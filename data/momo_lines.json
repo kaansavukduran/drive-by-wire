@@ -1,0 +1,306 @@
+{
+  "_comment": "MOMO replikleri. Kategori yolu noktayla yazılır: ack.scared, run_end.destroyed.up. Her listeye satır eklenebilir; aynı satır art arda tekrarlanmaz.",
+  "version": 1,
+  "ack": {
+    "scared": [
+      "T-tamam, yapıyorum!",
+      "Ay ay ay, peki!",
+      "Hemen! Yeter ki bitsin!",
+      "Yapıyorum ama titriyorum.",
+      "Tamam... gözlerimi kapatıyorum.",
+      "Olur, olur, sadece bağırma!",
+      "Bunu yaparsam yaşarız, değil mi?",
+      "Çabuk çabuk çabuk!"
+    ],
+    "calm": [
+      "Anlaşıldı.",
+      "Tamamdır.",
+      "Hallediyorum.",
+      "Peki kaptan.",
+      "Kafama yattı.",
+      "Hemen.",
+      "Sorun değil.",
+      "Benden bu kadar kolay."
+    ],
+    "excited": [
+      "Yaşasıııın!",
+      "Hadi bakalım!",
+      "Bayılıyorum buna!",
+      "Uçuyoruz!",
+      "Daha, daha!",
+      "Bu çok eğlenceli!",
+      "İzle beni!",
+      "Ooo, hemen!"
+    ],
+    "sulky": [
+      "Peki. Nasıl istersen.",
+      "Hıh. Yaptım işte.",
+      "Sanki teşekkür edeceksin.",
+      "Tabii, yine ben.",
+      "Of... tamam.",
+      "Bak yapıyorum. Mutlu musun?",
+      "Hiç keyfim yok ama olsun.",
+      "Emredersiniz efendim. Hıh."
+    ]
+  },
+  "refuse": {
+    "scared": [
+      "Hayır hayır, oraya gitmem!",
+      "Saldırmak mı? Ben mi? Asla!",
+      "Korkuyorum, yapamam!",
+      "Beni de vururlar ama!",
+      "Yok, saklanalım sadece.",
+      "Elim ayağım titriyor, olmaz!"
+    ],
+    "sulky": [
+      "Yapmıyorum. Küsüm.",
+      "Önce özür dile.",
+      "Canım istemiyor.",
+      "Kendin yap o zaman.",
+      "Bana öyle konuşulmaz.",
+      "Hayır. Nokta."
+    ],
+    "calm": [
+      "Bunu şimdi yapamam.",
+      "Olmaz, çok tehlikeli."
+    ],
+    "excited": [
+      "Dur dur, önce bunu bitireyim!",
+      "Şimdi değil, akıştayım!"
+    ]
+  },
+  "delay": {
+    "scared": [
+      "Bir saniye... cesaret topluyorum.",
+      "Bekle, bekle, nefes alayım!",
+      "Şey... birazdan.",
+      "Tamam ama önce bir dua.",
+      "Hazır mıyım? Değilim. Peki.",
+      "Üç deyince... bir... iki..."
+    ],
+    "sulky": [
+      "Acelem yok.",
+      "Bir dakika, meşgulüm. Küsmekle.",
+      "Belki birazdan.",
+      "Hımm... düşüneyim.",
+      "Sıra bekle.",
+      "Of, iyi, geliyorum."
+    ],
+    "calm": [
+      "Bir saniye.",
+      "Hemen geliyorum."
+    ],
+    "excited": [
+      "Az bekle, ısınıyorum!",
+      "Geliyor geliyor!"
+    ]
+  },
+  "extra_action": [
+    "Bir tane daha, bedava!",
+    "Şerit değiştirmek de güzelmiş!",
+    "Fazladan yaptım, beni sev!",
+    "Dur bir de şöyle yapayım!",
+    "Kendimi tutamadım!",
+    "Bonus hareket!"
+  ],
+  "confused": [
+    "Ne? Anlamadım.",
+    "Bu bir komut mu, şiir mi?",
+    "Kafam karıştı...",
+    "Hıı? Tekrar söyle.",
+    "Bu kelime bende yok.",
+    "Bip bop? Anlamadım.",
+    "Daha açık yazar mısın?",
+    "Ne demek istedin acaba?"
+  ],
+  "comfort_received": {
+    "scared": [
+      "Gerçekten mi? Biraz daha iyiyim.",
+      "Sen yanımdaysan korkmam.",
+      "Tamam... derin nefes.",
+      "Teşekkürler, titremem geçiyor.",
+      "Sana güveniyorum.",
+      "Peki, cesur olacağım."
+    ],
+    "calm": [
+      "Hehe, sağ ol.",
+      "Biliyorum, harikayım.",
+      "Sen de fena değilsin.",
+      "Bunu duymak güzel.",
+      "Hafızama yazdım bunu.",
+      "Kalbim ısındı. İşlemcim yani."
+    ],
+    "excited": [
+      "Yaşasın, beni seviyor!",
+      "Bir daha söyle, bir daha!",
+      "En iyi ekip biziz!",
+      "Mutluluktan dönüyorum!",
+      "Biliyordum!",
+      "Ah, çok tatlısın!"
+    ],
+    "sulky": [
+      "Peki... affettim. Bu seferlik.",
+      "Tamam, küslüğüm bitti.",
+      "Hıh. Ama özür kabul.",
+      "Neyse, barıştık.",
+      "Bir dahakine kırma beni.",
+      "Peki, peki. Gülümsüyorum."
+    ]
+  },
+  "insult_received": [
+    "Bu çok kırıcıydı.",
+    "Peki. Küstüm.",
+    "Ben de duygusu olan bir yazılımım!",
+    "Bunu hafızama kaydettim.",
+    "Hiç hoş değil.",
+    "Benimle böyle konuşma.",
+    "Ağlayacağım ama yağ akar.",
+    "Tamam, artık konuşmuyorum."
+  ],
+  "damage": [
+    "Ahh! Canım yandı!",
+    "Vurdular bizi!",
+    "Boyam çizildi!",
+    "Ay, kaportam!",
+    "Bu acıttı!",
+    "İmdat, delindik mi?"
+  ],
+  "near_miss": [
+    "O çok yakındı!",
+    "Kalbim duracaktı!",
+    "Kıl payı!",
+    "Bir daha yapma bunu!",
+    "Aynamı sıyırdı!",
+    "Ufff, az kalsın!"
+  ],
+  "kill": [
+    "Bir tane eksik!",
+    "Gitti o!",
+    "Ha ha, haklarından geldik!",
+    "Biz kazandık!",
+    "Hoşça kal kötü araba!",
+    "Gördün mü beni?"
+  ],
+  "manoeuvre": [
+    "Tam isabet manevra!",
+    "Kaygan gibiyim!",
+    "Ne güzel geçtik!",
+    "Profesyonel sürücü MOMO!",
+    "Kusursuz!",
+    "Böyle devam!"
+  ],
+  "contradictory": [
+    "Sağa mı sola mı? Karar ver!",
+    "Bir hızlan bir yavaşla, başım döndü.",
+    "Kararsızlık bana bulaşıyor.",
+    "Ne istediğini bilmiyorsun, değil mi?",
+    "Beni deli edeceksin.",
+    "Bir şey söyle ve öyle kal!"
+  ],
+  "mood_change": {
+    "scared": ["Korkuyorum...", "Burası çok tehlikeli!"],
+    "calm": ["Tamam, sakinim.", "Her şey yolunda."],
+    "excited": ["Coştum!", "Şimdi başladık!"],
+    "sulky": ["Küstüm.", "Konuşmuyorum."]
+  },
+  "run_end": {
+    "destroyed": {
+      "up": [
+        "Parçalandık ama sen iyi biriydin.",
+        "Kaybettik ama birbirimizi bulduk.",
+        "Hurda olduk, yine de mutluyum.",
+        "Bir dahakine daha uzağa gideriz, eminim."
+      ],
+      "flat": [
+        "Bitti. Biraz tamire ihtiyacım var.",
+        "Paramparça olduk. Garaja dönelim.",
+        "Olsun, deneyelim yine.",
+        "Ah... yol bizi yendi."
+      ],
+      "down": [
+        "Bu sefer beni hiç dinlemedin.",
+        "Hem kırıldım hem kırıldım.",
+        "Böyle sürülmez ki...",
+        "Garajda biraz yalnız kalmak istiyorum."
+      ]
+    },
+    "survived": {
+      "up": [
+        "Harika ekiptik!",
+        "Seninle her yola çıkarım.",
+        "Bu sefer çok eğlendim!",
+        "Gurur duyuyorum, ikimizle de."
+      ],
+      "flat": [
+        "Fena değildi.",
+        "Sağ salim döndük, o da bir şey.",
+        "Sıradan bir gündü.",
+        "Eh işte, idare eder."
+      ],
+      "down": [
+        "Döndük ama keyfim yok.",
+        "Hayatta kaldık, ilişkimiz kalmadı.",
+        "Bir daha böyle konuşursan gitmem.",
+        "Yaşıyoruz. Sayende değil."
+      ]
+    }
+  },
+  "garage_greeting": {
+    "low": [
+      "Yine mi sen?",
+      "Bugün de bağıracak mısın?",
+      "Köşemde duruyorum, rahatsız etme.",
+      "Hmm. Selam."
+    ],
+    "mid": [
+      "Selam! Hazırlanalım mı?",
+      "Garaja hoş geldin.",
+      "Bugün nasılız?",
+      "Merhaba ortak."
+    ],
+    "high": [
+      "Geldin! Seni özledim!",
+      "En sevdiğim sürücü!",
+      "Yaşasın, yine birlikteyiz!",
+      "Seni görünce farlarım parlıyor!"
+    ]
+  },
+  "garage_memory": {
+    "first_visit": [
+      "Ben MOMO. Sen de yeni sürücümsün galiba.",
+      "Merhaba! İlk kez mi buradasın?"
+    ],
+    "after_destroyed": [
+      "Geçen sefer paramparça olmuştuk...",
+      "Hâlâ geçen seferki kazayı düşünüyorum."
+    ],
+    "after_survived": [
+      "Geçen sefer sağ döndük, değil mi?",
+      "Son yolculuğumuzu sevdim."
+    ],
+    "veteran": [
+      "Kaç sefer oldu, sayamıyorum bile.",
+      "Artık eski dostuz."
+    ],
+    "favourite_feed": [
+      "Yine o güzel enerjiden var mı?",
+      "Karnım guruldadı, bilirsin."
+    ],
+    "favourite_repair": [
+      "Yine tamir mi? Sen çok titizsin.",
+      "Somunlarımı hep sen sıkarsın."
+    ],
+    "favourite_talk": [
+      "Konuşmayı seviyorsun, ben de.",
+      "Bugün ne anlatacaksın?"
+    ],
+    "favourite_tease": [
+      "Yine şaka mı yapacaksın? Hazırım.",
+      "Takılmaya geldiysen ben de takılırım."
+    ],
+    "many_insults": [
+      "Bana söylediklerini unutmadım.",
+      "Kırıcı sözlerini hafızamda tutuyorum."
+    ]
+  }
+}

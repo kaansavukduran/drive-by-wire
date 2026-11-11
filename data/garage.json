@@ -1,0 +1,164 @@
+{
+  "_comment": "Garaj içeriği. dialogues: MOMO sorusu + 3-4 seçenek. effects.trust güveni, effects.mood ruh halini değiştirir; effects.next_run bir sonraki sefere özel denge değişiklikleri (path/op/value, op: add|mul|set). tag hafızada sayılır (feed/repair/talk/tease/insult). upgrades: kalıcı yükseltmeler; levels[i] = o seviyede eklenen değiştiriciler.",
+  "version": 1,
+  "dialogues": [
+    {
+      "id": "hungry",
+      "min_trust": 0,
+      "max_trust": 100,
+      "prompt": "Karnım aç... Bataryam guruldıyor. Bir şey verir misin?",
+      "options": [
+        { "id": "feed_energy", "tag": "feed", "text": "Al, taze enerji hücresi.", "effects": { "trust": 4, "mood": "excited", "next_run": [ { "path": "run.player.max_speed", "op": "add", "value": 20 } ] }, "reply": "Mmm! Vızır vızır oldum!" },
+        { "id": "feed_parts", "tag": "feed", "text": "Biraz yedek parça buldum, ye bakalım.", "effects": { "trust": 3, "mood": "calm", "next_run": [ { "path": "run.mine.count", "op": "add", "value": 1 } ] }, "reply": "Çıtır çıtır somunlar! Bir mayın daha yaparım bundan." },
+        { "id": "feed_later", "tag": "talk", "text": "Sonra, şimdi işimiz var.", "effects": { "trust": -1 }, "reply": "Peki... aç aç sürerim o zaman." },
+        { "id": "feed_tease", "tag": "tease", "text": "Diyet yapıyorsun, unuttun mu?", "effects": { "trust": -2, "mood": "sulky" }, "reply": "Ben şişman değilim, sadece bol kodluyum!" }
+      ]
+    },
+    {
+      "id": "scratches",
+      "min_trust": 0,
+      "max_trust": 100,
+      "prompt": "Kaportamda çizikler var. Çirkin oldum mu?",
+      "options": [
+        { "id": "repair_full", "tag": "repair", "text": "Hemen tamir ediyorum, yepyeni olacaksın.", "effects": { "trust": 4, "mood": "calm", "next_run": [ { "path": "run.player.max_hp", "op": "add", "value": 15 } ] }, "reply": "Ohh, pırıl pırıl! Teşekkürler." },
+        { "id": "repair_paint", "tag": "repair", "text": "Biraz boya yeter, yine en güzelsin.", "effects": { "trust": 3, "mood": "excited" }, "reply": "En güzel miyim? Biliyordum!" },
+        { "id": "scratch_cool", "tag": "talk", "text": "Çizikler havalı duruyor, savaş izi.", "effects": { "trust": 2 }, "reply": "Savaş izi... Kulağa cesur geliyor." },
+        { "id": "scratch_ugly", "tag": "insult", "text": "Evet, hurda gibisin.", "effects": { "trust": -6, "mood": "sulky" }, "reply": "...Konuşmuyorum seninle." }
+      ]
+    },
+    {
+      "id": "scared_of_road",
+      "min_trust": 0,
+      "max_trust": 60,
+      "prompt": "Yol beni korkutuyor. Bu sefer de geri dönecek miyiz?",
+      "options": [
+        { "id": "promise", "tag": "talk", "text": "Söz veriyorum, seni koruyacağım.", "effects": { "trust": 5, "mood": "calm" }, "reply": "Söz mü? Peki, sana inanıyorum." },
+        { "id": "armor_up", "tag": "repair", "text": "Zırhını güçlendireyim, içi rahat etsin.", "effects": { "trust": 3, "mood": "calm", "next_run": [ { "path": "run.player.max_hp", "op": "add", "value": 10 } ] }, "reply": "Kalın kalın zırh. Biraz daha cesurum." },
+        { "id": "no_promise", "tag": "talk", "text": "Bilmiyorum. Göreceğiz.", "effects": { "trust": -1, "mood": "scared" }, "reply": "Bu hiç yardımcı olmadı..." },
+        { "id": "toughen_up", "tag": "tease", "text": "Korkak araba olur mu hiç?", "effects": { "trust": -3, "mood": "sulky" }, "reply": "Korkak değilim, dikkatliyim! Hıh." }
+      ]
+    },
+    {
+      "id": "music",
+      "min_trust": 30,
+      "max_trust": 100,
+      "prompt": "Yolda şarkı söylesem kızar mısın?",
+      "options": [
+        { "id": "sing_yes", "tag": "talk", "text": "Söyle tabii, sesini seviyorum.", "effects": { "trust": 4, "mood": "excited" }, "reply": "La la laaa! Bip bip!" },
+        { "id": "sing_quiet", "tag": "talk", "text": "Sadece sessiz anlarda.", "effects": { "trust": 1, "mood": "calm" }, "reply": "Anlaştık, kısık sesle." },
+        { "id": "sing_no", "tag": "tease", "text": "Hayır, kulaklarım kanıyor.", "effects": { "trust": -3, "mood": "sulky" }, "reply": "O zaman içimden söylerim. Hıh." }
+      ]
+    },
+    {
+      "id": "memory_talk",
+      "min_trust": 50,
+      "max_trust": 100,
+      "requires": { "min_runs": 2 },
+      "prompt": "Biliyor musun, birlikte yaptığımız her seferi hatırlıyorum.",
+      "options": [
+        { "id": "me_too", "tag": "talk", "text": "Ben de. Harika bir ekibiz.", "effects": { "trust": 4, "mood": "excited" }, "reply": "En harika ekip!" },
+        { "id": "upgrade_brain", "tag": "repair", "text": "Hafızana biraz yer açayım mı?", "effects": { "trust": 2, "mood": "calm", "next_run": [ { "path": "run.weapon.cooldown", "op": "mul", "value": 0.95 } ] }, "reply": "Ferahladım! Tetik parmağım da hızlandı." },
+        { "id": "forget_it", "tag": "tease", "text": "Kötü olanları unut bence.", "effects": { "trust": 0, "mood": "calm" }, "reply": "Unutamam ki, ben hafızayım." }
+      ]
+    },
+    {
+      "id": "after_crash",
+      "min_trust": 0,
+      "max_trust": 100,
+      "requires": { "last_outcome": "destroyed" },
+      "prompt": "Geçen sefer paramparça olduk. Bana kızgın mısın?",
+      "options": [
+        { "id": "not_angry", "tag": "talk", "text": "Hayır, ikimizin de suçu yoktu.", "effects": { "trust": 5, "mood": "calm" }, "reply": "Oh... içim rahatladı." },
+        { "id": "fix_you", "tag": "repair", "text": "Kızgın değilim, gel seni toparlayayım.", "effects": { "trust": 4, "mood": "calm", "next_run": [ { "path": "run.player.max_hp", "op": "add", "value": 10 } ] }, "reply": "Vida vida birleşiyorum. Sağ ol." },
+        { "id": "bit_angry", "tag": "talk", "text": "Biraz. Daha dikkatli olmalıyız.", "effects": { "trust": 0, "mood": "scared" }, "reply": "Haklısın... daha dikkatli olacağım." },
+        { "id": "your_fault", "tag": "insult", "text": "Evet, senin yüzünden.", "effects": { "trust": -7, "mood": "sulky" }, "reply": "Ben elimden geleni yaptım ama..." }
+      ]
+    }
+  ],
+  "upgrades": [
+    {
+      "id": "armor",
+      "name": "Kalın Zırh",
+      "description": "+20 azami can.",
+      "max_level": 3,
+      "levels": [
+        [ { "path": "run.player.max_hp", "op": "add", "value": 20 } ],
+        [ { "path": "run.player.max_hp", "op": "add", "value": 20 } ],
+        [ { "path": "run.player.max_hp", "op": "add", "value": 20 } ]
+      ]
+    },
+    {
+      "id": "quick_trigger",
+      "name": "Çabuk Tetik",
+      "description": "Silah bekleme süresi %15 kısalır.",
+      "max_level": 3,
+      "levels": [
+        [ { "path": "run.weapon.cooldown", "op": "mul", "value": 0.85 } ],
+        [ { "path": "run.weapon.cooldown", "op": "mul", "value": 0.85 } ],
+        [ { "path": "run.weapon.cooldown", "op": "mul", "value": 0.85 } ]
+      ]
+    },
+    {
+      "id": "extra_mine",
+      "name": "Yedek Mayın",
+      "description": "Sefere +1 mayınla başla.",
+      "max_level": 3,
+      "levels": [
+        [ { "path": "run.mine.count", "op": "add", "value": 1 } ],
+        [ { "path": "run.mine.count", "op": "add", "value": 1 } ],
+        [ { "path": "run.mine.count", "op": "add", "value": 1 } ]
+      ]
+    },
+    {
+      "id": "heavy_rounds",
+      "name": "Ağır Mermi",
+      "description": "Mermi hasarı +5.",
+      "max_level": 3,
+      "levels": [
+        [ { "path": "run.weapon.damage", "op": "add", "value": 5 } ],
+        [ { "path": "run.weapon.damage", "op": "add", "value": 5 } ],
+        [ { "path": "run.weapon.damage", "op": "add", "value": 5 } ]
+      ]
+    },
+    {
+      "id": "bull_bar",
+      "name": "Boğa Tamponu",
+      "description": "Çarpma hasarı +15, çarpınca alınan hasar %30 azalır.",
+      "max_level": 2,
+      "levels": [
+        [ { "path": "run.player.ram_damage", "op": "add", "value": 15 }, { "path": "run.player.ram_self_damage", "op": "mul", "value": 0.7 } ],
+        [ { "path": "run.player.ram_damage", "op": "add", "value": 15 }, { "path": "run.player.ram_self_damage", "op": "mul", "value": 0.7 } ]
+      ]
+    },
+    {
+      "id": "calm_core",
+      "name": "Sakin Çekirdek",
+      "description": "MOMO korkunca saldırıları daha az reddeder.",
+      "max_level": 2,
+      "levels": [
+        [ { "path": "momo.scared.attack_refuse_probability", "op": "mul", "value": 0.75 }, { "path": "momo.scared.attack_delay_probability", "op": "mul", "value": 0.8 } ],
+        [ { "path": "momo.scared.attack_refuse_probability", "op": "mul", "value": 0.75 }, { "path": "momo.scared.attack_delay_probability", "op": "mul", "value": 0.8 } ]
+      ]
+    },
+    {
+      "id": "warm_heart",
+      "name": "Sıcak Kalp",
+      "description": "MOMO küsünce daha az inatlaşır.",
+      "max_level": 2,
+      "levels": [
+        [ { "path": "momo.sulky.refuse_probability", "op": "mul", "value": 0.7 }, { "path": "momo.sulky.delay_probability", "op": "mul", "value": 0.85 } ],
+        [ { "path": "momo.sulky.refuse_probability", "op": "mul", "value": 0.7 }, { "path": "momo.sulky.delay_probability", "op": "mul", "value": 0.85 } ]
+      ]
+    },
+    {
+      "id": "turbo",
+      "name": "Turbo",
+      "description": "Azami hız +30.",
+      "max_level": 2,
+      "levels": [
+        [ { "path": "run.player.max_speed", "op": "add", "value": 30 } ],
+        [ { "path": "run.player.max_speed", "op": "add", "value": 30 } ]
+      ]
+    }
+  ]
+}

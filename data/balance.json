@@ -1,0 +1,128 @@
+{
+  "_comment": "Drive-By Wire: tüm ayarlanabilir sayılar. Süreler saniye, mesafeler mantıksal piksel (640x360), hızlar piksel/saniye, olasılıklar 0..1.",
+  "version": 1,
+  "time": {
+    "command_box_time_scale": 0.10,
+    "time_scale_lerp_seconds": 0.15
+  },
+  "parser": {
+    "fuzzy_min_length": 4,
+    "short_word_max_length": 6,
+    "short_max_distance": 1,
+    "long_max_distance": 2,
+    "suffix_min_root_length": 3,
+    "intent_suffix_min_root_length": 4,
+    "transposition_costs_one": true
+  },
+  "momo": {
+    "trust_default": 50,
+    "trust_min": 0,
+    "trust_max": 100,
+    "start_mood": "calm",
+    "start_scared_below_trust": 20,
+    "trust_modulation": 0.4,
+    "attack_intents": ["fire", "ram", "drop_mine"],
+    "escape_intents": ["dodge", "lane_left", "lane_right", "speed_up", "slow_down"],
+    "contradiction_window_seconds": 2.5,
+    "contradictory_pairs": [["lane_left", "lane_right"], ["speed_up", "slow_down"]],
+    "contradictions_to_sulk": 2,
+    "near_misses_to_scare": 2,
+    "successes_to_excite": 2,
+    "kills_to_excite": 1,
+    "excited_max_commands": 6,
+    "comfort_trust_cap_per_run": 15,
+    "scared": {
+      "attack_refuse_probability": 0.30,
+      "attack_delay_probability": 0.30,
+      "delay_min": 0.6,
+      "delay_max": 1.2,
+      "escape_speed": 1.5,
+      "other_speed": 1.0
+    },
+    "calm": {
+      "speed": 1.0
+    },
+    "excited": {
+      "speed": 1.3,
+      "extra_probability": 0.25,
+      "double_fire_intents": ["fire", "drop_mine"]
+    },
+    "sulky": {
+      "refuse_probability": 0.20,
+      "delay_probability": 0.55,
+      "delay_min": 0.8,
+      "delay_max": 1.6,
+      "speed": 0.8,
+      "snark_probability": 0.6
+    },
+    "trust_deltas": {
+      "damage": -1,
+      "heavy_damage": -2,
+      "near_miss": 0,
+      "insult": -8,
+      "comfort": 3,
+      "contradictory": -3,
+      "manoeuvre_success": 1,
+      "kill": 2,
+      "unknown_command": 0,
+      "run_survived": 3,
+      "run_destroyed": -2
+    },
+    "heavy_damage_amount": 25,
+    "run_end_flat_band": 2
+  },
+  "garage": {
+    "trust_bands": { "low_below": 35, "high_from": 70 },
+    "upgrade_offer_count": 3,
+    "favourite_min_count": 3,
+    "veteran_runs": 5
+  },
+  "run": {
+    "lane_count": 3,
+    "lane_width": 64,
+    "lane_change_seconds": 0.25,
+    "player": {
+      "max_hp": 100,
+      "base_speed": 220,
+      "min_speed": 140,
+      "max_speed": 340,
+      "speed_step": 40,
+      "acceleration": 160,
+      "dodge_seconds": 0.45,
+      "dodge_cooldown": 1.5,
+      "invulnerable_after_hit": 0.6,
+      "ram_damage": 40,
+      "ram_self_damage": 10,
+      "contact_damage": 15
+    },
+    "weapon": {
+      "cooldown": 0.45,
+      "damage": 20,
+      "bullet_speed": 420,
+      "range": 260
+    },
+    "mine": {
+      "count": 3,
+      "damage": 60,
+      "arm_seconds": 0.3,
+      "lifetime": 8.0
+    },
+    "enemies": {
+      "rammer": { "hp": 40, "speed": 260, "contact_damage": 20, "score": 10, "lane_change_seconds": 0.6, "aggro_distance": 180 },
+      "pickup": { "hp": 60, "speed": 230, "contact_damage": 15, "score": 15, "fire_cooldown": 1.6, "bullet_damage": 8, "bullet_speed": 300 },
+      "truck":  { "hp": 140, "speed": 180, "contact_damage": 35, "score": 25, "obstacle_cooldown": 3.0, "obstacle_damage": 20 }
+    },
+    "spawn": {
+      "initial_delay": 2.0,
+      "interval_start": 3.0,
+      "interval_min": 1.1,
+      "interval_decay_per_minute": 0.6,
+      "max_alive": 5,
+      "weights": { "rammer": 0.5, "pickup": 0.3, "truck": 0.2 },
+      "distance_unlocks": { "pickup": 300, "truck": 800 }
+    },
+    "near_miss_distance": 18,
+    "distance_per_pixel": 0.05,
+    "screen_shake": { "hit": 3.0, "kill": 2.0, "seconds": 0.2 }
+  }
+}

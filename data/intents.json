@@ -1,0 +1,86 @@
+{
+  "_comment": "Drive-By Wire niyet sözlüğü. Kelime eklemek için ilgili listeye yeni bir öğe ekle. Büyük/küçük harf ve Türkçe karakter farkı önemsiz (ı/i, ş/s, ğ/g, ç/c, ö/o, ü/u). Çok kelimeli ifadeler boşlukla yazılır. Yazım hatası toleransı ve eşikler data/balance.json > parser içinde.",
+  "version": 1,
+  "intents": {
+    "lane_left": [
+      "sola geç", "sola gec", "sola kay", "sola kaç", "sola dön", "sola çek", "sola çek direksiyonu", "sola kır", "sola git", "sola sap", "sola gir", "sola atla", "sola yanaş", "sola geçsene", "sola kaysana",
+      "sol şerit", "sol şeride", "sol şeride geç", "sol şeride kay", "sol şeride gir", "soldaki şeride geç", "sol tarafa geç", "sol tarafa", "sol taraf",
+      "move left", "go left", "turn left", "steer left", "switch left", "shift left", "veer left", "slide left", "left lane", "change lane left", "lane left", "to the left"
+    ],
+    "lane_right": [
+      "sağa geç", "saga gec", "sağa kay", "sağa kaç", "sağa dön", "sağa çek", "sağa çek direksiyonu", "sağa kır", "sağa git", "sağa sap", "sağa gir", "sağa atla", "sağa yanaş", "sağa geçsene", "sağa kaysana",
+      "sağ şerit", "sağ şeride", "sağ şeride geç", "sağ şeride kay", "sağ şeride gir", "sağdaki şeride geç", "sağ tarafa geç", "sağ tarafa", "sağ taraf",
+      "move right", "go right", "turn right", "steer right", "switch right", "shift right", "veer right", "slide right", "right lane", "change lane right", "lane right", "to the right"
+    ],
+    "speed_up": [
+      "hızlan", "hızlı", "daha hızlı", "hızlı git", "hızlansana", "hızlanalım", "hızlandır", "gazla", "gazlasana", "gaz", "gaz ver", "gaza bas", "bas gaza", "kökle", "son hız", "tam gaz", "turbo", "uçur", "hadi hadi", "çabuk", "acele et",
+      "speed up", "faster", "go faster", "accelerate", "gas", "full speed", "full throttle", "floor it", "step on it", "hurry", "hurry up", "boost", "punch it"
+    ],
+    "slow_down": [
+      "yavaşla", "yavaş", "yavaş git", "daha yavaş", "yavaşlasana", "yavaşlayalım", "yavaşlat", "fren", "fren yap", "frene bas", "frenle", "frenle şunu", "dur", "durdur", "gazı kes", "gazdan çek", "ağır ol", "ağırdan al", "hızını kes", "hızını düşür",
+      "slow down", "slow", "slower", "brake", "hit the brakes", "brakes", "ease off", "decelerate", "stop", "easy on the gas"
+    ],
+    "fire": [
+      "ateş", "ateş et", "ateşle", "ateş aç", "ateşe başla", "ateş etsene", "vur", "vur şunu", "vursana", "vur onu", "patlat", "patlat şunu", "kurşunla", "nişan al", "indir", "indir şunu", "tara", "tarat", "bam",
+      "fire", "shoot", "shoot it", "open fire", "blast", "blast it", "gun it down", "take the shot", "pew"
+    ],
+    "drop_mine": [
+      "mayın", "mayın bırak", "mayın at", "mayın koy", "mayın dök", "mayın salla", "mayınla", "mayın döşe", "arkaya mayın", "arkaya mayın bırak", "bomba bırak", "tuzak kur", "tuzak bırak",
+      "mine", "drop mine", "drop a mine", "lay mine", "lay a mine", "deploy mine", "mines", "drop mines", "leave a mine", "trap"
+    ],
+    "dodge": [
+      "kaç", "kaçın", "kaçsana", "kaç kurtar", "sıyrıl", "sıyrılsana", "kurtar bizi", "manevra", "manevra yap", "kıvır", "kıvrıl", "zikzak", "zikzak çiz", "kenara kaç", "yoldan çekil", "çekil", "kaçamak yap",
+      "dodge", "dodge it", "evade", "swerve", "duck", "juke", "get out of the way", "watch out", "look out"
+    ],
+    "ram": [
+      "çarp", "çarp ona", "çarp şuna", "çarpsana", "bindir", "bindir şuna", "tosla", "toslasana", "ez", "ez geç", "ez onu", "ez şunu", "dal", "dal ona", "üstüne sür", "üstüne git", "kafa at", "sıkıştır", "yan çiz", "omuzla",
+      "ram", "ram it", "ram them", "smash", "smash it", "crash into", "hit", "hit it", "slam", "slam into", "bump", "run it over", "run over"
+    ],
+    "comfort": [
+      "aferin", "aferim", "aferin sana", "aferin oğlum", "aferin kızım", "bravo", "helal", "helal olsun", "harika", "harikasın", "süpersin", "çok iyisin", "iyisin", "en iyisi sensin", "aslansın", "iyi gidiyorsun", "çok iyi gidiyorsun", "iyi iş", "güzel", "çok güzel", "güzel iş", "tebrikler", "tebrik ederim",
+      "korkma", "korkma ben buradayım", "merak etme", "endişelenme", "sakin ol", "sakin", "rahat ol", "geçti", "geçecek", "tamam tamam", "sorun yok", "ben yanındayım", "yanındayım", "seni seviyorum", "seviyorum seni", "canım", "tatlım", "kuzum", "güveniyorum sana", "sana güveniyorum", "sağ ol", "sağol", "teşekkürler", "teşekkür ederim", "eyvallah", "özür dilerim", "pardon", "kusura bakma",
+      "good job", "well done", "nice", "nice one", "great", "great job", "good boy", "good girl", "good bot", "youre doing great", "you are doing great", "doing great", "you got this", "proud of you", "im proud of you", "dont worry", "do not worry", "its ok", "its okay", "it is ok", "calm down", "relax", "easy", "i love you", "love you", "thanks", "thank you", "sorry", "im sorry", "i trust you", "awesome", "amazing", "you rock"
+    ],
+    "insult": [
+      "aptal", "salak", "mal", "ahmak", "budala", "beyinsiz", "geri zekalı", "gerizekalı", "dangalak", "hıyar", "öküz", "ezik", "beceriksiz", "işe yaramaz", "hurda", "hurda yığını", "teneke", "teneke kutu", "çöp", "çöpsün", "berbat", "berbatsın", "rezil", "rezilsin", "sus", "kes sesini", "sus be", "kapa çeneni", "defol", "nefret ediyorum", "senden nefret ediyorum", "yazılımın bozuk", "bozuk", "lanet", "lanet olası", "kahrolası", "kahrol", "şerefsiz", "haysiyetsiz", "adi", "pislik", "köpek", "gebertirim", "seni sileceğim", "fişini çekerim", "fişini çekeceğim",
+      "stupid", "idiot", "dumb", "moron", "useless", "trash", "garbage", "junk", "piece of junk", "scrap", "loser", "shut up", "i hate you", "hate you", "damn you", "screw you", "you suck", "suck", "worthless", "pathetic", "dumbass", "jerk", "go to hell"
+    ]
+  },
+  "targets": {
+    "type": {
+      "rammer": ["çarpan", "çarpan araba", "çarpan araç", "çarpıcı", "kamikaze", "deli araba", "rammer", "ram car", "rammer car", "kamikaze car"],
+      "pickup": ["kamyonet", "pikap", "pick up", "pickup", "pickup truck", "silahlı kamyonet", "shooter", "gunner"],
+      "truck": ["kamyon", "tır", "tir", "büyük kamyon", "truck", "big truck", "lorry", "semi", "trailer"]
+    },
+    "position": {
+      "front": ["öndeki", "önümüzdeki", "önde", "önündeki", "ileri", "ilerideki", "front", "ahead", "in front", "the one ahead", "forward"],
+      "behind": ["arkadaki", "arkamızdaki", "arka", "arkada", "arkandaki", "geri", "gerideki", "behind", "rear", "back", "the one behind", "tail"],
+      "nearest": ["en yakın", "en yakındaki", "yakındaki", "yakın", "nearest", "closest", "near", "nearby", "the closest one"]
+    },
+    "side": {
+      "left": ["soldaki", "solundaki", "sol taraftaki", "leftmost", "left one", "the left one"],
+      "right": ["sağdaki", "sağındaki", "sağ taraftaki", "rightmost", "right one", "the right one"]
+    }
+  },
+  "_lane_side_words_comment": "Tek başına yön kelimeleri. Ateş/çarp komutuyla aynı parçadaysa hedef tarafı olur (\"sola ateş et\" = soldakine ateş). Yoksa şerit değişimi olur (\"sola!\").",
+  "lane_side_words": {
+    "left": ["sol", "left"],
+    "right": ["sağ", "right"]
+  },
+  "_suffixes_comment": "Hedef ve yön kelimelerine eklenebilen Türkçe ekler (Türkçe karaktersiz yazılır). kamyon + a = kamyona, öndeki + ne = öndekine.",
+  "suffixes": [
+    "a", "e", "ya", "ye", "na", "ne", "i", "u", "yi", "yu", "ni", "nu", "in", "un", "nin", "nun", "yin", "yun",
+    "da", "de", "ta", "te", "nda", "nde", "dan", "den", "tan", "ten", "ndan", "nden",
+    "la", "le", "yla", "yle", "ler", "lar", "lere", "lara", "leri", "lari",
+    "daki", "deki", "dakine", "dekine", "dakini", "dekini", "dakiye", "dekiye", "ki", "kine", "kini",
+    "sin", "sun", "siniz", "sunuz", "dir", "dur", "tir", "tur", "im", "um", "ca", "ce",
+    "s"
+  ],
+  "_separators_comment": "Zincir ayırıcıları. Noktalama karakterleri de ayırıcı olabilir.",
+  "separators": ["ve", "and", "sonra", "daha sonra", "ardından", "sonrasında", "then", "and then", "ondan sonra", "bir de", "also", ",", ";", ".", "!", "?"],
+  "_fuzzy_blocklist_comment": "Bu kelimeler yazım hatası düzeltmesine sokulmaz (yalnızca birebir eşleşir). Yanlış pozitif görürsen buraya ekle.",
+  "fuzzy_blocklist": [
+    "fine", "five", "nine", "fare", "hire", "wire", "tire", "fore", "free", "fire", "slot", "show", "snow", "slim", "stop", "shop", "step", "mint", "mind", "mile", "hint", "bump", "dump", "jump", "pump", "lump", "nice", "rice", "dice", "mice", "nick", "neck", "easy", "east", "ease", "gast", "great", "treat", "grant", "suck", "sock", "back", "duck", "dock", "luck", "lock", "truck", "track", "trick",
+    "ates", "sakin", "sakın", "kacak", "kalan", "kalem", "kazan", "dalga", "salla", "sabah", "akşam", "ekmek", "merhaba", "selam", "naber", "nasılsın", "tamam", "evet", "hayır", "yok", "var", "araba", "arabam", "yolda", "yine", "bunu", "şunu", "onu", "hadi", "bence", "belki", "galiba", "kamyon", "kamyonet", "mayın", "mayıs", "malı", "hıyar", "kahve", "gazete", "zaman", "uzak", "yakın", "sana", "bana", "beni", "seni"
+  ]
+}
