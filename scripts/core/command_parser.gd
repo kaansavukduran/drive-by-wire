@@ -196,6 +196,14 @@ func parse(text: String) -> Array:
 	var commands: Array = []
 	for segment in _split_segments(tokens):
 		_parse_segment(segment, commands)
+	# One feeling per breath: "işe yaramaz hurda" is a single insult, not two.
+	var merged: Array = []
+	for command in commands:
+		var intent := str(command.get("intent", ""))
+		if (intent == "insult" or intent == "comfort") and not merged.is_empty() and str(merged[-1].get("intent", "")) == intent:
+			continue
+		merged.append(command)
+	commands = merged
 	for i in range(commands.size()):
 		commands[i]["index"] = i
 	return commands
