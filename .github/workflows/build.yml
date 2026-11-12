@@ -124,7 +124,7 @@ jobs:
           python packaging/png_to_ico.py assets/icon.png build/DriveByWire.ico
           MAKENSIS="/c/Program Files (x86)/NSIS/makensis.exe"
           if [ ! -f "$MAKENSIS" ]; then choco install nsis -y --no-progress; fi
-          "$MAKENSIS" -DVERSION="$DBW_VERSION" packaging/windows.nsi
+          "$MAKENSIS" -NOCD -DVERSION="$DBW_VERSION" packaging/windows.nsi
       - name: Silent per-user install, run installed game, uninstall
         shell: pwsh
         run: |

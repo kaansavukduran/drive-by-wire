@@ -43,7 +43,7 @@ bash packaging/linux.sh
 # Windows: export (works from Linux too) + installer (needs NSIS: apt install nsis / choco install nsis)
 godot --headless --export-release "Windows Desktop"
 python3 packaging/png_to_ico.py assets/icon.png build/DriveByWire.ico
-makensis -DVERSION=$(python3 packaging/version.py) packaging/windows.nsi
+makensis -NOCD -DVERSION=$(python3 packaging/version.py) packaging/windows.nsi
 
 # Web: build/web, then serve it
 GODOT_BIN=godot python3 packaging/build_web.py

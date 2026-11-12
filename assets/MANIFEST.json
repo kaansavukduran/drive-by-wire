@@ -1,0 +1,1140 @@
+{
+ "conventions": "Frame index n is at column n % columns, row n // columns. anchor = pivot in frame pixels (place node position here). collision = suggested rect in frame pixels. Vehicles face up. Animations repeat indices to make holds.",
+ "generator": "tools/art/build.py",
+ "images": {
+  "road_tile": {
+   "drivable_x_screen": [
+    224,
+    416
+   ],
+   "guard_rail_x_screen": [
+    198,
+    441
+   ],
+   "lane_centers_x_screen": [
+    256,
+    320,
+    384
+   ],
+   "lane_centers_x_tile": [
+    64,
+    128,
+    192
+   ],
+   "lane_width": 64,
+   "notes": "Draw at x=192, repeat every 256 px vertically, scroll down at the road speed. Lane dividers at screen x 287-288 and 351-352.",
+   "parallax": 1.0,
+   "path": "assets/road/road_tile.png",
+   "screen_x": 192,
+   "size": [
+    256,
+    256
+   ],
+   "tile_size": [
+    256,
+    256
+   ],
+   "tiles_vertically": true
+  },
+  "roadside_left": {
+   "parallax": 1.0,
+   "path": "assets/road/roadside_left.png",
+   "screen_x": 0,
+   "size": [
+    192,
+    256
+   ],
+   "tile_size": [
+    192,
+    256
+   ],
+   "tiles_vertically": true
+  },
+  "roadside_right": {
+   "parallax": 1.0,
+   "path": "assets/road/roadside_right.png",
+   "screen_x": 448,
+   "size": [
+    192,
+    256
+   ],
+   "tile_size": [
+    192,
+    256
+   ],
+   "tiles_vertically": true
+  }
+ },
+ "logical_resolution": [
+  640,
+  360
+ ],
+ "palette": {
+  "colors": 64,
+  "gpl": "assets/palette.gpl",
+  "path": "assets/palette.png"
+ },
+ "sheets": {
+  "enemy_pickup": {
+   "anchor": [
+    24,
+    40
+   ],
+   "animations": {
+    "attack": {
+     "fps": 14,
+     "frames": [
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+     ],
+     "loop": false
+    },
+    "destroyed": {
+     "fps": 12,
+     "frames": [
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39
+     ],
+     "loop": false
+    },
+    "drive": {
+     "fps": 12,
+     "frames": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "loop": true
+    },
+    "drive_noturret": {
+     "fps": 12,
+     "frames": [
+      40,
+      41,
+      42,
+      43
+     ],
+     "loop": true
+    },
+    "hit": {
+     "fps": 15,
+     "frames": [
+      20,
+      21,
+      22
+     ],
+     "loop": false
+    }
+   },
+   "collision": {
+    "h": 48,
+    "w": 24,
+    "x": 12,
+    "y": 16
+   },
+   "columns": 10,
+   "frame_height": 80,
+   "frame_width": 48,
+   "notes": "Armed pickup. drive/attack have the turret baked in pointing down (at the player behind). For an aiming turret use drive_noturret + sheet enemy_pickup_turret at turret_mount.",
+   "path": "assets/sprites/enemy_pickup.png",
+   "rows": 5,
+   "size": [
+    480,
+    400
+   ],
+   "turret_mount": [
+    24,
+    52
+   ]
+  },
+  "enemy_pickup_turret": {
+   "anchor": [
+    16,
+    16
+   ],
+   "angle_direction": "clockwise",
+   "angle_step_deg": 22.5,
+   "angle_zero": "down",
+   "animations": {
+    "aim": {
+     "fps": 0,
+     "frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+     ],
+     "loop": false
+    },
+    "fire": {
+     "fps": 0,
+     "frames": [
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31
+     ],
+     "loop": false
+    }
+   },
+   "columns": 16,
+   "frame_height": 32,
+   "frame_width": 32,
+   "notes": "Row 0 = aim, row 1 = firing (flash+recoil). Column i = angle i*22.5 deg, clockwise starting from pointing DOWN (screen south): 0=down, 4=left, 8=up, 12=right. Pick the column for the aim angle; flash frame for ~2 frames per shot.",
+   "path": "assets/sprites/enemy_pickup_turret.png",
+   "rows": 2,
+   "size": [
+    512,
+    64
+   ]
+  },
+  "enemy_rammer": {
+   "anchor": [
+    24,
+    40
+   ],
+   "animations": {
+    "attack": {
+     "fps": 12,
+     "frames": [
+      10,
+      11,
+      12,
+      13
+     ],
+     "loop": false
+    },
+    "destroyed": {
+     "fps": 12,
+     "frames": [
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59
+     ],
+     "loop": false
+    },
+    "drive": {
+     "fps": 12,
+     "frames": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "loop": true
+    },
+    "hit": {
+     "fps": 15,
+     "frames": [
+      40,
+      41,
+      42
+     ],
+     "loop": false
+    },
+    "ram_left": {
+     "fps": 12,
+     "frames": [
+      20,
+      21,
+      22
+     ],
+     "loop": false
+    },
+    "ram_right": {
+     "fps": 12,
+     "frames": [
+      30,
+      31,
+      32
+     ],
+     "loop": false
+    }
+   },
+   "collision": {
+    "h": 44,
+    "w": 22,
+    "x": 13,
+    "y": 18
+   },
+   "columns": 10,
+   "frame_height": 80,
+   "frame_width": 48,
+   "notes": "Rammer car with spiked plow. attack = forward lunge (sprite itself moves up to 5 px; keep node still). ram_left/right = sideways ram tilt; translate the node yourself.",
+   "path": "assets/sprites/enemy_rammer.png",
+   "rows": 6,
+   "size": [
+    480,
+    480
+   ],
+   "spike_line_y": 10
+  },
+  "enemy_truck": {
+   "anchor": [
+    32,
+    56
+   ],
+   "animations": {
+    "attack": {
+     "drop_frame": 5,
+     "fps": 10,
+     "frames": [
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17
+     ],
+     "loop": false
+    },
+    "destroyed": {
+     "fps": 12,
+     "frames": [
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41
+     ],
+     "loop": false
+    },
+    "drive": {
+     "fps": 10,
+     "frames": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "loop": true
+    },
+    "hit": {
+     "fps": 15,
+     "frames": [
+      20,
+      21,
+      22
+     ],
+     "loop": false
+    }
+   },
+   "collision": {
+    "h": 80,
+    "w": 28,
+    "x": 18,
+    "y": 16
+   },
+   "columns": 10,
+   "drop_point": [
+    32,
+    108
+   ],
+   "frame_height": 112,
+   "frame_width": 64,
+   "notes": "Cab at top, rear hatch at bottom. attack = hatch opens, a crate slides down the ramp; spawn the real obstacle at drop_point when the animation reaches frame offset 5.",
+   "path": "assets/sprites/enemy_truck.png",
+   "rows": 5,
+   "size": [
+    640,
+    560
+   ]
+  },
+  "explosion": {
+   "anchor": [
+    32,
+    32
+   ],
+   "animations": {
+    "explode": {
+     "fps": 14,
+     "frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ],
+     "loop": false
+    }
+   },
+   "columns": 10,
+   "frame_height": 64,
+   "frame_width": 64,
+   "path": "assets/fx/explosion.png",
+   "rows": 1,
+   "size": [
+    640,
+    64
+   ]
+  },
+  "explosion_small": {
+   "anchor": [
+    16,
+    16
+   ],
+   "animations": {
+    "explode": {
+     "fps": 16,
+     "frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "loop": false
+    }
+   },
+   "columns": 8,
+   "frame_height": 32,
+   "frame_width": 32,
+   "path": "assets/fx/explosion_small.png",
+   "rows": 1,
+   "size": [
+    256,
+    32
+   ]
+  },
+  "mine": {
+   "anchor": [
+    8,
+    8
+   ],
+   "animations": {
+    "armed": {
+     "fps": 4,
+     "frames": [
+      8,
+      9
+     ],
+     "loop": true
+    },
+    "arming": {
+     "fps": 6,
+     "frames": [
+      4,
+      5
+     ],
+     "loop": true
+    },
+    "explode": {
+     "fps": 1,
+     "frames": [
+      12
+     ],
+     "loop": true
+    },
+    "idle": {
+     "fps": 1,
+     "frames": [
+      0
+     ],
+     "loop": true
+    }
+   },
+   "collision": {
+    "h": 10,
+    "w": 10,
+    "x": 3,
+    "y": 3
+   },
+   "columns": 4,
+   "frame_height": 16,
+   "frame_width": 16,
+   "notes": "Player's rear mine. On trigger spawn explosion_small.",
+   "path": "assets/sprites/mine.png",
+   "rows": 4,
+   "size": [
+    64,
+    64
+   ]
+  },
+  "near_miss": {
+   "anchor": [
+    8,
+    24
+   ],
+   "animations": {
+    "streak": {
+     "fps": 16,
+     "frames": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "loop": false
+    }
+   },
+   "columns": 4,
+   "frame_height": 48,
+   "frame_width": 16,
+   "notes": "Place beside the player on the side the enemy passed.",
+   "path": "assets/fx/near_miss.png",
+   "rows": 1,
+   "size": [
+    64,
+    48
+   ]
+  },
+  "obstacles": {
+   "anchor": [
+    12,
+    12
+   ],
+   "animations": {
+    "barrel_break": {
+     "fps": 14,
+     "frames": [
+      18,
+      19,
+      20,
+      21,
+      22
+     ],
+     "loop": false
+    },
+    "barrel_idle": {
+     "fps": 3,
+     "frames": [
+      12,
+      13
+     ],
+     "loop": true
+    },
+    "crate_break": {
+     "fps": 14,
+     "frames": [
+      6,
+      7,
+      8,
+      9,
+      10
+     ],
+     "loop": false
+    },
+    "crate_idle": {
+     "fps": 1,
+     "frames": [
+      0
+     ],
+     "loop": true
+    },
+    "spikes_break": {
+     "fps": 14,
+     "frames": [
+      30,
+      31,
+      32,
+      33
+     ],
+     "loop": false
+    },
+    "spikes_idle": {
+     "fps": 3,
+     "frames": [
+      24,
+      25
+     ],
+     "loop": true
+    }
+   },
+   "collision": {
+    "h": 16,
+    "w": 16,
+    "x": 4,
+    "y": 4
+   },
+   "collision_spikes": {
+    "h": 8,
+    "w": 22,
+    "x": 1,
+    "y": 9
+   },
+   "columns": 6,
+   "frame_height": 24,
+   "frame_width": 24,
+   "notes": "Dropped by the truck. ~16x16 objects centred in 24x24 frames. Barrel is a toxic drum seen from above.",
+   "path": "assets/sprites/obstacles.png",
+   "rows": 6,
+   "size": [
+    144,
+    144
+   ]
+  },
+  "pickups": {
+   "anchor": [
+    8,
+    8
+   ],
+   "animations": {
+    "energy": {
+     "fps": 8,
+     "frames": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "loop": true
+    },
+    "parts": {
+     "fps": 8,
+     "frames": [
+      4,
+      5,
+      6,
+      7
+     ],
+     "loop": true
+    }
+   },
+   "collision": {
+    "h": 12,
+    "w": 12,
+    "x": 2,
+    "y": 2
+   },
+   "columns": 4,
+   "frame_height": 16,
+   "frame_width": 16,
+   "notes": "energy = cyan battery (MOMO food), parts = brass gear (repairs).",
+   "path": "assets/sprites/pickups.png",
+   "rows": 2,
+   "size": [
+    64,
+    32
+   ]
+  },
+  "player_car": {
+   "anchor": [
+    24,
+    40
+   ],
+   "animations": {
+    "boost": {
+     "fps": 16,
+     "frames": [
+      40,
+      41,
+      42,
+      43
+     ],
+     "loop": true
+    },
+    "brake": {
+     "fps": 10,
+     "frames": [
+      50,
+      51
+     ],
+     "loop": true
+    },
+    "damaged_heavy": {
+     "fps": 10,
+     "frames": [
+      90,
+      91,
+      92,
+      93
+     ],
+     "loop": true
+    },
+    "damaged_light": {
+     "fps": 10,
+     "frames": [
+      80,
+      81,
+      82,
+      83
+     ],
+     "loop": true
+    },
+    "destroyed": {
+     "fps": 12,
+     "frames": [
+      100,
+      101,
+      102,
+      103,
+      104,
+      105,
+      106,
+      107,
+      108,
+      109
+     ],
+     "loop": false
+    },
+    "drive": {
+     "fps": 12,
+     "frames": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "loop": true
+    },
+    "drop_mine": {
+     "fps": 12,
+     "frames": [
+      110,
+      111,
+      112
+     ],
+     "loop": false
+    },
+    "fire": {
+     "fps": 20,
+     "frames": [
+      60,
+      61,
+      62,
+      63
+     ],
+     "loop": false
+    },
+    "hit": {
+     "fps": 15,
+     "frames": [
+      70,
+      71,
+      72
+     ],
+     "loop": false
+    },
+    "idle": {
+     "fps": 6,
+     "frames": [
+      10,
+      11,
+      12,
+      13
+     ],
+     "loop": true
+    },
+    "shift_left": {
+     "fps": 14,
+     "frames": [
+      20,
+      21,
+      22
+     ],
+     "loop": false
+    },
+    "shift_right": {
+     "fps": 14,
+     "frames": [
+      30,
+      31,
+      32
+     ],
+     "loop": false
+    }
+   },
+   "collision": {
+    "h": 54,
+    "w": 26,
+    "x": 11,
+    "y": 13
+   },
+   "columns": 10,
+   "exhaust_points": [
+    [
+     19,
+     69
+    ],
+    [
+     28,
+     69
+    ]
+   ],
+   "frame_height": 80,
+   "frame_width": 48,
+   "mine_point": [
+    24,
+    71
+   ],
+   "muzzle_points": [
+    [
+     18,
+     9
+    ],
+    [
+     29,
+     9
+    ]
+   ],
+   "notes": "MOMO's car. Faces up. Anchor = car centre. Twin nose guns at (anchor.x-6/+5, anchor.y-30); mines drop from (anchor.x, anchor.y+31). Aion visible in the glass canopy. shift_* tilt only; translate the node yourself.",
+   "path": "assets/sprites/player_car.png",
+   "rows": 12,
+   "size": [
+    480,
+    960
+   ]
+  },
+  "projectiles": {
+   "anchor": [
+    8,
+    8
+   ],
+   "animations": {
+    "enemy_bullet": {
+     "fps": 10,
+     "frames": [
+      4,
+      5
+     ],
+     "loop": true
+    },
+    "player_bullet": {
+     "fps": 16,
+     "frames": [
+      0,
+      1
+     ],
+     "loop": true
+    }
+   },
+   "collision": {
+    "h": 8,
+    "w": 4,
+    "x": 6,
+    "y": 3
+   },
+   "collision_enemy_bullet": {
+    "h": 6,
+    "w": 6,
+    "x": 5,
+    "y": 5
+   },
+   "columns": 4,
+   "frame_height": 16,
+   "frame_width": 16,
+   "notes": "player_bullet points up (rotate node for other directions); enemy_bullet is round.",
+   "path": "assets/sprites/projectiles.png",
+   "rows": 2,
+   "size": [
+    64,
+    32
+   ]
+  },
+  "road_decals": {
+   "anchor": [
+    16,
+    16
+   ],
+   "animations": {
+    "arrow": {
+     "fps": 0,
+     "frames": [
+      5
+     ],
+     "loop": false
+    },
+    "crack": {
+     "fps": 0,
+     "frames": [
+      2
+     ],
+     "loop": false
+    },
+    "decals": {
+     "fps": 0,
+     "frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "loop": false
+    },
+    "manhole": {
+     "fps": 0,
+     "frames": [
+      1
+     ],
+     "loop": false
+    },
+    "oil": {
+     "fps": 0,
+     "frames": [
+      3
+     ],
+     "loop": false
+    },
+    "patch": {
+     "fps": 0,
+     "frames": [
+      4
+     ],
+     "loop": false
+    },
+    "skid": {
+     "fps": 0,
+     "frames": [
+      0
+     ],
+     "loop": false
+    }
+   },
+   "columns": 6,
+   "frame_height": 32,
+   "frame_width": 32,
+   "notes": "Static decals to scatter on the asphalt for variety (scroll with road).",
+   "parallax": 1.0,
+   "path": "assets/road/road_decals.png",
+   "rows": 1,
+   "size": [
+    192,
+    32
+   ]
+  },
+  "roadside_props": {
+   "anchor": [
+    32,
+    60
+   ],
+   "animations": {
+    "barrels": {
+     "fps": 0,
+     "frames": [
+      32
+     ],
+     "loop": false
+    },
+    "billboard_buy": {
+     "fps": 0,
+     "frames": [
+      8
+     ],
+     "loop": false
+    },
+    "billboard_momo": {
+     "fps": 0,
+     "frames": [
+      4
+     ],
+     "loop": false
+    },
+    "billboard_obey": {
+     "fps": 0,
+     "frames": [
+      0
+     ],
+     "loop": false
+    },
+    "neon_fuel": {
+     "fps": 6,
+     "frames": [
+      16,
+      17,
+      18,
+      19
+     ],
+     "loop": true
+    },
+    "neon_open": {
+     "fps": 6,
+     "frames": [
+      12,
+      13,
+      14,
+      15
+     ],
+     "loop": true
+    },
+    "pylon": {
+     "fps": 2,
+     "frames": [
+      20,
+      21
+     ],
+     "loop": true
+    },
+    "toxic_puddle": {
+     "fps": 6,
+     "frames": [
+      28,
+      29,
+      30,
+      31
+     ],
+     "loop": true
+    },
+    "wreck": {
+     "fps": 0,
+     "frames": [
+      24
+     ],
+     "loop": false
+    }
+   },
+   "columns": 4,
+   "frame_height": 64,
+   "frame_width": 64,
+   "notes": "Scatter on the roadside strips (x 0-170 and 470-640). Tall props (billboards, neon, pylons) scroll slightly faster than the ground (parallax factor) to fake height. anchor = foot point.",
+   "parallax": {
+    "barrels": 1.0,
+    "billboard_*": 1.15,
+    "neon_*": 1.15,
+    "pylon": 1.2,
+    "toxic_puddle": 1.0,
+    "wreck": 1.0
+   },
+   "path": "assets/road/roadside_props.png",
+   "rows": 9,
+   "size": [
+    256,
+    576
+   ]
+  },
+  "smoke_sparks": {
+   "anchor": [
+    8,
+    8
+   ],
+   "animations": {
+    "puff": {
+     "fps": 12,
+     "frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "loop": false
+    },
+    "puff_dark": {
+     "fps": 12,
+     "frames": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+     ],
+     "loop": false
+    },
+    "sparks": {
+     "fps": 20,
+     "frames": [
+      12,
+      13,
+      14,
+      15,
+      16
+     ],
+     "loop": false
+    }
+   },
+   "columns": 6,
+   "frame_height": 16,
+   "frame_width": 16,
+   "path": "assets/fx/smoke_sparks.png",
+   "rows": 3,
+   "size": [
+    96,
+    48
+   ]
+  },
+  "speed_lines": {
+   "anchor": [
+    4,
+    0
+   ],
+   "animations": {
+    "line": {
+     "fps": 20,
+     "frames": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "loop": false
+    }
+   },
+   "columns": 4,
+   "frame_height": 64,
+   "frame_width": 8,
+   "notes": "Spawn several at random x along the screen edges while boosting; move them down fast.",
+   "path": "assets/fx/speed_lines.png",
+   "rows": 1,
+   "size": [
+    32,
+    64
+   ]
+  }
+ },
+ "texture_filter": "nearest",
+ "version": "0.1.0"
+}

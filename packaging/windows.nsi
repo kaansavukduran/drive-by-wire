@@ -13,7 +13,7 @@ Unicode true
 !include "MUI2.nsh"
 
 Name "${APP}"
-OutFile "../build/DriveByWire-${VERSION}-windows-x64-Setup.exe"
+OutFile "build/DriveByWire-${VERSION}-windows-x64-Setup.exe"
 InstallDir "$LOCALAPPDATA\Programs\${APP}"
 InstallDirRegKey HKCU "Software\DriveByWire" "InstallDir"
 RequestExecutionLevel user
@@ -26,9 +26,9 @@ VIAddVersionKey /LANG=0 "FileVersion" "${VERSION}"
 VIAddVersionKey /LANG=0 "ProductVersion" "${VERSION}"
 VIAddVersionKey /LANG=0 "LegalCopyright" "Kaan Savukduran"
 
-!if /FileExists "../build/DriveByWire.ico"
-  !define MUI_ICON "../build/DriveByWire.ico"
-  !define MUI_UNICON "../build/DriveByWire.ico"
+!if /FileExists "build/DriveByWire.ico"
+  !define MUI_ICON "build/DriveByWire.ico"
+  !define MUI_UNICON "build/DriveByWire.ico"
 !endif
 !define MUI_ABORTWARNING
 !define MUI_FINISHPAGE_RUN "$INSTDIR\${EXE}"
@@ -43,9 +43,9 @@ VIAddVersionKey /LANG=0 "LegalCopyright" "Kaan Savukduran"
 
 Section "Game"
   SetOutPath "$INSTDIR"
-  File "../build/windows/${EXE}"
-  File "../LICENSE"
-  File "../THIRD_PARTY_NOTICES.md"
+  File "build/windows/${EXE}"
+  File "LICENSE"
+  File "THIRD_PARTY_NOTICES.md"
   WriteUninstaller "$INSTDIR\Uninstall.exe"
   CreateDirectory "$SMPROGRAMS\${APP}"
   CreateShortcut "$SMPROGRAMS\${APP}\${APP}.lnk" "$INSTDIR\${EXE}"

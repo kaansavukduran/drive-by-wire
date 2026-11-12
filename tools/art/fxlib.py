@@ -27,7 +27,7 @@ def fireball(size, t, n_frames, seed=1, max_r=None, cx=None, cy=None, smoke_dark
     max_r = max_r or size * 0.42
     u = t / max(1, n_frames - 1)              # 0..1
     grow = min(1.0, 0.25 + 1.6 * u) if u < 0.5 else 1.0
-    R = max_r * grow
+    R = min(max_r, (min(size, size) / 2 - 1) / 2.0) * grow
     blobs = _blobs(seed, 9, 0.55)
     heat_scale = max(0.0, 1.25 - 1.5 * u)       # fire cools over time
     smoke = u > 0.35

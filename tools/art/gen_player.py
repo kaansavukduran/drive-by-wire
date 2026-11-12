@@ -162,7 +162,7 @@ def car_shapes(phase=0, brake=False, eye="normal", damaged=0):
         if damaged > 1:
             def scorch(x, y):
                 return in_body(x, y) and CANOPY_RIM(x, y) > 0 and \
-                    px.hash01("scorch", int(x * 2), int(y * 2)) < 0.22
+                    px.hash01("scorch", int(x), int(y)) < 0.07
             s.append((scorch, P["g1"]))
             s.append((lambda x, y: CANOPY(x, y) < 0 and abs(x - 2 - 0.5 * (y + 1)) < 0.5,
                       P["g10"]))   # cracked glass
@@ -328,7 +328,7 @@ def charred(img, seed="char"):
     p = out.load()
     for y in range(out.height):
         for x in range(out.width):
-            if p[x, y][3] and p[x, y][:3] != INK[:3] and px.hash01(seed, x, y) < 0.05:
+            if p[x, y][3] and p[x, y][:3] != INK[:3] and px.hash01(seed, x, y) < 0.025:
                 p[x, y] = P["o1"]
     return out
 
