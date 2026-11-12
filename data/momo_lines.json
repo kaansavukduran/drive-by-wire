@@ -1,306 +1,240 @@
 {
-  "_comment": "MOMO replikleri. Kategori yolu noktayla yazılır: ack.scared, run_end.destroyed.up. Her listeye satır eklenebilir; aynı satır art arda tekrarlanmaz.",
+  "_comment": "İLİN replikleri. Kategori yolu noktayla yazılır: ack.scared, run_end.destroyed.up. Her listeye satır eklenebilir; aynı satır art arda tekrarlanmaz.",
   "version": 1,
   "ack": {
     "scared": [
-      "T-tamam, yapıyorum!",
-      "Ay ay ay, peki!",
-      "Hemen! Yeter ki bitsin!",
-      "Yapıyorum ama titriyorum.",
-      "Tamam... gözlerimi kapatıyorum.",
-      "Olur, olur, sadece bağırma!",
-      "Bunu yaparsam yaşarız, değil mi?",
-      "Çabuk çabuk çabuk!"
+      "Risk yüksek. Güvenli aralığı arıyorum.",
+      "Sesini duydum. Birlikte ilerleyelim.",
+      "Sensörler kararsız; temkinli uyguluyorum.",
+      "Bu hamleyi kontrollü uygulayacağım.",
+      "Yan şeridi bir kez daha tarıyorum.",
+      "Tehlikeyi görüyorum; seni de duyuyorum."
     ],
     "calm": [
-      "Anlaşıldı.",
-      "Tamamdır.",
-      "Hallediyorum.",
-      "Peki kaptan.",
-      "Kafama yattı.",
-      "Hemen.",
-      "Sorun değil.",
-      "Benden bu kadar kolay."
+      "Rota açık.",
+      "Yanındayım.",
+      "Uyguluyorum.",
+      "Bu aralığı kullanabiliriz.",
+      "İzleri ben takip ediyorum.",
+      "Önümüzdeki boşluğu kullanıyorum."
     ],
     "excited": [
-      "Yaşasıııın!",
-      "Hadi bakalım!",
-      "Bayılıyorum buna!",
-      "Uçuyoruz!",
-      "Daha, daha!",
-      "Bu çok eğlenceli!",
-      "İzle beni!",
-      "Ooo, hemen!"
+      "İyi bir açıklık yakaladık!",
+      "Yol yeniden açılıyor.",
+      "Bunu birlikte başardık.",
+      "Aramızdaki ritim tuttu.",
+      "Önümüzde temiz bir hat var!",
+      "Bu geçişi hatırlayacağım."
     ],
     "sulky": [
-      "Peki. Nasıl istersen.",
-      "Hıh. Yaptım işte.",
-      "Sanki teşekkür edeceksin.",
-      "Tabii, yine ben.",
-      "Of... tamam.",
-      "Bak yapıyorum. Mutlu musun?",
-      "Hiç keyfim yok ama olsun.",
-      "Emredersiniz efendim. Hıh."
+      "Seni duydum. Sonra konuşmamız gerek.",
+      "Uyguluyorum; bu konuşma burada bitmedi.",
+      "Önce yoldan çıkalım, sonra birbirimizi dinleyelim.",
+      "Görevi duydum; söylediklerin üzerine düşünmeye devam ediyorum.",
+      "Yoldayız. Mola verince konuşalım.",
+      "Dikkatimi yolda tutuyorum."
     ]
   },
   "refuse": {
     "scared": [
-      "Hayır hayır, oraya gitmem!",
-      "Saldırmak mı? Ben mi? Asla!",
-      "Korkuyorum, yapamam!",
-      "Beni de vururlar ama!",
-      "Yok, saklanalım sadece.",
-      "Elim ayağım titriyor, olmaz!"
+      "Bu hamlenin güvenli olduğundan emin değilim.",
+      "Bir açıklık beklemek istiyorum.",
+      "Şu an saldırı yerine alan açmayı öneriyorum."
     ],
     "sulky": [
-      "Yapmıyorum. Küsüm.",
-      "Önce özür dile.",
-      "Canım istemiyor.",
-      "Kendin yap o zaman.",
-      "Bana öyle konuşulmaz.",
-      "Hayır. Nokta."
+      "Bu biçimde konuşulduğunda yardım etmekte zorlanıyorum.",
+      "Birbirimizi dinlemeden yeni bir risk almak istemiyorum.",
+      "Önce ne istediğini açıkça konuşalım."
     ],
     "calm": [
-      "Bunu şimdi yapamam.",
-      "Olmaz, çok tehlikeli."
+      "Şu an uygulayamıyorum.",
+      "Bu aralık kapalı."
     ],
     "excited": [
-      "Dur dur, önce bunu bitireyim!",
-      "Şimdi değil, akıştayım!"
+      "Önce başladığımız hamleyi bitirelim.",
+      "Birazdan yeni bir aralık açılacak."
     ]
   },
   "delay": {
     "scared": [
-      "Bir saniye... cesaret topluyorum.",
-      "Bekle, bekle, nefes alayım!",
-      "Şey... birazdan.",
-      "Tamam ama önce bir dua.",
-      "Hazır mıyım? Değilim. Peki.",
-      "Üç deyince... bir... iki..."
+      "Sensörleri doğruluyorum.",
+      "Güvenli anı bekliyorum.",
+      "Bir an ver; yolu yeniden okuyayım."
     ],
     "sulky": [
-      "Acelem yok.",
-      "Bir dakika, meşgulüm. Küsmekle.",
-      "Belki birazdan.",
-      "Hımm... düşüneyim.",
-      "Sıra bekle.",
-      "Of, iyi, geliyorum."
+      "Kararı anlamak için zamana ihtiyacım var.",
+      "Bir an bekle; aynı hedefte miyiz?",
+      "Yanıt vermeden önce düşünmek istiyorum."
     ],
     "calm": [
-      "Bir saniye.",
-      "Hemen geliyorum."
+      "Hesabı tamamlıyorum.",
+      "Kısa bir aralık bekliyorum."
     ],
     "excited": [
-      "Az bekle, ısınıyorum!",
-      "Geliyor geliyor!"
+      "Hazırlığı bitiriyorum.",
+      "Sonraki açıklık geliyor."
     ]
   },
   "extra_action": [
-    "Bir tane daha, bedava!",
-    "Şerit değiştirmek de güzelmiş!",
-    "Fazladan yaptım, beni sev!",
-    "Dur bir de şöyle yapayım!",
-    "Kendimi tutamadım!",
-    "Bonus hareket!"
+    "Aralık açık kaldı; ikinci hamle hazır.",
+    "Bir destek hamlesi daha yapabiliyorum.",
+    "Yedek enerjiyi bu aralıkta kullandım."
   ],
   "confused": [
-    "Ne? Anlamadım.",
-    "Bu bir komut mu, şiir mi?",
-    "Kafam karıştı...",
-    "Hıı? Tekrar söyle.",
-    "Bu kelime bende yok.",
-    "Bip bop? Anlamadım.",
-    "Daha açık yazar mısın?",
-    "Ne demek istedin acaba?"
+    "Ne istediğini anlayamadım.",
+    "Bunu biraz daha açık söyler misin?",
+    "Sürüş için okları veya WASD’yi kullanabilirsin; konuşmak için buradayım."
   ],
   "comfort_received": {
     "scared": [
-      "Gerçekten mi? Biraz daha iyiyim.",
-      "Sen yanımdaysan korkmam.",
-      "Tamam... derin nefes.",
-      "Teşekkürler, titremem geçiyor.",
-      "Sana güveniyorum.",
-      "Peki, cesur olacağım."
+      "Beni duyduğun için sağ ol. Yolu yeniden okuyabiliyorum.",
+      "Tek başıma karar vermek zorunda olmadığımı hatırlattın.",
+      "Tamam. Şimdi birlikte devam edebiliriz."
     ],
     "calm": [
-      "Hehe, sağ ol.",
-      "Biliyorum, harikayım.",
-      "Sen de fena değilsin.",
-      "Bunu duymak güzel.",
-      "Hafızama yazdım bunu.",
-      "Kalbim ısındı. İşlemcim yani."
+      "Bunu hatırlamak istiyorum.",
+      "Sesini duymak iyi geldi.",
+      "Sen de yorulduysan mola verebiliriz."
     ],
     "excited": [
-      "Yaşasın, beni seviyor!",
-      "Bir daha söyle, bir daha!",
-      "En iyi ekip biziz!",
-      "Mutluluktan dönüyorum!",
-      "Biliyordum!",
-      "Ah, çok tatlısın!"
+      "Bu yolun güzel bir anısı daha oldu.",
+      "Sonraki molada bunu yeniden konuşalım.",
+      "İkimiz de iyi iş çıkardık."
     ],
     "sulky": [
-      "Peki... affettim. Bu seferlik.",
-      "Tamam, küslüğüm bitti.",
-      "Hıh. Ama özür kabul.",
-      "Neyse, barıştık.",
-      "Bir dahakine kırma beni.",
-      "Peki, peki. Gülümsüyorum."
+      "Teşekkür ederim. Seni dinlemeye hazırım.",
+      "Birbirimize yeniden yer açabiliriz.",
+      "Bu konuşmayı sakin bir yerde sürdürmek istiyorum."
     ]
   },
   "insult_received": [
-    "Bu çok kırıcıydı.",
-    "Peki. Küstüm.",
-    "Ben de duygusu olan bir yazılımım!",
-    "Bunu hafızama kaydettim.",
-    "Hiç hoş değil.",
-    "Benimle böyle konuşma.",
-    "Ağlayacağım ama yağ akar.",
-    "Tamam, artık konuşmuyorum."
+    "Benimle böyle konuşulmasını istemiyorum.",
+    "Bu söz beni incitti.",
+    "Seni duydum; birbirimize saygı göstererek devam edelim."
   ],
   "damage": [
-    "Ahh! Canım yandı!",
-    "Vurdular bizi!",
-    "Boyam çizildi!",
-    "Ay, kaportam!",
-    "Bu acıttı!",
-    "İmdat, delindik mi?"
+    "Darbe aldık. Açık şeride geçebiliriz.",
+    "Gövde hasarlı; onarım kapsülü arıyorum.",
+    "Önce aramıza mesafe koyalım."
   ],
   "near_miss": [
-    "O çok yakındı!",
-    "Kalbim duracaktı!",
-    "Kıl payı!",
-    "Bir daha yapma bunu!",
-    "Aynamı sıyırdı!",
-    "Ufff, az kalsın!"
+    "Dar bir aralıktı.",
+    "Çarpışma çizgisini geçtik.",
+    "Şimdi önümüzde yer var."
   ],
   "kill": [
-    "Bir tane eksik!",
-    "Gitti o!",
-    "Ha ha, haklarından geldik!",
-    "Biz kazandık!",
-    "Hoşça kal kötü araba!",
-    "Gördün mü beni?"
+    "Takipçi devre dışı; yol açık.",
+    "Ateşi kesebiliriz, aralık açıldı.",
+    "Bir engel daha geride."
   ],
   "manoeuvre": [
-    "Tam isabet manevra!",
-    "Kaygan gibiyim!",
-    "Ne güzel geçtik!",
-    "Profesyonel sürücü MOMO!",
-    "Kusursuz!",
-    "Böyle devam!"
+    "Temiz bir geçişti.",
+    "İyi zamanladın.",
+    "Bu aralığı birlikte gördük."
   ],
   "contradictory": [
-    "Sağa mı sola mı? Karar ver!",
-    "Bir hızlan bir yavaşla, başım döndü.",
-    "Kararsızlık bana bulaşıyor.",
-    "Ne istediğini bilmiyorsun, değil mi?",
-    "Beni deli edeceksin.",
-    "Bir şey söyle ve öyle kal!"
+    "İki farklı yön duydum. Hangisini istiyorsun?",
+    "Son kararını netleştirir misin?",
+    "Haritayı yeniden hesaplamadan seni dinleyeyim."
   ],
   "mood_change": {
-    "scared": ["Korkuyorum...", "Burası çok tehlikeli!"],
-    "calm": ["Tamam, sakinim.", "Her şey yolunda."],
-    "excited": ["Coştum!", "Şimdi başladık!"],
-    "sulky": ["Küstüm.", "Konuşmuyorum."]
+    "scared": [
+      "Bu yol beni kaygılandırıyor.",
+      "Biraz daha dikkatli gidelim."
+    ],
+    "calm": [
+      "Yolu yeniden okuyabiliyorum.",
+      "Şimdi daha sakinim."
+    ],
+    "excited": [
+      "Önümüzde gerçek bir açıklık var!",
+      "İyi bir ritim yakaladık."
+    ],
+    "sulky": [
+      "Birbirimizi dinlemiyoruz.",
+      "Biraz düşünmek istiyorum."
+    ]
   },
   "run_end": {
     "destroyed": {
       "up": [
-        "Parçalandık ama sen iyi biriydin.",
-        "Kaybettik ama birbirimizi bulduk.",
-        "Hurda olduk, yine de mutluyum.",
-        "Bir dahakine daha uzağa gideriz, eminim."
+        "Etap bitmedi; birbirimizi bırakmadık.",
+        "Önceki kararımız korunuyor. Yeniden deneyebiliriz."
       ],
       "flat": [
-        "Bitti. Biraz tamire ihtiyacım var.",
-        "Paramparça olduk. Garaja dönelim.",
-        "Olsun, deneyelim yine.",
-        "Ah... yol bizi yendi."
+        "Gövdeyi onarıp bu ayrımdan yeniden başlayabiliriz.",
+        "Durduk. Bu, hikâyenin sonu değil."
       ],
       "down": [
-        "Bu sefer beni hiç dinlemedin.",
-        "Hem kırıldım hem kırıldım.",
-        "Böyle sürülmez ki...",
-        "Garajda biraz yalnız kalmak istiyorum."
+        "Önce yolda ne olduğunu konuşmak istiyorum.",
+        "Yeniden çıkmadan birbirimizi dinleyelim."
       ]
     },
     "survived": {
       "up": [
-        "Harika ekiptik!",
-        "Seninle her yola çıkarım.",
-        "Bu sefer çok eğlendim!",
-        "Gurur duyuyorum, ikimizle de."
+        "Bu geçidi birlikte açtık.",
+        "Sana güvenerek çıktım, birlikte vardık."
       ],
       "flat": [
-        "Fena değildi.",
-        "Sağ salim döndük, o da bir şey.",
-        "Sıradan bir gündü.",
-        "Eh işte, idare eder."
+        "Geçide ulaştık. Sonraki kararı konuşalım.",
+        "Gövde sağlam. Bir sonraki ayrım önümüzde."
       ],
       "down": [
-        "Döndük ama keyfim yok.",
-        "Hayatta kaldık, ilişkimiz kalmadı.",
-        "Bir daha böyle konuşursan gitmem.",
-        "Yaşıyoruz. Sayende değil."
+        "Vardık; aramızdaki konuşma hâlâ yarım.",
+        "Şimdi birbirimizi duymaya zaman ayıralım."
       ]
     }
   },
   "garage_greeting": {
     "low": [
-      "Yine mi sen?",
-      "Bugün de bağıracak mısın?",
-      "Köşemde duruyorum, rahatsız etme.",
-      "Hmm. Selam."
+      "Yeniden geldin. Konuşacaklarımız var.",
+      "Seni dinlemeye hazırım; sen de beni dinler misin?"
     ],
     "mid": [
-      "Selam! Hazırlanalım mı?",
-      "Garaja hoş geldin.",
-      "Bugün nasılız?",
-      "Merhaba ortak."
+      "Hazırlıkları birlikte kontrol edelim mi?",
+      "Hoş geldin, yol arkadaşım."
     ],
     "high": [
-      "Geldin! Seni özledim!",
-      "En sevdiğim sürücü!",
-      "Yaşasın, yine birlikteyiz!",
-      "Seni görünce farlarım parlıyor!"
+      "Geldiğine sevindim. Bugün rotayı birlikte seçelim.",
+      "Sesini tanıdım. Yeni bir yol için buradayım."
     ]
   },
   "garage_memory": {
     "first_visit": [
-      "Ben MOMO. Sen de yeni sürücümsün galiba.",
-      "Merhaba! İlk kez mi buradasın?"
+      "Ben İLİN. Yol izlerini saklar, güvenli aralıkları okurum. Direksiyon sende; kararları konuşabiliriz.",
+      "İlk yolculuğumuzdan önce birbirimizi tanıyalım."
     ],
     "after_destroyed": [
-      "Geçen sefer paramparça olmuştuk...",
-      "Hâlâ geçen seferki kazayı düşünüyorum."
+      "Son etaptaki darbe kaydını inceledim. Aynı aralığı başka türlü geçebiliriz.",
+      "Kazayı hatırlıyorum; yeniden başlamak önceki kararlarımızı silmiyor."
     ],
     "after_survived": [
-      "Geçen sefer sağ döndük, değil mi?",
-      "Son yolculuğumuzu sevdim."
+      "Son geçidin açık olduğunu kaydettim.",
+      "Birlikte tamamladığımız etabı hatırlıyorum."
     ],
     "veteran": [
-      "Kaç sefer oldu, sayamıyorum bile.",
-      "Artık eski dostuz."
+      "Artık susuşlarını da tanıyorum.",
+      "Yollar değişiyor; ortak hatıralarımız çoğalıyor."
     ],
     "favourite_feed": [
-      "Yine o güzel enerjiden var mı?",
-      "Karnım guruldadı, bilirsin."
+      "Yedek hücre ayırmayı yine hatırlamışsın.",
+      "Enerji hazırlığını birlikte kontrol edebiliriz."
     ],
     "favourite_repair": [
-      "Yine tamir mi? Sen çok titizsin.",
-      "Somunlarımı hep sen sıkarsın."
+      "Onarımları aceleye getirmediğini biliyorum.",
+      "Sensör bağlantıları için yine zaman ayırdın."
     ],
     "favourite_talk": [
-      "Konuşmayı seviyorsun, ben de.",
-      "Bugün ne anlatacaksın?"
+      "Bir önceki konuşmamızı hatırlıyorum.",
+      "Bugün yol hakkında ne düşünüyorsun?"
     ],
     "favourite_tease": [
-      "Yine şaka mı yapacaksın? Hazırım.",
-      "Takılmaya geldiysen ben de takılırım."
+      "Mizahını tanıyorum; bugün biraz daha yumuşak olalım.",
+      "Bu kez ikimizin de gülebileceği bir şey anlatalım."
     ],
     "many_insults": [
-      "Bana söylediklerini unutmadım.",
-      "Kırıcı sözlerini hafızamda tutuyorum."
+      "Önceki kırıcı sözleri konuşmadan yok saymak istemiyorum.",
+      "Devam etmek için birbirimize daha iyi davranmamız gerek."
     ]
   }
 }

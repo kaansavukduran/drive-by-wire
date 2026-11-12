@@ -16,6 +16,8 @@ func _process(_delta: float) -> bool:
 	h.eq("first keyboard focus is the play button", root.gui_get_focus_owner(), title.start_button)
 	title._show_help()
 	h.check("help is visible and underlying play is disabled", title.help_panel.visible and title.start_button.disabled)
+	h.check("help content fits its clipped reading area",title.help_body.size.x<=title.help_scroll.size.x and title.help_scroll.clip_contents)
+	h.check("long help remains vertically scrollable",title.help_scroll.get_v_scroll_bar().max_value>title.help_scroll.get_v_scroll_bar().page)
 	title._hide_help()
 	h.check("closing help restores play and keyboard focus", not title.help_panel.visible and not title.start_button.disabled and root.gui_get_focus_owner() == title.start_button)
 	title._show_settings()

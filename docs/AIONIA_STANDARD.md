@@ -2,7 +2,7 @@
 
 # AIONIA standardı · Sürümlü kaynak kopyası
 
-Normatif kaynak: https://docs.google.com/document/d/16jj2cwbm8SiVWqDy3N3dzqxTlLoK7JR2_aH6hl4noWY/edit
+Normatif kaynak: [private reference omitted]
 
 Okuma tarihi: 12 Kasım 2026. Sürüm: 1.0. Bu dosya kaynak metnin kopyasıdır; proje özelindeki kararlar ART_BIBLE.md, GAME_DESIGN.md, LORE_LINKS.md ve QA.md içindedir.
 

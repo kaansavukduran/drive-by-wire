@@ -29,3 +29,20 @@ func goal_text(comforts: int, collected: int) -> String:
 func ending(survived: bool, comforts: int, collected: int) -> String:
 	if not survived: return str(data["failure"])
 	return str(spec()["success"] if goal_met(comforts,collected) else spec()["partial"])
+
+func configure_book(state: Dictionary) -> void:
+	const Book = preload("res://scripts/core/story_book.gd")
+	var selected: Dictionary=Book.current(state)
+	if selected.is_empty(): return
+	route=str(selected["goal"])
+	var stage: int=state["stage"]
+	var chapter: String=Book.node(state)["title"]
+	data={"chapter":chapter,"premise":Book.node(state)["text"],"routes":{route:selected},"beats":[],"failure":"Bu etap tamamlanmadı. Önceki kararların korunuyor; bu ayrımdan yeniden deneyebiliriz."}
+	for i in 3:
+		data["beats"].append({"distance":[100,220,340][i],"line":Book.data()["beats"][stage][i]})
+	data["routes"][route]=selected.duplicate(true)
+	data["routes"][route]["success"]="Kararımızın yolunu açtık. Bir sonraki ayrımı birlikte seçelim."
+	data["routes"][route]["partial"]="Geçide ulaştık. Yol hedefini kaçırdık; seçimimiz ve hikâyemiz yine de ilerliyor."
+	log_lines.clear()
+	next_beat=0
+	log_lines.assign([chapter,"Kararların: "+" → ".join(Book.path_labels(state)),str(data["premise"]),str(selected["name"]),str(selected["effect"])])

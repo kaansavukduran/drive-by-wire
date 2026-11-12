@@ -48,12 +48,13 @@
   },
   "icon": {
    "design_grid": 64,
-   "path": "assets/icon.png",
+   "path": "assets/brand/ilin-icon.png",
    "scale": 4,
    "size": [
     256,
     256
-   ]
+   ],
+   "notes": "0.6.0 original İLİN compass icon; historical MOMO art is unused."
   },
   "icon_192": {
    "design_grid": 64,

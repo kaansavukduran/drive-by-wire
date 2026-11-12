@@ -1,22 +1,9 @@
 {
-  "standard_version": "1.0",
+  "standard_version": "1.5",
   "reviewed_on": "2026-11-12",
-  "root_url": "https://drive.google.com/drive/folders/1CXbBM41DUkPYJwyuKTdcsmW2UmjKBE95",
   "references": [
     {
-      "title": "Fragaria_Cilek_Gorsel_Referansi.jpg",
-      "url": "https://drive.google.com/file/d/1dU0VP3r8Jayjpct5pdTHzsvinQKw_S4O/view",
-      "sha256": "e72d624a012cb86e5b21011452fd1a8fb1954b2f19c68b51d8910bebef093828",
-      "bytes": 144131,
-      "width": 1058,
-      "height": 1487,
-      "mode": "RGB",
-      "approval": "reference_only_approval_pending",
-      "runtime": false
-    },
-    {
       "title": "Aion_Motion_Sprite.png",
-      "url": "https://drive.google.com/file/d/1FJC14xFxwZIJ5zT_h-Y8Qwn3X7N1BINf/view?usp=drivesdk",
       "sha256": "9312191d6aebca0fd96db16ddae7391316890f627096d77d619d7588989876d2",
       "bytes": 3058751,
       "width": 1536,
@@ -27,7 +14,6 @@
     },
     {
       "title": "Aion_Canonical_Sprite.png",
-      "url": "https://drive.google.com/file/d/1Tr08dHxAzixvNSI5bi91PnhNyooWDVnX/view?usp=drivesdk",
       "sha256": "789fe4e54752e0f11da49eff5d43ab92e0c726ca919ca136c906991143844687",
       "bytes": 2650092,
       "width": 1254,
@@ -38,7 +24,6 @@
     },
     {
       "title": "Aion_Turnaround.png",
-      "url": "https://drive.google.com/file/d/1QTvyY2yknmLsq1OnkKTSROq3xhge8ZEt/view?usp=drivesdk",
       "sha256": "981ba10ff00286c29a5cc58015363b390c5887fb89b818b762a2df17b60cfd18",
       "bytes": 1538088,
       "width": 1536,
@@ -49,7 +34,6 @@
     },
     {
       "title": "Aion_T_Poz_Pafta_Varyant_A.png",
-      "url": "https://drive.google.com/file/d/1SfHCRio4NEBBG4u-r2d4evRB0VP8GKRE/view?usp=drivesdk",
       "sha256": "e292ac842b19283057c9e162bcd17831f514f9fd9ac945d6fa41e481d470055a",
       "bytes": 1662783,
       "width": 1536,
@@ -60,7 +44,6 @@
     },
     {
       "title": "Aion_T_Poz_Pafta_Varyant_B.png",
-      "url": "https://drive.google.com/file/d/13vQfRtojqItmKmCqjkv3dJcdnRVwuFrz/view?usp=drivesdk",
       "sha256": "3fb888eaa6f9388e6e773316ac00a4c60854405bf8b1c2d743b3fb9a7bf015c6",
       "bytes": 1961520,
       "width": 1536,
@@ -71,7 +54,6 @@
     },
     {
       "title": "Aion_Ana_Karakter_Referansi.png",
-      "url": "https://drive.google.com/file/d/1SGDOppBxDzax-tDlGl6BgNuhvpGmDXFA/view?usp=drivesdk",
       "sha256": "76b3e45de9187a89473d84f70f13b120ff73fde8f5cd44bc5fcfb9de40ab7f11",
       "bytes": 1329627,
       "width": 1254,
@@ -82,7 +64,6 @@
     },
     {
       "title": "Aion_canonical-base.png",
-      "url": "https://drive.google.com/file/d/13KnxjqSFIlhLcl_fYk5hRnh3HrOmPPn9/view?usp=drivesdk",
       "sha256": "ff4c34ab2086eaed19188d7d10dc5ca1d51ba6f52d854295c0eebe511349ee94",
       "bytes": 1332289,
       "width": 1254,
@@ -93,7 +74,6 @@
     },
     {
       "title": "Kurt_Motion_Sprite.png",
-      "url": "https://drive.google.com/file/d/1PoJtQsac2F2y36fy-siNBHjY-q4iyDZi/view?usp=drivesdk",
       "sha256": "06db7e167e22815ccce2b15b78ccba41d6987eca465f5278a0592af85094b099",
       "bytes": 2944863,
       "width": 1536,
@@ -104,7 +84,6 @@
     },
     {
       "title": "Kurt_Canonical_Sprite.png",
-      "url": "https://drive.google.com/file/d/1ungTqWrrVFQPk5j0NjhMmfNpsm3QsXPM/view?usp=drivesdk",
       "sha256": "6f5eb1f33b92f4b0f77be626d9c50ab997bb79b37237d3f8857de723469e0ba3",
       "bytes": 2670658,
       "width": 887,
@@ -115,7 +94,6 @@
     },
     {
       "title": "Kurt_Modelleme_Paftasi.png",
-      "url": "https://drive.google.com/file/d/1M6wTrq2GeGCl7bGGMFQLrkznRBwx2Tje/view?usp=drivesdk",
       "sha256": "98462238f944593a4547fc2f8498c17ba580ebfc6ce0f5e62a2adeaf0465b62e",
       "bytes": 1775431,
       "width": 1536,
@@ -126,7 +104,6 @@
     },
     {
       "title": "Kuzu_Motion_Sprite.png",
-      "url": "https://drive.google.com/file/d/1b3UAN9d4GIG_CTynWqdI_TxUB_zmCfh2/view?usp=drivesdk",
       "sha256": "be50626466064f8cde5f75cfbb31ea1543caf0293971b5d456cd7bd7940a893e",
       "bytes": 2785832,
       "width": 1536,
@@ -137,7 +114,6 @@
     },
     {
       "title": "Kuzu_Canonical_Sprite.png",
-      "url": "https://drive.google.com/file/d/1aR4kBvPm1kHr6rFoK2GhtiRIFtHBTtyI/view?usp=drivesdk",
       "sha256": "8b60d58e55798aeed7edde058342beb66647eb5d1a8735f867fbb586c2eb9083",
       "bytes": 3011991,
       "width": 948,
@@ -148,7 +124,6 @@
     },
     {
       "title": "Kuzu_Modelleme_Paftasi_v02.png",
-      "url": "https://drive.google.com/file/d/1Q-o9BJq2aCCG4WgrlPzStTxXKUAH2SqJ/view?usp=drivesdk",
       "sha256": "e04e4153e705cdc3031b3b208ae185b95c3b80f48f85cc9ddd92a29bfe3682f6",
       "bytes": 1666875,
       "width": 1536,
@@ -159,7 +134,6 @@
     },
     {
       "title": "Kuzu_Modelleme_Paftasi_v01.png",
-      "url": "https://drive.google.com/file/d/1hjYYXmMbn_U9C3H2GYm-wv9fBLn9fNJ4/view?usp=drivesdk",
       "sha256": "05e857bacfae107fb46614bfc77bf1ccd1e4130982f596cc8272f2bda9406839",
       "bytes": 1704927,
       "width": 1536,
@@ -170,7 +144,6 @@
     },
     {
       "title": "Omer_Motion_Sprite.png",
-      "url": "https://drive.google.com/file/d/1LwSj8oAgWVIxEri2qbFN9WkQNtmJTLR6/view?usp=drivesdk",
       "sha256": "145cb66faba9ca0b7bde64fc55da1fa2a8d414c8c7fbb3bb371323b03751064c",
       "bytes": 2785446,
       "width": 1448,
@@ -181,7 +154,6 @@
     },
     {
       "title": "Omer_Canonical_Sprite.png",
-      "url": "https://drive.google.com/file/d/1pDPvroikI4r_GRlPqaA1Qj1bvebal0zp/view?usp=drivesdk",
       "sha256": "7969f14b2b15d92f3352350546e8cd55cd3d663ecef6f768fa4f1289d727c1bb",
       "bytes": 2637221,
       "width": 1086,
@@ -192,7 +164,6 @@
     },
     {
       "title": "Omer_Modelleme_Paftasi.png",
-      "url": "https://drive.google.com/file/d/18MZh4IRi2Z95sy3rcHzdSS9YSkw9GNzA/view?usp=drivesdk",
       "sha256": "bf4e8cf799d43df1e4f014a17f201defe12ba2a88d9120f6899ca047e3bf6ca2",
       "bytes": 1827651,
       "width": 1536,
@@ -203,7 +174,6 @@
     },
     {
       "title": "Tavsan_Emre_Modelleme_Paftasi.png",
-      "url": "https://drive.google.com/file/d/1_gDPSpL7sQDdO791wWfx4zzZWQksbZPk/view?usp=drivesdk",
       "sha256": "4c955e003fe771d91ac7673cec71076efca37dc6624ca173547d86ca80578e60",
       "bytes": 1509493,
       "width": 1536,
@@ -212,5 +182,7 @@
       "approval": "reference_only_approval_pending",
       "runtime": false
     }
-  ]
+  ],
+  "standard_note": "2026-11-12 current linked document header; original character references unchanged.",
+  "publication_note": "Private source URLs and private strawberry reference are omitted from this public edition."
 }

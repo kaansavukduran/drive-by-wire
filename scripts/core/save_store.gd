@@ -7,6 +7,7 @@ extends RefCounted
 ##   {"version": 1, "trust": float, "memory": {...garage.default_memory()},
 ##    "upgrades": {upgrade_id: level}}
 
+const Book := preload("res://scripts/core/story_book.gd")
 const Garage := preload("res://scripts/core/garage.gd")
 
 const VERSION := 1
@@ -25,7 +26,7 @@ func _init(save_path: String = DEFAULT_PATH, trust_default: float = 50.0) -> voi
 
 
 func defaults() -> Dictionary:
-	return {"version": VERSION, "trust": default_trust, "memory": Garage.default_memory(), "upgrades": {}, "best_score": 0, "settings": {"effects": true, "sound": true, "motion": true, "volume": 0.7, "auto_fire": false, "low_power": false, "bindings": {}, "pad_bindings": {}, "deadzone": 0.35, "vibration": false}}
+	return {"version": VERSION, "campaign": Book.defaults(), "trust": default_trust, "memory": Garage.default_memory(), "upgrades": {}, "best_score": 0, "settings": {"effects": true, "sound": true, "motion": true, "volume": 0.7, "auto_fire": false, "low_power": false, "bindings": {}, "pad_bindings": {}, "deadzone": 0.35, "vibration": false, "theme": "dark", "font": "system"}}
 
 
 func exists() -> bool:
@@ -67,6 +68,7 @@ func _read(candidate: String) -> Dictionary:
 ## Fills gaps and fixes types; clamps trust to 0..100. Unknown keys dropped.
 func sanitize(raw: Dictionary) -> Dictionary:
 	var out := defaults()
+	out["campaign"]=Book.sanitize(raw.get("campaign",{}))
 	var t: Variant = raw.get("trust", null)
 	if (t is float or t is int) and is_finite(float(t)):
 		out["trust"] = clampf(float(t), 0.0, 100.0)
@@ -99,6 +101,9 @@ func sanitize(raw: Dictionary) -> Dictionary:
 				out["settings"]["pad_bindings"][action] = int(button)
 	if settings is Dictionary and (settings.get("deadzone") is float or settings.get("deadzone") is int) and is_finite(float(settings["deadzone"])):
 		out["settings"]["deadzone"] = clampf(float(settings["deadzone"]), 0.2, 0.6)
+	if settings is Dictionary:
+		if settings.get("theme") in ["dark","light","system"]: out["settings"]["theme"]=settings["theme"]
+		if settings.get("font") in ["system","lexend"]: out["settings"]["font"]=settings["font"]
 	var ups: Variant = raw.get("upgrades", {})
 	if ups is Dictionary:
 		var clean := {}

@@ -33,6 +33,14 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
     let q=await state(page,'title');
     assert(inside(q.play,q.view),'title play must be on screen');
     await page.screenshot({path:`${out}/${device.name}-title.png`});
+    await tap(page,q.garage,device.touch);
+    q=await state(page,'garage');await sleep(300);q=await page.evaluate(()=>window.__dbwQA);
+    for(const rect of [q.quick,q.speech,q.footer,...q.buttons])assert(inside(rect,q.view),'garage controls must fit');
+    for(let i=1;i<q.buttons.length;i++)assert(q.buttons[i][1]>=q.buttons[i-1][1]+q.buttons[i-1][3]-1,'garage choices must not overlap');
+    if(q.brief_visible&&q.buttons.length)assert(q.brief[1]>=q.buttons.at(-1)[1]+q.buttons.at(-1)[3]-1,'garage brief must clear choices');
+    if(device.touch){assert(q.quick[3]>=44);for(const rect of q.buttons)assert(rect[3]>=44);}
+    await page.screenshot({path:`${out}/${device.name}-garage.png`});
+    await page.keyboard.press('Escape');q=await state(page,'title');
     await tap(page,q.play,device.touch);
     q=await state(page,'briefing');
     await wait(page,()=>{const q=window.__dbwQA;return q.back[1]+q.back[3]<=q.view[1];});

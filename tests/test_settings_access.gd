@@ -31,7 +31,7 @@ func run() -> void:
  panel.options["vibration"].button_pressed=true
  await create_timer(0.4).timeout
  h.check("coalesced save persists final toggles",panel.store.load_data()["settings"]["auto_fire"] and panel.store.load_data()["settings"]["vibration"])
- panel.tabs.current_tab=1
+ panel.tabs.current_tab=panel.tabs.get_tab_idx_from_control(panel.tabs.get_node("Kontroller"))
  panel.binding_buttons["drive_fire"].pressed.emit()
  key(KEY_LEFT)
  h.check("conflict stays in capture with explanation",panel.capture_action=="drive_fire" and panel.status.text.contains("zaten"))

@@ -15,7 +15,7 @@ const PAD := {
  "drive_dodge": [JOY_BUTTON_B, JOY_BUTTON_LEFT_SHOULDER], "drive_comfort": [JOY_BUTTON_Y],
  "drive_pause": [JOY_BUTTON_START],
 }
-const LABELS := {"drive_left":"Sol şerit", "drive_right":"Sağ şerit", "drive_up":"Turbo", "drive_down":"Fren", "drive_fire":"Ateş", "drive_mine":"Mayın", "drive_dodge":"Sıyrılma", "drive_comfort":"MOMO desteği"}
+const LABELS := {"drive_left":"Sol şerit", "drive_right":"Sağ şerit", "drive_up":"Turbo", "drive_down":"Fren", "drive_fire":"Ateş", "drive_mine":"Mayın", "drive_dodge":"Sıyrılma", "drive_comfort":"İLİN desteği"}
 const PAD_NAMES := {JOY_BUTTON_A:"A", JOY_BUTTON_B:"B", JOY_BUTTON_X:"X", JOY_BUTTON_Y:"Y", JOY_BUTTON_LEFT_SHOULDER:"LB", JOY_BUTTON_RIGHT_SHOULDER:"RB", JOY_BUTTON_DPAD_LEFT:"D-pad sol", JOY_BUTTON_DPAD_RIGHT:"D-pad sağ", JOY_BUTTON_DPAD_UP:"D-pad yukarı", JOY_BUTTON_DPAD_DOWN:"D-pad aşağı"}
 static var last_device := "keyboard"
 static var bindings: Dictionary = {}
@@ -103,5 +103,5 @@ static func binding_name(action: String, is_pad := false) -> String:
 
 static func run_hint() -> String:
  if last_device == "pad":
-  return "Sol çubuk / D-pad Şerit\n%s / ↑ Turbo · LT Fren\nRT / %s Ateş\n%s Mayın · %s Sıyrıl\n%s Destek · Start Mola" % [binding_name("drive_up",true),binding_name("drive_fire",true),binding_name("drive_mine",true),binding_name("drive_dodge",true),binding_name("drive_comfort",true)]
- return "%s / %s Şerit\n%s Turbo · %s Fren\n%s / Fare sol Ateş\n%s Mayın · %s / Fare sağ Sıyrıl\n%s Destek · T Sohbet" % [binding_name("drive_left"),binding_name("drive_right"),binding_name("drive_up"),binding_name("drive_down"),binding_name("drive_fire"),binding_name("drive_mine"),binding_name("drive_dodge"),binding_name("drive_comfort")]
+  return "Sol çubuk / D-pad Şerit\n%s / ↑ Turbo · LT Fren\nRT / %s Ateş\n%s Mayın · %s Sıyrıl\n%s Destek" % [binding_name("drive_up",true),binding_name("drive_fire",true),binding_name("drive_mine",true),binding_name("drive_dodge",true),binding_name("drive_comfort",true)]
+ return "%s / %s Şerit\n%s Turbo · %s Fren\n%s / Fare sol Ateş\n%s Mayın · %s Sıyrıl\n%s Destek · T Sohbet" % [binding_name("drive_left"),binding_name("drive_right"),binding_name("drive_up"),binding_name("drive_down"),binding_name("drive_fire"),binding_name("drive_mine"),binding_name("drive_dodge"),binding_name("drive_comfort")]

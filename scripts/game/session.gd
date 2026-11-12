@@ -6,3 +6,8 @@ static var next_run_modifiers: Array = []
 static var came_from_run := false
 
 static var next_route := "steady"
+
+static var story_mode := false
+static var campaign_state: Dictionary = {}
+static var campaign_save_failed := false
+static var view_ending := ""

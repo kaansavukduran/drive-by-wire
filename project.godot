@@ -4,16 +4,19 @@ config_version=5
 [application]
 
 config/name="Drive-By Wire"
-config/description="Fragaria Interactive · Fragaria Games · AIONIA. Ok tuşlarıyla sür, MOMO ile 1200 metrelik kuşatmayı aş."
-config/version="0.5.0"
-run/main_scene="res://scenes/title.tscn"
+config/description="Fragaria Interactive · Fragaria Games · AIONIA. Ok tuşlarıyla sür, İLİN ile üç arcade etabını aş; seçimlerinle 13 farklı gelecek aç."
+config/version="0.6.1"
+run/main_scene="res://scenes/loading.tscn"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 run/max_fps=60
-config/icon="res://assets/icon.png"
+config/icon="res://assets/brand/ilin-icon.png"
+boot_splash/show_image=false
+boot_splash/bg_color=Color(0, 0, 0, 1)
 
 [autoload]
 
 DisplayLayout="*res://scripts/game/display_layout.gd"
+Appearance="*res://scripts/game/appearance.gd"
 
 [display]
 

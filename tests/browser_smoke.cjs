@@ -53,6 +53,8 @@ if (process.env.DBW_CHROMIUM) launch.executablePath = process.env.DBW_CHROMIUM;
     await click(98, 254);
     await page.waitForTimeout(200);
     await page.screenshot({ path: path.join(output, 'help.png') });
+    const help=await page.evaluate(()=>window.__dbwQA);assert(help.help_content[2]<=help.help_scroll[2]+1,'help text must not overflow horizontally');
+    await page.keyboard.press('ArrowDown');await page.waitForTimeout(300);assert((await page.evaluate(()=>window.__dbwQA)).help_scroll_value>0,'help must scroll with arrows');
     await page.keyboard.press('Escape');
     await click(250, 254);
     await page.waitForTimeout(200);

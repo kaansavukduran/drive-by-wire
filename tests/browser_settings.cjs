@@ -16,8 +16,8 @@ const output=process.env.DBW_EVIDENCE_DIR||'work/evidence-v050';fs.mkdirSync(out
  assert.equal(await page.evaluate(()=>document.documentElement.dataset.renderMode),'low-power');
  assert.deepEqual(await page.locator('#canvas').evaluate(e=>[e.width,e.height]),[640,360]);
  await tap((await q()).settings);await wait(()=>window.__dbwQA.settings_ui.visible);
- await tap((await q()).settings_ui.tabs[1]);await page.waitForTimeout(250);await page.screenshot({path:`${output}/settings-controls.png`});
- await tap((await q()).settings_ui.tabs[2]);await page.waitForTimeout(250);await page.screenshot({path:`${output}/settings-data.png`});
+ await tap((await q()).settings_ui.tabs[2]);await page.waitForTimeout(250);await page.screenshot({path:`${output}/settings-controls.png`});
+ await tap((await q()).settings_ui.tabs[3]);await page.waitForTimeout(250);await page.screenshot({path:`${output}/settings-data.png`});
  await tap((await q()).settings_ui.reset);await wait(()=>window.__dbwQA.settings_ui.confirm);await page.screenshot({path:`${output}/reset-confirmation.png`});
  await page.keyboard.press('Escape');await wait(()=>!window.__dbwQA.settings_ui.confirm);
  assert.equal(await page.evaluate(()=>localStorage.getItem('dbw.low_power')),'1');assert.deepEqual(errors,[]);

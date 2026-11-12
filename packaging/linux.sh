@@ -8,7 +8,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 version="$(python3 packaging/version.py)"
 binary=build/linux/DriveByWire.x86_64
-icon=assets/icon.png
+icon=assets/brand/ilin-icon.png
 test -f "$binary" || { echo "missing $binary; run: godot --headless --export-release Linux" >&2; exit 1; }
 test -f "$icon" || { echo "missing $icon" >&2; exit 1; }
 chmod +x "$binary"
@@ -29,8 +29,8 @@ desktop_entry() {
 [Desktop Entry]
 Type=Application
 Name=Drive-By Wire
-Comment=Yazarak sürülen roguelite araba çatışması
-Comment[en]=Typing-driven roguelite car combat
+Comment=İLİN ile seçimli arcade araba çatışması
+Comment[en]=Choice-driven arcade car combat
 Exec=$1
 Icon=drivebywire
 Terminal=false
@@ -83,9 +83,9 @@ Installed-Size: $installed_kb
 Depends: libc6 (>= 2.31), libx11-6, libxcursor1, libxinerama1, libxi6, libxrandr2, libgl1, libfontconfig1
 Recommends: libasound2t64 | libasound2, libpulse0
 Homepage: https://github.com/kaansavukduran/drive-by-wire
-Description: Typing-driven roguelite car combat (prototype)
- Drive-By Wire: yazarak sürülen roguelite araba çatışması. Arabanın
- yapay zekâsı MOMO komutlarını ruh haline göre yorumlar.
+Description: Choice-driven arcade car combat
+ Drive-By Wire: İLİN ile üç arcade etap ve seçime göre 13 son.
+ Klavye, fare, gamepad ve mobil kaydırma kontrolleri.
 EOF
 dpkg-deb --root-owner-group --build "$deb" "build/DriveByWire-${version}-linux-x64.deb"
 ls -l build/DriveByWire-"${version}"-linux-x64*

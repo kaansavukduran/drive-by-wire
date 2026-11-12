@@ -20,6 +20,8 @@ var reset_dialog: ConfirmationDialog
 var save_timer: Timer
 var capture_action := ""
 var _dirty := false
+var theme_option: OptionButton
+var font_option: OptionButton
 
 func _init() -> void:
  position = Vector2(100, 28)
@@ -84,14 +86,15 @@ func _ready() -> void:
   amount.text = "%d%%" % int(value)
   _persist())
  _note(play, "Otomatik ateş basılı tutmayı azaltır. Düşük güç modu daha sade çizimle akıcılığı artırır; yeniden açınca uygulanır.")
+ _make_appearance(_page("Görünüm"))
  _make_controls(_page("Kontroller"))
  var privacy := _page("Veri")
- _note(privacy, "Rekor, MOMO hafızası ve tercihler yalnızca bu cihazda saklanır. Hesap, reklam, analiz servisi veya sunucuya gönderim yoktur.\n\nSıfırlama ilerlemeyi, tercihleri ve kurtarma kopyasını siler.")
+ _note(privacy, "Rekor, hikâye kitabı, İLİN hafızası ve tercihler yalnızca bu cihazda saklanır. Hesap, reklam, analiz servisi veya sunucuya gönderim yoktur.\n\nSıfırlama ilerlemeyi, tercihleri ve kurtarma kopyasını siler.")
  reset_button = _button(privacy,"Bu cihazdaki verileri sıfırla",func(): _show_reset())
  reset_dialog = ConfirmationDialog.new()
  UiSkin.prepare_confirmation(reset_dialog)
  reset_dialog.title = "Yerel verileri sıfırla?"
- reset_dialog.dialog_text = "Rekor, MOMO hafızası ve tercihler bu cihazdan silinecek. Bu işlem geri alınamaz."
+ reset_dialog.dialog_text = "Rekor, hikâye kitabı, İLİN hafızası ve tercihler bu cihazdan silinecek. Bu işlem geri alınamaz."
  reset_dialog.ok_button_text = "Verileri sil"
  reset_dialog.cancel_button_text = "Vazgeç"
  reset_dialog.confirmed.connect(_reset_data)
@@ -220,8 +223,7 @@ func close() -> void:
 func _persist() -> void:
  _dirty = true
  Controls.install(settings["bindings"],settings["pad_bindings"],settings["deadzone"])
- if OS.has_feature("web"):
-  JavaScriptBridge.eval("try{localStorage.setItem('dbw.low_power','%s')}catch(e){}" % ("1" if settings["low_power"] else "0"))
+ get_node("/root/Appearance").apply(settings)
  status.text = "Uygulandı · kaydediliyor…"
  save_timer.start()
  changed.emit(settings.duplicate(true))
@@ -233,8 +235,11 @@ func flush() -> void:
  save["settings"] = settings.duplicate(true)
  var ok: bool = store.save_data(save)
  _dirty = not ok
+ if ok:
+  get_node("/root/Appearance").cache(settings)
+  if OS.has_feature("web"): JavaScriptBridge.eval("try{localStorage.setItem('dbw.low_power','%s')}catch(e){}" % ("1" if settings["low_power"] else "0"))
  status.text = "Kaydedildi. Düşük güç değişikliği sonraki açılışta uygulanır." if ok else "Kayıt yazılamadı. Bu oturumda uygulanıyor; Geri ile yeniden denenir."
- status.modulate = Color("9de1c3") if ok else Color("ffb3a8")
+ status.theme_type_variation="SuccessLabel" if ok else "ErrorLabel"
 
 func _show_reset() -> void:
  reset_dialog.popup_centered(Vector2i(380,160))
@@ -247,8 +252,14 @@ func _reset_data() -> void:
   status.text = "Veriler silinemedi. Bu cihazın depolama izinlerini kontrol et."
   return
  if OS.has_feature("web"):
-  JavaScriptBridge.eval("try{localStorage.removeItem('dbw.low_power')}catch(e){}")
+  JavaScriptBridge.eval("try{localStorage.removeItem('dbw.low_power');localStorage.removeItem('dbw.appearance')}catch(e){}")
  settings=store.defaults()["settings"]
+ get_node("/root/Appearance").apply(settings)
+ var session=load("res://scripts/game/session.gd")
+ session.campaign_state={}
+ session.campaign_save_failed=false
+ session.story_mode=false
+ session.view_ending=""
  Controls.install()
  data_reset.emit()
 
@@ -258,9 +269,9 @@ func _fit_viewport() -> void:
  var portrait := view.y>view.x
  position=Vector2(8,24) if portrait else (view-Vector2(440,304))/2
  size=view-Vector2(16,48) if portrait else Vector2(440,304)
- for toggle in options.values(): toggle.custom_minimum_size.y=44 if portrait else 28
- for button in binding_buttons.values(): button.custom_minimum_size.y=44 if portrait else 28
- back.custom_minimum_size.y=44 if portrait else 28
+ for toggle in options.values(): toggle.custom_minimum_size.y=44 if portrait or DisplayServer.is_touchscreen_available() else 28
+ for button in binding_buttons.values(): button.custom_minimum_size.y=44 if portrait or DisplayServer.is_touchscreen_available() else 28
+ back.custom_minimum_size.y=44 if portrait or DisplayServer.is_touchscreen_available() else 28
 
 
 func _process(_delta: float) -> void:
@@ -268,3 +279,25 @@ func _process(_delta: float) -> void:
  var view: Vector2=get_viewport().get_visible_rect().size
  var target := view-Vector2(16,48) if view.y>view.x else Vector2(440,304)
  if not size.is_equal_approx(target): _fit_viewport()
+
+func _make_appearance(parent: Node) -> void:
+ _note(parent,"Tema · Varsayılan koyu. Sistem seçeneği cihazın açık/koyu tercihini izler.")
+ theme_option=OptionButton.new()
+ for label in ["Koyu","Açık","Sistem"]: theme_option.add_item(label)
+ theme_option.selected=["dark","light","system"].find(settings["theme"])
+ theme_option.custom_minimum_size.y=36
+ theme_option.item_selected.connect(func(index: int):
+  settings["theme"]=["dark","light","system"][index]
+  _persist())
+ parent.add_child(theme_option)
+ _note(parent,"Yazı tipi")
+ font_option=OptionButton.new()
+ font_option.add_item("Sistem · varsayılan")
+ font_option.add_item("Lexend · alternatif")
+ font_option.selected=0 if settings["font"]=="system" else 1
+ font_option.custom_minimum_size.y=36
+ font_option.item_selected.connect(func(index: int):
+  settings["font"]=["system","lexend"][index]
+  _persist())
+ parent.add_child(font_option)
+ _note(parent,"Tarayıcıda oyun tuvalinin yerel font dosyalarına erişimi yoktur; Sistem seçeneği Godot’un gömülü okunaklı font yedeğini kullanır. HTML yardım ve yükleme metinleri cihazın sistem fontunu kullanır." if OS.has_feature("web") else "Sistem seçeneği cihazın yerel sans-serif fontunu kullanır. Pixel-art görseller ve marka yazıları kendi biçimlerini korur.")

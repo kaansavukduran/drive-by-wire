@@ -1,6 +1,6 @@
 # Kontrol kararı · 0.5.0
 
-12 Kasım 2026. Tür: üç şeritli, üstten görünen otoyol aksiyonu. Kamera doğrultusu sabit, araç şeritler arasında geçer. Temel eylemler: yön, turbo/fren, ateş, mayın, sıyrılma ve MOMO desteği. Hedefler: telefon/tablet dikey-yatay, PC ve gamepad. İki başparmak kullanımında eylem basılıyken yön değiştirilebilmelidir.
+12 Kasım 2026. Tür: üç şeritli, üstten görünen otoyol aksiyonu. Kamera doğrultusu sabit, araç şeritler arasında geçer. Temel eylemler: yön, turbo/fren, ateş, mayın, sıyrılma ve İLİN desteği. Hedefler: telefon/tablet dikey-yatay, PC ve gamepad. İki başparmak kullanımında eylem basılıyken yön değiştirilebilmelidir.
 
 Kontrol şemasını seçmeden önce 2–4 uygun seçenek karşılaştırılır, birincil öneri sunulur ve kullanıcının seçimi beklenir. Açık onay olmadan değişiklik yapılmaz. Kullanıcının son açık seçimi, önceki virtual joystick isteğini değiştirmiştir: **“Sağa/sola kaydırma + eylem düğmeleri olsun mobil ve tabletten oynarken.”**
 
@@ -22,3 +22,7 @@ PC: sol/sağ veya A/D bir şerit; yukarı/W turbo; aşağı/S fren; Space/F ate�
 Kumanda: analog/D-pad, A/RT ateş, RB turbo, LT fren, X mayın, B/LB sıyrıl, Y destek, Start mola. Menülerde A onay, B geri; tüm ana akış kontrolcüyle ilerler. Yeniden tuş/düğme atama ve ölü bölge ayarı korunur. Fiziksel cihaz testiyle yazılım emülasyonu aynı kabul edilmez.
 
 [Gerçek test kapsamı](QA.md).
+
+0.6.0: kullanıcı “Öneri 1’i uygula, onaylıyorum” diyerek kaydırma + eylemleri yeniden onayladı. Yeni seçim kitabı sürüşün türünü/kamerasını/hareket modelini değiştirmez. Onaylı şema korunur; eşit tam pixel düğme genişlikleri ve mobil menü hedefleri mevcut şema içinde iyileştirilir.
+
+0.6.1: kontrol şeması aynı kalır. Kesik çizgi yaklaşan atışın kilitli hedefini, `!` işareti hazırlanmakta olan engeli gösterir; oyuncu onaylı şerit/sıyrılma girdileriyle kaçabilir. Yeni kontrol seçimi veya joystick eklenmedi.

@@ -126,7 +126,7 @@ jobs:
           cp build/windows/DriveByWire.exe LICENSE THIRD_PARTY_NOTICES.md build/portable-windows/DriveByWire/
           [ -f README.md ] && cp README.md build/portable-windows/DriveByWire/
           (cd build/portable-windows && 7z a -tzip "../DriveByWire-${DBW_VERSION}-windows-x64-portable.zip" DriveByWire >/dev/null)
-          python packaging/png_to_ico.py assets/icon.png build/windows/DriveByWire.ico
+          python packaging/png_to_ico.py assets/brand/ilin-icon.png build/windows/DriveByWire.ico
       - uses: actions/upload-artifact@v4
         with:
           name: windows

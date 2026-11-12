@@ -92,8 +92,11 @@ func _process(_delta: float) -> bool:
 	game.enemies.clear()
 	game._spawn_enemy_for_test("pickup", 1, 100.0)
 	game.enemies[0]["cd"] = 0.0
+	game.enemies[0]["slot"] = 100.0
 	_tick(0.2)
-	h.check("pickup shoots at the car", game.enemy_bullets.size() > 0)
+	h.check("pickup announces its shot before firing", game.enemy_bullets.is_empty() and game.enemies[0]["state"] == "windup")
+	_tick(0.6)
+	h.check("pickup shoots after its warning", game.enemy_bullets.size() > 0)
 
 	# Unknown text: confused line, nothing breaks.
 	game.bubble.text = ""

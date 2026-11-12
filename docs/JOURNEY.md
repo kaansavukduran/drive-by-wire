@@ -1,14 +1,35 @@
-# Eve Giden Yol · ilk oynanabilir bölüm
+# Yolun Hafızası · 0.6.0
 
-Bu, mevcut MOMO ve garaj ilişkisi üzerinden yazılmış **OYUN / TASLAK** bölümüdür. AIONIA ana kanonuna yeni şehir, tarih, karakter veya köken eklemez; resmî evren onayı iddiası yoktur. Kullanıcı anlamlı hikâyeli oyun istediği için ilk bölüm üzerinde çalışılmıştır; tamamlanmış çok bölümlü kampanya değildir.
+Üç adet 400 metrelik arcade etap ve aralarındaki üç karar, seçim kitabı biçiminde ilerler. Toplam sürüş mesafesi 1.200 metredir. Aynı otoyol çizimleri kullanılır; 13 ayrı harita iddiası yoktur. Oyuncu ateş, şerit, turbo/fren, mayın, sıyrılma ve destekle yolu açar; kararlar canı, mayını, trafik baskısını, ikmal sıklığını ve isteğe bağlı yol hedefini değiştirir. Hedefi kaçırmak hikâyeyi kilitlemez.
 
-Oyuncunun amacı MOMO'ya verdiği birlikte eve dönme sözünü tutmaktır. Başla veya garaj yükseltmesinden sonra, dünya henüz akmadan iki açık tercih sunulur:
+İlk ayrım sinyale yanıt vermek, bellek izini araştırmak veya güvenli yolu bulmaktır. İkinci ayrım ilk karara, üçüncü ayrım ilk iki karara göre değişir. On karar düğümü ve 22 seçenek vardır. Her kapanışın farklı bir metni, sonucu ve karar yolu bulunur. Kaza yapmak 14. bir son değildir: tamamlanan etaplar korunur, mevcut karar yeniden seçilir.
 
-- **Birbirimizi kollayalım:** +15 azami can; yol boyunca MOMO'ya en az bir kez destek ol.
-- **İkmal toplayalım:** +2 mayın; en az iki ikmal kapsülü topla.
+| Son | Karar yolu | Kapanış |
+| --- | --- | --- |
+| 01 | signal / share / anchor | Birlikte Yanan Işık |
+| 02 | signal / share / release | Ayrı Yollar, Aynı Ses |
+| 03 | signal / shield / stay | Dönüş Noktası |
+| 04 | signal / shield / escort | Son Aracın Ardında |
+| 05 | archive / open / broadcast | Sabah Yayını |
+| 06 | archive / open / witness | Birbirini Hatırlayanlar |
+| 07 | archive / seal / garden | Toprağın Hafızası |
+| 08 | archive / seal / return | Kendi Adıyla |
+| 09 | escape / convoy / lead | Bekleyen Öncü |
+| 10 | escape / convoy / follow | Birlikte Varılan Yer |
+| 11 | escape / alone / keep | Açık Ufuk |
+| 12 | escape / alone / turnback | Kendi Seçiminle Dönmek |
+| 13 | signal / share / sleep | Uyanacak Bir Sabah |
 
-İki yol aynı 1.200 metrelik bölümü paylaşır; farklı harita sunulduğu iddia edilmez. Tercih gerçek kaynakları ve isteğe bağlı hedefi değiştirir. 300, 650 ve 1.000 metre diyalogları ilişkiyi yolculuk boyunca sürdürür. Görülmüş satırlar mola menüsündeki Yol günlüğünde tekrar okunur; günlük açıkken dünya durur. Hedefler sürüşten önce açıklanır ve HUD'da takip edilir.
+Karar seçilince etap başlangıç noktası diske kaydedilir. Kazanılan etap, puan, yol hedefi ve açılan sonlar aynı güvenli SaveStore kaydına yazılır. Yeniden açınca son etabın **başından** devam edilir; metre başına kayıt veya bulut senkronizasyonu yoktur. Yazma başarısızsa oturum içi ilerleme korunur ve kullanıcı bilgilendirilir. Yeni hikâye açılmış sonları korur. Veri sıfırlaması açık onaydan sonra tüm yerel ilerlemeyi siler.
 
-Sonuç, eve varma/başaramama ve tercih hedefinin tamamlanmasına göre farklılaşır. Başarısızlık ilişkiyi bitirmez; yeni deneme için anlamlı bir karşılık verir. Bölüm tamamlama sayısı, son yol ve hedef durumu mevcut yerel hafızaya kaydolur. Aynı sonuç iki kez işlenmez. Eski kayıtlarda bu alanlar güvenli varsayılanlarla açılır.
+Ana menüde Sonlar kitabı 13 yuvayı gösterir; yalnız kazanılan kapanışlar okunabilir. Kayıtlı ilerleme ve sonlar kitabı klavye, kumanda, fare ve dokunmayla kullanılır. Günlükte mevcut etabın konuşmaları ve önceki kararlar okunabilir; dünya durur.
 
-Metin ve eşikler data/journey.json, küçük sahnesiz durum mantığı scripts/core/journey.gd, yol öncesi UI scripts/game/journey_screen.gd içindedir. Sürüş, çatışma ve kayıt mevcut Godot altyapısındadır. Yeni çizim, dış diyalog servisi, yeni motor veya genel hikâye framework'ü yoktur. İnsan oyuncu eğlence ve anlatı değerlendirmesi ayrıca gerekir.
+Metinler `data/story_book.json`, sınırlı saf durum geçişleri `scripts/core/story_book.gd` içindedir. İki seçenekli eski bölüm yalnız eski kuralların regresyonlarında korunur; oyuncunun normal akışı yeni kitaptır. Dış diyalog/LLM servisi, yeni motor veya genel anlatı framework'ü eklenmedi.
+
+## İLİN · OYUN / TASLAK
+
+Kullanıcının yeni yapay zekâ karakter talebiyle yaratıldı. Adı **İLİN**. Yol izlerini okuyabilen, kendi belleği üzerinde söz hakkı isteyen bir yol arkadaşıdır. Sakin ve açık konuşur; riski söyler, oyuncuyu aşağılamaz. Hikâye bakım, rıza, tanıklık, topluluk ve özgürlük arasında seçimler kurar. Tek bir ahlaki puan tüm sonları iyi/kötü diye sıralamaz.
+
+Görseli 48×44 pixel ızgarada kesik köşeli bir hafıza pusulasıdır: iki üst anten, yan yön kanatları, ortada bellek tohumu ve iki optik. Gri gövde, mint/amber/gül vurgu paleti, kısa konuşma ışığı. CRT/MOMO paftası ve üzerinde MOMO yazan çerçeve kullanılmaz. Azaltılmış harekette dekoratif animasyon durur; hasar bildirimi süresi yine biter. Yüz `scripts/game/companion_face.gd` içinde özgün Godot çizimidir.
+
+İLİN'in varlığı, kökeni ve bu yolculuk **ana AIONIA kanon onayı değildir**. Kullanıcı oyun için yeni karakteri yetkilendirdi; ANA kanon kararı ayrı kalır. Aion, Kurt, Kuzu, Baykuş Ömer ve Tavşan Emre tasarımları yeniden çizilmedi. Eski kayıt/çekirdek dosyalarındaki `momo` kimlikleri uyumluluk için tutulur; oyuncuya gösterilen isim İLİN'dir.

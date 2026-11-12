@@ -1,6 +1,6 @@
 """Wrap a PNG (up to 256x256) into a single-image .ico for the NSIS installer.
 
-  python3 packaging/png_to_ico.py assets/icon.png build/DriveByWire.ico
+  python3 packaging/png_to_ico.py assets/brand/ilin-icon.png build/DriveByWire.ico
 
 Windows Vista and later read PNG-compressed ICO entries directly, so no image
 library is needed. The game .exe gets its icon from export_presets.cfg instead.

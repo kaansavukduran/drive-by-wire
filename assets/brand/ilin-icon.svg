@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 64 64" shape-rendering="crispEdges">
+<title>İLİN · Yolun Hafızası oyun simgesi</title>
+<rect width="64" height="64" fill="#101a23"/>
+<path d="M2 0h2v64H2zM60 0h2v64h-2z" fill="#6b8596"/>
+<path d="M31 0h2v6h-2zM31 58h2v6h-2z" fill="#f4a8c5"/>
+<g transform="translate(8 10)">
+<path d="M18 0h4v5h-4zM26 0h4v5h-4z" fill="#b6c5ce"/>
+<path d="M12 5h24v3H12zM8 8h32v28H8zM4 13h40v18H4z" fill="#0b1016"/>
+<path d="M12 7h24v3H12zM9 10h30v24H9zM6 14h36v16H6zM12 35h24v3H12z" fill="#566879"/>
+<path d="M13 10h22v2H13z" fill="#b6c5ce"/>
+<path d="M11 14h26v16H11zM18 38h12v3H18z" fill="#101a23"/>
+<path d="M0 20h7v4H0zM41 20h7v4h-7zM14 18h5v3h-5zM29 18h5v3h-5zM22 15h4v12h-4zM20 19h8v4h-8zM17 28h14v2H17zM21 41h6v3h-6z" fill="#9de1c3"/>
+<path d="M23 19h2v4h-2z" fill="#101a23"/>
+</g></svg>

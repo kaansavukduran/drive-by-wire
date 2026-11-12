@@ -1,14 +1,15 @@
 extends Node2D
 const QA := preload("res://scripts/game/qa_snapshot.gd")
-## Garaj: MOMO selamlar (güven + hafıza), 3–4 seçenekli kısa diyalog, tek yükseltme
+## Garaj: İLİN selamlar (güven + hafıza), 3–4 seçenekli kısa diyalog, tek yükseltme
 ## seçimi, "Sefere çık". Klavye: 1–4 seçer, Enter devam/sefere çık. Fare/dokunma da çalışır.
 
 const DataLoader := preload("res://scripts/core/data_loader.gd")
 const Momo := preload("res://scripts/core/momo.gd")
 const SaveStore := preload("res://scripts/core/save_store.gd")
 const Garage := preload("res://scripts/core/garage.gd")
+const Book := preload("res://scripts/core/story_book.gd")
 const Session := preload("res://scripts/game/session.gd")
-const MomoFace := preload("res://scripts/game/momo_face.gd")
+const MomoFace := preload("res://scripts/game/companion_face.gd")
 const FONT_FALLBACK := preload("res://assets/fonts/Lexend.ttf")
 const FONT_TERM := preload("res://assets/fonts/VT323.ttf")
 const Sheets := preload("res://scripts/game/sheets.gd")
@@ -27,9 +28,10 @@ var store: RefCounted
 var save: Dictionary
 var dialogue: Dictionary = {}
 var offers: Array = []
+var app_version: String=str(ProjectSettings.get_setting("application/config/version"))
 var stage := "dialogue"  # dialogue -> upgrade -> ready
 var chosen_upgrade := ""
-var theme := Theme.new()
+var theme := UiSkin.theme()
 var face: Control
 var speech: Label
 var info: Label
@@ -53,17 +55,12 @@ func _ready() -> void:
 	save = store.load_data()
 	Controls.install(save["settings"]["bindings"],save["settings"]["pad_bindings"],save["settings"]["deadzone"])
 	momo = Momo.new(balance, DataLoader.load_json(DataLoader.MOMO_LINES_PATH), float(save.get("trust", 50.0)))
-	# Pixelify Sans digits (5 looks like S) hurt HUD readability; Lexend stays the UI font.
-	var font: FontFile = FONT_FALLBACK.duplicate()
-	font.fallbacks = [FONT_SYMBOLS]
-	theme.default_font = font
-	theme.default_font_size = 12
 	var ui := CanvasLayer.new()
 	add_child(ui)
 	has_art = sheets.texture("assets/ui/garage_bg.png") != null
 	title = _label(ui, Vector2(16, 10), Vector2(300, 24), 18)
 	title.text = "" if has_art else "DRIVE-BY WIRE · GARAJ"
-	title.add_theme_color_override("font_color", Color("e0b84a"))
+
 	face = MomoFace.new()
 	face.decorative_motion = bool(save.get("settings", {}).get("motion", true))
 	var term: Array = sheets.image("garage_bg").get("terminal_screen_rect", [40, 64, 48, 44])
@@ -79,10 +76,10 @@ func _ready() -> void:
 	bubble.border_color = Color("101018")
 	bubble.set_border_width_all(2)
 	bubble.set_content_margin_all(8)
-	speech.add_theme_stylebox_override("normal", UiSkin.box("assets/ui/speech_bubble.png", 6, 8) if has_art else bubble)
-	speech.add_theme_color_override("font_color", Color("1b1d2b"))
+	speech.add_theme_stylebox_override("normal", UiSkin.panel())
 	speech.add_theme_constant_override("outline_size", 0)
 	info = _label(ui, Vector2(16, 336), Vector2(608, 18), 10)
+	info.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 	info.modulate = Color(1, 1, 1, 0.8)
 	buttons = VBoxContainer.new()
 	buttons.position = Vector2(16, 140)
@@ -93,10 +90,10 @@ func _ready() -> void:
 	brand_label=brand
 	brand.text = "FRAGARIA GAMES · AIONIA"
 	brand.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	brand.add_theme_color_override("font_color", Color("ff8fb1"))
+
 	var brief := _label(ui, Vector2(16, 290), Vector2(410, 40), 11)
 	brief_label=brief
-	brief.text = "← → Sür · ↑ Turbo · ↓ Fren · Space Ateş\n1.200 metreyi aş. MOMO'yu eve getir."
+	brief.text = "← → Sür · ↑ Turbo · ↓ Fren · Space Ateş\nÜç etabı aş. İLİN ile geleceğini seç."
 	var quick := Button.new()
 	quick_button = quick
 	quick.theme = theme
@@ -132,8 +129,6 @@ func _label(parent: Node, pos: Vector2, size: Vector2, font_size: int) -> Label:
 	l.position = pos
 	l.size = size
 	l.add_theme_font_size_override("font_size", font_size)
-	l.add_theme_color_override("font_outline_color", Color(0.05, 0.05, 0.1))
-	l.add_theme_constant_override("outline_size", 4)
 	parent.add_child(l)
 	return l
 
@@ -220,7 +215,7 @@ func _pick_upgrade(id: String) -> void:
 	if stage != "upgrade":
 		return
 	chosen_upgrade = id
-	save["upgrades"] = garage.apply_upgrade({}, id)  # the car is rebuilt every run; MOMO is what persists
+	save["upgrades"] = garage.apply_upgrade({}, id)  # the car is rebuilt every run; İLİN is what persists
 	store.save_data(save)
 	stage = "ready"
 	_clear_buttons()
@@ -236,13 +231,18 @@ func _pick_upgrade(id: String) -> void:
 
 
 func _start_run() -> void:
-	store.save_data(save)
+	var campaign: Dictionary=Book.sanitize(Session.campaign_state if not Session.campaign_state.is_empty() else save["campaign"])
+	if campaign["stage"]==3: campaign=Book.defaults(campaign["unlocked"])
+	save["campaign"]=campaign
+	Session.campaign_state=campaign.duplicate(true)
+	Session.campaign_save_failed=not store.save_data(save)
+	Session.story_mode=true
 	get_tree().call_deferred("change_scene_to_file", "res://scenes/journey.tscn")
 
 
 func _quick_start() -> void:
 	# A quick run always rebuilds the car with the same friendly starter armour.
-	save["upgrades"] = garage.apply_upgrade({}, "armor")
+	save["upgrades"] = garage.apply_upgrade({}, "armor") if save["upgrades"].is_empty() else save["upgrades"]
 	Session.next_run_modifiers = []
 	_start_run()
 
@@ -282,14 +282,19 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _update_info() -> void:
 	var mem: Dictionary = save.get("memory", {})
-	info.text = "v0.5.0 · Güven %d · Sefer %d · Rekor %d · En uzun %d m · 1–4 seç / Space hızlı sürüş" % [
-		int(momo.trust), int(mem.get("runs", 0)), int(save.get("best_score", 0)), int(mem.get("best_distance", 0))]
+	info.text = "v%s · Güven %d · Sefer %d · Rekor %d · En uzun %d m · 1–4 seç / Space hızlı sürüş" % [
+		app_version,int(momo.trust), int(mem.get("runs", 0)), int(save.get("best_score", 0)), int(mem.get("best_distance", 0))]
+	var view: Vector2=get_viewport_rect().size
+	if view.y>view.x:
+		info.text="v%s · Güven %d · Rekor %d\nİlerleme bu cihazda." % [app_version,int(momo.trust),int(save.get("best_score",0))]
+	elif DisplayServer.is_touchscreen_available():
+		info.text="FRAGARIA · v%s · Rekor %d · Kayıt bu cihazda" % [app_version,int(save.get("best_score",0))]
 	face.mood = momo.mood
 
 
 func _process(delta: float) -> void:
 	if QA.active():
-		QA.publish("garage",{"stage":stage,"quick":QA.rect(quick_button),"buttons":buttons.get_children().filter(func(child): return child is Button and not child.is_queued_for_deletion()).map(func(button): return QA.rect(button))})
+		QA.publish("garage",{"view":[get_viewport_rect().size.x,get_viewport_rect().size.y],"speech":QA.rect(speech),"brief":QA.rect(brief_label),"brief_visible":brief_label.visible,"footer":QA.rect(info),"stage":stage,"quick":QA.rect(quick_button),"buttons":buttons.get_children().filter(func(child): return child is Button and not child.is_queued_for_deletion()).map(func(button): return QA.rect(button))})
 	if bool(save.get("settings", {}).get("motion", true)):
 		_t += delta
 	if Controls.last_device == "pad":
@@ -302,13 +307,17 @@ func _process(delta: float) -> void:
 func _draw() -> void:
 	var view: Vector2=get_viewport_rect().size
 	if view.y>view.x:
-		draw_rect(Rect2(Vector2.ZERO,view),Color("111d2b"))
+		draw_rect(Rect2(Vector2.ZERO,view),UiSkin.color("background"))
 		sheets.draw_anim(self,"characters","aion_idle",_t,Vector2(64,view.y-20))
 		sheets.draw_anim(self,"characters","omer_idle",_t,Vector2(view.x-64,view.y-20),Color.WHITE,true)
 		return
 	draw_set_transform((view-Vector2(640,360))/2)
 	if has_art:
 		draw_texture(sheets.texture("assets/ui/garage_bg.png"), Vector2.ZERO)
+		# Runtime terminal surface covers the historical baked MOMO label.
+		draw_rect(Rect2(530,171,50,46),Color("101a23"))
+		for surface in [Rect2(318,6,312,24),Rect2(8,330,624,25),Rect2(8,306,420,24)]:
+			draw_rect(surface,UiSkin.color("surface"))
 		var logo := sheets.texture("assets/ui/logo.png")
 		if logo:
 			draw_texture(logo, Vector2(12, 8))
@@ -349,9 +358,11 @@ func _draw() -> void:
 func _layout() -> void:
 	var view: Vector2=get_viewport_rect().size
 	var portrait := view.y>view.x
+	var touch_landscape := not portrait and DisplayServer.is_touchscreen_available()
 	var offset := (view-Vector2(640,360))/2 if not portrait else Vector2.ZERO
-	quick_button.position=Vector2(16,16) if portrait else offset+Vector2(326,32)
-	quick_button.size=Vector2(view.x-32,44) if portrait else Vector2(298,24)
+	quick_button.position=Vector2(16,16) if portrait else offset+Vector2(326,8 if touch_landscape else 32)
+	quick_button.size=Vector2(view.x-32,44) if portrait else Vector2(298,44 if touch_landscape else 24)
+	brand_label.visible=not touch_landscape
 	brand_label.position=Vector2(16,64) if portrait else offset+Vector2(326,10)
 	brand_label.size=Vector2(view.x-32,18) if portrait else Vector2(298,17)
 	speech.position=Vector2(16,90) if portrait else offset+Vector2(16,62)
@@ -359,10 +370,11 @@ func _layout() -> void:
 	buttons.position=Vector2(16,204) if portrait else offset+Vector2(16,140)
 	buttons.size=Vector2(view.x-32,280) if portrait else Vector2(500,150)
 	for button in buttons.get_children():
-		if button is Button: button.custom_minimum_size.y=56 if portrait else 36
-	brief_label.position=Vector2(16,view.y-136) if portrait else offset+Vector2(16,290)
-	brief_label.size=Vector2(view.x-32,44) if portrait else Vector2(410,40)
-	brief_label.text="Yolda sağa / sola kaydır.\nEylem düğmeleriyle MOMO'yu eve getir." if portrait else "← → / A D Sür · ↑ / W Turbo · ↓ / S Fren\n1.200 metreyi aş. MOMO'yu eve getir."
+		if button is Button: button.custom_minimum_size.y=56 if portrait else (44 if touch_landscape else 36)
+	brief_label.visible=not touch_landscape
+	brief_label.position=Vector2(16,view.y-136) if portrait else offset+Vector2(16,308)
+	brief_label.size=Vector2(view.x-32,44) if portrait else Vector2(410,20)
+	brief_label.text="Yolda sağa / sola kaydır.\nEylem düğmeleriyle İLİN ile yolu aç." if portrait else "3 etap · 13 son. Önce kararını seç, sonra yolu aç."
 	info.position=Vector2(16,view.y-80) if portrait else offset+Vector2(16,336)
 	info.size=Vector2(view.x-32,40) if portrait else Vector2(608,18)
 	info.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART

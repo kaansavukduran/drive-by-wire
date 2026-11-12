@@ -36,3 +36,15 @@ Orijinaller Drive'da değişmeden durur; yerel indirmeler çalışma alanının 
 | Tavşan Emre | T poz/modelleme paftası | Bej tüy, yeşil göz, açık mavi gömlek, kırmızı kravat, koyu pantolon kaydedildi. Sprite yok; uydurma animasyon eklenmedi. |
 
 Aion/Kurt/Kuzu motion atlasları 1536×1024; görülen 12×8 düzen için 128×128 aday hücreler vardır. Ömer ve canonical atlasların boyutları farklıdır; kullanıcı onayı, kare ayrımı, alfa temizliği ve pivot doğrulaması yapılmadan doğrudan runtime atlası sayılmazlar. Referansların tamamı final kaynak olarak onay bekler. Bu oyundaki mevcut paftaların çizim/lisans kaydı `assets/PROVENANCE.json` ve `THIRD_PARTY_NOTICES.md` içindedir.
+
+## 0.6.0 · İLİN ve Fragaria yükleyicisi
+
+Kullanıcının yeni AI talebiyle İLİN oluşturuldu; [JOURNEY.md](JOURNEY.md) yüz siluetini, paletini ve OYUN/TASLAK statüsünü kaydeder. Eski CRT/MOMO yüzü ve MOMO panosu yeni oyuncu akışında kullanılmaz. Aion, Kurt, Kuzu, Ömer ve Emre kaynakları korunur.
+
+Yükleyici `assets/brand/fragaria-reference.jpg` dosyasını kullanır. 1058×1487, 144131 byte; SHA-256 `e72d624a012cb86e5b21011452fd1a8fb1954b2f19c68b51d8910bebef093828`. Özgün Drive JPG'si değişmeden kopyalandı; çizim yeniden üretilmedi. Siyah arka plan, pixel marka yazısı ve on parçalı ölçülen yükleme çubuğu standardın art direction'ını uygular. Onay klasöründe ayrı final logo/kompozisyon bulunmadı; bu kullanım kesin logo/ANA kanon onayı iddiası taşımaz.
+
+Normal UI tek koyu/açık palet ve sistem tercihiyle çalışır; oyun dünyasının pixel çizimleri tema değiştirince yeniden renklendirilmez. HTML normal metinleri system-ui; native UI SystemFont, Web Canvas gömülü font yedeği; Lexend isteğe bağlıdır. Marka pixel yazısı istisnadır.
+
+0.6.0 oyun simgesi de yeni İLİN çiziminden gelir: `assets/brand/ilin-icon.svg` özgün pixel geometri; `tools/art/render_ilin_icon.gd` PNG çıktısını üretir. Eski MOMO ikonu arşiv varlığı olarak kaldı, uygulama/favicon/export onu kullanmaz. Garajın eski terminal yüzeyi runtime paneliyle kapatılıp İLİN gösterilir; kaynak arka plan değiştirilmez.
+
+Yayın kapısı: bu sürümde özel referansların, kaynak ağacının ve test ekranlarının public GitHub aktarımı onaylanmadı. Yerel geliştirme/inceleme tamamlandı; dal ve uzak önizleme 0.6 olarak yayımlanmadı.

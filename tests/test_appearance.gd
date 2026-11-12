@@ -1,0 +1,47 @@
+extends SceneTree
+const H := preload("res://tests/harness.gd")
+const UiSkin := preload("res://scripts/game/ui_skin.gd")
+const Store := preload("res://scripts/core/save_store.gd")
+const SettingsPanel := preload("res://scripts/game/settings_panel.gd")
+var h:=H.new("appearance")
+func _initialize() -> void: call_deferred("run")
+func run() -> void:
+ h.check("arrow glyph fallback is available",UiSkin.theme().default_font.has_char(0x2190) and UiSkin.theme().default_font.has_char(0x2192))
+ h.eq("default is dark and system font",[Store.new().defaults()["settings"]["theme"],Store.new().defaults()["settings"]["font"]],["dark","system"])
+ var panel:=SettingsPanel.new()
+ root.add_child(panel)
+ await process_frame
+ panel.store=Store.new("user://appearance-test.json")
+ panel.open()
+ var shared: Theme=UiSkin.theme()
+ var surface: StyleBoxFlat=UiSkin.panel()
+ panel.theme_option.selected=1
+ panel.theme_option.item_selected.emit(1)
+ panel.flush()
+ h.eq("appearance UI applies live light theme",UiSkin.resolved,"light")
+ h.eq("shared surfaces repaint live",surface.bg_color,UiSkin.color("surface"))
+ h.check("same resource updates every screen",UiSkin.theme()==shared)
+ h.eq("theme choice persists",panel.store.load_data()["settings"]["theme"],"light")
+ panel.font_option.selected=1
+ panel.font_option.item_selected.emit(1)
+ panel.flush()
+ h.eq("font UI changes and persists",[UiSkin.font_status()["choice"],panel.store.load_data()["settings"]["font"]],["lexend","lexend"])
+ panel.font_option.item_selected.emit(0)
+ h.check("native system font is actually resolved",UiSkin.font_status()["native_system"] and UiSkin.font_status()["family"]!="Lexend")
+ UiSkin.configure("system","system",false)
+ h.eq("system appearance follows light preference",UiSkin.resolved,"light")
+ UiSkin.configure("system","system",true)
+ h.eq("system appearance follows dark preference",UiSkin.resolved,"dark")
+ for mode in ["dark","light"]:
+  UiSkin.configure(mode,"system")
+  for role in ["text","muted","brand","accent","warning","error"]:
+   h.check("%s %s contrast >=4.5:1" % [mode,role],contrast(UiSkin.color(role),UiSkin.color("surface"))>=4.5)
+  h.check("button text contrast >=4.5:1",contrast(UiSkin.color("text"),UiSkin.color("control"))>=4.5)
+ panel.store.clear()
+ panel.queue_free()
+ UiSkin.configure("dark","system")
+ quit(h.finish())
+func contrast(a: Color,b: Color) -> float:
+ var la: float=a.srgb_to_linear().get_luminance()
+ var lb: float=b.srgb_to_linear().get_luminance()
+ return (maxf(la,lb)+0.05)/(minf(la,lb)+0.05)

@@ -1,7 +1,7 @@
 extends Node2D
 const QA := preload("res://scripts/game/qa_snapshot.gd")
 ## Sefer sahnesi: doğrudan ok tuşlu sürüş, üç şeritli yol, isteğe bağlı sohbet,
-## üç düşman tipi, kapsüller, turbo, görevler, puan serisi ve MOMO ilişkisi
+## üç düşman tipi, kapsüller, turbo, görevler, puan serisi ve İLİN ilişkisi
 ## ve sefer sonu ekranı. Oyun kuralları scripts/core/ altında, sayılar data/balance.json'da.
 
 const DataLoader := preload("res://scripts/core/data_loader.gd")
@@ -10,15 +10,17 @@ const Momo := preload("res://scripts/core/momo.gd")
 const SaveStore := preload("res://scripts/core/save_store.gd")
 const Garage := preload("res://scripts/core/garage.gd")
 const Session := preload("res://scripts/game/session.gd")
-const MomoFace := preload("res://scripts/game/momo_face.gd")
+const MomoFace := preload("res://scripts/game/companion_face.gd")
 const Sheets := preload("res://scripts/game/sheets.gd")
 const UiSkin := preload("res://scripts/game/ui_skin.gd")
 const Controls := preload("res://scripts/game/controls.gd")
 const Arcade := preload("res://scripts/core/arcade.gd")
 const Sounds := preload("res://scripts/game/sounds.gd")
 const SettingsPanel := preload("res://scripts/game/settings_panel.gd")
+const Book := preload("res://scripts/core/story_book.gd")
 const Journey := preload("res://scripts/core/journey.gd")
 const SwipeSteering := preload("res://scripts/game/swipe_steering.gd")
+const WarningView := preload("res://scripts/game/enemy_warning_view.gd")
 const TouchControl := preload("res://scripts/game/touch_control.gd")
 const FONT_SYMBOLS := preload("res://assets/fonts/ControlSymbols.ttf")
 const CAR_SHEET := preload("res://assets/sprites/player_car.png")
@@ -31,6 +33,8 @@ const FW := 48
 const FH := 80
 const PLAYER_Y := 290.0
 const PLAYER_HALF := Vector2(11, 26)
+# Match the live enemy band: shots can hit pursuers, then leave bounded memory.
+const COMBAT_BOUNDS := Rect2(-64,-120,W+128,H+240)
 # sheet rows: animation -> [row, frames, fps, loop]
 const ANIMS := {
 	"drive": [0, 4, 12.0, true], "shift_left": [2, 3, 14.0, false], "shift_right": [3, 3, 14.0, false],
@@ -48,6 +52,9 @@ var momo: RefCounted
 var store: RefCounted
 var save: Dictionary
 var rng := RandomNumberGenerator.new()
+# Cosmetic choices and companion replies never advance traffic randomness.
+var visual_rng := RandomNumberGenerator.new()
+var companion_rng := RandomNumberGenerator.new()
 
 var lane_count := 3
 var lane_width := 64.0
@@ -151,19 +158,34 @@ var journal_scroll: ScrollContainer
 var result_buttons: Array[Button] = []
 var layout_initialized := false
 var was_portrait := false
+var campaign: Dictionary = {}
 
 
 func _ready() -> void:
 	rng.randomize()
+	visual_rng.randomize()
+	companion_rng.randomize()
 	var base_balance := DataLoader.load_json(DataLoader.BALANCE_PATH)
 	store = SaveStore.new()
 	save = store.load_data()
 	journey = Journey.new(Session.next_route)
+	if Session.story_mode:
+		campaign=Book.sanitize(Session.campaign_state if not Session.campaign_state.is_empty() else save["campaign"])
+		if not campaign["active"]:
+			get_tree().call_deferred("change_scene_to_file","res://scenes/journey.tscn")
+			return
+		journey.configure_book(campaign)
 	Controls.install(save["settings"]["bindings"], save["settings"]["pad_bindings"], save["settings"]["deadzone"])
 	var garage := Garage.new(DataLoader.load_json(DataLoader.GARAGE_PATH), base_balance)
 	balance = garage.effective_balance(base_balance, save.get("upgrades", {}), Session.next_run_modifiers)
 	Session.next_run_modifiers = []
-	run_cfg = balance.get("run", {})
+	run_cfg = balance.get("run", {}).duplicate(true)
+	if Session.story_mode:
+		run_cfg["arcade"]["finish_distance"]=Book.data()["leg_distance"]
+		var spec: Dictionary=Book.current(campaign)
+		run_cfg["arcade"]["pickup_interval"]=spec["pickup_interval"]
+		run_cfg["spawn"]["interval_start"]*=float(spec["spawn_scale"])
+		run_cfg["spawn"]["distance_unlocks"]={"pickup":60 if campaign["stage"]==0 else 0,"truck":180 if campaign["stage"]==0 else (100 if campaign["stage"]==1 else 0)}
 	arcade = Arcade.new(run_cfg.get("arcade", {}))
 	energy = _cfg("arcade.boost_capacity", 100)
 	pickup_timer = _cfg("arcade.pickup_initial", 2.5)
@@ -195,7 +217,7 @@ func _ready() -> void:
 	car_x = _lane_x(lane)
 	_build_ui()
 	face.decorative_motion = motion_enabled
-	_say(str(journey.spec()["opening"]))
+	_say("Kayıt yazılamadı; bu oturumda devam edebilirsin." if Session.story_mode and Session.campaign_save_failed else str(journey.spec()["opening"]))
 	bubble_left = 7.0
 	for child in ui_layer.get_children():
 		if child is Control and child != settings_panel:
@@ -228,15 +250,14 @@ func _build_ui() -> void:
 	car.region_enabled = true
 	car.position = Vector2(car_x, PLAYER_Y)
 	add_child(car)
+	var warning_view := WarningView.new()
+	warning_view.name="EnemyWarnings"
+	warning_view.z_index=1
+	add_child(warning_view)
 	var ui := CanvasLayer.new()
 	ui_layer = ui
 	add_child(ui)
-	var theme := Theme.new()
-	# Pixelify Sans digits (5 looks like S) hurt HUD readability; Lexend stays the UI font.
-	var font: FontFile = FONT_FALLBACK.duplicate()
-	font.fallbacks = [FONT_SYMBOLS]
-	theme.default_font = font
-	theme.default_font_size = 12
+	var theme := UiSkin.theme()
 	ui_theme = theme
 	_panel(ui, Rect2(8, 8, 176, 151))
 	_panel(ui, Rect2(456, 8, 176, 166))
@@ -245,7 +266,7 @@ func _build_ui() -> void:
 	brand_label = brand
 	brand.text = "FRAGARIA INTERACTIVE"
 	brand.add_theme_font_size_override("font_size", 9)
-	brand.add_theme_color_override("font_color", Color("ff8fb1"))
+	brand.theme_type_variation="BrandLabel"
 	score_label = _label(ui, theme, Vector2(18, 32), Vector2(158, 36))
 	score_label.add_theme_font_size_override("font_size", 20)
 	hud = _label(ui, theme, Vector2(18, 75), Vector2(155, 65))
@@ -257,7 +278,7 @@ func _build_ui() -> void:
 	face.position = Vector2(466, 18)
 	ui.add_child(face)
 	momo_title = _label(ui, theme, Vector2(523, 20), Vector2(98, 38))
-	momo_title.text = "MOMO\nYol arkadaşın"
+	momo_title.text = "İLİN\nYol arkadaşın"
 	momo_title.add_theme_font_size_override("font_size", 10)
 	bubble = _label(ui, theme, Vector2(466, 68), Vector2(156, 58))
 	bubble.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -267,15 +288,16 @@ func _build_ui() -> void:
 	mission.add_theme_font_size_override("font_size", 11)
 	mission.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	route_bar = _bar(ui, Rect2(224, 8, 192, 4), Color("ffce70"))
-	hint = _label(ui, theme, Vector2(456, 184), Vector2(176, 92))
+	hint = _label(ui, theme, Vector2(456, 184), Vector2(176, 82))
 	hint.text = "← → Şerit değiştir\n↑ Turbo  ·  ↓ Fren\nSpace / F Ateş (basılı tut)\nX Mayın  ·  Shift Sıyrıl\nC Destek  ·  T Sohbet"
 	hint.add_theme_font_size_override("font_size", 10)
-	hint.add_theme_stylebox_override("normal", _panel_style())
+	hint.add_theme_stylebox_override("normal", UiSkin.caption())
 	toast = _label(ui, theme, Vector2(202, 30), Vector2(236, 42))
 	toast.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	toast.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	toast.add_theme_font_size_override("font_size", 12)
-	toast.add_theme_color_override("font_color", Color("ffce70"))
+	toast.theme_type_variation="WarningLabel"
+	toast.add_theme_stylebox_override("normal",UiSkin.caption())
 	pause_button = _control_button(ui, Rect2(466, 270, 156, 42), "Mola · Esc", func(): _set_paused(true))
 	pause_button.focus_mode = Control.FOCUS_NONE
 	_build_pause(ui)
@@ -285,7 +307,8 @@ func _build_ui() -> void:
 	story_caption.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 	story_caption.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
 	story_caption.add_theme_font_size_override("font_size",9)
-	story_caption.add_theme_color_override("font_color",Color("9de1c3"))
+	story_caption.theme_type_variation="AccentLabel"
+	story_caption.add_theme_stylebox_override("normal",UiSkin.caption())
 	toast.position.y=46
 	end_panel = _label(ui, theme, Vector2(W / 2 - 190, 44), Vector2(380, 250))
 	end_panel.z_index=40
@@ -304,11 +327,8 @@ func _build_ui() -> void:
 	box.theme = theme
 	box.position = Vector2(W / 2 - 160, H - 48)
 	box.size = Vector2(320, 24)
-	var term_font: FontFile = FONT_TERM.duplicate()
-	term_font.fallbacks = [FONT_FALLBACK]
-	box.add_theme_font_override("font", term_font)
 	box.add_theme_font_size_override("font_size", 16)
-	box.placeholder_text = "MOMO'ya yaz · Enter gönderir · Esc vazgeçer"
+	box.placeholder_text = "İLİN’e yaz · Enter gönderir · Esc vazgeçer"
 	box.visible = false
 	box.add_theme_stylebox_override("normal", UiSkin.box("assets/ui/command_box.png", 6))
 	box.add_theme_stylebox_override("focus", UiSkin.box("assets/ui/command_box.png", 6))
@@ -321,8 +341,6 @@ func _label(parent: Node, theme: Theme, pos: Vector2, size: Vector2) -> Label:
 	l.theme = theme
 	l.position = pos
 	l.size = size
-	l.add_theme_color_override("font_outline_color", Color(0.05, 0.05, 0.1))
-	l.add_theme_constant_override("outline_size", 4)
 	parent.add_child(l)
 	return l
 
@@ -494,7 +512,7 @@ func _lane_of(x: float) -> int:
 
 
 # ---------------------------------------------------------------------------
-# Direct driving never passes through MOMO's probabilistic interpretation.
+# Direct driving never passes through İLİN's probabilistic interpretation.
 # Typing is an optional conversation mode, opened explicitly with T.
 # ---------------------------------------------------------------------------
 
@@ -637,7 +655,7 @@ func _notification(what: int) -> void:
 func _restart_run() -> void:
 	Engine.time_scale = 1.0
 	Session.next_route = journey.route
-	get_tree().call_deferred("change_scene_to_file","res://scenes/journey.tscn")
+	get_tree().call_deferred("change_scene_to_file","res://scenes/ending.tscn" if Session.story_mode and campaign.get("stage",0)==3 else "res://scenes/journey.tscn")
 
 
 func _open_box(first: String) -> void:
@@ -662,7 +680,7 @@ func _on_submit(text: String) -> void:
 	if over:
 		return
 	for command in parser.parse(text):
-		var res: Dictionary = momo.interpret(command, rng, game_time)
+		var res: Dictionary = momo.interpret(command, companion_rng, game_time)
 		if str(res.get("line", "")) != "":
 			_say(str(res["line"]))
 		if str(command.get("intent", "")) == "unknown":
@@ -670,7 +688,7 @@ func _on_submit(text: String) -> void:
 		var action := str(res.get("action", "none"))
 		if action == "execute" or action == "delay":
 			var wait := float(res.get("delay", 0.0)) if action == "delay" else 0.0
-			# Mood speed: >1 means MOMO reacts faster (escapes when scared, everything when excited).
+			# Mood speed: >1 means İLİN reacts faster (escapes when scared, everything when excited).
 			wait += 0.08 / maxf(float(res.get("speed", 1.0)), 0.25)
 			pending.append({"t": wait, "command": command})
 			for extra in res.get("extra", []):
@@ -687,7 +705,7 @@ func _say(line: String) -> void:
 
 
 func _event(ev: Variant) -> void:
-	var res: Dictionary = momo.apply_event(ev, rng)
+	var res: Dictionary = momo.apply_event(ev, companion_rng)
 	if str(res.get("line", "")) != "":
 		_say(str(res["line"]))
 
@@ -821,7 +839,7 @@ func _process(delta: float) -> void:
 		qa_clock=0
 		var targets := {}
 		for action in touch_by_action: targets[action]=QA.rect(touch_by_action[action])
-		QA.publish("run",{"view":[get_viewport_rect().size.x,get_viewport_rect().size.y],"lane":lane,"paused":paused,"over":over,"fire":_held("drive_fire"),"boost":boosting,"distance":distance,"speed":speed,"energy":energy,"road":[road_touch_rect.position.x,road_touch_rect.position.y,road_touch_rect.size.x,road_touch_rect.size.y],"actions":targets,"pause":QA.rect(pause_button),"journal":journal_panel.visible,"touch":touch_enabled,"route":journey.route,"mines":mines_left,"dodge":dodge_cooldown,"settings":settings_panel.visible,"settings_ui":QA.settings(settings_panel),"settings_rect":QA.rect(settings_panel),"settings_back":QA.rect(settings_panel.back),"pause_menu":pause_panel.get_child(0).get_children().filter(func(child): return child is Button).map(func(child): return QA.rect(child)),"journal_rect":QA.rect(journal_panel),"journal_back":QA.rect(journal_panel.get_child(0).get_child(2))})
+		QA.publish("run",{"view":[get_viewport_rect().size.x,get_viewport_rect().size.y],"chapter":campaign.get("stage",-1),"hp":hp,"kills":kills,"collected":arcade.collected,"finish":_cfg("arcade.finish_distance",1200),"warnings":_enemy_warnings().map(func(w): return {"kind":w["kind"],"lane":w["lane"],"progress":w["progress"],"origin":[w["origin"].x,w["origin"].y],"target":[w["target"].x,w["target"].y]}),"pickup_targets":pickups.map(func(p): return {"lane":_lane_of(p["pos"].x),"y":p["pos"].y}),"result":result_buttons.map(func(b): return QA.rect(b)),"ending_text":end_panel.text if over else "","lane":lane,"paused":paused,"over":over,"fire":_held("drive_fire"),"boost":boosting,"distance":distance,"speed":speed,"energy":energy,"road":[road_touch_rect.position.x,road_touch_rect.position.y,road_touch_rect.size.x,road_touch_rect.size.y],"actions":targets,"pause":QA.rect(pause_button),"journal":journal_panel.visible,"touch":touch_enabled,"route":journey.route,"mines":mines_left,"dodge":dodge_cooldown,"settings":settings_panel.visible,"settings_ui":QA.settings(settings_panel),"settings_rect":QA.rect(settings_panel),"settings_back":QA.rect(settings_panel.back),"pause_menu":pause_panel.get_child(0).get_children().filter(func(child): return child is Button).map(func(child): return QA.rect(child)),"journal_rect":QA.rect(journal_panel),"journal_back":QA.rect(journal_panel.get_child(0).get_child(2))})
 	metrics_clock += delta
 	if OS.has_feature("web") and metrics_clock > 5.0:
 		metrics_clock = 0.0
@@ -856,10 +874,10 @@ func _update_hud() -> void:
 	hint.text = Controls.run_hint()
 	hint.visible = not box.visible and not over and not was_portrait and not touch_enabled
 	story_caption.visible=not paused and not over
-	story_caption.text = "EVE GİDEN YOL\n" + journey.goal_text(comfort_count,arcade.collected)
+	story_caption.text = ("ETAP %d / 3" % (mini(3,int(campaign.get("stage",0))+1)) if Session.story_mode else "EVE GİDEN YOL") + "\n" + journey.goal_text(comfort_count,arcade.collected)
 	if was_portrait:
 		energy_caption.text="ENERJİ %d%%" % int(energy_bar.value)
-		hud.text="CAN %d / %d\n%d / 1200 m" % [maxi(0,ceili(hp)),int(max_hp),int(distance)]
+		hud.text="CAN %d / %d\n%d / %d m" % [maxi(0,ceili(hp)),int(max_hp),int(distance),int(_cfg("arcade.finish_distance",1200))]
 
 
 
@@ -934,9 +952,9 @@ func _simulate(delta: float) -> void:
 			var k := str(fx["kind"])
 			var mul := 0.6 if k.begins_with("wreck_") else (3.0 if k == "speed" else 1.0)
 			fx["pos"] = fx["pos"] + Vector2(0, speed * delta * mul)
-	if motion_enabled and speed > _cfg("player.base_speed", 220) + 20.0 and rng.randf() < delta * 18.0:
-		var sx := rng.randf_range(200, 230) if rng.randf() < 0.5 else rng.randf_range(410, 440)
-		effects.append({"pos": Vector2(sx, rng.randf_range(-40, 200)), "t": 0.0, "kind": "speed"})
+	if motion_enabled and speed > _cfg("player.base_speed", 220) + 20.0 and visual_rng.randf() < delta * 18.0:
+		var sx := visual_rng.randf_range(200, 230) if visual_rng.randf() < 0.5 else visual_rng.randf_range(410, 440)
+		effects.append({"pos": Vector2(sx, visual_rng.randf_range(-40, 200)), "t": 0.0, "kind": "speed"})
 	effects = effects.filter(func(f: Dictionary) -> bool: return float(f["t"]) < 1.0)
 	_scroll_scenery(delta)
 
@@ -1043,7 +1061,7 @@ func _update_bullets(delta: float) -> void:
 					o["hp"] = float(o["hp"]) - _cfg("weapon.damage", 20)
 					b["dead"] = true
 					break
-	bullets = bullets.filter(func(b: Dictionary) -> bool: return not b.has("dead") and b["pos"].y > -10 and b["pos"].y < H + 10)
+	bullets = bullets.filter(func(b: Dictionary) -> bool: return not b.has("dead") and COMBAT_BOUNDS.has_point(b["pos"]))
 	var pr := _player_rect()
 	for b in enemy_bullets:
 		b["pos"] = b["pos"] + b["vel"] * delta
@@ -1052,7 +1070,7 @@ func _update_bullets(delta: float) -> void:
 			_damage_player(float(b["dmg"]))
 		else:
 			_check_near(b, Rect2(b["pos"] - Vector2(2, 2), Vector2(4, 4)), lane)
-	enemy_bullets = enemy_bullets.filter(func(b: Dictionary) -> bool: return not b.has("dead") and b["pos"].y < H + 10)
+	enemy_bullets = enemy_bullets.filter(func(b: Dictionary) -> bool: return not b.has("dead") and COMBAT_BOUNDS.has_point(b["pos"]))
 
 
 func _update_mines(delta: float) -> void:
@@ -1112,23 +1130,36 @@ func _update_enemies(delta: float) -> void:
 					vy = minf(vy, -60.0)
 				else:
 					vy = 0.0
-					if float(e["cd"]) <= 0.0:
+					if str(e["state"]) == "windup":
+						if float(e["t"]) >= _warning_seconds(kind):
+							var origin: Vector2 = e["pos"] + Vector2(0, 20)
+							var dir: Vector2 = (e["aim"] - origin).normalized()
+							enemy_bullets.append({"pos":origin,"vel":dir * float(cfg.get("bullet_speed",300)),"dmg":float(cfg.get("bullet_damage",8)),"near":false,"passed":false})
+							e["state"] = "attack"
+							e["t"] = 0.0
+					elif float(e["cd"]) <= 0.0:
 						e["cd"] = float(cfg.get("fire_cooldown", 1.6))
-						e["state"] = "attack"
+						e["state"] = "windup"
+						e["aim"] = Vector2(car_x, PLAYER_Y)
 						e["t"] = 0.0
-						var dir: Vector2 = (Vector2(car_x, PLAYER_Y) - e["pos"]).normalized()
-						enemy_bullets.append({"pos": e["pos"] + Vector2(0, 20), "vel": dir * float(cfg.get("bullet_speed", 300)), "dmg": float(cfg.get("bullet_damage", 8)), "near": false, "passed": false})
 					if float(e["lane_cd"]) <= 0.0 and rng.randf() < 0.01:
 						e["lane"] = clampi(int(e["lane"]) + (1 if rng.randf() < 0.5 else -1), 0, lane_count - 1)
 						e["lane_cd"] = 2.0
 			"truck":
 				vy = minf(vy, 70.0) if e["pos"].y < 120 else vy
-				if float(e["cd"]) <= 0.0 and e["pos"].y > 0.0 and e["pos"].y < PLAYER_Y - 80:
+				if str(e["state"]) == "windup":
+					if e["pos"].y >= PLAYER_Y - 80:
+						# A passed truck cannot drop an untelegraphed obstacle onto the car.
+						e["state"] = "drive"
+					elif float(e["t"]) >= _warning_seconds(kind):
+						obstacles.append({"pos":e["pos"]+Vector2(0,52),"kind":e["drop_kind"],"hp":20.0,"dmg":float(cfg.get("obstacle_damage",20)),"near":false,"passed":false})
+						e["state"] = "attack"
+						e["t"] = 0.0
+				elif float(e["cd"]) <= 0.0 and e["pos"].y > 0.0 and e["pos"].y < PLAYER_Y - 80:
 					e["cd"] = float(cfg.get("obstacle_cooldown", 3.0))
-					e["state"] = "attack"
+					e["state"] = "windup"
 					e["t"] = 0.0
-					var kinds := ["crate", "barrel", "spikes"]
-					obstacles.append({"pos": e["pos"] + Vector2(0, 52), "kind": kinds[rng.randi() % 3], "hp": 20.0, "dmg": float(cfg.get("obstacle_damage", 20)), "near": false, "passed": false})
+					e["drop_kind"] = ["crate","barrel","spikes"][rng.randi()%3]
 		if str(e["state"]) == "attack" and float(e["t"]) > 0.5 and kind != "rammer":
 			e["state"] = "drive"
 		e["pos"] = Vector2(move_toward(e["pos"].x, _lane_x(int(e["lane"])), lane_width / maxf(float(cfg.get("lane_change_seconds", 0.6)), 0.05) * delta), e["pos"].y + vy * delta)
@@ -1248,7 +1279,7 @@ func _end_run(outcome := "destroyed") -> void:
 	pending.clear()
 	if outcome == "survived":
 		arcade.score += int(_cfg("arcade.finish_reward", 500))
-	end_result = momo.end_run(outcome, rng)
+	end_result = momo.end_run(outcome, companion_rng)
 	var garage := Garage.new(DataLoader.load_json(DataLoader.GARAGE_PATH), balance)
 	save["trust"] = momo.trust
 	var run_info := end_result.duplicate()
@@ -1260,19 +1291,24 @@ func _end_run(outcome := "destroyed") -> void:
 	if outcome=="survived":
 		save["memory"]["chapter_clears"]=int(save["memory"]["chapter_clears"])+1
 	save["best_score"] = maxi(int(save.get("best_score", 0)), arcade.score)
+	if Session.story_mode:
+		campaign=Book.complete(campaign,outcome=="survived",arcade.score,journey.goal_met(comfort_count,arcade.collected))
+		save["campaign"]=campaign
+		Session.campaign_state=campaign.duplicate(true)
 	var saved: bool = store.save_data(save)
+	if Session.story_mode: Session.campaign_save_failed=not saved
 	var d := float(end_result.get("trust_delta", 0.0))
 	var final_line: String=journey.ending(outcome=="survived",comfort_count,arcade.collected)
 	journey.log_lines.append(final_line)
-	end_panel.text = "%s\n%s\n\nMOMO: %s\n\nPUAN %d · REKOR %d\nMesafe: %d m · %d düşman · Seri %d\n%s\nGüven: %d (%s%d)\n%s" % [
-		"EVE DÖNDÜK" if outcome=="survived" else "SÖZÜMÜZ DEVAM EDİYOR",str(journey.spec()["name"]),final_line,
+	end_panel.text = "%s\n%s\n\nİLİN: %s\n\nPUAN %d · REKOR %d\nMesafe: %d m · %d düşman · Seri %d\n%s\nGüven: %d (%s%d)\n%s" % [
+		("ÜÇ ETAP TAMAMLANDI" if campaign.get("stage",0)==3 else "ETAP TAMAMLANDI") if outcome=="survived" and Session.story_mode else ("EVE DÖNDÜK" if outcome=="survived" else "BU AYRIMDAN YENİDEN"),str(journey.spec()["name"]),final_line,
 		arcade.score,int(save["best_score"]),int(distance),kills,arcade.best_chain,
 		"Yol hedefi tamamlandı" if journey.goal_met(comfort_count,arcade.collected) else "Yol hedefi bir sonraki sefere kaldı",
 		int(momo.trust),"+" if d>=0 else "",int(round(d)),"" if saved else "Kayıt yazılamadı."]
 	for button in touch_controls:
 		button.hide()
 	var layer := end_panel.get_parent()
-	var retry := _control_button(layer, Rect2(166, 300, 148, 44), "Yeniden sür", _restart_run)
+	var retry := _control_button(layer, Rect2(166, 300, 148, 44), ("Sonu oku" if campaign.get("stage",0)==3 else ("Sonraki seçim" if outcome=="survived" else "Kararı gözden geçir")) if Session.story_mode else "Yeniden sür", _restart_run)
 	retry.grab_focus()
 	retry.z_index=40
 	result_buttons.append(retry)
@@ -1321,23 +1357,52 @@ func _scroll_scenery(delta: float) -> void:
 		pr["pos"] = pr["pos"] + Vector2(0, speed * delta * float(pr["parallax"]))
 	decals = decals.filter(func(d: Dictionary) -> bool: return d["pos"].y < H + 40)
 	props = props.filter(func(pr: Dictionary) -> bool: return pr["pos"].y < H + 80)
-	if rng.randf() < delta * 0.6:
-		decals.append({"pos": Vector2(_lane_x(rng.randi_range(0, lane_count - 1)) + rng.randf_range(-14, 14), -30), "frame": rng.randi_range(0, 5)})
-	if rng.randf() < delta * 0.5:
-		var names := ["billboard_obey", "billboard_buy", "billboard_momo", "neon_fuel", "neon_open", "pylon", "wreck", "toxic_puddle", "barrels"]
-		var anim: String = names[rng.randi() % names.size()]
-		var left := rng.randf() < 0.5
+	if visual_rng.randf() < delta * 0.6:
+		decals.append({"pos": Vector2(_lane_x(visual_rng.randi_range(0, lane_count - 1)) + visual_rng.randf_range(-14, 14), -30), "frame": visual_rng.randi_range(0, 5)})
+	if visual_rng.randf() < delta * 0.5:
+		var names := ["billboard_obey", "billboard_buy", "neon_fuel", "neon_open", "pylon", "wreck", "toxic_puddle", "barrels"]
+		var anim: String = names[visual_rng.randi() % names.size()]
+		var left := visual_rng.randf() < 0.5
 		var par: Variant = DataLoader.dig(sheets.sheet("roadside_props"), "parallax." + anim, null)
 		if par == null:
 			par = 1.15 if anim.begins_with("billboard") or anim.begins_with("neon") else 1.0
-		props.append({"pos": Vector2(rng.randf_range(40, 170) if left else rng.randf_range(470, 600), -70), "anim": anim, "parallax": float(par)})
+		props.append({"pos": Vector2(visual_rng.randf_range(40, 170) if left else visual_rng.randf_range(470, 600), -70), "anim": anim, "parallax": float(par)})
+
+
+func _camera_offset() -> Vector2:
+	# Sample simulation time, not a random stream or render-frame count.
+	if shake <= 0.0 or not effects_enabled or paused or over:
+		return Vector2.ZERO
+	return (Vector2(sin(game_time*83.13+2.7),sin(game_time*107.71+0.9))*shake_power).round()
+
+
+func _warning_seconds(kind: String) -> float:
+	return maxf(0.1,_cfg("enemies."+kind+".warning_seconds",0.55))
+
+
+func _enemy_warnings() -> Array[Dictionary]:
+	var warnings: Array[Dictionary] = []
+	if over: return warnings
+	var rear_lanes := {}
+	for enemy in enemies:
+		if enemy.has("dead"): continue
+		var p: Vector2 = enemy["pos"]
+		var enemy_lane: int = int(enemy["lane"])
+		if p.y > H:
+			if not rear_lanes.has(enemy_lane):
+				rear_lanes[enemy_lane]=true
+				warnings.append({"kind":"rear","lane":enemy_lane,"progress":0.0,"origin":p,"target":Vector2(_lane_x(enemy_lane),H-13)})
+		elif str(enemy["state"]) == "windup":
+			var shot: bool = str(enemy["type"]) == "pickup"
+			var target: Vector2 = enemy["aim"] if shot else p+Vector2(0,52)
+			warnings.append({"kind":"shot" if shot else "drop","lane":_lane_of(target.x),"progress":clampf(float(enemy["t"])/_warning_seconds(str(enemy["type"])),0,1),"origin":p+Vector2(0,20),"target":target})
+		elif str(enemy["type"]) == "rammer" and absf(p.x-_lane_x(enemy_lane)) > 2:
+			warnings.append({"kind":"ram","lane":enemy_lane,"progress":clampf(1.0-absf(p.x-_lane_x(enemy_lane))/lane_width,0,1),"origin":p,"target":Vector2(_lane_x(enemy_lane),p.y)})
+	return warnings
 
 
 func _draw() -> void:
-	var off := Vector2.ZERO
-	if shake > 0.0 and effects_enabled and not paused:
-		off = Vector2(rng.randf_range(-1, 1), rng.randf_range(-1, 1)) * shake_power
-	position = world_origin + off.round()
+	position = world_origin + _camera_offset()
 	var road := sheets.texture("assets/road/road_tile.png")
 	if road == null:
 		_draw_fallback_road()
@@ -1361,11 +1426,6 @@ func _draw() -> void:
 	if boosting and not over:
 		for side in [-1, 1]:
 			draw_line(Vector2(car_x + side * 7, PLAYER_Y + 28), Vector2(car_x + side * 7, PLAYER_Y + 38 + sin(game_time * 40) * 5), Color("79d4ff"), 3)
-	# Offscreen pursuers receive a lane marker before entering the playfield.
-	for enemy in enemies:
-		if enemy["pos"].y > H and not enemy.has("dead"):
-			var x := _lane_x(int(enemy["lane"]))
-			draw_colored_polygon(PackedVector2Array([Vector2(x - 6, 347), Vector2(x + 6, 347), Vector2(x, 339)]), Color("ff8b8b"))
 	for m in mines:
 		var armed := float(m["arm"]) <= 0.0
 		sheets.draw_anim(self, "mine", "armed" if armed else "arming", game_time, m["pos"])
@@ -1423,7 +1483,8 @@ func _draw_enemy_sprite(e: Dictionary) -> void:
 		var mount: Array = sheets.sheet(name).get("turret_mount", [24, 52])
 		var anchor: Array = sheets.sheet(name).get("anchor", [24, 40])
 		var tp := p + Vector2(float(mount[0]) - float(anchor[0]), float(mount[1]) - float(anchor[1]))
-		var dir := Vector2(car_x, PLAYER_Y) - tp
+		var aim: Vector2 = e.get("aim",Vector2(car_x,PLAYER_Y)) if str(e["state"]) in ["windup","attack"] else Vector2(car_x,PLAYER_Y)
+		var dir := aim - tp
 		var idx := posmod(roundi((atan2(dir.y, dir.x) - PI / 2.0) / deg_to_rad(22.5)), 16)
 		var firing := str(e["state"]) == "attack" and float(e["t"]) < 0.15
 		sheets.draw_frame(self, "enemy_pickup_turret", idx + (16 if firing else 0), tp)
@@ -1639,10 +1700,11 @@ func _layout() -> void:
 		_place(touch_hint,Rect2(12,view.y-166,width-24,22))
 		touch_hint.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
 		var gap := 8.0
-		var button_width: float = (width-24-gap*2)/3
+		var button_width: float = floorf((width-24-gap*2)/3)
+		var buttons_left: float=floorf((width-(button_width*3+gap*2))/2)
 		var actions := ["drive_up","drive_down","drive_comfort","drive_dodge","drive_fire","drive_mine"]
 		for i in actions.size():
-			touch_by_action[actions[i]].fit(Rect2(12+(i%3)*(button_width+gap),view.y-136+(i/3)*64,button_width,56))
+			touch_by_action[actions[i]].fit(Rect2(buttons_left+(i%3)*(button_width+gap),view.y-136+(i/3)*64,button_width,56))
 		_place(pause_panel,Rect2(20,40,width-40,minf(view.y-80,440)))
 		_place(end_panel,Rect2(12,174,width-24,view.y-254))
 		_place(box,Rect2(12,view.y-56,width-24,40))
@@ -1676,7 +1738,7 @@ func _build_journal(parent: Node) -> void:
 	column.add_theme_constant_override("separation",8)
 	journal_panel.add_child(column)
 	var title := Label.new()
-	title.text="YOL GÜNLÜĞÜ · MOMO"
+	title.text="YOL GÜNLÜĞÜ · İLİN"
 	column.add_child(title)
 	journal_scroll=ScrollContainer.new()
 	journal_scroll.horizontal_scroll_mode=ScrollContainer.SCROLL_MODE_DISABLED
