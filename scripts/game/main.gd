@@ -897,7 +897,7 @@ func _update_hud() -> void:
 	mission.text = "GÖREV %02d\n%s\n%d / %d\nSeri %d · En iyi %d" % [arcade.contract + 1, arcade.contract_title(), mini(int(progress.x), int(progress.y)), int(progress.y), arcade.chain, arcade.best_chain]
 	status_label.text = "Güven %d · %s\n%s" % [int(momo.trust), Momo.mood_name_tr(momo.mood), ("KALKAN %.1f sn" % shield_left) if shield_left > 0 else (("Destek %.0f sn" % comfort_cooldown) if comfort_cooldown > 0 else "%s · Destek hazır" % Controls.binding_name("drive_comfort",Controls.last_device=="pad"))]
 	if touch_by_action.has("drive_mine"):
-		touch_by_action["drive_mine"].visual.text=("MAYIN · %.1f sn" % mine_cooldown) if mine_cooldown>0 else "MAYIN · SINIRSIZ"
+		touch_by_action["drive_mine"].visual.text=("MAYIN %.1f" % mine_cooldown) if mine_cooldown>0 else "MAYIN · ∞"
 	face.mood = momo.mood
 	face.queue_redraw()
 	hint.text = Controls.run_hint()

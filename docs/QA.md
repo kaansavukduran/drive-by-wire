@@ -4,8 +4,8 @@ PASS çalıştırılmış kapsam, FAIL karşılanmayan hedef, NOT TESTED denenme
 
 | Kontrol | Sonuç | Gerçek kapsam / sınır |
 | --- | --- | --- |
-| Native regresyon | PASS | 1049 kontrol, 0 başarısız; 19 takım. Gerçek geçici XDG kayıtları, script/parse hata denetimi. 13×3 fizik etabı, eski kayıtlar ve 13 son korunur. |
-| Sürücü ve ortak pivot | PASS | Yeni sekiz karede Aion'un başının arkası görülür, direksiyon/eller aracın önündedir. Araba tamamen ters çevrilmedi. Hücre gövde merkezi, sprite ve hitbox konumu bütün pozlarda doğrulandı; ortak pivot (32,43.5). İnsan sanat onayı değildir. |
+| Native regresyon | PASS | 1057 kontrol, 0 başarısız; 19 takım. Gerçek geçici XDG kayıtları, script/parse hata denetimi. 13×3 fizik etabı, eski kayıtlar ve 13 son korunur. |
+| Sürücü ve ortak pivot | PASS | Görünen eylem düğmeleri ile dokunma alanlarının aynı sınırda kalması dört boyut ve iki mayın bekleme durumunda ayrıca doğrulandı. Yeni sekiz karede Aion'un başının arkası görülür, direksiyon/eller aracın önündedir. Araba tamamen ters çevrilmedi. Hücre gövde merkezi, sprite ve hitbox konumu bütün pozlarda doğrulandı; ortak pivot (32,43.5). İnsan sanat onayı değildir. |
 | Sınırsız arka savunma | PASS | 11 yeni kontrol: eski cephane sıfır olsa da bırakma, aynı kare spam engeli, mola sırasında donan bekleme, basılı X ile tekrar, sınırlı aktif nesne, gerçek arka takipçiye hasar ve mermilerin temizlenmesi. Oyuncuya patlama hasarı yok. |
 | Küçük ekran / bütün karar düğümleri | PASS | 10 düğüm ×4 sayfa ×4 viewport =160 kontrol: 640×360, 360×640, 360×780, 640×480. Kontroller ve metin ölçümleri ekrana sığar; eylemler en az44 mantıksal piksel. İçerik gizlenip yalnız kaydırma çubuğu kapatılmadı; uzun günlük Sonraki sayfa ile bölünür. |
 | Gerçek web kontrol akışı | PASS | Chromium PC, telefon dikey/yatay, tablet dikey/yatay ve düşük güç telefon; klavye/fare/CDP çoklu dokunma. Konuşma/Yanıt/Rota/Günlük sayfalarına dokunarak geçiş, görünür kontrollerin ekran/içerik sınırları, joystick+ateş, ters hareket, sınırsız mayın, mola/ayarlar/yön değiştirme. Gamepad API ayrıca emüle edildi. Fiziksel cihaz değildir. |
