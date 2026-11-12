@@ -5,6 +5,11 @@ on:
     tags: ['v*']
   pull_request:
   workflow_dispatch:
+    inputs:
+      publish_release:
+        description: "main'den v<config/version> etiketiyle GitHub Release yayınla"
+        type: boolean
+        default: false
 permissions:
   contents: read
 concurrency:
@@ -256,7 +261,7 @@ jobs:
           if-no-files-found: error
 
   release:
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && inputs.publish_release && github.ref == 'refs/heads/main')
     needs: [linux_web, windows, windows_installer, windows_install_test, android]
     runs-on: ubuntu-24.04
     permissions:
@@ -267,7 +272,10 @@ jobs:
         run: |
           python3 packaging/version.py --github-env
           version="$(python3 packaging/version.py)"
-          test "$GITHUB_REF_NAME" = "v$version" || { echo "::error::tag $GITHUB_REF_NAME does not match config/version $version"; exit 1; }
+          if [ "$GITHUB_REF_TYPE" = "tag" ]; then
+            test "$GITHUB_REF_NAME" = "v$version" || { echo "::error::tag $GITHUB_REF_NAME does not match config/version $version"; exit 1; }
+          fi
+          echo "RELEASE_TAG=v$version" >> "$GITHUB_ENV"
       - uses: actions/download-artifact@v4
         with:
           path: release
@@ -284,5 +292,7 @@ jobs:
           cd ..
           prerelease=""
           case "$DBW_VERSION" in 0.*) prerelease="--prerelease" ;; esac
-          gh release create "$GITHUB_REF_NAME" release/DriveByWire-* release/SHA256SUMS --verify-tag $prerelease \
-            --title "Drive-By Wire $GITHUB_REF_NAME" --notes-file docs/RELEASE.md
+          target=""
+          if [ "$GITHUB_REF_TYPE" = "tag" ]; then target="--verify-tag"; else target="--target $GITHUB_SHA"; fi
+          gh release create "$RELEASE_TAG" release/DriveByWire-* release/SHA256SUMS $target $prerelease \
+            --title "Drive-By Wire $RELEASE_TAG" --notes-file docs/RELEASE.md
