@@ -11,6 +11,7 @@
 | Görsel ayarlar altında aynı oynanış | PASS | 44 yeni kontrol. Aynı fizik girdilerinde 60 saniyelik iki gerçek sahne: hareket/sarsıntı kapalı ve açık, farklı dekor seed'leri, fazladan kamera örnekleri. Trafik, mermiler, ikmal, can, puan ve gameplay RNG durumu aynı. Eski kod ilk fizik adımında ayrıştı; before/after logları kanıtta. |
 | Uyarı, saldırı ve mermi yaşam döngüsü | PASS | 32 yeni kontrol: ateşten önce süre ve kilitli hedef; ilan edilen yöne gerçek mermi; mola sırasında sabit zaman/işaret; 0.65 sn kamyon hazırlığı, geç kalan engeli iptal; şerit kırma ve tek arka şerit işareti; renk dışı şekiller için ayrı katman. Ekran dışı yatay/düşman mermileri temizlenir; arka takipçiye atış gerçek HP azaltır. |
 | PC / telefon / tablet | PASS | Gerçek Chromium klavye/fare/CDP touch. 1280×720; 390×844 / 844×390; 768×1024 / 1024×768; düşük güç telefon. Garaj sınırları, kaydırma+ateş, turbo+ateş, tek hareket/tek şerit, dikey ret, ayarlar/günlük ve yön değişiminde güvenli mola. |
+| Dikey HUD çakışma regresyonu | PASS | Telefon, tablet ve düşük güç görünümünde gerçek Godot kontrol dikdörtgenleri doğrulandı: can yazısı enerji çubuğuna taşmaz; mesafe can çubuğunun altında, enerji yazısının solunda kalır. Altı tarayıcı düzeni ve Gamepad API akışı düzeltmeden sonra tekrar geçti. |
 | Gamepad API | PASS | Emüle D-pad/A garaj, konuşma, yükseltme ve karar; analog, RB/RT, Start/B, kopunca mola ve yeniden bağlanınca otomatik sürmeme. Fiziksel Xbox değildir. |
 | Tam web hikâyesi | PASS | Gerçek girdilerle üç 400 m etap: 15/16/12 düşman, 6/7/6 ikmal. e01 açıldı; sonlar kitabı dokunmayla kullanıldı ve reload sonrası korundu. |
 | Canlı saldırı uyarısı | PASS | Gerçek trafikte arka/şerit kırma/nişan işaretleri gözlendi. Mevcut T sohbet yavaşlatması gerçek tuşla açılarak canlı nişan çizgisi görüntülendi; mola hedef ve ilerlemeyi sabit tuttu. QA yalnız okur, oyuna değer yazmaz. |
@@ -22,8 +23,9 @@
 | Fiziksel cihaz, Safari, gerçek gamepad/titreşim | NOT TESTED | Ortamda donanım yok. Yazılım olayları fiziksel test diye sunulmaz. |
 | İnsan eğlence / denge / anlatı | NOT TESTED | 13 otomatik yol ve tam web koşusu insan değerlendirmesi değildir. |
 | Tam ekran okuyucu / WCAG AA / toplam cihaz bellek ve enerji | NOT TESTED | Kontrast kontrolleri ve semantik HTML yardım kapsamı ayrı. JS heap toplam WASM/GPU belleği değildir. |
-| İmzalı native kurulum / üretim yayını | NOT TESTED | Yeni native kurulum paketi veya main birleşimi yapılmadı. |
-| GitHub / Vercel yayını | NOT TESTED | Kullanıcının 12 Kasım açık yayın talebiyle hazırlanıyor. Canlı sürüm, telefon görünümü ve girdiler yayından sonra doğrulanır. Yerel testler uzak test gibi sunulmaz. |
+| Yeni imzalı native kurulum | NOT TESTED | Bu web yayını kapsamında native kurulum paketi üretilmedi. |
+| GitHub / Vercel yayını | PASS | PR #1 main'e birleşti: `1cb9f21fcc21b79a8191c91d42413405dac37a87`. Vercel production `dpl_7cyyd4i3ZdtpwcexraAi6K3Brse2` READY; `drive-by-wire.vercel.app` bu dağıtıma bağlı. İlk canlı sürüm 0.6.1; sonraki commit bilgisi `/version.json` üzerinden okunur. |
+| Herkese açık canlı sürüm | PASS | Önizleme çerezi veya giriş kullanmayan yeni Chromium oturumları: PC 1280×720, telefon 390×844 ve 844×390. Gerçek canlı `/version.json` commit/sürüm ve indirilen PCK kontrolü; başlat → seçim → 400 m etap, PC A/D, iki parmak kaydırma+ateş ve molada sabit mesafe. Üçünde sıfır tarayıcı runtime hatası. Fiziksel telefon testi değildir. |
 
 ## Yeniden üretim
 

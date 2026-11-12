@@ -10,10 +10,11 @@ Fragaria Interactive · AIONIA
 - Kamera, dekoratif yol ve İLİN replikleri düşman/ikmal rastgeleliğini tüketmez. Aynı fizik girdilerinde görsel tercihler canı, puanı ve trafiği değiştirmez.
 - Yatay kaçan mermiler sınırlı alanın dışına çıkınca silinir. Arka takipçiye ateş, hedefe varmadan kesilmez.
 - Menü/garaj sürüm yazısı artık project.godot değerinden gelir.
+- Dikey telefonda mesafe, can ve enerji ayrı alanlarda gösterilir; mesafe yazısı enerji çubuğunun altında kalmaz.
 
 Godot 4.6.3 ve mevcut görsel kaynaklar korunur; yeni motor, framework veya runtime bağımlılığı yoktur. [Hikâye/İLİN](JOURNEY.md) OYUN/TASLAK statüsündedir. [Gerçek test raporu](QA.md) ve önceki [0.6.0 raporu](history/QA-v060.md) ayrı tutulur.
 
-Kullanıcı 12 Kasım 2026'da kaynak ve oyunda kullanılan referansların GitHub/Vercel yayınını açıkça istedi. Yayın hedefi `https://drive-by-wire.vercel.app`; GitHub `kaansavukduran/drive-by-wire`. Yerelde hazırlanmış sürüm mevcut PR üzerinden main'e alınarak Vercel'in Git bağlantısıyla dağıtılır. `version.json` sürüm/commit bilgisi verir. Canlı sonuç ayrıca doğrulanır; eski yerel paket ve geçmiş raporlar yayın başarısı sayılmaz.
+12 Kasım 2026'da PR #1 main'e birleşti; 0.6.1 Vercel production üzerinde READY oldu. Canlı oyun: https://drive-by-wire.vercel.app. GitHub: `kaansavukduran/drive-by-wire`. `/version.json` sürüm/commit bilgisi verir. Girişsiz canlı tarayıcı testleri PC, telefon dikey ve telefon yatay akışlarını doğruladı; kapsam [QA raporunda](QA.md). Özel Drive içeriği public sürüme alınmadı.
 
 Tam Git geçmişi başka servise/pakete aktarılmaz. İLİN ve yeni anlatı OYUN/TASLAK; çilek görseli onaylı final logo ilan edilmez. Fiziksel cihaz ve insan eğlence testi tamamlanmış gösterilmez.
 

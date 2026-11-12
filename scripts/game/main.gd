@@ -130,6 +130,7 @@ var sounds: Node
 var settings_panel: Control
 var motion_enabled := true
 var energy_caption: Label
+var distance_caption: Label
 var metrics_clock := 0.0
 var pad_lane_latch := 0
 var hud_clock := 0.0
@@ -274,6 +275,9 @@ func _build_ui() -> void:
 	energy_bar = _bar(ui, Rect2(18, 146, 154, 5), Color("79d4ff"))
 	energy_caption = _label(ui, theme, Vector2(18, 130), Vector2(154, 14))
 	energy_caption.add_theme_font_size_override("font_size", 9)
+	distance_caption = _label(ui, theme, Vector2.ZERO, Vector2(90, 12))
+	distance_caption.add_theme_font_size_override("font_size", 9)
+	distance_caption.visible = false
 	face = MomoFace.new()
 	face.position = Vector2(466, 18)
 	ui.add_child(face)
@@ -839,7 +843,7 @@ func _process(delta: float) -> void:
 		qa_clock=0
 		var targets := {}
 		for action in touch_by_action: targets[action]=QA.rect(touch_by_action[action])
-		QA.publish("run",{"view":[get_viewport_rect().size.x,get_viewport_rect().size.y],"chapter":campaign.get("stage",-1),"hp":hp,"kills":kills,"collected":arcade.collected,"finish":_cfg("arcade.finish_distance",1200),"warnings":_enemy_warnings().map(func(w): return {"kind":w["kind"],"lane":w["lane"],"progress":w["progress"],"origin":[w["origin"].x,w["origin"].y],"target":[w["target"].x,w["target"].y]}),"pickup_targets":pickups.map(func(p): return {"lane":_lane_of(p["pos"].x),"y":p["pos"].y}),"result":result_buttons.map(func(b): return QA.rect(b)),"ending_text":end_panel.text if over else "","lane":lane,"paused":paused,"over":over,"fire":_held("drive_fire"),"boost":boosting,"distance":distance,"speed":speed,"energy":energy,"road":[road_touch_rect.position.x,road_touch_rect.position.y,road_touch_rect.size.x,road_touch_rect.size.y],"actions":targets,"pause":QA.rect(pause_button),"journal":journal_panel.visible,"touch":touch_enabled,"route":journey.route,"mines":mines_left,"dodge":dodge_cooldown,"settings":settings_panel.visible,"settings_ui":QA.settings(settings_panel),"settings_rect":QA.rect(settings_panel),"settings_back":QA.rect(settings_panel.back),"pause_menu":pause_panel.get_child(0).get_children().filter(func(child): return child is Button).map(func(child): return QA.rect(child)),"journal_rect":QA.rect(journal_panel),"journal_back":QA.rect(journal_panel.get_child(0).get_child(2))})
+		QA.publish("run",{"view":[get_viewport_rect().size.x,get_viewport_rect().size.y],"chapter":campaign.get("stage",-1),"hp":hp,"kills":kills,"collected":arcade.collected,"finish":_cfg("arcade.finish_distance",1200),"warnings":_enemy_warnings().map(func(w): return {"kind":w["kind"],"lane":w["lane"],"progress":w["progress"],"origin":[w["origin"].x,w["origin"].y],"target":[w["target"].x,w["target"].y]}),"pickup_targets":pickups.map(func(p): return {"lane":_lane_of(p["pos"].x),"y":p["pos"].y}),"result":result_buttons.map(func(b): return QA.rect(b)),"ending_text":end_panel.text if over else "","lane":lane,"paused":paused,"over":over,"fire":_held("drive_fire"),"boost":boosting,"distance":distance,"speed":speed,"energy":energy,"road":[road_touch_rect.position.x,road_touch_rect.position.y,road_touch_rect.size.x,road_touch_rect.size.y],"actions":targets,"pause":QA.rect(pause_button),"journal":journal_panel.visible,"touch":touch_enabled,"portrait_hud":({"health":QA.rect(hud),"meters":QA.rect(distance_caption),"hp_bar":QA.rect(hp_bar),"energy_bar":QA.rect(energy_bar),"energy":QA.rect(energy_caption)} if was_portrait else {}),"route":journey.route,"mines":mines_left,"dodge":dodge_cooldown,"settings":settings_panel.visible,"settings_ui":QA.settings(settings_panel),"settings_rect":QA.rect(settings_panel),"settings_back":QA.rect(settings_panel.back),"pause_menu":pause_panel.get_child(0).get_children().filter(func(child): return child is Button).map(func(child): return QA.rect(child)),"journal_rect":QA.rect(journal_panel),"journal_back":QA.rect(journal_panel.get_child(0).get_child(2))})
 	metrics_clock += delta
 	if OS.has_feature("web") and metrics_clock > 5.0:
 		metrics_clock = 0.0
@@ -877,7 +881,8 @@ func _update_hud() -> void:
 	story_caption.text = ("ETAP %d / 3" % (mini(3,int(campaign.get("stage",0))+1)) if Session.story_mode else "EVE GİDEN YOL") + "\n" + journey.goal_text(comfort_count,arcade.collected)
 	if was_portrait:
 		energy_caption.text="ENERJİ %d%%" % int(energy_bar.value)
-		hud.text="CAN %d / %d\n%d / %d m" % [maxi(0,ceili(hp)),int(max_hp),int(distance),int(_cfg("arcade.finish_distance",1200))]
+		hud.text="CAN %d / %d" % [maxi(0,ceili(hp)),int(max_hp)]
+		distance_caption.text="%d / %d m" % [int(distance),int(_cfg("arcade.finish_distance",1200))]
 
 
 
@@ -1663,6 +1668,7 @@ func _layout() -> void:
 	momo_title.visible=not portrait
 	status_label.visible=not portrait
 	mission.visible=not portrait
+	distance_caption.visible=portrait
 	ui_panels[2].visible=not portrait
 	face.scale=Vector2.ONE
 	bubble.add_theme_font_size_override("font_size",11 if portrait else 12)
@@ -1679,7 +1685,8 @@ func _layout() -> void:
 		_place(ui_panels[0],Rect2(8,8,width-92,72))
 		_place(brand_label,Rect2(16,10,width-110,12))
 		_place(score_label,Rect2(16,27,94,24))
-		_place(hud,Rect2(118,28,width-214,36))
+		_place(hud,Rect2(118,28,width-214,20))
+		_place(distance_caption,Rect2(16,62,90,12))
 		_place(hp_bar,Rect2(16,55,90,5))
 		_place(energy_bar,Rect2(118,55,width-218,5))
 		_place(energy_caption,Rect2(118,62,width-214,12))
