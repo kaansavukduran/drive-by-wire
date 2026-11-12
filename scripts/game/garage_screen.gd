@@ -1,4 +1,5 @@
 extends Node2D
+const QA := preload("res://scripts/game/qa_snapshot.gd")
 ## Garaj: MOMO selamlar (güven + hafıza), 3–4 seçenekli kısa diyalog, tek yükseltme
 ## seçimi, "Sefere çık". Klavye: 1–4 seçer, Enter devam/sefere çık. Fare/dokunma da çalışır.
 
@@ -33,6 +34,9 @@ var face: Control
 var speech: Label
 var info: Label
 var title: Label
+var brand_label: Label
+var brief_label: Label
+var face_base_position := Vector2.ZERO
 var quick_button: Button
 var buttons: VBoxContainer
 var _t := 0.0
@@ -65,6 +69,7 @@ func _ready() -> void:
 	var term: Array = sheets.image("garage_bg").get("terminal_screen_rect", [40, 64, 48, 44])
 	face.position = Vector2(float(term[0]), float(term[1])) if has_art else Vector2(40, 64)
 	face.scale = Vector2.ONE if has_art else Vector2(2, 2)
+	face_base_position=face.position
 	add_child(face)
 	speech = _label(ui, Vector2(16, 62), Vector2(500, 70), 13)
 	speech.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -85,10 +90,12 @@ func _ready() -> void:
 	buttons.add_theme_constant_override("separation", 6)
 	ui.add_child(buttons)
 	var brand := _label(ui, Vector2(326, 10), Vector2(298, 17), 10)
+	brand_label=brand
 	brand.text = "FRAGARIA GAMES · AIONIA"
 	brand.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	brand.add_theme_color_override("font_color", Color("ff8fb1"))
 	var brief := _label(ui, Vector2(16, 290), Vector2(410, 40), 11)
+	brief_label=brief
 	brief.text = "← → Sür · ↑ Turbo · ↓ Fren · Space Ateş\n1.200 metreyi aş. MOMO'yu eve getir."
 	var quick := Button.new()
 	quick_button = quick
@@ -115,6 +122,8 @@ func _ready() -> void:
 			_button("%d) %s" % [i + 1, str(opt.get("text", ""))], _choose.bind(str(opt.get("id", ""))))
 	_update_info()
 	_link_focus()
+	get_viewport().size_changed.connect(_layout)
+	_layout()
 
 
 func _label(parent: Node, pos: Vector2, size: Vector2, font_size: int) -> Label:
@@ -134,7 +143,8 @@ func _button(text: String, action: Callable) -> Button:
 	b.theme = theme
 	b.text = text
 	b.alignment = HORIZONTAL_ALIGNMENT_LEFT
-	b.custom_minimum_size = Vector2(500, 22)
+	b.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
+	b.custom_minimum_size = Vector2(0, 36)
 	b.pressed.connect(action)
 	UiSkin.style_button(b)
 	buttons.add_child(b)
@@ -179,6 +189,7 @@ func _show_upgrades() -> void:
 		var u: Dictionary = offers[i]
 		_button("%d) %s · %s" % [i + 1, str(u.get("name", u.get("id", ""))), str(u.get("description", ""))], _pick_upgrade.bind(str(u.get("id", ""))))
 	_update_info()
+	_layout()
 	_focus_options()
 	_link_focus()
 
@@ -218,6 +229,7 @@ func _pick_upgrade(id: String) -> void:
 		if str(u.get("id", "")) == id:
 			name = str(u.get("name", id))
 	var go := _button("Enter) Sefere çık  ·  takılı: %s" % name, _start_run)
+	_layout()
 	go.grab_focus()
 	_link_focus()
 	_update_info()
@@ -225,7 +237,7 @@ func _pick_upgrade(id: String) -> void:
 
 func _start_run() -> void:
 	store.save_data(save)
-	get_tree().call_deferred("change_scene_to_file", "res://scenes/main.tscn")
+	get_tree().call_deferred("change_scene_to_file", "res://scenes/journey.tscn")
 
 
 func _quick_start() -> void:
@@ -270,12 +282,14 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _update_info() -> void:
 	var mem: Dictionary = save.get("memory", {})
-	info.text = "v0.4.0 · Güven %d · Sefer %d · Rekor %d · En uzun %d m · 1–4 seç / Space hızlı sürüş" % [
+	info.text = "v0.5.0 · Güven %d · Sefer %d · Rekor %d · En uzun %d m · 1–4 seç / Space hızlı sürüş" % [
 		int(momo.trust), int(mem.get("runs", 0)), int(save.get("best_score", 0)), int(mem.get("best_distance", 0))]
 	face.mood = momo.mood
 
 
 func _process(delta: float) -> void:
+	if QA.active():
+		QA.publish("garage",{"stage":stage,"quick":QA.rect(quick_button),"buttons":buttons.get_children().filter(func(child): return child is Button and not child.is_queued_for_deletion()).map(func(button): return QA.rect(button))})
 	if bool(save.get("settings", {}).get("motion", true)):
 		_t += delta
 	if Controls.last_device == "pad":
@@ -286,6 +300,13 @@ func _process(delta: float) -> void:
 
 
 func _draw() -> void:
+	var view: Vector2=get_viewport_rect().size
+	if view.y>view.x:
+		draw_rect(Rect2(Vector2.ZERO,view),Color("111d2b"))
+		sheets.draw_anim(self,"characters","aion_idle",_t,Vector2(64,view.y-20))
+		sheets.draw_anim(self,"characters","omer_idle",_t,Vector2(view.x-64,view.y-20),Color.WHITE,true)
+		return
+	draw_set_transform((view-Vector2(640,360))/2)
 	if has_art:
 		draw_texture(sheets.texture("assets/ui/garage_bg.png"), Vector2.ZERO)
 		var logo := sheets.texture("assets/ui/logo.png")
@@ -323,3 +344,28 @@ func _draw() -> void:
 	for i in range(5):
 		draw_rect(Rect2(24 + i * 20, 168, 4, 30 + (i % 2) * 10), Color("9aa0aa"))
 		draw_rect(Rect2(22 + i * 20, 166, 8, 4), Color("c0392b") if i % 2 else Color("d4a017"))
+
+
+func _layout() -> void:
+	var view: Vector2=get_viewport_rect().size
+	var portrait := view.y>view.x
+	var offset := (view-Vector2(640,360))/2 if not portrait else Vector2.ZERO
+	quick_button.position=Vector2(16,16) if portrait else offset+Vector2(326,32)
+	quick_button.size=Vector2(view.x-32,44) if portrait else Vector2(298,24)
+	brand_label.position=Vector2(16,64) if portrait else offset+Vector2(326,10)
+	brand_label.size=Vector2(view.x-32,18) if portrait else Vector2(298,17)
+	speech.position=Vector2(16,90) if portrait else offset+Vector2(16,62)
+	speech.size=Vector2(view.x-32,100) if portrait else Vector2(500,70)
+	buttons.position=Vector2(16,204) if portrait else offset+Vector2(16,140)
+	buttons.size=Vector2(view.x-32,280) if portrait else Vector2(500,150)
+	for button in buttons.get_children():
+		if button is Button: button.custom_minimum_size.y=56 if portrait else 36
+	brief_label.position=Vector2(16,view.y-136) if portrait else offset+Vector2(16,290)
+	brief_label.size=Vector2(view.x-32,44) if portrait else Vector2(410,40)
+	brief_label.text="Yolda sağa / sola kaydır.\nEylem düğmeleriyle MOMO'yu eve getir." if portrait else "← → / A D Sür · ↑ / W Turbo · ↓ / S Fren\n1.200 metreyi aş. MOMO'yu eve getir."
+	info.position=Vector2(16,view.y-80) if portrait else offset+Vector2(16,336)
+	info.size=Vector2(view.x-32,40) if portrait else Vector2(608,18)
+	info.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
+	face.position=face_base_position+offset
+	face.visible=not portrait
+	queue_redraw()

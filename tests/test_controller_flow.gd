@@ -38,6 +38,9 @@ func run() -> void:
  title=current_scene
  await tap(JOY_BUTTON_A)
  await frames()
+ h.check("story briefing offers two routes",current_scene.get("choices")!=null and current_scene.choices.size()==2)
+ await tap(JOY_BUTTON_A)
+ await frames()
  var game := current_scene
  if not h.check("A starts from focused title without a keyboard",game!=title and game.get("lane")!=null):
   quit(h.finish())

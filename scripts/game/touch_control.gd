@@ -31,3 +31,14 @@ func setup(rect: Rect2, title: String, ui_theme: Theme, down: Callable, up: Call
 		visual.set_pressed_no_signal(false)
 		up.call())
 	add_child(key)
+
+
+func fit(rect: Rect2) -> void:
+	position = rect.position
+	size = rect.size
+	visual.size = rect.size
+	(key.shape as RectangleShape2D).size = rect.size
+	key.position = rect.size / 2
+
+func release_visual() -> void:
+	visual.set_pressed_no_signal(false)

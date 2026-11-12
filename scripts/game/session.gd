@@ -4,3 +4,5 @@ extends RefCounted
 
 static var next_run_modifiers: Array = []
 static var came_from_run := false
+
+static var next_route := "steady"

@@ -30,6 +30,9 @@ func _init(garage_data: Dictionary = {}, balance: Dictionary = {}) -> void:
 static func default_memory() -> Dictionary:
 	return {
 		"runs": 0,
+		"chapter_clears": 0,
+		"last_route": "",
+		"last_route_goal": 0,
 		"last_outcome": "",          # "", "destroyed", "survived"
 		"best_distance": 0.0,
 		"total_distance": 0.0,

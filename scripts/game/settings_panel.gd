@@ -15,6 +15,7 @@ var volume_slider: HSlider
 var tabs: TabContainer
 var input_mode: OptionButton
 var binding_buttons: Dictionary = {}
+var reset_button: Button
 var reset_dialog: ConfirmationDialog
 var save_timer: Timer
 var capture_action := ""
@@ -50,6 +51,7 @@ func _ready() -> void:
   var key: String = spec[0]
   var caption: String = spec[1]
   var toggle := CheckButton.new()
+  toggle.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
   toggle.text = caption + (" · Açık" if bool(settings[key]) else " · Kapalı")
   toggle.button_pressed = bool(settings[key])
   toggle.toggled.connect(func(value: bool):
@@ -85,7 +87,7 @@ func _ready() -> void:
  _make_controls(_page("Kontroller"))
  var privacy := _page("Veri")
  _note(privacy, "Rekor, MOMO hafızası ve tercihler yalnızca bu cihazda saklanır. Hesap, reklam, analiz servisi veya sunucuya gönderim yoktur.\n\nSıfırlama ilerlemeyi, tercihleri ve kurtarma kopyasını siler.")
- _button(privacy,"Bu cihazdaki verileri sıfırla",func(): _show_reset())
+ reset_button = _button(privacy,"Bu cihazdaki verileri sıfırla",func(): _show_reset())
  reset_dialog = ConfirmationDialog.new()
  UiSkin.prepare_confirmation(reset_dialog)
  reset_dialog.title = "Yerel verileri sıfırla?"
@@ -97,10 +99,12 @@ func _ready() -> void:
  status = Label.new()
  status.text = "Tercihlerin bu cihazda saklanır."
  status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
- status.custom_minimum_size.y = 26
+ status.custom_minimum_size=Vector2(220,26)
  status.add_theme_font_size_override("font_size", 10)
  column.add_child(status)
  back = _button(column,"Geri · Esc / B",close)
+ get_viewport().size_changed.connect(_fit_viewport)
+ _fit_viewport()
  hide()
 
 func _page(title: String) -> VBoxContainer:
@@ -205,6 +209,7 @@ func _input(event: InputEvent) -> void:
 
 func open() -> void:
  show()
+ call_deferred("_fit_viewport")
  back.grab_focus()
 
 func close() -> void:
@@ -246,3 +251,20 @@ func _reset_data() -> void:
  settings=store.defaults()["settings"]
  Controls.install()
  data_reset.emit()
+
+
+func _fit_viewport() -> void:
+ var view: Vector2=get_viewport().get_visible_rect().size
+ var portrait := view.y>view.x
+ position=Vector2(8,24) if portrait else (view-Vector2(440,304))/2
+ size=view-Vector2(16,48) if portrait else Vector2(440,304)
+ for toggle in options.values(): toggle.custom_minimum_size.y=44 if portrait else 28
+ for button in binding_buttons.values(): button.custom_minimum_size.y=44 if portrait else 28
+ back.custom_minimum_size.y=44 if portrait else 28
+
+
+func _process(_delta: float) -> void:
+ if not visible: return
+ var view: Vector2=get_viewport().get_visible_rect().size
+ var target := view-Vector2(16,48) if view.y>view.x else Vector2(440,304)
+ if not size.is_equal_approx(target): _fit_viewport()

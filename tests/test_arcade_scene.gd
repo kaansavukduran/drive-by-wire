@@ -82,12 +82,12 @@ func _process(_delta: float) -> bool:
 	game._close_box()
 	for button in game.touch_controls:
 		button.show()
-	touch(0, Vector2(48, 333), true)
-	touch(1, Vector2(490, 333), true)
+	touch(0, game.touch_by_action["drive_up"].position + game.touch_by_action["drive_up"].size / 2, true)
+	touch(1, game.touch_by_action["drive_fire"].position + game.touch_by_action["drive_fire"].size / 2, true)
 	h.check("two fingers hold turbo and fire together", game._held("drive_up") and game._held("drive_fire"))
-	touch(0, Vector2(48, 333), false)
+	touch(0, game.touch_by_action["drive_up"].position + game.touch_by_action["drive_up"].size / 2, false)
 	h.check("releasing turbo preserves second finger fire", not game._held("drive_up") and game._held("drive_fire"))
-	touch(1, Vector2(490, 333), false)
+	touch(1, game.touch_by_action["drive_fire"].position + game.touch_by_action["drive_fire"].size / 2, false)
 	h.check("releasing all fingers clears held actions", not game._held("drive_fire"))
 	game.hp = 60
 	game.pickups.append({"kind": "repair", "pos": Vector2(game.car_x, game.PLAYER_Y)})

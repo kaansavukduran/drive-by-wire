@@ -4,7 +4,7 @@ const {chromium}=require('playwright');
 const fs=require('node:fs');
 const path=require('node:path');
 const assert=require('node:assert/strict');
-const output=process.env.DBW_EVIDENCE_DIR||'work/evidence-v040';
+const output=process.env.DBW_EVIDENCE_DIR||'work/evidence-v050';
 const base=process.env.DBW_URL||'http://127.0.0.1:8765';
 fs.mkdirSync(output,{recursive:true});
 (async()=>{
@@ -23,7 +23,7 @@ fs.mkdirSync(output,{recursive:true});
     window.__pad=pad;
     Object.defineProperty(navigator,'getGamepads',{value:()=>{pad.timestamp=performance.now();return pad.connected?[pad]:[];}});
    });
-   await page.goto(`${base}/?qa_render=${mode}`);
+   await page.goto(`${base}/?qa&qa_render=${mode}`);
    await page.waitForFunction(()=>document.documentElement.dataset.gameState==='started',null,{timeout:60000});
    const tap=async(index)=>{
     await page.evaluate(i=>{window.__pad.buttons[i]={pressed:true,touched:true,value:1};},index);
@@ -32,7 +32,9 @@ fs.mkdirSync(output,{recursive:true});
     await page.waitForTimeout(250);
    };
    await page.evaluate(()=>{const event=new Event('gamepadconnected');Object.defineProperty(event,'gamepad',{value:window.__pad});window.dispatchEvent(event);});
-   await tap(0); // Title A, through navigator.getGamepads -> Godot -> native Button.
+   await tap(0); // Title -> story briefing.
+   await page.waitForFunction(()=>window.__dbwQA?.screen==='briefing',null,{timeout:15000});
+   await tap(0); // Confirm the first route through the native Godot Button.
    await page.waitForFunction(()=>Number(document.documentElement.dataset.gameFps)>0,null,{timeout:15000});
    const samples=[];
    for(let i=0;i<3;i++){

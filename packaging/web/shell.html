@@ -104,10 +104,11 @@ body {
         <a id="help-link" href="#accessible-help">Kontroller ve erişim bilgisi</a>
         <aside id="accessible-help" tabindex="-1">
           <h1>Drive-By Wire nasıl oynanır?</h1>
-          <p>MOMO ile 1.200 metreye ulaş. Sol ve sağ ok şerit değiştirir; yukarı turbo, aşağı fren. Boşluk veya F ateş eder. X mayın, Shift sıyrılma, C destek, Escape mola.</p>
+          <p>MOMO’ya verdiğin sözü tut; birlikte 1.200 metreyi aşıp eve dön. Sol ve sağ ok şerit değiştirir; yukarı turbo, aşağı fren. Boşluk veya F ateş eder. X mayın, Shift sıyrılma, C destek, Escape mola. WASD de sürüşü yönetir; yolda fare sol ateş, sağ sıyrılmadır.</p>
+          <p>Mobil ve tablette yolda sağa/sola kaydırarak bir şerit değiştir. Turbo, fren, ateş, mayın, sıyrılma ve destek için eylem düğmeleri vardır. Dikey ve yatay ekran desteklenir.</p>
           <p>Kumandada sol çubuk veya D-pad yön verir; A/RT ateş, RB turbo, LT fren, X mayın, B/LB sıyrılma, Y destek, Start mola. Tuşlar Ayarlar içinden değiştirilebilir.</p>
           <p>Ayarlar içinde otomatik ateş, düşük güç, sesi kapatma, ses düzeyi ve hareket azaltma vardır. Kayıt yalnızca bu cihazda tutulur; Veri sekmesinden silinebilir.</p>
-          <p>Oyun alanı görsel bir canvas kullanır. Ekran okuyucuyla tam oynanabilirlik henüz doğrulanmadı. Yatay ekran önerilir.</p>
+          <p>Oyun alanı görsel bir canvas kullanır. Ekran okuyucuyla tam oynanabilirlik henüz doğrulanmadı. Yol öncesi tercihin oyun içi desteği ve bölüm sonunu etkiler. Mola menüsünden Yol günlüğünü okuyabilirsin.</p>
           <a href="#canvas">Oyuna dön</a>
         </aside>
 
@@ -140,9 +141,14 @@ if (lowPower) {
   document.body.style.alignItems = 'center';
   document.body.style.justifyContent = 'center';
   function fitLowPower() {
-    const ratio = Math.min(window.innerWidth / 640, window.innerHeight / 360);
-    lowCanvas.style.width = `${Math.round(640 * ratio)}px`;
-    lowCanvas.style.height = `${Math.round(360 * ratio)}px`;
+    const portrait = window.innerHeight > window.innerWidth;
+    const width = portrait ? 360 : 640;
+    const height = portrait ? 640 : 360;
+    if (lowCanvas.width !== width) lowCanvas.width = width;
+    if (lowCanvas.height !== height) lowCanvas.height = height;
+    const ratio = Math.min(window.innerWidth / width, window.innerHeight / height);
+    lowCanvas.style.width = `${Math.round(width * ratio)}px`;
+    lowCanvas.style.height = `${Math.round(height * ratio)}px`;
   }
   window.addEventListener('resize', fitLowPower);
   fitLowPower();

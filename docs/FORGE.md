@@ -66,3 +66,13 @@ Yeni resmî belge okundu; erişimde başlık v1.2 olduğundan istenen v1.1 kapsa
 390 otomatik kontrol PASS. Yazılım renderer normal mod 60 FPS kapısı FAIL; düşük güç 30 FPS ara hedefi PASS. Fiziksel cihaz/yardımcı teknoloji/insan eğlence testi ve üretim yayını NOT TESTED. Ayrıntılar QA.md'de.
 
 [0.4 teslimleri](https://drive.google.com/drive/folders/1-AJSBd8mt-o2dZgBm2CWC9W8LiOGABMV). 0.2 ve 0.3 yedekleri korundu.
+
+## 0.5 · Onaylı kaydırma ve Eve Giden Yol
+
+Kullanıcı son olarak telefon/tablette sağa/sola kaydırma + eylem düğmelerini seçti; önceki joystick isteği bu seçimle değişti. PC oklar/WASD ve yol alanında fare, gamepad analog/D-pad/tetikleyici akışı korunup doğrulandı. Dikey/yatay ekran için Godot içerik boyutu ve UI yerleşimi uyarlanır. Kontrol kararı CONTROLS.md ve AGENTS.md'de kayıtlıdır.
+
+İlk hikâyeli bölümde yol öncesi iki tercih gerçek can/mayın desteğini ve hedefi değiştirir; mesafe diyalogları, molada okunabilen günlük, hedefe bağlı son ve yerel bölüm hafızası vardır. Yeni kanon onayı iddiası yoktur. JOURNEY.md tasarım sınırını açıklar.
+
+429 headless kontrol / 11 takım PASS. Chromium PC, telefon/tablet dikey-yatay, düşük güç telefon ve emüle gamepad akışları PASS. Normal 60 FPS yazılım renderer hedefi FAIL; düşük güç 30 FPS ara hedefi PASS. Fiziksel/yardımcı teknoloji/insan eğlence testleri NOT TESTED. Ayrıntılar QA.md ve teslim kanıtlarında.
+
+[0.5 kaynak, web ve doğrulama teslimleri](https://drive.google.com/drive/folders/1Ti_FI_vlt2HG9kMmlchkPjW-SHDCWNrA). Önceki sürümler korunur.

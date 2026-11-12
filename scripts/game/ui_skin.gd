@@ -85,4 +85,8 @@ static func prepare_confirmation(dialog: ConfirmationDialog) -> void:
 			dialog.hide()
 			dialog.canceled.emit()
 			dialog.set_input_as_handled())
-	dialog.about_to_popup.connect(func(): dialog.get_cancel_button().call_deferred("grab_focus"))
+	dialog.about_to_popup.connect(func():
+		var width: float=dialog.get_tree().root.get_visible_rect().size.x
+		dialog.get_label().custom_minimum_size.x=minf(340,width-64)
+		dialog.size.x=mini(dialog.size.x,int(width-24))
+		dialog.get_cancel_button().call_deferred("grab_focus"))

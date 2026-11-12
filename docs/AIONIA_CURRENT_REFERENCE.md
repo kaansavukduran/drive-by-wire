@@ -12,3 +12,5 @@ Erişim: 12 Kasım 2026. Belge başarıyla okundu. Kullanıcının istediği sü
 - Test sonuçları PASS / FAIL / NOT TESTED olarak kanıtla raporlanır; yapılmamış test veya onaylanmamış karakter varyantı tamamlanmış kabul edilmez.
 
 [Tasarım ve teknik inceleme](DESIGN_BRIEF.md) · [Mahremiyet](PRIVACY.md) · [Gerçek test raporu](QA.md) · [Önceki sanat incelemesi](ART_BIBLE.md).
+
+0.5 güncellemesinde resmî belge yeniden okundu. Mobil/tablet için hem dikey hem yatay tam ana akış ve şema öncesi seçenek/onay hükümleri de kaynakta bulunuyor. Kullanıcı kaydırma + eylem düğmelerini açıkça seçti; karar CONTROLS.md içinde.

@@ -10,4 +10,4 @@ Normatif evren adı **AIONIA**; önceki geliştirme notlarında geçen Aionverse
 
 Aion ve Ömer mevcut garaj/menü çizimleriyle görünür. Kurt, Kuzu veya Emre için yeni oynanabilir rol, ilişki, köken veya animasyon icat edilmedi. Aion'un farklı arka kuyruk paftaları ve Kuzu'nun hale/kitap varyantları aynı kesin tasarım diye birleştirilmedi. Emre'nin sprite sheet'i kaynak klasörde bulunmadı. Fragaria çilek görseli resmî son logo olarak onaylanmadığından bu sürümde marka yazısı kullanılır.
 
-Drive'daki kaynaklar düzenlenmedi veya yeniden boyutlandırılmış kopyalarla değiştirilmedi. Yeni lore önerisi eklenirse TASLAK kaydı ve insan onayı gerekir; bu çalışmada yeni lore önerisi yapılmadı.
+Drive'daki kaynaklar düzenlenmedi veya yeniden boyutlandırılmış kopyalarla değiştirilmedi. Yeni lore önerisi eklenirse TASLAK kaydı ve insan onayı gerekir; 0.5 sürümünde kullanıcının hikâye isteğiyle MOMO/garaj ilişkisine dayalı yerel bir bölüm yazıldı. [JOURNEY.md](JOURNEY.md) bunu OYUN / TASLAK olarak sınırlar; ana kanon onayı iddiası yoktur.

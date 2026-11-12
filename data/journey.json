@@ -1,0 +1,33 @@
+{
+  "chapter": "BÖLÜM 1 · EVE GİDEN YOL",
+  "premise": "MOMO geçen seferin izlerini taşıyor. Garajınız 1.200 metre ötede. Bu yolculukta mesele yalnızca yolu aşmak değil: birbirinize verdiğiniz sözü tutmak.",
+  "question": "MOMO: ‘Bu kez nasıl gidelim? Direksiyon sende. Ben yanındayım.’",
+  "routes": {
+    "steady": {
+      "name": "Birbirimizi kollayalım",
+      "effect": "+15 azami can. Yol hedefi: MOMO'ya en az bir kez destek ver.",
+      "opening": "Acele etmek zorunda değiliz. Birlikte dönelim, yeter.",
+      "objective": "MOMO'ya destek ver",
+      "max_hp": 15,
+      "mines": 0,
+      "success": "Sözünü tuttun. Garajın ışığına birlikte vardık. Bu yolu artık tek başıma hatırlamayacağım.",
+      "partial": "Eve vardık. Yolda sesini biraz daha duymak isterdim. Bir sonraki sefer birbirimizi daha çok dinleriz."
+    },
+    "supplies": {
+      "name": "Dönüş için ikmal toplayalım",
+      "effect": "+2 mayın. Yol hedefi: en az iki ikmal kapsülü topla.",
+      "opening": "Garaja elimiz dolu dönelim. Kapsülleri ben işaretlerim, güvenli anı sen seç.",
+      "objective": "İki ikmal kapsülü topla",
+      "max_hp": 0,
+      "mines": 2,
+      "success": "Hem eve döndük hem yarına hazırız. Topladıklarımızla garajda birbirimizi toparlarız.",
+      "partial": "Her kapsüle yetişemedik. Olsun, önce birlikte dönmekti. Eksikleri sonra tamamlarız."
+    }
+  },
+  "beats": [
+    {"distance": 300, "line": "İlk kez bu kadar sessiz gitmiyoruz. Motor sesinin yanında sen de varsın."},
+    {"distance": 650, "line": "Yolun yarısını aştık. Korkum geçmedi; ama artık yalnız değilim."},
+    {"distance": 1000, "line": "Garajın ışığını görüyorum. Son düzlükte de birbirimizi kollayalım."}
+  ],
+  "failure": "Garaja varamadık. Ama bu, verdiğimiz sözü bitirmiyor. Beni toparla; birlikte bir daha deneyelim."
+}

@@ -1,4 +1,5 @@
 extends Node2D
+const QA := preload("res://scripts/game/qa_snapshot.gd")
 ## Sefer sahnesi: doğrudan ok tuşlu sürüş, üç şeritli yol, isteğe bağlı sohbet,
 ## üç düşman tipi, kapsüller, turbo, görevler, puan serisi ve MOMO ilişkisi
 ## ve sefer sonu ekranı. Oyun kuralları scripts/core/ altında, sayılar data/balance.json'da.
@@ -16,6 +17,8 @@ const Controls := preload("res://scripts/game/controls.gd")
 const Arcade := preload("res://scripts/core/arcade.gd")
 const Sounds := preload("res://scripts/game/sounds.gd")
 const SettingsPanel := preload("res://scripts/game/settings_panel.gd")
+const Journey := preload("res://scripts/core/journey.gd")
+const SwipeSteering := preload("res://scripts/game/swipe_steering.gd")
 const TouchControl := preload("res://scripts/game/touch_control.gd")
 const FONT_SYMBOLS := preload("res://assets/fonts/ControlSymbols.ttf")
 const CAR_SHEET := preload("res://assets/sprites/player_car.png")
@@ -123,9 +126,31 @@ var energy_caption: Label
 var metrics_clock := 0.0
 var pad_lane_latch := 0
 var hud_clock := 0.0
+var qa_clock := 0.0
 var web_help_callback: JavaScriptObject
 var abandon_dialog: ConfirmationDialog
 var pending_exit: Callable
+var journey: RefCounted
+var comfort_count := 0
+var swipe := SwipeSteering.new()
+var road_touch_rect := Rect2()
+var mouse_fire := false
+var world_origin := Vector2.ZERO
+var ui_layer: CanvasLayer
+var ui_panels: Array[Panel] = []
+var base_rects: Dictionary = {}
+var brand_label: Label
+var momo_title: Label
+var pause_button: Button
+var touch_hint: Label
+var story_caption: Label
+var touch_by_action: Dictionary = {}
+var journal_panel: PanelContainer
+var journal_text: Label
+var journal_scroll: ScrollContainer
+var result_buttons: Array[Button] = []
+var layout_initialized := false
+var was_portrait := false
 
 
 func _ready() -> void:
@@ -133,6 +158,7 @@ func _ready() -> void:
 	var base_balance := DataLoader.load_json(DataLoader.BALANCE_PATH)
 	store = SaveStore.new()
 	save = store.load_data()
+	journey = Journey.new(Session.next_route)
 	Controls.install(save["settings"]["bindings"], save["settings"]["pad_bindings"], save["settings"]["deadzone"])
 	var garage := Garage.new(DataLoader.load_json(DataLoader.GARAGE_PATH), base_balance)
 	balance = garage.effective_balance(base_balance, save.get("upgrades", {}), Session.next_run_modifiers)
@@ -159,8 +185,9 @@ func _ready() -> void:
 	speed = _cfg("player.base_speed", 220)
 	target_speed = speed
 	max_hp = _cfg("player.max_hp", 100)
+	max_hp += float(journey.spec()["max_hp"])
 	hp = max_hp
-	mines_left = int(_cfg("mine.count", 3))
+	mines_left = int(_cfg("mine.count", 3)) + int(journey.spec()["mines"])
 	spawn_timer = _cfg("spawn.initial_delay", 2.0)
 	slow_scale = float(DataLoader.dig(balance, "time.command_box_time_scale", 0.1))
 	lane = lane_count / 2
@@ -168,7 +195,13 @@ func _ready() -> void:
 	car_x = _lane_x(lane)
 	_build_ui()
 	face.decorative_motion = motion_enabled
-	_say("Oklar sende.\nSpace ile ateş!")
+	_say(str(journey.spec()["opening"]))
+	bubble_left = 7.0
+	for child in ui_layer.get_children():
+		if child is Control and child != settings_panel:
+			base_rects[child] = Rect2(child.position,child.size)
+	get_viewport().size_changed.connect(_layout)
+	_layout()
 	if OS.has_feature("web"):
 		web_help_callback = JavaScriptBridge.create_callback(_on_web_help)
 		JavaScriptBridge.get_interface("window").addEventListener("hashchange", web_help_callback)
@@ -196,6 +229,7 @@ func _build_ui() -> void:
 	car.position = Vector2(car_x, PLAYER_Y)
 	add_child(car)
 	var ui := CanvasLayer.new()
+	ui_layer = ui
 	add_child(ui)
 	var theme := Theme.new()
 	# Pixelify Sans digits (5 looks like S) hurt HUD readability; Lexend stays the UI font.
@@ -208,6 +242,7 @@ func _build_ui() -> void:
 	_panel(ui, Rect2(456, 8, 176, 166))
 	_panel(ui, Rect2(8, 172, 176, 97))
 	var brand := _label(ui, theme, Vector2(18, 14), Vector2(156, 16))
+	brand_label = brand
 	brand.text = "FRAGARIA INTERACTIVE"
 	brand.add_theme_font_size_override("font_size", 9)
 	brand.add_theme_color_override("font_color", Color("ff8fb1"))
@@ -221,7 +256,7 @@ func _build_ui() -> void:
 	face = MomoFace.new()
 	face.position = Vector2(466, 18)
 	ui.add_child(face)
-	var momo_title := _label(ui, theme, Vector2(523, 20), Vector2(98, 38))
+	momo_title = _label(ui, theme, Vector2(523, 20), Vector2(98, 38))
 	momo_title.text = "MOMO\nYol arkadaşın"
 	momo_title.add_theme_font_size_override("font_size", 10)
 	bubble = _label(ui, theme, Vector2(466, 68), Vector2(156, 58))
@@ -241,15 +276,23 @@ func _build_ui() -> void:
 	toast.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	toast.add_theme_font_size_override("font_size", 12)
 	toast.add_theme_color_override("font_color", Color("ffce70"))
-	var pause_button := _control_button(ui, Rect2(466, 282, 156, 26), "Mola · Esc", func(): _set_paused(true))
+	pause_button = _control_button(ui, Rect2(466, 270, 156, 42), "Mola · Esc", func(): _set_paused(true))
 	pause_button.focus_mode = Control.FOCUS_NONE
 	_build_pause(ui)
 	_build_touch(ui)
-	end_panel = _label(ui, theme, Vector2(W / 2 - 170, 70), Vector2(340, 220))
+	_build_journal(ui)
+	story_caption = _label(ui,theme,Vector2(202,16),Vector2(236,26))
+	story_caption.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
+	story_caption.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
+	story_caption.add_theme_font_size_override("font_size",9)
+	story_caption.add_theme_color_override("font_color",Color("9de1c3"))
+	toast.position.y=46
+	end_panel = _label(ui, theme, Vector2(W / 2 - 190, 44), Vector2(380, 250))
+	end_panel.z_index=40
 	end_panel.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	end_panel.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	end_panel.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	end_panel.add_theme_font_size_override("font_size", 14)
+	end_panel.add_theme_font_size_override("font_size", 12)
 	var bg := StyleBoxFlat.new()
 	bg.bg_color = Color(0.06, 0.07, 0.11, 0.92)
 	bg.border_color = Color("e0b84a")
@@ -294,6 +337,7 @@ func _panel(parent: Node, rect: Rect2) -> void:
 	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	panel.add_theme_stylebox_override("panel", _panel_style())
 	parent.add_child(panel)
+	ui_panels.append(panel)
 
 
 func _bar(parent: Node, rect: Rect2, color: Color) -> ProgressBar:
@@ -326,13 +370,14 @@ func _control_button(parent: Node, rect: Rect2, text: String, action: Callable) 
 
 func _build_pause(parent: Node) -> void:
 	pause_panel = PanelContainer.new()
-	pause_panel.position = Vector2(200, 42)
-	pause_panel.size = Vector2(240, 250)
+	pause_panel.z_index=20
+	pause_panel.position = Vector2(200, 20)
+	pause_panel.size = Vector2(240, 320)
 	pause_panel.theme = ui_theme
 	pause_panel.add_theme_stylebox_override("panel", _panel_style())
 	parent.add_child(pause_panel)
 	var column := VBoxContainer.new()
-	column.add_theme_constant_override("separation", 7)
+	column.add_theme_constant_override("separation", 4)
 	pause_panel.add_child(column)
 	var title := Label.new()
 	title.text = "MOLA · Yol seni bekler"
@@ -344,11 +389,12 @@ func _build_pause(parent: Node) -> void:
 			pause_panel.hide()
 			settings_panel.open()],
 		["Yeniden sür", func(): _confirm_abandon(_restart_run)], ["Garaja dön", func(): _confirm_abandon(_to_garage)], ["Ana menü", func(): _confirm_abandon(_to_title)],
+		["Yol günlüğü", _open_journal],
 	]
 	for item in items:
 		var button := Button.new()
 		button.text = item[0]
-		button.custom_minimum_size.y = 27
+		button.custom_minimum_size.y = 36
 		UiSkin.style_button(button)
 		button.pressed.connect(item[1])
 		column.add_child(button)
@@ -357,11 +403,11 @@ func _build_pause(parent: Node) -> void:
 	touch_toggle.button_pressed = DisplayServer.is_touchscreen_available() or OS.has_feature("mobile")
 	touch_toggle.toggled.connect(func(value: bool):
 		touch_enabled = value
-		for button in touch_controls:
-			button.visible = value and not paused)
+		_sync_touch())
 	column.add_child(touch_toggle)
 	pause_panel.hide()
 	settings_panel = SettingsPanel.new()
+	settings_panel.z_index=30
 	settings_panel.changed.connect(_apply_settings)
 	settings_panel.closed.connect(func():
 		settings_panel.hide()
@@ -411,7 +457,6 @@ func _to_title() -> void:
 func _build_touch(parent: Node) -> void:
 	touch_enabled = DisplayServer.is_touchscreen_available() or OS.has_feature("mobile")
 	var specs := [
-		[Rect2(8, 270, 80, 42), "←", "drive_left"], [Rect2(96, 270, 80, 42), "→", "drive_right"],
 		[Rect2(8, 316, 80, 42), "TURBO", "drive_up"], [Rect2(96, 316, 80, 42), "FREN", "drive_down"],
 		[Rect2(456, 220, 80, 42), "SIYRIL", "drive_dodge"], [Rect2(544, 220, 80, 42), "DESTEK", "drive_comfort"],
 		[Rect2(456, 316, 80, 42), "ATEŞ", "drive_fire"], [Rect2(544, 316, 80, 42), "MAYIN", "drive_mine"],
@@ -427,6 +472,12 @@ func _build_touch(parent: Node) -> void:
 		button.setup(spec[0], spec[1], ui_theme, down, func(): touch_held.erase(action))
 		button.visible = touch_enabled
 		touch_controls.append(button)
+		touch_by_action[action]=button
+	touch_hint = _label(parent,ui_theme,Vector2(8,278),Vector2(176,30))
+	touch_hint.text="YOLDA KAYDIR · ← →"
+	touch_hint.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
+	touch_hint.add_theme_font_size_override("font_size",10)
+	touch_hint.visible=touch_enabled
 
 
 func _notice(text: String) -> void:
@@ -449,6 +500,14 @@ func _lane_of(x: float) -> int:
 
 func _input(event: InputEvent) -> void:
 	Controls.observe(event)
+	if is_instance_valid(journal_panel) and journal_panel.visible:
+		if event.is_action_pressed("ui_cancel") or event.is_action_pressed("drive_pause"):
+			_close_journal()
+			get_viewport().set_input_as_handled()
+		elif event.is_action_pressed("ui_up") or event.is_action_pressed("ui_down"):
+			journal_scroll.scroll_vertical += 36 if event.is_action_pressed("ui_down") else -36
+			get_viewport().set_input_as_handled()
+		return
 	if is_instance_valid(abandon_dialog) and abandon_dialog.visible:
 		return
 	if is_instance_valid(settings_panel) and settings_panel.visible:
@@ -472,6 +531,25 @@ func _input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 		return
 	if over or paused:
+		return
+	if event is InputEventScreenTouch and touch_enabled:
+		swipe.touch(event.index,event.position,event.pressed,road_touch_rect,event.canceled)
+	elif event is InputEventScreenDrag and touch_enabled:
+		var direction := swipe.drag(event.index,event.position)
+		if direction:
+			_change_lane(lane+direction)
+			get_viewport().set_input_as_handled()
+		return
+	if event is InputEventMouseButton and event.device != -1:
+		if event.button_index==MOUSE_BUTTON_LEFT and not event.pressed:
+			mouse_fire=false
+		elif event.pressed and road_touch_rect.has_point(event.position):
+			if event.button_index==MOUSE_BUTTON_LEFT:
+				mouse_fire=true
+				_fire({})
+			elif event.button_index==MOUSE_BUTTON_RIGHT:
+				_direct_action("drive_dodge")
+			get_viewport().set_input_as_handled()
 		return
 	if event is InputEventJoypadMotion and event.axis == JOY_AXIS_LEFT_X:
 		if absf(event.axis_value) < Controls.deadzone * 0.7:
@@ -514,6 +592,7 @@ func _direct_action(action: String) -> void:
 		"drive_chat": _open_box("")
 		"drive_comfort":
 			if comfort_cooldown <= 0.0:
+				comfort_count += 1
 				comfort_cooldown = _cfg("arcade.comfort_cooldown", 8)
 				_event("comfort")
 				energy = minf(_cfg("arcade.boost_capacity", 100), energy + _cfg("arcade.energy_amount", 30))
@@ -521,7 +600,7 @@ func _direct_action(action: String) -> void:
 
 
 func _held(action: String) -> bool:
-	return Input.is_action_pressed(action) or bool(touch_held.get(action, false))
+	return Input.is_action_pressed(action) or bool(touch_held.get(action, false)) or (action=="drive_fire" and mouse_fire)
 
 
 func _set_paused(value: bool) -> void:
@@ -538,11 +617,10 @@ func _set_paused(value: bool) -> void:
 		Input.action_release(action)
 	face.set_process(not value)
 	face.queue_redraw()
-	touch_held.clear()
+	_clear_pointers()
 	boosting = false
 	pause_panel.visible = value
-	for button in touch_controls:
-		button.visible = touch_enabled and not value
+	_sync_touch()
 	if value:
 		(pause_panel.get_child(0).get_child(1) as Button).grab_focus()
 	else:
@@ -558,13 +636,14 @@ func _notification(what: int) -> void:
 
 func _restart_run() -> void:
 	Engine.time_scale = 1.0
-	get_tree().call_deferred("reload_current_scene")
+	Session.next_route = journey.route
+	get_tree().call_deferred("change_scene_to_file","res://scenes/journey.tscn")
 
 
 func _open_box(first: String) -> void:
 	if paused or over:
 		return
-	touch_held.clear()
+	_clear_pointers()
 	box.visible = true
 	box.text = first
 	box.grab_focus()
@@ -737,6 +816,12 @@ func _fire(target: Variant) -> void:
 # ---------------------------------------------------------------------------
 
 func _process(delta: float) -> void:
+	qa_clock+=delta
+	if qa_clock>=0.2 and QA.active():
+		qa_clock=0
+		var targets := {}
+		for action in touch_by_action: targets[action]=QA.rect(touch_by_action[action])
+		QA.publish("run",{"view":[get_viewport_rect().size.x,get_viewport_rect().size.y],"lane":lane,"paused":paused,"over":over,"fire":_held("drive_fire"),"boost":boosting,"distance":distance,"speed":speed,"energy":energy,"road":[road_touch_rect.position.x,road_touch_rect.position.y,road_touch_rect.size.x,road_touch_rect.size.y],"actions":targets,"pause":QA.rect(pause_button),"journal":journal_panel.visible,"touch":touch_enabled,"route":journey.route,"mines":mines_left,"dodge":dodge_cooldown,"settings":settings_panel.visible,"settings_ui":QA.settings(settings_panel),"settings_rect":QA.rect(settings_panel),"settings_back":QA.rect(settings_panel.back),"pause_menu":pause_panel.get_child(0).get_children().filter(func(child): return child is Button).map(func(child): return QA.rect(child)),"journal_rect":QA.rect(journal_panel),"journal_back":QA.rect(journal_panel.get_child(0).get_child(2))})
 	metrics_clock += delta
 	if OS.has_feature("web") and metrics_clock > 5.0:
 		metrics_clock = 0.0
@@ -769,7 +854,12 @@ func _update_hud() -> void:
 	face.mood = momo.mood
 	face.queue_redraw()
 	hint.text = Controls.run_hint()
-	hint.visible = not box.visible and not over and Controls.last_device != "touch"
+	hint.visible = not box.visible and not over and not was_portrait and not touch_enabled
+	story_caption.visible=not paused and not over
+	story_caption.text = "EVE GİDEN YOL\n" + journey.goal_text(comfort_count,arcade.collected)
+	if was_portrait:
+		energy_caption.text="ENERJİ %d%%" % int(energy_bar.value)
+		hud.text="CAN %d / %d\n%d / 1200 m" % [maxi(0,ceili(hp)),int(max_hp),int(distance)]
 
 
 
@@ -819,6 +909,9 @@ func _simulate(delta: float) -> void:
 	speed = move_toward(speed, target_speed, _cfg("player.acceleration", 160) * delta)
 	scroll = fposmod(scroll + speed * delta, 48.0)
 	distance += speed * delta * float(run_cfg.get("distance_per_pixel", 0.05))
+	for line in journey.advance(distance):
+		_say(line)
+		bubble_left=7.0
 	car.position = Vector2(round(car_x), PLAYER_Y)
 
 	_spawn(delta)
@@ -1148,7 +1241,7 @@ func _end_run(outcome := "destroyed") -> void:
 	sounds.cue("finish" if outcome == "survived" else "hit")
 	paused = false
 	pause_panel.hide()
-	touch_held.clear()
+	_clear_pointers()
 	_close_box()
 	anim = "destroyed" if outcome == "destroyed" else "drive"
 	anim_t = 0.0
@@ -1162,20 +1255,30 @@ func _end_run(outcome := "destroyed") -> void:
 	run_info["distance"] = distance
 	run_info["kills"] = kills
 	save["memory"] = garage.record_run(save.get("memory", {}), run_info)
+	save["memory"]["last_route"]=journey.route
+	save["memory"]["last_route_goal"]=int(journey.goal_met(comfort_count,arcade.collected))
+	if outcome=="survived":
+		save["memory"]["chapter_clears"]=int(save["memory"]["chapter_clears"])+1
 	save["best_score"] = maxi(int(save.get("best_score", 0)), arcade.score)
 	var saved: bool = store.save_data(save)
 	var d := float(end_result.get("trust_delta", 0.0))
-	end_panel.text = "%s\n\nPUAN %d · REKOR %d\nMesafe: %d m · Düşman: %d\nEn iyi seri: %d · Görev: %d\nGüven: %d (%s%d)\n\nMOMO: %s\n\n%sEnter: yeniden sür · G: garaj" % [
-		"YOLU AŞTIK!" if outcome == "survived" else "TEKRAR DENEYELİM",
-		arcade.score, int(save["best_score"]), int(distance), kills, arcade.best_chain, arcade.contract,
-		int(momo.trust), "+" if d >= 0 else "", int(round(d)), str(end_result.get("comment", "...")),
-		"" if saved else "Kayıt yazılamadı.\n"]
+	var final_line: String=journey.ending(outcome=="survived",comfort_count,arcade.collected)
+	journey.log_lines.append(final_line)
+	end_panel.text = "%s\n%s\n\nMOMO: %s\n\nPUAN %d · REKOR %d\nMesafe: %d m · %d düşman · Seri %d\n%s\nGüven: %d (%s%d)\n%s" % [
+		"EVE DÖNDÜK" if outcome=="survived" else "SÖZÜMÜZ DEVAM EDİYOR",str(journey.spec()["name"]),final_line,
+		arcade.score,int(save["best_score"]),int(distance),kills,arcade.best_chain,
+		"Yol hedefi tamamlandı" if journey.goal_met(comfort_count,arcade.collected) else "Yol hedefi bir sonraki sefere kaldı",
+		int(momo.trust),"+" if d>=0 else "",int(round(d)),"" if saved else "Kayıt yazılamadı."]
 	for button in touch_controls:
 		button.hide()
 	var layer := end_panel.get_parent()
-	var retry := _control_button(layer, Rect2(166, 300, 148, 30), "Yeniden sür", _restart_run)
+	var retry := _control_button(layer, Rect2(166, 300, 148, 44), "Yeniden sür", _restart_run)
 	retry.grab_focus()
-	_control_button(layer, Rect2(326, 300, 148, 30), "Garaj", _to_garage)
+	retry.z_index=40
+	result_buttons.append(retry)
+	result_buttons.append(_control_button(layer, Rect2(326, 300, 148, 44), "Garaj", _to_garage))
+	result_buttons[-1].z_index=40
+	_layout()
 
 	end_panel.visible = true
 
@@ -1234,7 +1337,7 @@ func _draw() -> void:
 	var off := Vector2.ZERO
 	if shake > 0.0 and effects_enabled and not paused:
 		off = Vector2(rng.randf_range(-1, 1), rng.randf_range(-1, 1)) * shake_power
-	position = off.round()
+	position = world_origin + off.round()
 	var road := sheets.texture("assets/road/road_tile.png")
 	if road == null:
 		_draw_fallback_road()
@@ -1462,3 +1565,146 @@ func _draw_effect(fx: Dictionary) -> void:
 		for i in range(6):
 			var a := i * TAU / 6.0 + t * 3.0
 			draw_rect(Rect2((p + Vector2(cos(a), sin(a)) * (t * 40.0)).round(), Vector2(2, 2)), Color("ffe08a"))
+
+
+func _clear_pointers() -> void:
+	touch_held.clear()
+	swipe.clear()
+	mouse_fire=false
+	for button in touch_controls:
+		button.release_visual()
+
+
+func _sync_touch() -> void:
+	var show_controls := touch_enabled and not paused and not over and not box.visible
+	for button in touch_controls:
+		button.visible=show_controls
+	if is_instance_valid(touch_hint): touch_hint.visible=show_controls
+
+
+func _place(control: Control, rect: Rect2) -> void:
+	control.position=rect.position
+	control.size=rect.size
+
+
+func _layout() -> void:
+	if not is_instance_valid(end_panel): return
+	var view: Vector2 = get_viewport().get_visible_rect().size
+	var portrait: bool = view.y>view.x
+	_clear_pointers()
+	if layout_initialized and portrait!=was_portrait and not over:
+		_set_paused(true)
+	was_portrait=portrait
+	layout_initialized=true
+	var offset: Vector2 = (view-Vector2(640,360))/2 if not portrait else Vector2.ZERO
+	for node in base_rects:
+		if is_instance_valid(node): _place(node,Rect2(base_rects[node].position+offset,base_rects[node].size))
+	momo_title.visible=not portrait
+	status_label.visible=not portrait
+	mission.visible=not portrait
+	ui_panels[2].visible=not portrait
+	face.scale=Vector2.ONE
+	bubble.add_theme_font_size_override("font_size",11 if portrait else 12)
+	score_label.add_theme_font_size_override("font_size",16 if portrait else 20)
+	hud.add_theme_font_size_override("font_size",11 if portrait else 12)
+	brand_label.text="FRAGARIA · AIONIA" if portrait else "FRAGARIA INTERACTIVE"
+	brand_label.add_theme_font_size_override("font_size",8 if portrait else 9)
+	var column := pause_panel.get_child(0)
+	for child in column.get_children():
+		if child is BaseButton: child.custom_minimum_size.y=44 if portrait else 36
+	pause_panel.reset_size()
+	if portrait:
+		var width: float = view.x
+		_place(ui_panels[0],Rect2(8,8,width-92,72))
+		_place(brand_label,Rect2(16,10,width-110,12))
+		_place(score_label,Rect2(16,27,94,24))
+		_place(hud,Rect2(118,28,width-214,36))
+		_place(hp_bar,Rect2(16,55,90,5))
+		_place(energy_bar,Rect2(118,55,width-218,5))
+		_place(energy_caption,Rect2(118,62,width-214,12))
+		energy_caption.add_theme_font_size_override("font_size",9)
+		_place(route_bar,Rect2(8,83,width-16,4))
+		_place(pause_button,Rect2(width-76,12,64,60))
+		pause_button.text="Mola"
+		_place(ui_panels[1],Rect2(8,94,width-16,68))
+		face.position=Vector2(16,104)
+		_place(bubble,Rect2(76,102,width-94,52))
+		_place(story_caption,Rect2(8,166,width-16,28))
+		_place(toast,Rect2(30,200,width-60,42))
+		var play_height := maxf(220,view.y-370)
+		var zoom := minf(play_height/360.0,(width-24)/224.0)
+		scale=Vector2.ONE*zoom
+		world_origin=Vector2(width/2-320*zoom,196)
+		road_touch_rect=Rect2(12,196,width-24,play_height)
+		_place(touch_hint,Rect2(12,view.y-166,width-24,22))
+		touch_hint.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
+		var gap := 8.0
+		var button_width: float = (width-24-gap*2)/3
+		var actions := ["drive_up","drive_down","drive_comfort","drive_dodge","drive_fire","drive_mine"]
+		for i in actions.size():
+			touch_by_action[actions[i]].fit(Rect2(12+(i%3)*(button_width+gap),view.y-136+(i/3)*64,button_width,56))
+		_place(pause_panel,Rect2(20,40,width-40,minf(view.y-80,440)))
+		_place(end_panel,Rect2(12,174,width-24,view.y-254))
+		_place(box,Rect2(12,view.y-56,width-24,40))
+	else:
+		scale=Vector2.ONE
+		world_origin=offset
+		road_touch_rect=Rect2(offset+Vector2(192,12),Vector2(256,336))
+		pause_button.text="Mola · Start" if Controls.last_device=="pad" else "Mola · Esc"
+		energy_caption.add_theme_font_size_override("font_size",9)
+		touch_hint.horizontal_alignment=HORIZONTAL_ALIGNMENT_LEFT
+		var rects := {"drive_up":Rect2(8,316,80,42),"drive_down":Rect2(96,316,80,42),"drive_dodge":Rect2(456,220,80,42),"drive_comfort":Rect2(544,220,80,42),"drive_fire":Rect2(456,316,80,42),"drive_mine":Rect2(544,316,80,42)}
+		for action in rects:
+			var rect: Rect2=rects[action]
+			touch_by_action[action].fit(Rect2(rect.position+offset,rect.size))
+	position=world_origin
+	if not result_buttons.is_empty():
+		for i in result_buttons.size():
+			_place(result_buttons[i],Rect2(Vector2(12+i*(view.x/2),view.y-64),Vector2(view.x/2-24,48)) if portrait else Rect2(offset+Vector2(166+i*160,300),Vector2(148,44)))
+	_place(journal_panel,Rect2(Vector2(12,24),view-Vector2(24,48)) if portrait else Rect2(offset+Vector2(80,24),Vector2(480,312)))
+	_sync_touch()
+	_update_hud()
+
+
+func _build_journal(parent: Node) -> void:
+	journal_panel=PanelContainer.new()
+	journal_panel.z_index=30
+	journal_panel.theme=ui_theme
+	journal_panel.add_theme_stylebox_override("panel",UiSkin.panel(Color("9de1c3")))
+	parent.add_child(journal_panel)
+	var column := VBoxContainer.new()
+	column.add_theme_constant_override("separation",8)
+	journal_panel.add_child(column)
+	var title := Label.new()
+	title.text="YOL GÜNLÜĞÜ · MOMO"
+	column.add_child(title)
+	journal_scroll=ScrollContainer.new()
+	journal_scroll.horizontal_scroll_mode=ScrollContainer.SCROLL_MODE_DISABLED
+	journal_scroll.size_flags_vertical=Control.SIZE_EXPAND_FILL
+	column.add_child(journal_scroll)
+	journal_text=Label.new()
+	journal_text.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
+	journal_text.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+	journal_scroll.add_child(journal_text)
+	var back := Button.new()
+	back.text="Molaya dön · Esc / B"
+	back.custom_minimum_size.y=44
+	UiSkin.style_button(back)
+	back.pressed.connect(_close_journal)
+	column.add_child(back)
+	journal_panel.hide()
+
+
+func _open_journal() -> void:
+	_set_paused(true)
+	_clear_pointers()
+	pause_panel.hide()
+	journal_text.text="\n\n".join(journey.log_lines)+"\n\n"+journey.goal_text(comfort_count,arcade.collected)+"\n\nYukarı/aşağı, fare tekerleği veya parmağınla kaydır."
+	journal_panel.show()
+	(journal_panel.get_child(0).get_child(2) as Button).grab_focus()
+
+
+func _close_journal() -> void:
+	journal_panel.hide()
+	pause_panel.show()
+	(pause_panel.get_child(0).get_child(1) as Button).grab_focus()

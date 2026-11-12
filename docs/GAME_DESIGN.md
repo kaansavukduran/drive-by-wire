@@ -8,7 +8,7 @@ Ton: sıcak yol arkadaşlığı ile çizgi film araç çatışması. Genel arcad
 
 ## Döngü ve kurallar
 
-Ana menü → doğrudan zırhlı sürüş veya isteğe bağlı garaj konuşması/yükseltme → şerit, turbo, fren ve çatışma → kapsül ve kısa görevler → 1.200 m başarı veya can bitince sonuç → tek adımda tekrar / garaj / ana menü. Ölümde kaybedilen sefer geri yüklenmez; güven, hafıza, rekor ve tercihler cihazda saklanır.
+Ana menü → isteğe bağlı garaj konuşması/yükseltme → Eve Giden Yol tercihi (can/destek hedefi veya mayın/ikmal hedefi) → şerit, turbo, fren ve çatışma → kapsül ve kısa görevler → 1.200 m başarı veya can bitince tercihe/hedefe göre bölüm sonu → tek adımda tekrar / garaj / ana menü. Ölümde kaybedilen sefer geri yüklenmez; güven, hafıza, rekor ve tercihler cihazda saklanır.
 
 Üç ayırt edici mekanik:
 
@@ -27,3 +27,7 @@ Mola, devam, tekrar, garaj, ana menü ve ortak ayarlara erişim sağlar. Ses aç
 ## Tamamlanma ölçütü
 
 Bu dilim için gerçek girdi, çatışma, üç destek kapsülü, puan/görev, başarı/ölüm, tekrar, kayıt, menü, ses ve web açılışı doğrulanır. PASS/FAIL/NOT TESTED sonuçları [QA.md](QA.md) içindedir. İnsanlarla eğlence testi ve hedef cihaz performansı, bu dilimin otomatik testleriyle eşdeğer sayılmaz.
+
+## 0.5 kontrol ve hikâye kararı
+
+[CONTROLS.md](CONTROLS.md) son kullanıcı onayını, seçenekleri ve çoklu girdi davranışını; [JOURNEY.md](JOURNEY.md) ilk bölümün anlamlı tercihlerini ve kanon sınırını kaydeder. Telefon/tablette kaydırma + eylemler, PC’de oklar/WASD + fare, gamepad’de analog/D-pad kullanılır. Dikey/yatay düzenler ayrıdır; sürüş için metin zorunluluğu yoktur.

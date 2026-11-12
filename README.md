@@ -1,4 +1,4 @@
-# Drive-By Wire · 0.4.0
+# Drive-By Wire · 0.5.0
 
 **Fragaria Interactive · Fragaria Games · AIONIA**
 
@@ -6,7 +6,7 @@ MOMO ile distopik otoyolda 1.200 metrelik kuşatmayı aş. Ok tuşlarıyla sür,
 
 ## Oyna
 
-Ana menüde **Sürüşe başla / Space** ile hemen çık. **Nasıl oynanır?** hedefi ve kapsülleri açıklar. **Önce garaja uğra** ile MOMO'ya 1–4 üzerinden cevap verip yükseltme seçebilirsin.
+Ana menüde **Sürüşe başla / Space** ile Eve Giden Yol bölümüne gir. Yol öncesinde destek veya ikmal tercihini yap; seçim can/mayın desteğini, hedefini ve bölüm sonunu değiştirir. Mola menüsündeki Yol günlüğü diyalogları saklar. **Nasıl oynanır?** hedefi ve kapsülleri açıklar. **Önce garaja uğra** ile MOMO'ya 1–4 üzerinden cevap verip yükseltme seçebilirsin.
 
 | Tuş | İşlev |
 | --- | --- |
@@ -22,7 +22,9 @@ Ana menüde **Sürüşe başla / Space** ile hemen çık. **Nasıl oynanır?** h
 
 Kumandada sol analog veya D-pad şerit, yukarı/RB turbo, aşağı/LT fren, A/RT ateş, X mayın, B/LB sıyrılma, Y destek, Start mola. Menülerde yönler, A onay, B geri; ayarlarda LB/RB sekme değiştirir. Tuşlar ve düğmeler yeniden atanabilir; analog ölü bölgesi ayarlanabilir. Yazılım olaylarıyla akış testlidir; fiziksel kumanda henüz doğrulanmadı.
 
-Dokunmatik cihazlarda sol/sağ, turbo/fren ve ateş/mayın/sıyrılma/destek düğmeleri görünür. Turbo ve ateş iki parmakla birlikte kullanılabilir. Mola menüsünden düğmeler elle de açılır. Yatay ekran önerilir.
+Telefon/tablette **yol üzerinde sağa/sola kaydırarak** tek şerit değiştir. Eylem düğmeleriyle ateş, turbo, fren, mayın, sıyrılma ve destek kullan. Ayrı parmakla ateşe basılıyken kaydırabilirsin. Dikey ve yatay düzenler vardır; döndürünce güvenli mola verilir. Mola menüsünden dokunmatik kontroller elle açılır. Bu şema kullanıcının açık seçimidir; virtual joystick uygulanmadı.
+
+PC'de oklar/WASD yanında yol alanında fare sol basılı ateş, fare sağ sıyrılmadır. Menüler fareyle kullanılır; tıklama sürüş komutu yazdırmaz.
 
 **Kapsüller:** Artı onarım, şimşek enerji + bir mayın, kalkan tek darbeye koruma verir. Renk yanında şekiller farklıdır. Kalkan en fazla 7 saniye sürer. Düşmanları yenmek, kapsülleri toplamak ve başarılı kaçışlar seri puanı kazandırır; hasar veya seriye katkı olmadan 5 saniye geçmesi seriyi sıfırlar. Kısa görevler puan, onarım ve mayın kazandırır. 1.200 metrede sefer başarıyla biter. Sonuçta Enter ile yeniden sür, G ile garaja dön.
 
@@ -43,7 +45,7 @@ python3 -m http.server 8765 --directory build/web
 Web çıktısını `http://localhost:8765` ile aç.
 
 **Önizleme durumu:** İşlev testleri geçiyor; bulut yazılım renderer ortamında 60 FPS hedefi sağlanmadı. Fiziksel hedefler ve üretim yayını henüz doğrulanmadı. Ayrıntılar QA raporunda.
- HTML dosyasına çift tıklamak yeterli değildir. [Sürüm ve platform durumu](docs/RELEASE.md) · [Güncel AIONIA referansı](docs/AIONIA_CURRENT_REFERENCE.md) · [Tasarım incelemesi](docs/DESIGN_BRIEF.md) · [Mahremiyet](docs/PRIVACY.md) · [Sanat kılavuzu](docs/ART_BIBLE.md) · [Test sonuçları](docs/QA.md) · [Forge kaydı](docs/FORGE.md) · [Derleme](docs/BUILD.md) · [Vercel](docs/VERCEL.md).
+ HTML dosyasına çift tıklamak yeterli değildir. [Sürüm ve platform durumu](docs/RELEASE.md) · [Güncel AIONIA referansı](docs/AIONIA_CURRENT_REFERENCE.md) · [Kontrol kararı](docs/CONTROLS.md) · [Hikâyeli bölüm](docs/JOURNEY.md) · [Tasarım incelemesi](docs/DESIGN_BRIEF.md) · [Mahremiyet](docs/PRIVACY.md) · [Sanat kılavuzu](docs/ART_BIBLE.md) · [Test sonuçları](docs/QA.md) · [Forge kaydı](docs/FORGE.md) · [Derleme](docs/BUILD.md) · [Vercel](docs/VERCEL.md).
 
 `Releases/latest` önceki 0.1.0 paketlerini gösterebilir; bu dalın paketleriyle aynı değildir.
 
