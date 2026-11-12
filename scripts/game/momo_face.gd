@@ -29,7 +29,28 @@ func px(x: float, y: float, w: float, h: float, c: Color) -> void:
 	draw_rect(Rect2(x, y, w, h), c)
 
 
+const Sheets := preload("res://scripts/game/sheets.gd")
+static var _sheets: RefCounted
+
+
 func _draw() -> void:
+	if _sheets == null:
+		_sheets = Sheets.new()
+	if not _sheets.sheet("momo_face").is_empty():
+		var anim := mood + ("_talk" if talking > 0.0 else "_idle")
+		if hurt > 0.0:
+			anim = "hurt"
+		elif confused > 0.0:
+			anim = "confused_talk" if talking > 0.0 else "confused_idle"
+		if _sheets.draw_anim(self, "momo_face", anim, _t, Vector2.ZERO):
+			var bezel: Texture2D = _sheets.texture("assets/ui/momo_bezel.png")
+			if bezel:
+				draw_texture(bezel, Vector2.ZERO)
+			return
+	_draw_code_face()
+
+
+func _draw_code_face() -> void:
 	# casing and screen
 	px(0, 0, 48, 44, Color("101018"))
 	px(1, 1, 46, 42, Color("4a4f63"))

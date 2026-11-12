@@ -7,13 +7,16 @@ Unicode true
 !ifndef VERSION
   !error "Pass -DVERSION=x.y.z (python3 packaging/version.py)"
 !endif
+!ifndef ROOT
+  !define ROOT "."
+!endif
 !define APP "Drive-By Wire"
 !define EXE "DriveByWire.exe"
 !define UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\DriveByWire"
 !include "MUI2.nsh"
 
 Name "${APP}"
-OutFile "build/DriveByWire-${VERSION}-windows-x64-Setup.exe"
+OutFile "${ROOT}/build/DriveByWire-${VERSION}-windows-x64-Setup.exe"
 InstallDir "$LOCALAPPDATA\Programs\${APP}"
 InstallDirRegKey HKCU "Software\DriveByWire" "InstallDir"
 RequestExecutionLevel user
@@ -26,9 +29,9 @@ VIAddVersionKey /LANG=0 "FileVersion" "${VERSION}"
 VIAddVersionKey /LANG=0 "ProductVersion" "${VERSION}"
 VIAddVersionKey /LANG=0 "LegalCopyright" "Kaan Savukduran"
 
-!if /FileExists "build/DriveByWire.ico"
-  !define MUI_ICON "build/DriveByWire.ico"
-  !define MUI_UNICON "build/DriveByWire.ico"
+!if /FileExists "${ROOT}/build/DriveByWire.ico"
+  !define MUI_ICON "${ROOT}/build/DriveByWire.ico"
+  !define MUI_UNICON "${ROOT}/build/DriveByWire.ico"
 !endif
 !define MUI_ABORTWARNING
 !define MUI_FINISHPAGE_RUN "$INSTDIR\${EXE}"
@@ -43,9 +46,9 @@ VIAddVersionKey /LANG=0 "LegalCopyright" "Kaan Savukduran"
 
 Section "Game"
   SetOutPath "$INSTDIR"
-  File "build/windows/${EXE}"
-  File "LICENSE"
-  File "THIRD_PARTY_NOTICES.md"
+  File "${ROOT}/build/windows/${EXE}"
+  File "${ROOT}/LICENSE"
+  File "${ROOT}/THIRD_PARTY_NOTICES.md"
   WriteUninstaller "$INSTDIR\Uninstall.exe"
   CreateDirectory "$SMPROGRAMS\${APP}"
   CreateShortcut "$SMPROGRAMS\${APP}\${APP}.lnk" "$INSTDIR\${EXE}"

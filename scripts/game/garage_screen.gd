@@ -9,6 +9,8 @@ const Garage := preload("res://scripts/core/garage.gd")
 const Session := preload("res://scripts/game/session.gd")
 const MomoFace := preload("res://scripts/game/momo_face.gd")
 const FONT := preload("res://assets/fonts/Lexend.ttf")
+const Sheets := preload("res://scripts/game/sheets.gd")
+const UiSkin := preload("res://scripts/game/ui_skin.gd")
 
 const W := 640.0
 const H := 360.0
@@ -30,6 +32,8 @@ var info: Label
 var title: Label
 var buttons: VBoxContainer
 var _t := 0.0
+var sheets := Sheets.new()
+var has_art := false
 
 
 func _ready() -> void:
@@ -44,14 +48,16 @@ func _ready() -> void:
 	theme.default_font_size = 12
 	var ui := CanvasLayer.new()
 	add_child(ui)
+	has_art = sheets.texture("assets/ui/garage_bg.png") != null
 	title = _label(ui, Vector2(16, 10), Vector2(300, 24), 18)
-	title.text = "DRIVE-BY WIRE · GARAJ"
+	title.text = "" if has_art else "DRIVE-BY WIRE · GARAJ"
 	title.add_theme_color_override("font_color", Color("e0b84a"))
 	face = MomoFace.new()
-	face.scale = Vector2(2, 2)
-	face.position = Vector2(40, 64)
-	ui.add_child(face)
-	speech = _label(ui, Vector2(150, 64), Vector2(470, 80), 13)
+	var term: Array = sheets.image("garage_bg").get("terminal_screen_rect", [40, 64, 48, 44])
+	face.position = Vector2(float(term[0]), float(term[1])) if has_art else Vector2(40, 64)
+	face.scale = Vector2.ONE if has_art else Vector2(2, 2)
+	add_child(face)
+	speech = _label(ui, Vector2(16, 62), Vector2(500, 70), 13)
 	speech.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	var bubble := StyleBoxFlat.new()
 	bubble.bg_color = Color(0.93, 0.95, 1.0)
@@ -59,14 +65,14 @@ func _ready() -> void:
 	bubble.border_color = Color("101018")
 	bubble.set_border_width_all(2)
 	bubble.set_content_margin_all(8)
-	speech.add_theme_stylebox_override("normal", bubble)
+	speech.add_theme_stylebox_override("normal", UiSkin.box("assets/ui/speech_bubble.png", 6, 8) if has_art else bubble)
 	speech.add_theme_color_override("font_color", Color("1b1d2b"))
 	speech.add_theme_constant_override("outline_size", 0)
 	info = _label(ui, Vector2(16, 336), Vector2(608, 18), 10)
 	info.modulate = Color(1, 1, 1, 0.8)
 	buttons = VBoxContainer.new()
-	buttons.position = Vector2(150, 160)
-	buttons.size = Vector2(470, 160)
+	buttons.position = Vector2(16, 140)
+	buttons.size = Vector2(500, 150)
 	buttons.add_theme_constant_override("separation", 6)
 	ui.add_child(buttons)
 
@@ -102,8 +108,9 @@ func _button(text: String, action: Callable) -> Button:
 	b.theme = theme
 	b.text = text
 	b.alignment = HORIZONTAL_ALIGNMENT_LEFT
-	b.custom_minimum_size = Vector2(470, 24)
+	b.custom_minimum_size = Vector2(500, 22)
 	b.pressed.connect(action)
+	UiSkin.style_button(b)
 	buttons.add_child(b)
 	return b
 
@@ -205,6 +212,15 @@ func _process(delta: float) -> void:
 
 
 func _draw() -> void:
+	if has_art:
+		draw_texture(sheets.texture("assets/ui/garage_bg.png"), Vector2.ZERO)
+		var logo := sheets.texture("assets/ui/logo.png")
+		if logo:
+			draw_texture(logo, Vector2(12, 8))
+		var feet := float(sheets.image("garage_bg").get("character_feet_y", 330))
+		sheets.draw_anim(self, "characters", "omer_idle", _t, Vector2(560, feet))
+		sheets.draw_anim(self, "characters", "aion_idle", _t + 0.4, Vector2(450, feet))
+		return
 	# Placeholder pixel garage until the garage background sheet lands in assets/.
 	draw_rect(Rect2(0, 0, W, H), Color("1b1d2b"))
 	draw_rect(Rect2(0, 250, W, 110), Color("2a2c3a"))

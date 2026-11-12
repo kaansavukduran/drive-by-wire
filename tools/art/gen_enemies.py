@@ -439,8 +439,7 @@ def build():
     a = build_rammer()
     b = build_pickup()
     c = build_truck()
-    for name, s in (("enemy_rammer", a), ("enemy_pickup", b), ("enemy_truck", c)):
-        px.preview(s, name + "_4x.png", 3, bg=(64, 57, 82, 255))
+    return a, b, c
 
 
 if __name__ == "__main__":

@@ -10,6 +10,8 @@ const SaveStore := preload("res://scripts/core/save_store.gd")
 const Garage := preload("res://scripts/core/garage.gd")
 const Session := preload("res://scripts/game/session.gd")
 const MomoFace := preload("res://scripts/game/momo_face.gd")
+const Sheets := preload("res://scripts/game/sheets.gd")
+const UiSkin := preload("res://scripts/game/ui_skin.gd")
 const CAR_SHEET := preload("res://assets/sprites/player_car.png")
 const FONT := preload("res://assets/fonts/Lexend.ttf")
 
@@ -81,6 +83,10 @@ var hint: Label
 var end_panel: Label
 var bubble_left := 0.0
 var face: Control
+var sheets := Sheets.new()
+var road_scroll := 0.0
+var decals: Array = []  # {pos, frame}
+var props: Array = []   # {pos, anim, side}
 
 
 func _ready() -> void:
@@ -148,7 +154,7 @@ func _build_ui() -> void:
 	bg.border_color = Color("e0b84a")
 	bg.set_border_width_all(2)
 	bg.set_content_margin_all(12)
-	end_panel.add_theme_stylebox_override("normal", bg)
+	end_panel.add_theme_stylebox_override("normal", UiSkin.box("assets/ui/panel.png", 6, 12) if ResourceLoader.exists("res://assets/ui/panel.png") else bg)
 	end_panel.visible = false
 	box = LineEdit.new()
 	box.theme = theme
@@ -156,6 +162,8 @@ func _build_ui() -> void:
 	box.size = Vector2(320, 24)
 	box.placeholder_text = "MOMO'ya yaz · Enter gönderir · Esc vazgeçer"
 	box.visible = false
+	box.add_theme_stylebox_override("normal", UiSkin.box("assets/ui/command_box.png", 6))
+	box.add_theme_stylebox_override("focus", UiSkin.box("assets/ui/command_box.png", 6))
 	box.text_submitted.connect(_on_submit)
 	ui.add_child(box)
 
@@ -418,7 +426,9 @@ func _simulate(delta: float) -> void:
 	_update_enemies(delta)
 	for fx in effects:
 		fx["t"] = float(fx["t"]) + delta
-	effects = effects.filter(func(f: Dictionary) -> bool: return float(f["t"]) < 0.8)
+		fx["pos"] = fx["pos"] + Vector2(0, speed * delta * (0.6 if str(fx["kind"]).begins_with("wreck_") else 1.0))
+	effects = effects.filter(func(f: Dictionary) -> bool: return float(f["t"]) < 1.0)
+	_scroll_scenery(delta)
 
 
 func _spawn(delta: float) -> void:
@@ -509,7 +519,7 @@ func _update_mines(delta: float) -> void:
 		for e in enemies:
 			if _rect(e["pos"], ENEMY_HALF[e["type"]] + Vector2(4, 4)).has_point(m["pos"]):
 				_hurt_enemy(e, _cfg("mine.damage", 60))
-				effects.append({"pos": m["pos"], "t": 0.0, "kind": "boom"})
+				effects.append({"pos": m["pos"], "t": 0.0, "kind": "small"})
 				m["life"] = -1.0
 				break
 	mines = mines.filter(func(m: Dictionary) -> bool: return float(m["life"]) > 0.0 and m["pos"].y < H + 20)
@@ -521,11 +531,11 @@ func _update_obstacles(delta: float) -> void:
 		o["pos"] = o["pos"] + Vector2(0, speed * delta)
 		var r := _rect(o["pos"], Vector2(8, 8))
 		if float(o["hp"]) <= 0.0:
-			effects.append({"pos": o["pos"], "t": 0.0, "kind": "spark"})
+			effects.append({"pos": o["pos"], "t": 0.0, "kind": str(o["kind"]) + "_break"})
 			o["dead"] = true
 		elif r.intersects(pr):
 			o["dead"] = true
-			effects.append({"pos": o["pos"], "t": 0.0, "kind": "spark"})
+			effects.append({"pos": o["pos"], "t": 0.0, "kind": str(o["kind"]) + "_break"})
 			_damage_player(float(o["dmg"]))
 		else:
 			_check_near(o, r, _lane_of(o["pos"].x))
@@ -572,7 +582,7 @@ func _update_enemies(delta: float) -> void:
 					e["state"] = "attack"
 					e["t"] = 0.0
 					var kinds := ["crate", "barrel", "spikes"]
-					obstacles.append({"pos": e["pos"] + Vector2(0, 44), "kind": kinds[rng.randi() % 3], "hp": 20.0, "dmg": float(cfg.get("obstacle_damage", 20)), "near": false, "passed": false})
+					obstacles.append({"pos": e["pos"] + Vector2(0, 52), "kind": kinds[rng.randi() % 3], "hp": 20.0, "dmg": float(cfg.get("obstacle_damage", 20)), "near": false, "passed": false})
 		if str(e["state"]) == "attack" and float(e["t"]) > 0.5 and kind != "rammer":
 			e["state"] = "drive"
 		e["pos"] = Vector2(move_toward(e["pos"].x, _lane_x(int(e["lane"])), lane_width / maxf(float(cfg.get("lane_change_seconds", 0.6)), 0.05) * delta), e["pos"].y + vy * delta)
@@ -626,7 +636,7 @@ func _hurt_enemy(e: Dictionary, amount: float) -> void:
 
 func _explode(e: Dictionary, by_player: bool) -> void:
 	e["dead"] = true
-	effects.append({"pos": e["pos"], "t": 0.0, "kind": "boom"})
+	effects.append({"pos": e["pos"], "t": 0.0, "kind": "wreck_" + str(e["type"])})
 	_shake(float(DataLoader.dig(run_cfg, "screen_shake.kill", 2.0)))
 	if by_player:
 		kills += 1
@@ -707,41 +717,133 @@ func _animate(delta: float) -> void:
 	car.modulate = Color(0.7, 0.9, 1.0, 0.75) if dodge_left > 0.0 else Color.WHITE
 
 
+func _scroll_scenery(delta: float) -> void:
+	road_scroll = fposmod(road_scroll + speed * delta, 256.0)
+	for d in decals:
+		d["pos"] = d["pos"] + Vector2(0, speed * delta)
+	for pr in props:
+		pr["pos"] = pr["pos"] + Vector2(0, speed * delta * float(pr["parallax"]))
+	decals = decals.filter(func(d: Dictionary) -> bool: return d["pos"].y < H + 40)
+	props = props.filter(func(pr: Dictionary) -> bool: return pr["pos"].y < H + 80)
+	if rng.randf() < delta * 0.6:
+		decals.append({"pos": Vector2(_lane_x(rng.randi_range(0, lane_count - 1)) + rng.randf_range(-14, 14), -30), "frame": rng.randi_range(0, 5)})
+	if rng.randf() < delta * 0.5:
+		var names := ["billboard_obey", "billboard_buy", "billboard_momo", "neon_fuel", "neon_open", "pylon", "wreck", "toxic_puddle", "barrels"]
+		var anim: String = names[rng.randi() % names.size()]
+		var left := rng.randf() < 0.5
+		var par: Variant = DataLoader.dig(sheets.sheet("roadside_props"), "parallax." + anim, null)
+		if par == null:
+			par = 1.15 if anim.begins_with("billboard") or anim.begins_with("neon") else 1.0
+		props.append({"pos": Vector2(rng.randf_range(40, 170) if left else rng.randf_range(470, 600), -70), "anim": anim, "parallax": float(par)})
+
+
 func _draw() -> void:
 	var off := Vector2.ZERO
 	if shake > 0.0:
 		off = Vector2(rng.randf_range(-1, 1), rng.randf_range(-1, 1)) * shake_power
 	position = off.round()
+	var road := sheets.texture("assets/road/road_tile.png")
+	if road == null:
+		_draw_fallback_road()
+	else:
+		var left_tex := sheets.texture("assets/road/roadside_left.png")
+		var right_tex := sheets.texture("assets/road/roadside_right.png")
+		var y := road_scroll - 256.0
+		while y < H + 8:
+			draw_texture(left_tex, Vector2(0, y))
+			draw_texture(road, Vector2(192, y))
+			draw_texture(right_tex, Vector2(448, y))
+			y += 256.0
+	for d in decals:
+		sheets.draw_frame(self, "road_decals", int(d["frame"]), d["pos"])
+	for pr in props:
+		sheets.draw_anim(self, "roadside_props", str(pr["anim"]), game_time, pr["pos"])
+	for m in mines:
+		var armed := float(m["arm"]) <= 0.0
+		sheets.draw_anim(self, "mine", "armed" if armed else "arming", game_time, m["pos"])
+	for o in obstacles:
+		sheets.draw_anim(self, "obstacles", str(o["kind"]) + "_idle", game_time, o["pos"])
+	for e in enemies:
+		_draw_enemy_sprite(e)
+	for b in bullets:
+		sheets.draw_anim(self, "projectiles", "player_bullet", game_time, b["pos"])
+	for b in enemy_bullets:
+		sheets.draw_anim(self, "projectiles", "enemy_bullet", game_time, b["pos"])
+	for fx in effects:
+		_draw_effect_sprite(fx)
+
+
+const ENEMY_SHEETS := {"rammer": "enemy_rammer", "pickup": "enemy_pickup", "truck": "enemy_truck"}
+
+
+func _draw_enemy_sprite(e: Dictionary) -> void:
+	var name: String = ENEMY_SHEETS[str(e["type"])]
+	if sheets.sheet(name).is_empty():
+		_draw_enemy(e)
+		return
+	var anim := "drive"
+	var t := game_time
+	if float(e["flash"]) > 0.0:
+		anim = "hit"
+		t = 0.12 - float(e["flash"])
+	elif str(e["state"]) == "attack":
+		anim = "attack"
+		t = float(e["t"])
+		if str(e["type"]) == "rammer":
+			var dx := _lane_x(int(e["lane"])) - float(e["pos"].x)
+			anim = "ram_left" if dx < -2.0 else ("ram_right" if dx > 2.0 else "attack")
+			t = game_time
+	var p: Vector2 = e["pos"]
+	if str(e["type"]) == "pickup":
+		sheets.draw_anim(self, name, "drive_noturret" if anim == "drive" or anim == "attack" else anim, t, p)
+		var mount: Array = sheets.sheet(name).get("turret_mount", [24, 52])
+		var anchor: Array = sheets.sheet(name).get("anchor", [24, 40])
+		var tp := p + Vector2(float(mount[0]) - float(anchor[0]), float(mount[1]) - float(anchor[1]))
+		var dir := Vector2(car_x, PLAYER_Y) - tp
+		var idx := posmod(roundi((atan2(dir.y, dir.x) - PI / 2.0) / deg_to_rad(22.5)), 16)
+		var firing := str(e["state"]) == "attack" and float(e["t"]) < 0.15
+		sheets.draw_frame(self, "enemy_pickup_turret", idx + (16 if firing else 0), tp)
+	else:
+		sheets.draw_anim(self, name, anim, t, p)
+	var frac := float(e["hp"]) / maxf(float(e["max_hp"]), 1.0)
+	if frac < 1.0:
+		var half: Vector2 = ENEMY_HALF[e["type"]]
+		draw_rect(Rect2(p + Vector2(-half.x, -half.y - 8), Vector2(half.x * 2, 2)), Color("101018"))
+		draw_rect(Rect2(p + Vector2(-half.x, -half.y - 8), Vector2(half.x * 2 * frac, 2)), Color("e05a5a"))
+
+
+func _draw_effect_sprite(fx: Dictionary) -> void:
+	var kind := str(fx["kind"])
+	var t := float(fx["t"])
+	var p: Vector2 = fx["pos"]
+	if kind.begins_with("wreck_"):
+		var name: String = ENEMY_SHEETS.get(kind.substr(6), "")
+		if name != "" and t < sheets.anim_length(name, "destroyed"):
+			sheets.draw_frame(self, name, sheets.frame_at(name, "destroyed", t, 0), p + Vector2(0, speed * 0.0))
+		if t < sheets.anim_length("explosion", "explode"):
+			sheets.draw_frame(self, "explosion", sheets.frame_at("explosion", "explode", t, 0), p)
+	elif kind == "small":
+		if t < sheets.anim_length("explosion_small", "explode"):
+			sheets.draw_frame(self, "explosion_small", sheets.frame_at("explosion_small", "explode", t, 0), p)
+	elif kind.ends_with("_break"):
+		if t < sheets.anim_length("obstacles", kind):
+			sheets.draw_frame(self, "obstacles", sheets.frame_at("obstacles", kind, t, 0), p)
+		elif t < 0.6:
+			sheets.draw_frame(self, "smoke_sparks", sheets.frame_at("smoke_sparks", "sparks", t - 0.3, 0), p)
+	else:
+		_draw_effect(fx)
+
+
+func _draw_fallback_road() -> void:
 	draw_rect(Rect2(-8, -8, W + 16, H + 16), Color("1b1d2b"))
 	var road_w := lane_count * lane_width
 	var left := W / 2 - road_w / 2
-	draw_rect(Rect2(left - 10, -8, road_w + 20, H + 16), Color("2a2c3a"))
 	draw_rect(Rect2(left, -8, road_w, H + 16), Color("3a3d4d"))
-	draw_rect(Rect2(left - 10, -8, 3, H + 16), Color("e0b84a"))
-	draw_rect(Rect2(left + road_w + 7, -8, 3, H + 16), Color("e0b84a"))
 	var y := scroll - 48.0
 	while y < H + 8:
 		for i in range(1, lane_count):
 			draw_rect(Rect2(left + i * lane_width - 1, y, 2, 24), Color("d8d8e0"))
-		draw_rect(Rect2(left - 40, y + 8, 12, 6), Color("3d2f4f"))
-		draw_rect(Rect2(left + road_w + 28, y + 30, 12, 6), Color("3d2f4f"))
 		y += 48.0
-	for m in mines:
-		var blink := Color("ff5a5a") if int(game_time * 6) % 2 == 0 or float(m["arm"]) > 0.0 else Color("7a2a2a")
-		draw_rect(Rect2(m["pos"].x - 5, m["pos"].y - 5, 10, 10), Color("101018"))
-		draw_rect(Rect2(m["pos"].x - 4, m["pos"].y - 4, 8, 8), Color("2f3140"))
-		draw_rect(Rect2(m["pos"].x - 1, m["pos"].y - 1, 2, 2), blink)
-	for o in obstacles:
-		_draw_obstacle(o)
-	for e in enemies:
-		_draw_enemy(e)
-	for b in bullets:
-		draw_rect(Rect2(b["pos"].x - 1, b["pos"].y - 4, 2, 8), Color("7fe7ff"))
-	for b in enemy_bullets:
-		draw_rect(Rect2(b["pos"].x - 2, b["pos"].y - 2, 4, 4), Color("ff7a3a"))
-		draw_rect(Rect2(b["pos"].x - 1, b["pos"].y - 1, 2, 2), Color("ffe08a"))
-	for fx in effects:
-		_draw_effect(fx)
 
 
 func _box(c: Vector2, half: Vector2, fill: Color, outline := Color("101018")) -> void:

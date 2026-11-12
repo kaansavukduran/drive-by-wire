@@ -1,7 +1,100 @@
 {
  "conventions": "Frame index n is at column n % columns, row n // columns. anchor = pivot in frame pixels (place node position here). collision = suggested rect in frame pixels. Vehicles face up. Animations repeat indices to make holds.",
+ "fonts": {
+  "Lexend": {
+   "license": "assets/fonts/LEXEND-OFL.txt",
+   "path": "assets/fonts/Lexend.ttf",
+   "role": "fallback vector font"
+  },
+  "PixelifySans": {
+   "license": "assets/fonts/PIXELIFYSANS-OFL.txt",
+   "path": "assets/fonts/PixelifySans.ttf",
+   "role": "pixel UI font (HUD, dialogue, buttons)"
+  },
+  "VT323": {
+   "license": "assets/fonts/VT323-OFL.txt",
+   "path": "assets/fonts/VT323.ttf",
+   "role": "terminal font (command box)"
+  }
+ },
  "generator": "tools/art/build.py",
  "images": {
+  "garage_bg": {
+   "character_feet_y": 330,
+   "floor_y": 280,
+   "lift_car_rect": [
+    245,
+    166,
+    152,
+    56
+   ],
+   "notes": "640x360 full screen. Leave the floor (y 280-360) left/right of the lift for standing characters (feet at y~330).",
+   "path": "assets/ui/garage_bg.png",
+   "size": [
+    640,
+    360
+   ],
+   "terminal_screen_rect": [
+    531,
+    172,
+    48,
+    44
+   ]
+  },
+  "icon": {
+   "design_grid": 64,
+   "path": "assets/icon.png",
+   "scale": 4,
+   "size": [
+    256,
+    256
+   ]
+  },
+  "icon_192": {
+   "design_grid": 64,
+   "path": "assets/icon-192.png",
+   "scale": 3,
+   "size": [
+    192,
+    192
+   ]
+  },
+  "icon_512": {
+   "design_grid": 64,
+   "path": "assets/icon-512.png",
+   "scale": 8,
+   "size": [
+    512,
+    512
+   ]
+  },
+  "icon_adaptive_bg": {
+   "design_grid": 108,
+   "path": "assets/icon-adaptive-bg.png",
+   "scale": 4,
+   "size": [
+    432,
+    432
+   ]
+  },
+  "icon_adaptive_fg": {
+   "design_grid": 108,
+   "notes": "Android adaptive foreground; face inside the 66/108 safe zone.",
+   "path": "assets/icon-adaptive-fg.png",
+   "scale": 4,
+   "size": [
+    432,
+    432
+   ]
+  },
+  "logo": {
+   "notes": "Title lettering. Draw at integer scale.",
+   "path": "assets/ui/logo.png",
+   "size": [
+    302,
+    48
+   ]
+  },
   "momo_bezel": {
    "notes": "Bezel only, screen window transparent.",
    "path": "assets/ui/momo_bezel.png",
@@ -77,6 +170,254 @@
     256
    ],
    "tiles_vertically": true
+  },
+  "ui_bar_fill_boost": {
+   "path": "assets/ui/bar_fill_boost.png",
+   "size": [
+    8,
+    6
+   ],
+   "tiles_horizontally": true
+  },
+  "ui_bar_fill_energy": {
+   "path": "assets/ui/bar_fill_energy.png",
+   "size": [
+    8,
+    6
+   ],
+   "tiles_horizontally": true
+  },
+  "ui_bar_fill_hp": {
+   "path": "assets/ui/bar_fill_hp.png",
+   "size": [
+    8,
+    6
+   ],
+   "tiles_horizontally": true
+  },
+  "ui_bar_fill_hp_low": {
+   "path": "assets/ui/bar_fill_hp_low.png",
+   "size": [
+    8,
+    6
+   ],
+   "tiles_horizontally": true
+  },
+  "ui_bar_fill_trust": {
+   "path": "assets/ui/bar_fill_trust.png",
+   "size": [
+    8,
+    6
+   ],
+   "tiles_horizontally": true
+  },
+  "ui_bar_frame": {
+   "nine_slice": {
+    "bottom": 3,
+    "left": 3,
+    "right": 3,
+    "top": 3
+   },
+   "notes": "Bar background/frame 9-slice; inner area starts 3 px in. Tile a bar_fill_* 6 px tall inside, clipped to the value.",
+   "path": "assets/ui/bar_frame.png",
+   "size": [
+    16,
+    12
+   ]
+  },
+  "ui_bubble_tail_down": {
+   "notes": "Place under the bubble, overlapping its bottom edge by 1 px.",
+   "path": "assets/ui/bubble_tail_down.png",
+   "size": [
+    12,
+    10
+   ]
+  },
+  "ui_bubble_tail_left": {
+   "notes": "Place left of the bubble, overlapping its left edge by 1 px.",
+   "path": "assets/ui/bubble_tail_left.png",
+   "size": [
+    10,
+    12
+   ]
+  },
+  "ui_button_disabled": {
+   "nine_slice": {
+    "bottom": 5,
+    "left": 5,
+    "right": 5,
+    "top": 5
+   },
+   "path": "assets/ui/button_disabled.png",
+   "size": [
+    24,
+    16
+   ]
+  },
+  "ui_button_hover": {
+   "nine_slice": {
+    "bottom": 5,
+    "left": 5,
+    "right": 5,
+    "top": 5
+   },
+   "path": "assets/ui/button_hover.png",
+   "size": [
+    24,
+    16
+   ]
+  },
+  "ui_button_normal": {
+   "nine_slice": {
+    "bottom": 5,
+    "left": 5,
+    "right": 5,
+    "top": 5
+   },
+   "path": "assets/ui/button_normal.png",
+   "size": [
+    24,
+    16
+   ]
+  },
+  "ui_button_pressed": {
+   "nine_slice": {
+    "bottom": 5,
+    "left": 5,
+    "right": 5,
+    "top": 5
+   },
+   "path": "assets/ui/button_pressed.png",
+   "size": [
+    24,
+    16
+   ]
+  },
+  "ui_chip_calm": {
+   "nine_slice": {
+    "bottom": 5,
+    "left": 5,
+    "right": 5,
+    "top": 5
+   },
+   "notes": "Mood chip 9-slice; put the matching ui_mood_icons frame at x=3 and the label text after it.",
+   "path": "assets/ui/chip_calm.png",
+   "size": [
+    16,
+    14
+   ]
+  },
+  "ui_chip_confused": {
+   "nine_slice": {
+    "bottom": 5,
+    "left": 5,
+    "right": 5,
+    "top": 5
+   },
+   "notes": "Mood chip 9-slice; put the matching ui_mood_icons frame at x=3 and the label text after it.",
+   "path": "assets/ui/chip_confused.png",
+   "size": [
+    16,
+    14
+   ]
+  },
+  "ui_chip_excited": {
+   "nine_slice": {
+    "bottom": 5,
+    "left": 5,
+    "right": 5,
+    "top": 5
+   },
+   "notes": "Mood chip 9-slice; put the matching ui_mood_icons frame at x=3 and the label text after it.",
+   "path": "assets/ui/chip_excited.png",
+   "size": [
+    16,
+    14
+   ]
+  },
+  "ui_chip_scared": {
+   "nine_slice": {
+    "bottom": 5,
+    "left": 5,
+    "right": 5,
+    "top": 5
+   },
+   "notes": "Mood chip 9-slice; put the matching ui_mood_icons frame at x=3 and the label text after it.",
+   "path": "assets/ui/chip_scared.png",
+   "size": [
+    16,
+    14
+   ]
+  },
+  "ui_chip_sulky": {
+   "nine_slice": {
+    "bottom": 5,
+    "left": 5,
+    "right": 5,
+    "top": 5
+   },
+   "notes": "Mood chip 9-slice; put the matching ui_mood_icons frame at x=3 and the label text after it.",
+   "path": "assets/ui/chip_sulky.png",
+   "size": [
+    16,
+    14
+   ]
+  },
+  "ui_command_box": {
+   "nine_slice": {
+    "bottom": 6,
+    "left": 6,
+    "right": 6,
+    "top": 6
+   },
+   "notes": "Terminal command box 9-slice (cyan on dark). Text colour cy4 #9af6ff.",
+   "path": "assets/ui/command_box.png",
+   "size": [
+    24,
+    24
+   ]
+  },
+  "ui_panel": {
+   "nine_slice": {
+    "bottom": 6,
+    "left": 6,
+    "right": 6,
+    "top": 6
+   },
+   "notes": "Generic dark panel (garage dialogue, run summary).",
+   "path": "assets/ui/panel.png",
+   "size": [
+    24,
+    24
+   ]
+  },
+  "ui_portrait_frame": {
+   "nine_slice": {
+    "bottom": 6,
+    "left": 6,
+    "right": 6,
+    "top": 6
+   },
+   "notes": "56x56 frame for the 48x48 portraits (portrait at 4,4).",
+   "path": "assets/ui/portrait_frame.png",
+   "size": [
+    56,
+    56
+   ]
+  },
+  "ui_speech_bubble": {
+   "nine_slice": {
+    "bottom": 6,
+    "left": 6,
+    "right": 6,
+    "top": 6
+   },
+   "notes": "White speech bubble 9-slice. Dark text (g0 #0e0b16).",
+   "path": "assets/ui/speech_bubble.png",
+   "size": [
+    24,
+    24
+   ]
   }
  },
  "logical_resolution": [
@@ -89,6 +430,94 @@
   "path": "assets/palette.png"
  },
  "sheets": {
+  "characters": {
+   "anchor": [
+    36,
+    61
+   ],
+   "animations": {
+    "aion_idle": {
+     "fps": 6,
+     "frames": [
+      0,
+      0,
+      0,
+      1,
+      1,
+      0,
+      0,
+      2,
+      3,
+      2
+     ],
+     "loop": true
+    },
+    "omer_idle": {
+     "fps": 6,
+     "frames": [
+      4,
+      4,
+      4,
+      5,
+      5,
+      4,
+      4,
+      6,
+      7,
+      6
+     ],
+     "loop": true
+    },
+    "sheep_idle": {
+     "fps": 6,
+     "frames": [
+      12,
+      12,
+      12,
+      13,
+      13,
+      12,
+      12,
+      14,
+      15,
+      14
+     ],
+     "loop": true
+    },
+    "wolf_idle": {
+     "fps": 6,
+     "frames": [
+      8,
+      8,
+      8,
+      9,
+      9,
+      8,
+      8,
+      10,
+      11,
+      10
+     ],
+     "loop": true
+    }
+   },
+   "cast": {
+    "aion": "Aion (driver / player)",
+    "omer": "Baykus Omer (garage mechanic)",
+    "sheep": "Blessed Ignorant Sheep (cameo)",
+    "wolf": "Accursed Wise Wolf (rival cameo)"
+   },
+   "columns": 4,
+   "frame_height": 64,
+   "frame_width": 72,
+   "notes": "Garage standing sprites, one character per row (aion, omer, wolf, sheep), facing right. anchor = feet. Flip horizontally to face left.",
+   "path": "assets/characters/characters_standing.png",
+   "rows": 4,
+   "size": [
+    288,
+    256
+   ]
+  },
   "enemy_pickup": {
    "anchor": [
     24,
@@ -471,6 +900,34 @@
     32
    ]
   },
+  "logo_spark": {
+   "anchor": [
+    0,
+    0
+   ],
+   "animations": {
+    "spark": {
+     "fps": 8,
+     "frames": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "loop": true
+    }
+   },
+   "columns": 4,
+   "frame_height": 48,
+   "frame_width": 302,
+   "notes": "Logo with a spark running along the wire (optional animated title).",
+   "path": "assets/ui/logo_spark.png",
+   "rows": 1,
+   "size": [
+    1208,
+    48
+   ]
+  },
   "mine": {
    "anchor": [
     8,
@@ -493,13 +950,6 @@
      ],
      "loop": true
     },
-    "explode": {
-     "fps": 1,
-     "frames": [
-      12
-     ],
-     "loop": true
-    },
     "idle": {
      "fps": 1,
      "frames": [
@@ -519,10 +969,10 @@
    "frame_width": 16,
    "notes": "Player's rear mine. On trigger spawn explosion_small.",
    "path": "assets/sprites/mine.png",
-   "rows": 4,
+   "rows": 3,
    "size": [
     64,
-    64
+    48
    ]
   },
   "momo_face": {
@@ -1084,6 +1534,112 @@
     960
    ]
   },
+  "portraits": {
+   "anchor": [
+    0,
+    0
+   ],
+   "animations": {
+    "aion_portrait": {
+     "fps": 4,
+     "frames": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1
+     ],
+     "loop": true
+    },
+    "aion_portrait_alt": {
+     "fps": 1,
+     "frames": [
+      2
+     ],
+     "loop": false
+    },
+    "omer_portrait": {
+     "fps": 4,
+     "frames": [
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      4
+     ],
+     "loop": true
+    },
+    "omer_portrait_alt": {
+     "fps": 1,
+     "frames": [
+      5
+     ],
+     "loop": false
+    },
+    "sheep_portrait": {
+     "fps": 4,
+     "frames": [
+      9,
+      9,
+      9,
+      9,
+      9,
+      9,
+      9,
+      9,
+      10
+     ],
+     "loop": true
+    },
+    "sheep_portrait_alt": {
+     "fps": 1,
+     "frames": [
+      11
+     ],
+     "loop": false
+    },
+    "wolf_portrait": {
+     "fps": 4,
+     "frames": [
+      6,
+      6,
+      6,
+      6,
+      6,
+      6,
+      6,
+      6,
+      7
+     ],
+     "loop": true
+    },
+    "wolf_portrait_alt": {
+     "fps": 1,
+     "frames": [
+      8
+     ],
+     "loop": false
+    }
+   },
+   "columns": 3,
+   "frame_height": 48,
+   "frame_width": 48,
+   "notes": "48x48 HUD/garage/dialogue portraits, transparent background. Row per character (aion, omer, wolf, sheep): col 0 neutral, col 1 blink/wink, col 2 alternate expression.",
+   "path": "assets/characters/portraits.png",
+   "rows": 4,
+   "size": [
+    144,
+    192
+   ]
+  },
   "projectiles": {
    "anchor": [
     8,
@@ -1380,6 +1936,173 @@
    "size": [
     32,
     64
+   ]
+  },
+  "ui_cursor": {
+   "anchor": [
+    0,
+    0
+   ],
+   "animations": {
+    "blink": {
+     "fps": 2,
+     "frames": [
+      0,
+      1
+     ],
+     "loop": true
+    }
+   },
+   "columns": 2,
+   "frame_height": 10,
+   "frame_width": 6,
+   "path": "assets/ui/cursor.png",
+   "rows": 1,
+   "size": [
+    12,
+    10
+   ]
+  },
+  "ui_icons": {
+   "anchor": [
+    6,
+    6
+   ],
+   "animations": {
+    "battery": {
+     "fps": 0,
+     "frames": [
+      3
+     ],
+     "loop": false
+    },
+    "bullet": {
+     "fps": 0,
+     "frames": [
+      5
+     ],
+     "loop": false
+    },
+    "distance": {
+     "fps": 0,
+     "frames": [
+      6
+     ],
+     "loop": false
+    },
+    "heart": {
+     "fps": 0,
+     "frames": [
+      0
+     ],
+     "loop": false
+    },
+    "icons": {
+     "fps": 0,
+     "frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+     ],
+     "loop": false
+    },
+    "mine": {
+     "fps": 0,
+     "frames": [
+      4
+     ],
+     "loop": false
+    },
+    "trust": {
+     "fps": 0,
+     "frames": [
+      1
+     ],
+     "loop": false
+    },
+    "wrench": {
+     "fps": 0,
+     "frames": [
+      2
+     ],
+     "loop": false
+    }
+   },
+   "columns": 7,
+   "frame_height": 12,
+   "frame_width": 12,
+   "path": "assets/ui/icons.png",
+   "rows": 1,
+   "size": [
+    84,
+    12
+   ]
+  },
+  "ui_mood_icons": {
+   "anchor": [
+    6,
+    6
+   ],
+   "animations": {
+    "calm": {
+     "fps": 0,
+     "frames": [
+      0
+     ],
+     "loop": false
+    },
+    "confused": {
+     "fps": 0,
+     "frames": [
+      4
+     ],
+     "loop": false
+    },
+    "excited": {
+     "fps": 0,
+     "frames": [
+      1
+     ],
+     "loop": false
+    },
+    "moods": {
+     "fps": 0,
+     "frames": [
+      0,
+      1,
+      2,
+      3,
+      4
+     ],
+     "loop": false
+    },
+    "scared": {
+     "fps": 0,
+     "frames": [
+      2
+     ],
+     "loop": false
+    },
+    "sulky": {
+     "fps": 0,
+     "frames": [
+      3
+     ],
+     "loop": false
+    }
+   },
+   "columns": 5,
+   "frame_height": 12,
+   "frame_width": 12,
+   "path": "assets/ui/mood_icons.png",
+   "rows": 1,
+   "size": [
+    60,
+    12
    ]
   }
  },

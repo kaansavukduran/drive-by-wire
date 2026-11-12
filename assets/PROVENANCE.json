@@ -1,5 +1,145 @@
 {
  "files": {
+  "assets/characters/characters_standing.png": {
+   "derived_from": {
+    "aion": {
+     "file": "aion_endless_run/assets/canonical-aion.png",
+     "frames": [
+      0,
+      1,
+      4,
+      2
+     ],
+     "row": 0,
+     "sha256": "789fe4e54752e0f11da49eff5d43ab92e0c726ca919ca136c906991143844687"
+    },
+    "omer": {
+     "file": "aion_endless_run/assets/canonical-owl.png",
+     "frames": [
+      0,
+      1,
+      4,
+      3
+     ],
+     "row": 0,
+     "sha256": "7969f14b2b15d92f3352350546e8cd55cd3d663ecef6f768fa4f1289d727c1bb"
+    },
+    "sheep": {
+     "file": "aion_endless_run/assets/canonical-sheep.png",
+     "frames": [
+      0,
+      1,
+      3,
+      2
+     ],
+     "row": 0,
+     "sha256": "8b60d58e55798aeed7edde058342beb66647eb5d1a8735f867fbb586c2eb9083"
+    },
+    "wolf": {
+     "file": "aion_endless_run/assets/canonical-wolf.png",
+     "frames": [
+      0,
+      1,
+      4,
+      2
+     ],
+     "row": 0,
+     "sha256": "6f5eb1f33b92f4b0f77be626d9c50ab997bb79b37237d3f8857de723469e0ba3"
+    }
+   },
+   "generated_by": "tools/art/gen_characters.py",
+   "method": "derived",
+   "process": "Owner's cast, derived from the owner's canonical sheets in aion_endless_run:\ngarage standing sprites (idle loop) and 48x48 HUD/garage portraits.\n\nMethod: crop each frame by its registered rect (CANONICAL-PROVENANCE.json), align on the\nregistered eye-stabilised origin, box-downscale (alpha-weighted), threshold alpha at\n50%, palette-clean to a per-character subset of the master palette, add the 1-px ink\noutline, remove orphan pixels.",
+   "rights": "Owner's original characters (Aion, Accursed Wise Wolf, Blessed Ignorant Sheep, Baykus Omer); used with the owner's permission.",
+   "sha256": "60d73f4360bf5639d9f9e4f83429a23ee09fbc2771a3f8a6ba8cd4b2b24df606",
+   "source_registration": "aion_endless_run/assets/CANONICAL-PROVENANCE.json (sha256 c5352ed68840f3b218d62addd78c4f15e84ea63b6afb370b326d789c87985a50)",
+   "source_repo": "github: kaansavukduran/aion_endless_run (assets/)"
+  },
+  "assets/characters/portraits.png": {
+   "derived_from": {
+    "aion": {
+     "file": "aion_endless_run/assets/canonical-aion.png",
+     "frames": [
+      0,
+      1,
+      4,
+      2
+     ],
+     "row": 0,
+     "sha256": "789fe4e54752e0f11da49eff5d43ab92e0c726ca919ca136c906991143844687"
+    },
+    "omer": {
+     "file": "aion_endless_run/assets/canonical-owl.png",
+     "frames": [
+      0,
+      1,
+      4,
+      3
+     ],
+     "row": 0,
+     "sha256": "7969f14b2b15d92f3352350546e8cd55cd3d663ecef6f768fa4f1289d727c1bb"
+    },
+    "sheep": {
+     "file": "aion_endless_run/assets/canonical-sheep.png",
+     "frames": [
+      0,
+      1,
+      3,
+      2
+     ],
+     "row": 0,
+     "sha256": "8b60d58e55798aeed7edde058342beb66647eb5d1a8735f867fbb586c2eb9083"
+    },
+    "wolf": {
+     "file": "aion_endless_run/assets/canonical-wolf.png",
+     "frames": [
+      0,
+      1,
+      4,
+      2
+     ],
+     "row": 0,
+     "sha256": "6f5eb1f33b92f4b0f77be626d9c50ab997bb79b37237d3f8857de723469e0ba3"
+    }
+   },
+   "generated_by": "tools/art/gen_characters.py",
+   "method": "derived",
+   "process": "Owner's cast, derived from the owner's canonical sheets in aion_endless_run:\ngarage standing sprites (idle loop) and 48x48 HUD/garage portraits.\n\nMethod: crop each frame by its registered rect (CANONICAL-PROVENANCE.json), align on the\nregistered eye-stabilised origin, box-downscale (alpha-weighted), threshold alpha at\n50%, palette-clean to a per-character subset of the master palette, add the 1-px ink\noutline, remove orphan pixels.",
+   "rights": "Owner's original characters (Aion, Accursed Wise Wolf, Blessed Ignorant Sheep, Baykus Omer); used with the owner's permission.",
+   "sha256": "cf61d1fa3f2922bf6537c2490a530e2f68a28dc5598f6b5eb1a1740bee1d1377",
+   "source_registration": "aion_endless_run/assets/CANONICAL-PROVENANCE.json (sha256 c5352ed68840f3b218d62addd78c4f15e84ea63b6afb370b326d789c87985a50)",
+   "source_repo": "github: kaansavukduran/aion_endless_run (assets/)"
+  },
+  "assets/fonts/Lexend.ttf": {
+   "copyright": "The Lexend Project Authors; copied from aion_endless_run/assets/Lexend.ttf",
+   "glyph_count": 685,
+   "license": "SIL Open Font License 1.1 (assets/fonts/LEXEND-OFL.txt)",
+   "method": "third-party font (unmodified)",
+   "sha256": "3add53e641fbc81da64da4bb254285e2831b52b029527bc0714e2b9610832ee6",
+   "source": "aion_endless_run",
+   "turkish_glyphs_verified": "çğıİöşüÇĞÖŞÜ",
+   "verified_by": "tools/art/gen_fonts.py"
+  },
+  "assets/fonts/PixelifySans.ttf": {
+   "copyright": "Copyright 2021 The Pixelify Sans Project Authors (github.com/eifetx/Pixelify-Sans)",
+   "glyph_count": 574,
+   "license": "SIL Open Font License 1.1 (assets/fonts/PIXELIFYSANS-OFL.txt)",
+   "method": "third-party font (unmodified)",
+   "sha256": "9ba86cd010a4de309d263ceff8e8044092c9db7efda869620cb9ff1c4389e8a5",
+   "source": "https://raw.githubusercontent.com/google/fonts/main/ofl/pixelifysans/PixelifySans%5Bwght%5D.ttf",
+   "turkish_glyphs_verified": "çğıİöşüÇĞÖŞÜ",
+   "verified_by": "tools/art/gen_fonts.py"
+  },
+  "assets/fonts/VT323.ttf": {
+   "copyright": "Copyright 2011 The VT323 Project Authors (peter.hull@oikoi.com)",
+   "glyph_count": 568,
+   "license": "SIL Open Font License 1.1 (assets/fonts/VT323-OFL.txt)",
+   "method": "third-party font (unmodified)",
+   "sha256": "cf4de751ada78ceac033dbe16a687742939995b77bc2a052ae17a4957958594d",
+   "source": "https://raw.githubusercontent.com/google/fonts/main/ofl/vt323/VT323-Regular.ttf",
+   "turkish_glyphs_verified": "çğıİöşüÇĞÖŞÜ",
+   "verified_by": "tools/art/gen_fonts.py"
+  },
   "assets/fx/explosion.png": {
    "generated_by": "tools/art/gen_fx.py",
    "method": "procedural",
@@ -24,6 +164,31 @@
    "generated_by": "tools/art/gen_fx.py",
    "method": "procedural",
    "sha256": "bdf3fdcccd18cd9074bda066cd120f8bda3c3855351641d43d482d88c2813112"
+  },
+  "assets/icon-192.png": {
+   "generated_by": "tools/art/gen_garage.py",
+   "method": "procedural",
+   "sha256": "f6f99477c82285b765941e6e9cbe0289540be798b4ea5620a6039799c7b883aa"
+  },
+  "assets/icon-512.png": {
+   "generated_by": "tools/art/gen_garage.py",
+   "method": "procedural",
+   "sha256": "8653debef294dc1b1d415258f628d3f596bff94f9b8066bcf13cb0f5a501c174"
+  },
+  "assets/icon-adaptive-bg.png": {
+   "generated_by": "tools/art/gen_garage.py",
+   "method": "procedural",
+   "sha256": "5c2ce4793211bd8e8a4c1b5890084fd873f7676be1626960f31316934d79b696"
+  },
+  "assets/icon-adaptive-fg.png": {
+   "generated_by": "tools/art/gen_garage.py",
+   "method": "procedural",
+   "sha256": "20e69aaf8177d68b2ed61d3c053ad6c3eb5fd047be23e3bf86bac060a0d21217"
+  },
+  "assets/icon.png": {
+   "generated_by": "tools/art/gen_garage.py",
+   "method": "procedural",
+   "sha256": "704f30bf7e762497a8eb76703ca2c8d02c18223448850cb95a0914401f7a146f"
   },
   "assets/road/road_decals.png": {
    "generated_by": "tools/art/gen_road.py",
@@ -73,12 +238,12 @@
   "assets/sprites/mine.png": {
    "generated_by": "tools/art/gen_fx.py",
    "method": "procedural",
-   "sha256": "1b320cd50394d614c33b00a8e9509779c82262da3dcfe4ea61c8227d4293b4d4"
+   "sha256": "cb7ee259bd48746c60386c83a8f5aaca1addaa8bca85cd94746ae659ec9903ac"
   },
   "assets/sprites/obstacles.png": {
    "generated_by": "tools/art/gen_fx.py",
    "method": "procedural",
-   "sha256": "38197ed21eba3973bbf31a1021f7f2b2f008126cffe4d43dacb2c54c6ce93d79"
+   "sha256": "fba920be5479240cbbcb155bc9ffbef8ac27c7532eb5ec46f5990a239f1b0797"
   },
   "assets/sprites/pickups.png": {
    "generated_by": "tools/art/gen_fx.py",
@@ -88,12 +253,127 @@
   "assets/sprites/player_car.png": {
    "generated_by": "tools/art/gen_player.py",
    "method": "procedural",
-   "sha256": "82f07518c99ba2499960e13ee19ec982917988a8711943d5bff8a509c1dedd82"
+   "sha256": "a28829ccd8671511159fc81abaf8d3e99c63cb560b72fc63d17d1b4ee2c09cb3"
   },
   "assets/sprites/projectiles.png": {
    "generated_by": "tools/art/gen_fx.py",
    "method": "procedural",
    "sha256": "df0aed05fc17d752165616278a20499a1f1e362a1314aedb3b70615a71551d94"
+  },
+  "assets/ui/bar_fill_boost.png": {
+   "generated_by": "tools/art/gen_ui.py",
+   "method": "procedural",
+   "sha256": "5253003623c92deb0b846b09f2c8dcd678d4ad66fc591a9e1499d3ffd8bbdf5e"
+  },
+  "assets/ui/bar_fill_energy.png": {
+   "generated_by": "tools/art/gen_ui.py",
+   "method": "procedural",
+   "sha256": "dab5186416f63b613359de84232d083217993f53a47321cbf4976f3834fcb352"
+  },
+  "assets/ui/bar_fill_hp.png": {
+   "generated_by": "tools/art/gen_ui.py",
+   "method": "procedural",
+   "sha256": "91f61a9d284fcaba3ed822358812683bf33871560bd9f9bf183eb6dd5566b628"
+  },
+  "assets/ui/bar_fill_hp_low.png": {
+   "generated_by": "tools/art/gen_ui.py",
+   "method": "procedural",
+   "sha256": "17284ac6774ae6c60b48f32a8149e37df3e1ba88d2def550017b689a481a8186"
+  },
+  "assets/ui/bar_fill_trust.png": {
+   "generated_by": "tools/art/gen_ui.py",
+   "method": "procedural",
+   "sha256": "ccd5287b84eabaa5c61a1a00a4f351b561f76f53f512c1d47ba01e0baad42e5f"
+  },
+  "assets/ui/bar_frame.png": {
+   "generated_by": "tools/art/gen_ui.py",
+   "method": "procedural",
+   "sha256": "491046498cf55f2d482efd5f64aa8a0bd61fa5429da47aaaeefcadd4083106ce"
+  },
+  "assets/ui/bubble_tail_down.png": {
+   "generated_by": "tools/art/gen_ui.py",
+   "method": "procedural",
+   "sha256": "1a4d27c4946613f21092361dd74d7745dd92e1ce65eb866ebb66e411d0cae805"
+  },
+  "assets/ui/bubble_tail_left.png": {
+   "generated_by": "tools/art/gen_ui.py",
+   "method": "procedural",
+   "sha256": "1a04b6e2c3e65ff2b969b748c2e399db1a584fe26d285eaeda7ffd91c4768cdb"
+  },
+  "assets/ui/button_disabled.png": {
+   "generated_by": "tools/art/gen_ui.py",
+   "method": "procedural",
+   "sha256": "1e3d971ec9648d19c80cfbd1f5ec39d0e427a186468ce6b5fecbbb5048039dae"
+  },
+  "assets/ui/button_hover.png": {
+   "generated_by": "tools/art/gen_ui.py",
+   "method": "procedural",
+   "sha256": "abae8e2e5f0a842924e033d14ba77dfb0df54342bcdd1cd90cfe2578959ef242"
+  },
+  "assets/ui/button_normal.png": {
+   "generated_by": "tools/art/gen_ui.py",
+   "method": "procedural",
+   "sha256": "ddd9d294589b4f454f8eedec423966f0c190a179a35252b5bba137a9299dafb7"
+  },
+  "assets/ui/button_pressed.png": {
+   "generated_by": "tools/art/gen_ui.py",
+   "method": "procedural",
+   "sha256": "b168e482461a40ed466b712b74e70f49c49766d3c37d12357ce26c4045de769d"
+  },
+  "assets/ui/chip_calm.png": {
+   "generated_by": "tools/art/gen_ui.py",
+   "method": "procedural",
+   "sha256": "c1dbeb57b493ce4b4f4f8187193b522441f2513d03723ea1d823860484f33913"
+  },
+  "assets/ui/chip_confused.png": {
+   "generated_by": "tools/art/gen_ui.py",
+   "method": "procedural",
+   "sha256": "e7538e68a8b0076ba2ab67d6581b6568fe4b10c995592b2e09f7c7f9b0dd871d"
+  },
+  "assets/ui/chip_excited.png": {
+   "generated_by": "tools/art/gen_ui.py",
+   "method": "procedural",
+   "sha256": "67aff276adbdbb625b711db5528e2f161b3200ee0f4a42bea7006c5426156bf3"
+  },
+  "assets/ui/chip_scared.png": {
+   "generated_by": "tools/art/gen_ui.py",
+   "method": "procedural",
+   "sha256": "ce1a7839cfb250b589f5f159ed26b1ba4c02bff0587fdcca78d1efd2c3162009"
+  },
+  "assets/ui/chip_sulky.png": {
+   "generated_by": "tools/art/gen_ui.py",
+   "method": "procedural",
+   "sha256": "96ef9e13770ebaf32943fc85d30cd24b9d9ef55f2da49a33c9cf5c33c2052626"
+  },
+  "assets/ui/command_box.png": {
+   "generated_by": "tools/art/gen_ui.py",
+   "method": "procedural",
+   "sha256": "808967b78138e0af0cd7bfb837d5e7244a399274afe151dbd20be54566277fd3"
+  },
+  "assets/ui/cursor.png": {
+   "generated_by": "tools/art/gen_ui.py",
+   "method": "procedural",
+   "sha256": "42f0d5434ca074e6aa0162fcdd04cdf9ca309417d788327e9901b9a1c6342cfa"
+  },
+  "assets/ui/garage_bg.png": {
+   "generated_by": "tools/art/gen_garage.py",
+   "method": "procedural",
+   "sha256": "70cc5ff526cfd650700021b58a131f0bab889fec3f55b0ea9478eae2f7e2a2d1"
+  },
+  "assets/ui/icons.png": {
+   "generated_by": "tools/art/gen_ui.py",
+   "method": "procedural",
+   "sha256": "dab266d234b16fd8db692889b22046c0b1f4ec276aa0f7e63594e563290650a3"
+  },
+  "assets/ui/logo.png": {
+   "generated_by": "tools/art/gen_garage.py",
+   "method": "procedural",
+   "sha256": "668f8a865ef779d6899e01f659e854bb95ed9457bc9cbc198c6102ba21db28ff"
+  },
+  "assets/ui/logo_spark.png": {
+   "generated_by": "tools/art/gen_garage.py",
+   "method": "procedural",
+   "sha256": "1e44c1092d69d78b65496a3f61f5c6f58c5b278b7a98d33346a90beaaabdd16b"
   },
   "assets/ui/momo_bezel.png": {
    "generated_by": "tools/art/gen_momo.py",
@@ -104,6 +384,26 @@
    "generated_by": "tools/art/gen_momo.py",
    "method": "procedural",
    "sha256": "e439763ee5e74c0e04021825cd907796e44a26fcdce9698208927e3a6afbe7de"
+  },
+  "assets/ui/mood_icons.png": {
+   "generated_by": "tools/art/gen_ui.py",
+   "method": "procedural",
+   "sha256": "54a9921d356d53c59b0eb8a9a97c670524bf69e34e44c14158daa25753ec3bd7"
+  },
+  "assets/ui/panel.png": {
+   "generated_by": "tools/art/gen_ui.py",
+   "method": "procedural",
+   "sha256": "26040e1aa6e0bd74a3a561b7dda15a819c80fd7ca8cff5d48f153e76aeefe3e9"
+  },
+  "assets/ui/portrait_frame.png": {
+   "generated_by": "tools/art/gen_ui.py",
+   "method": "procedural",
+   "sha256": "5897cae5e58384d32a9726c12aff4c74a93bc96889643b999d44e818a999264c"
+  },
+  "assets/ui/speech_bubble.png": {
+   "generated_by": "tools/art/gen_ui.py",
+   "method": "procedural",
+   "sha256": "ce269780a76674aab6888a4f5c1537967c0f9fb2529e66ede5a22834442d3bae"
   }
  },
  "generator": "tools/art/build.py",

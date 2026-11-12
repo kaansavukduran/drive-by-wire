@@ -87,7 +87,6 @@ def build_mine():
     sb.add("idle", [mine(0, False)], 1)
     sb.add("arming", [mine(1, False), mine(1, True)], 6)
     sb.add("armed", [mine(2, True), mine(2, False)], 4)
-    sb.add("explode", [px.new(16, 16)], 1)   # use sheet explosion_small
     sheet, rows = sb.build()
     px.register_sheet("mine", "sprites/mine.png", sheet, 16, 16, sb.cols, rows, sb.anims,
                       anchor=(8, 8), script=SCRIPT, collision={"x": 3, "y": 3, "w": 10, "h": 10},

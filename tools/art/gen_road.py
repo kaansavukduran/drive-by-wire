@@ -399,7 +399,6 @@ def build():
                       notes="Scatter on the roadside strips (x 0-170 and 470-640). Tall props "
                             "(billboards, neon, pylons) scroll slightly faster than the ground "
                             "(parallax factor) to fake height. anchor = foot point.")
-    px.preview(road, "road_tile_4x.png", 2)
 
 
 if __name__ == "__main__":
