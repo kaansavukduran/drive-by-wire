@@ -13,6 +13,7 @@ headers and no service worker. There is deliberately no offline/PWA layer.
 """
 import hashlib
 import json
+import re
 from version import version as game_version
 import os
 import shutil
@@ -108,7 +109,15 @@ def main() -> None:
     html = (OUT / "index.html").read_text(encoding="utf-8")
     if '<html lang="tr">' not in html or "$GODOT_" in html:
         raise SystemExit("index.html was not produced from packaging/web/shell.html")
+    commit=env.get("VERCEL_GIT_COMMIT_SHA", "")
+    if not commit:
+        commit=subprocess.run(["git","rev-parse","HEAD"],cwd=ROOT,capture_output=True,text=True).stdout.strip()
+    if not re.fullmatch(r"[0-9a-f]{40}", commit):
+        raise SystemExit("A Git commit is required for isolated web release paths")
+    release_path=f"/play/{game_version()}-{commit[:12]}/"
+    metadata={"version":game_version(),"commit":commit,"engine":VERSION,"entry":release_path}
     html=html.replace("__DBW_VERSION__", "v"+game_version())
+    html=html.replace("__DBW_RELEASE__", json.dumps(metadata))
     brand=ROOT / "assets/brand/fragaria-reference.jpg"
     if not brand.exists():
         html=html.replace('<img id="status-brand" src="fragaria-reference.jpg" alt="Fragaria pixel-art çilek referansı">','')
@@ -122,11 +131,23 @@ def main() -> None:
     shutil.copy2(ROOT / "assets/fonts/VT323.ttf", OUT / "brand-font.ttf")
     if brand.exists(): shutil.copy2(brand, OUT / "fragaria-reference.jpg")
     else: print("Brand image not included: wordmark-only preview; private asset publication approval pending.",flush=True)
-    commit=env.get("VERCEL_GIT_COMMIT_SHA", "")
-    if not commit:
-        commit=subprocess.run(["git","rev-parse","HEAD"],cwd=ROOT,capture_output=True,text=True).stdout.strip()
-    (OUT / "version.json").write_text(json.dumps({"version":game_version(),"commit":commit,"engine":VERSION},indent=2)+"\n",encoding="utf-8")
-    print("Web export ready:", OUT / "index.html", flush=True)
+    # HTML, JS, WASM and PCK travel together under a new path for every commit.
+    # Reusing /index.pck lets a previously cached shell mix different releases.
+    release=OUT / release_path.lstrip("/")
+    exported=list(OUT.iterdir())
+    release.mkdir(parents=True)
+    for source in exported:
+        shutil.move(str(source), release / source.name)
+    payload=json.dumps(metadata,indent=2)+"\n"
+    (release / "version.json").write_text(payload,encoding="utf-8")
+    (OUT / "version.json").write_text(payload,encoding="utf-8")
+    # Keep the origin and Godot user:// database unchanged. Never clear saves.
+    entry=(ROOT / "packaging/web/entry.html").read_text(encoding="utf-8")
+    entry=entry.replace("__DBW_ENTRY__",release_path).replace("__DBW_VERSION__",game_version())
+    (OUT / "index.html").write_text(entry,encoding="utf-8")
+    (OUT / "play/index.html").write_text(entry,encoding="utf-8")
+    shutil.copy2(release / "favicon.png",OUT / "favicon.png")
+    print("Web export ready:",release,flush=True)
 
 
 if __name__ == "__main__":

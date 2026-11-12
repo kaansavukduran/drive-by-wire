@@ -1,4 +1,13 @@
-# Drive-By Wire 0.6.1 · Daha adil sürüş
+# Drive-By Wire 0.6.2 · Güncel oyuna güvenilir giriş
+
+[Oyunu aç](https://drive-by-wire.vercel.app/play/). Kök adres bu girişe yönlenir. GitHub `main` gönderimi Vercel'i otomatik tetikler; web yayını GitHub Release beklemez.
+
+- Godot HTML, JS, WASM ve PCK aynı sürüm/commit klasöründe; önceki dosyalarla aynı URL kullanılmaz.
+- Giriş ve sürüm bilgisi önbelleğe alınmaz. Sürüm klasöründeki büyük dosyalar değişmediği için tekrar kullanılabilir.
+- 0.6.2 ve sonrası, sayfaya dönünce yeni sürümü haber verir. Güncelleme oyuncunun düğmeye basmasıyla açılır; etap kendiliğinden yenilenmez.
+- Origin ve Godot kayıt alanı korunur; kullanıcıdan veri silmesi istenmez. Eski önbellekle geçiş ve gerçek kayıt içeriği tarayıcı testiyle doğrulandı.
+
+Önceki 0.6.1 oynanış iyileştirmeleri:
 
 Fragaria Interactive · AIONIA
 

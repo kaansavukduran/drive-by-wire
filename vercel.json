@@ -4,13 +4,17 @@
   "installCommand": "",
   "buildCommand": "python3 packaging/build_web.py",
   "outputDirectory": "build/web",
+  "redirects": [
+    { "source": "/", "destination": "/play/", "permanent": false },
+    { "source": "/index.html", "destination": "/play/", "permanent": false }
+  ],
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
-          "value": "public, max-age=0, must-revalidate"
+          "value": "no-store"
         },
         {
           "key": "X-Content-Type-Options",
@@ -23,6 +27,15 @@
         {
           "key": "Permissions-Policy",
           "value": "camera=(), microphone=(), geolocation=(), payment=()"
+        }
+      ]
+    },
+    {
+      "source": "/play/:release/:asset",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
         }
       ]
     },

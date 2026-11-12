@@ -5,7 +5,7 @@ config_version=5
 
 config/name="Drive-By Wire"
 config/description="Fragaria Interactive · Fragaria Games · AIONIA. Ok tuşlarıyla sür, İLİN ile üç arcade etabını aş; seçimlerinle 13 farklı gelecek aç."
-config/version="0.6.1"
+config/version="0.6.2"
 run/main_scene="res://scenes/loading.tscn"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 run/max_fps=60

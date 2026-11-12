@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="tr">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b1016">
+<meta name="robots" content="noindex">
+<title>Drive-By Wire · Oyunu aç</title>
+<link rel="icon" href="/favicon.png">
+<style>
+html { color-scheme:dark; background:#0b1016; color:#f5f1e8; font-family:system-ui,sans-serif; }
+body { min-height:90vh; margin:0; display:grid; place-content:center; padding:1.5rem; text-align:center; }
+a { display:inline-block; padding:1rem; color:#0b1016; background:#9de1c3; border:2px solid #f5f1e8; }
+a:focus-visible { outline:3px solid #f4a8c5; outline-offset:4px; }
+</style>
+<main>
+<p>FRAGARIA INTERACTIVE · AIONIA</p>
+<h1>Drive-By Wire</h1>
+<p role="status">Güncel oyun açılıyor · v__DBW_VERSION__</p>
+<a id="play" href="__DBW_ENTRY__">Oyunu aç</a>
+<noscript><p>Oyunu oynamak için JavaScript’i etkinleştir.</p></noscript>
+</main>
+<script>
+const entry=new URL(document.getElementById('play').getAttribute('href'),location.origin);
+entry.search=location.search;
+entry.hash=location.hash;
+document.getElementById('play').href=entry.href;
+location.replace(entry.href);
+</script>
+</html>
