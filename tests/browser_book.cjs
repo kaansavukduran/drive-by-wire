@@ -13,16 +13,16 @@ const base=process.env.DBW_URL||'http://127.0.0.1:8765';
  for(let stage=0;stage<3;stage++){
   let brief=await state();assert.equal(brief.stage,stage);
   if(brief.radio_answers.length){
-   await page.keyboard.press('ArrowUp');
+   await tap(brief.tabs[0]);await page.waitForTimeout(200);brief=await state();
    if(stage===0){
     const cast=new Set([brief.speaker]);
-    for(let i=0;i<4;i++){await page.keyboard.press('Enter');await page.waitForTimeout(250);cast.add((await state()).speaker);}
+    for(let i=1;i<brief.line_count;i++){await tap((await state()).radio_next);await page.waitForTimeout(150);cast.add((await state()).speaker);}
     assert.deepEqual([...cast].sort(),['emre','kurt','kuzu','omega','omer']);result.cast=[...cast];
     await page.screenshot({path:`${out}/cast-conversation.png`});
    }
-   await page.keyboard.press('ArrowDown');await page.keyboard.press('ArrowRight');await page.keyboard.press('Enter');
+   await tap((await state()).tabs[1]);await page.waitForTimeout(200);await tap((await state()).radio_answers[1]);
    await wait(()=>window.__dbwQA?.screen==='briefing'&&window.__dbwQA.radio_selected==='together');
-   brief=await state();
+   await tap((await state()).tabs[2]);await page.waitForTimeout(200);brief=await state();
   }
   await tap(brief.choices[0]);await wait(()=>window.__dbwQA?.screen==='run');
   assert.equal((await state()).finish,400);await page.keyboard.press('KeyC');await page.keyboard.down('Space');
@@ -43,7 +43,7 @@ const base=process.env.DBW_URL||'http://127.0.0.1:8765';
    const desired=256+best*64;
    const direction=Math.abs(desired-px)<8?'':(desired<px?'ArrowLeft':'ArrowRight');
    if(direction!==held){if(held)await page.keyboard.up(held);if(direction)await page.keyboard.down(direction);held=direction;}
-   if(q.traffic.some(e=>Math.abs(e.x-px)<25&&e.y>py+25&&e.y<py+140)&&q.mines>0&&Date.now()-lastMine>1500){await page.keyboard.press('KeyX');lastMine=Date.now();}
+   if(q.traffic.some(e=>Math.abs(e.x-px)<25&&e.y>py+25&&e.y<py+140)&&q.mines===-1&&Date.now()-lastMine>1500){await page.keyboard.press('KeyX');lastMine=Date.now();}
    if(q.traffic.some(e=>Math.abs(e.x-px)<28&&Math.abs(e.y-py)<60)&&q.dodge<=0)await page.keyboard.press('Shift');
    if(Date.now()-lastSupport>8500){await page.keyboard.press('KeyC');lastSupport=Date.now();}
    await page.waitForTimeout(150);

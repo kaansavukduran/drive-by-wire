@@ -378,8 +378,8 @@
     },
     {
       "id": "extra_mine",
-      "name": "Yedek Mayın",
-      "description": "Sefere +1 mayınla başla.",
+      "name": "Mayın Soğutucu",
+      "description": "Sınırsız mayının bekleme süresini her seviyede 0,05 sn azalt.",
       "max_level": 3,
       "levels": [
         [

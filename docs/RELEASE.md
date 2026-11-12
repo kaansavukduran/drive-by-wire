@@ -1,3 +1,7 @@
+# 0.7.1 · Kullanıcı geri bildirimi düzeltmeleri
+
+Aion ve direksiyon yol yönüne döndü. Hikâye karar ekranında dört sabit sayfa; kaydırma gerekmez. Mayın sınırsız, bekleme süreli ve basılı tutmayla tekrar eder; arka mermilere karşı alan savunması sağlar. Aynı GitHub main → Vercel otomatik web dağıtımı kullanılır. Eski kayıtlar korunur. Ayrıntılı kapsam QA.md.
+
 # Drive-By Wire 0.7.0 · Omega-3 / Üçüncü Nabız
 
 [Oyunu aç](https://drive-by-wire.vercel.app/play/). Godot 4.6.3/GDScript korunur. `main` gönderimleri mevcut Git bağlantısıyla Vercel'e otomatik dağıtılır; web yayını GitHub Release beklemez. Sürüm/commit/giriş adresi `/version.json` içindedir.

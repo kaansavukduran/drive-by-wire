@@ -1,4 +1,4 @@
-# Drive-By Wire · 0.7.0
+# Drive-By Wire · 0.7.1
 
 **Fragaria Interactive · Fragaria Games · AIONIA**
 
@@ -6,13 +6,13 @@ Omega-3 ile Üçüncü Nabız’ı yaşa: üç 400 metrelik arcade etap, üç da
 
 ## Oyna
 
-Ana menüde **Hikâyeye başla**. Emre, Kuzu, Kurt ve Baykuş Ömer ile telsiz konuşmalarını ilerlet; yanıtını ver, ardından rota seç. Yanıtlar ilişkiyi ve etap başındaki kalkan/mayın desteğini etkiler. Tamamlanan her 400 m etap bir sonraki kararı açar; üç karar **13 ayrı sona** ulaşır. Kaza, yeni bir son açmaz. Önceki etaplar ve kazanılan sonlar korunur.
+Ana menüde **Hikâyeye başla**. Emre, Kuzu, Kurt ve Baykuş Ömer ile telsiz konuşmalarını ilerlet; yanıtını ver, ardından rota seç. Konuşma, yanıt, rota ve günlük ayrı sabit sayfalardadır; bu ekranda kaydırma veya fare tekerleği gerekmez. Yanıtlar ilişkiyi ve etap başındaki kalkan/mayın soğutma desteğini etkiler. Tamamlanan her 400 m etap bir sonraki kararı açar; üç karar **13 ayrı sona** ulaşır. Kaza, yeni bir son açmaz. Önceki etaplar ve kazanılan sonlar korunur.
 
-Telefon/tablette **sabit sol joystick** ile ileri/geri/sağa/sola serbestçe sür. Sağdaki Ateş öne, Mayın arkaya gider. Diğer eylemler turbo, fren, sıyrılma ve Omega-3 desteğidir. Dikey/yatay düzen, bağımsız parmaklar ve yön değişiminde güvenli mola vardır.
+Telefon/tablette **sabit sol joystick** ile ileri/geri/sağa/sola serbestçe sür. Sağdaki Ateş öne, Mayın arkaya gider. Mayın sınırsızdır; basılı tutunca her 0,7 saniyede bırakılır. Eski yükseltmeler ve ikmal rotaları bu süreyi kısaltır. Mayın patlaması arka mermileri de temizler. Diğer eylemler turbo, fren, sıyrılma ve Omega-3 desteğidir. Dikey/yatay düzen, bağımsız parmaklar ve yön değişiminde güvenli mola vardır.
 
 PC: **oklar/WASD** sürekli dört yönlü hareket, **Space/F/fare sol** öne ateş, **X** arka mayın, **E** turbo, **Q** fren, **Shift/fare sağ** sıyrılma, **C** Omega-3 desteği, **Esc/P** mola. Gamepad: sol çubuk/D-pad hareket, A/RT ateş, X mayın, RB turbo, LT fren, B/LB sıyrılma, Y destek, Start mola. Yeniden atama ve ölü bölgesi ayarı korunur. Sürüş için yazı yazılmaz; T sohbeti isteğe bağlıdır.
 
-Karakter/araç, hitbox, ateş ve mayın aynı fizik konumuna bağlıdır. Aion sürücülü yeni araç atlası sabit gövde pivotu kullanır. NPC portreleri kare oranını korur. Saldırı uyarıları, patlama paftaları, ön namlu parlaması ve Omega-3 elektrik darbesi vardır. Destek yakındaki düşman mermilerini temizler. Ses, titreşim, kamera sarsıntısı ve azaltılmış hareket tercihleri korunur.
+Karakter/araç, hitbox, ateş ve mayın aynı fizik konumuna bağlıdır. Aion sürücülü araç atlası sabit gövde pivotu kullanır; Aion ve direksiyon aracın önüne bakar. NPC portreleri kare oranını korur. Saldırı uyarıları, patlama paftaları, ön namlu parlaması ve Omega-3 elektrik darbesi vardır. Destek yakındaki düşman mermilerini temizler. Ses, titreşim, kamera sarsıntısı ve azaltılmış hareket tercihleri korunur.
 
 Koyu varsayılan tema; açık/sistem ve font tercihi, otomatik ateş, düşük güç, bağımsız ses/hareket seçenekleri Ayarlar'dadır. Kayıtlar yereldir. Özel hesap, reklam, analiz veya LLM bağlantısı yoktur. Godot Web Canvas gerçek sistem fontuna erişemediğinden gömülü yedek kullanır. Fiziksel cihaz/gamepad ve insan eğlence testi yapılmış sayılmaz.
 
@@ -35,7 +35,7 @@ Web çıktısını `http://localhost:8765` ile aç.
 
 `Releases/latest` önceki 0.1.0 paketlerini gösterebilir; bu dalın paketleriyle aynı değildir.
 
-0.7.0: Omega-3 adı, dört yönlü serbest sürüş, kullanıcı onaylı sabit joystick, yeni Aion sürücü/portre atlasları ve Üçüncü Nabız senaryosu. Önceki kayıt kimlikleri ve 13 sonun kimlikleri korunur.
+0.7.1: Omega-3 adı, dört yönlü serbest sürüş, kullanıcı onaylı sabit joystick, yeni Aion sürücü/portre atlasları ve Üçüncü Nabız senaryosu. Önceki kayıt kimlikleri ve 13 sonun kimlikleri korunur.
 
 ## Kaynaklar
 

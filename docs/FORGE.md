@@ -102,3 +102,9 @@ Konum regresyonları iki gerçek hata yakaladı: yatay turbo/mola çakışması 
 Görsel üretim orijinalleri yerelde korunur. Oyuna alınan atlaslar Godot Image ile sabit piksel hücrelerine nearest örneklenir; PNG boyutu 3.645.688 → 131.244 byte. Büyük blob yükleme çağrısı sonuçlanmadı; küçük işlenmiş dosyalar GitHub blob olarak hash'leri doğrulanarak alındı. Özel Drive orijinalleri/bağlantıları ve Git geçmişi yayımlanmaz.
 
 Sonraki öncelik: fiziksel Firefox Android, Safari/iOS, Xbox ve insan oyuncu denge/anlatı testi. Firefox 144.0.2 Linux otomasyonu bu ortamda WebGL2 sunamadığından BLOCKED; başarılı Chromium emülasyonu bunun yerine sunulmaz. Normal yazılım renderer 60 FPS hedefi FAIL; düşük güç ölçümü ayrı raporlanır. Güncel sonuçlar QA.md, yayından sonraki kesin commit/giriş adresi `/version.json` ve yayın doğrulama raporundadır.
+
+## 0.7.1 · Yol yönü / kaydırmasız karar / sınırsız arka savunma
+
+Kaynak `/workspace/drive-by-wire-public`, dal `codex/road-facing-infinite-mines`; başlangıç production main `0b69f681b98f3ec15bb7e62d73a0297736fc4da1`. Kullanıcı Aion yönünü, küçük ekranda seçim kaydırmasını ve tükenen mayın yüzünden savunmasız kalmayı bildirdi. Sabit joystick şeması korunur. Aion ve direksiyon kuzeye döndü; bütün karelerde ortak gövde pivotu doğrulandı. Karar ekranı ScrollContainer yerine dört sabit sayfaya ayrıldı; kontrol ve metin taşmaları test edilir, içerik gizleyip yalnız çubuğu kapatma yapılmaz.
+
+Mayın sayısız, beklemeli ve basılı tutmayla tekrarlanır. Eski mayın bonusları beklemeyi kısaltır; kayıt biçimi korunur. Patlama arka mermileri temizler, gerçek takipçiye hasar verir. 19 takımda 1049 native kontrol PASS; yeni arka savunma 11 ve bütün 10 karar düğümü ×4sayfa ×4ekran =160 taşma kontrolü var. Web ve yayın doğrulaması QA.md / ayrı dağıtım kaydındadır. Sonraki öncelik fiziksel mobil/Xbox ve insan oyuncu denge testidir.

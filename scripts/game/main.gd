@@ -86,7 +86,9 @@ var mines: Array = []        # {pos, arm, life}
 var obstacles: Array = []    # {pos, kind, hp, dmg, near, passed}
 var enemies: Array = []      # {type, pos, lane, hp, max_hp, cd, state, t, near, passed, flash}
 var effects: Array = []      # {pos, t, kind}
-var mines_left := 3
+var mines_left := 3 # Legacy supply/upgrade level; never consumed.
+var mine_cooldown := 0.0
+var mine_drops := 0
 var fire_cooldown := 0.0
 var spawn_timer := 2.0
 var kills := 0
@@ -260,7 +262,7 @@ func _build_ui() -> void:
 	car.texture = CAR_SHEET
 	car.region_enabled = true
 	car.centered=false
-	car.offset=-Vector2(32,45)
+	car.offset=-Vector2(32,43.5)
 	car.scale=Vector2(48.0/FW,80.0/FH)
 	car.position = Vector2(car_x, car_y)
 	add_child(car)
@@ -786,12 +788,15 @@ func _execute(command: Dictionary) -> void:
 		"fire":
 			_fire(command.get("target", {}))
 		"drop_mine":
-			if mines_left > 0:
-				mines_left -= 1
+			if mine_cooldown <= 0.0:
+				mine_cooldown = _mine_reload()
+				mine_drops += 1
 				sounds.cue("mine")
-				mines.append({"pos": Vector2(car_x, car_y + 30), "arm": _cfg("mine.arm_seconds", 0.3), "life": _cfg("mine.lifetime", 8.0)})
-			else:
-				_say("Mayın kalmadı!")
+				mines.append({"pos": Vector2(car_x, car_y + 30), "arm": _cfg("mine.arm_seconds", 0.12), "life": _cfg("mine.lifetime", 8.0)})
+
+func _mine_reload() -> float:
+	# Existing saved upgrades and route support now improve reload instead of ammo.
+	return maxf(0.3,_cfg("mine.cooldown",0.7)-0.05*maxi(0,mines_left-3))
 
 
 ## Score for how dangerous a lane is right now (for dodge).
@@ -861,7 +866,7 @@ func _process(delta: float) -> void:
 		qa_clock=0
 		var targets := {}
 		for action in touch_by_action: targets[action]=QA.rect(touch_by_action[action])
-		QA.publish("run",{"view":[get_viewport_rect().size.x,get_viewport_rect().size.y],"chapter":campaign.get("stage",-1),"hp":hp,"kills":kills,"collected":arcade.collected,"finish":_cfg("arcade.finish_distance",1200),"warnings":_enemy_warnings().map(func(w): return {"kind":w["kind"],"lane":w["lane"],"progress":w["progress"],"origin":[w["origin"].x,w["origin"].y],"target":[w["target"].x,w["target"].y]}),"traffic":enemies.map(func(e): return {"type":e["type"],"x":e["pos"].x,"y":e["pos"].y,"lane":e["lane"]}),"hazards":obstacles.map(func(o): return {"x":o["pos"].x,"y":o["pos"].y}),"shield":shield_left,"bonds":campaign.get("bonds",{}),"pickup_targets":pickups.map(func(p): return {"lane":_lane_of(p["pos"].x),"y":p["pos"].y}),"result":result_buttons.map(func(b): return QA.rect(b)),"ending_text":end_panel.text if over else "","lane":lane,"player":[car_x,car_y],"sprite":[car.position.x,car.position.y],"hitbox":[_player_rect().position.x,_player_rect().position.y,_player_rect().size.x,_player_rect().size.y],"joystick":QA.rect(joystick),"stick":[joystick.value.x,joystick.value.y],"paused":paused,"over":over,"fire":_held("drive_fire"),"boost":boosting,"distance":distance,"speed":speed,"energy":energy,"road":[road_touch_rect.position.x,road_touch_rect.position.y,road_touch_rect.size.x,road_touch_rect.size.y],"actions":targets,"pause":QA.rect(pause_button),"journal":journal_panel.visible,"touch":touch_enabled,"portrait_hud":({"health":QA.rect(hud),"meters":QA.rect(distance_caption),"hp_bar":QA.rect(hp_bar),"energy_bar":QA.rect(energy_bar),"energy":QA.rect(energy_caption)} if was_portrait else {}),"route":journey.route,"mines":mines_left,"dodge":dodge_cooldown,"settings":settings_panel.visible,"settings_ui":QA.settings(settings_panel),"settings_rect":QA.rect(settings_panel),"settings_back":QA.rect(settings_panel.back),"pause_menu":pause_panel.get_child(0).get_children().filter(func(child): return child is Button).map(func(child): return QA.rect(child)),"journal_rect":QA.rect(journal_panel),"journal_back":QA.rect(journal_panel.get_child(0).get_child(2))})
+		QA.publish("run",{"view":[get_viewport_rect().size.x,get_viewport_rect().size.y],"chapter":campaign.get("stage",-1),"hp":hp,"kills":kills,"collected":arcade.collected,"finish":_cfg("arcade.finish_distance",1200),"warnings":_enemy_warnings().map(func(w): return {"kind":w["kind"],"lane":w["lane"],"progress":w["progress"],"origin":[w["origin"].x,w["origin"].y],"target":[w["target"].x,w["target"].y]}),"traffic":enemies.map(func(e): return {"type":e["type"],"x":e["pos"].x,"y":e["pos"].y,"lane":e["lane"]}),"hazards":obstacles.map(func(o): return {"x":o["pos"].x,"y":o["pos"].y}),"shield":shield_left,"bonds":campaign.get("bonds",{}),"pickup_targets":pickups.map(func(p): return {"lane":_lane_of(p["pos"].x),"y":p["pos"].y}),"result":result_buttons.map(func(b): return QA.rect(b)),"ending_text":end_panel.text if over else "","lane":lane,"player":[car_x,car_y],"sprite":[car.position.x,car.position.y],"hitbox":[_player_rect().position.x,_player_rect().position.y,_player_rect().size.x,_player_rect().size.y],"joystick":QA.rect(joystick),"stick":[joystick.value.x,joystick.value.y],"paused":paused,"over":over,"fire":_held("drive_fire"),"boost":boosting,"distance":distance,"speed":speed,"energy":energy,"road":[road_touch_rect.position.x,road_touch_rect.position.y,road_touch_rect.size.x,road_touch_rect.size.y],"actions":targets,"pause":QA.rect(pause_button),"journal":journal_panel.visible,"touch":touch_enabled,"portrait_hud":({"health":QA.rect(hud),"meters":QA.rect(distance_caption),"hp_bar":QA.rect(hp_bar),"energy_bar":QA.rect(energy_bar),"energy":QA.rect(energy_caption)} if was_portrait else {}),"route":journey.route,"mines":-1,"mine_cooldown":mine_cooldown,"mine_reload":_mine_reload(),"mine_drops":mine_drops,"active_mines":mines.map(func(m): return [m["pos"].x,m["pos"].y]),"dodge":dodge_cooldown,"settings":settings_panel.visible,"settings_ui":QA.settings(settings_panel),"settings_rect":QA.rect(settings_panel),"settings_back":QA.rect(settings_panel.back),"pause_menu":pause_panel.get_child(0).get_children().filter(func(child): return child is Button).map(func(child): return QA.rect(child)),"journal_rect":QA.rect(journal_panel),"journal_back":QA.rect(journal_panel.get_child(0).get_child(2))})
 	metrics_clock += delta
 	if OS.has_feature("web") and metrics_clock > 5.0:
 		metrics_clock = 0.0
@@ -883,7 +888,7 @@ func _process(delta: float) -> void:
 
 func _update_hud() -> void:
 	score_label.text = "%06d" % arcade.score
-	hud.text = "CAN %d / %d\n%d m / %d m\nHız %d · Mayın %d" % [maxi(0, ceili(hp)), int(max_hp), int(distance), int(_cfg("arcade.finish_distance", 1200)), int(speed), mines_left]
+	hud.text = "CAN %d / %d\n%d m / %d m\nHız %d · Mayın sınırsız" % [maxi(0, ceili(hp)), int(max_hp), int(distance), int(_cfg("arcade.finish_distance", 1200)), int(speed)]
 	hp_bar.value = hp / max_hp * 100.0
 	energy_bar.value = energy / _cfg("arcade.boost_capacity", 100) * 100.0
 	energy_caption.text = "TURBO · ENERJİ %d%%" % int(energy_bar.value)
@@ -891,6 +896,8 @@ func _update_hud() -> void:
 	var progress: Vector2 = arcade.contract_progress(distance, kills)
 	mission.text = "GÖREV %02d\n%s\n%d / %d\nSeri %d · En iyi %d" % [arcade.contract + 1, arcade.contract_title(), mini(int(progress.x), int(progress.y)), int(progress.y), arcade.chain, arcade.best_chain]
 	status_label.text = "Güven %d · %s\n%s" % [int(momo.trust), Momo.mood_name_tr(momo.mood), ("KALKAN %.1f sn" % shield_left) if shield_left > 0 else (("Destek %.0f sn" % comfort_cooldown) if comfort_cooldown > 0 else "%s · Destek hazır" % Controls.binding_name("drive_comfort",Controls.last_device=="pad"))]
+	if touch_by_action.has("drive_mine"):
+		touch_by_action["drive_mine"].visual.text=("MAYIN · %.1f sn" % mine_cooldown) if mine_cooldown>0 else "MAYIN · SINIRSIZ"
 	face.mood = momo.mood
 	face.queue_redraw()
 	hint.text = Controls.run_hint()
@@ -960,6 +967,9 @@ func _simulate(delta: float) -> void:
 			energy = minf(_cfg("arcade.boost_capacity", 100), energy + _cfg("arcade.boost_regen", 12) * delta)
 	game_time += delta
 	fire_cooldown -= delta
+	mine_cooldown = maxf(0.0,mine_cooldown-delta)
+	if not box.visible and _held("drive_mine"):
+		_execute({"intent":"drop_mine"})
 	invulnerable -= delta
 	dodge_left -= delta
 	dodge_cooldown -= delta
@@ -991,8 +1001,8 @@ func _simulate(delta: float) -> void:
 	_update_pickups(delta)
 	if arcade.complete_contract(distance, kills):
 		hp = minf(max_hp, hp + _cfg("arcade.contract_heal", 10))
-		mines_left += 1
-		_notice("GÖREV TAMAM! +%d puan\n+onarım · +mayın" % int(_cfg("arcade.contract_reward", 200)))
+		mine_cooldown = 0.0
+		_notice("GÖREV TAMAM! +%d puan\n+onarım · mayın hazır" % int(_cfg("arcade.contract_reward", 200)))
 	if distance >= _cfg("arcade.finish_distance", 1200):
 		_end_run("survived")
 	for fx in effects:
@@ -1064,8 +1074,8 @@ func _collect_pickup(kind: String) -> void:
 			_notice("ONARIM +%d" % int(_cfg("arcade.repair_amount", 18)))
 		"energy":
 			energy = minf(_cfg("arcade.boost_capacity", 100), energy + _cfg("arcade.energy_amount", 30))
-			mines_left += 1
-			_notice("İKMAL · +enerji +mayın")
+			mine_cooldown = 0.0
+			_notice("İKMAL · +enerji · mayın hazır")
 		"shield":
 			shield_left = _cfg("arcade.shield_seconds", 7)
 			_notice("KALKAN · Bir darbeye koruma")
@@ -1129,12 +1139,23 @@ func _update_mines(delta: float) -> void:
 		m["life"] = float(m["life"]) - delta
 		if float(m["arm"]) > 0.0:
 			continue
+		var detonate := false
 		for e in enemies:
-			if _rect(e["pos"], ENEMY_HALF[e["type"]] + Vector2(4, 4)).has_point(m["pos"]):
-				_hurt_enemy(e, _cfg("mine.damage", 60))
-				effects.append({"pos": m["pos"], "t": 0.0, "kind": "small"})
-				m["life"] = -1.0
+			if _rect(e["pos"], ENEMY_HALF[e["type"]] + Vector2(10, 10)).has_point(m["pos"]):
+				detonate = true
 				break
+		# Rear fire is counterable even before its shooter reaches the mine.
+		for bullet in enemy_bullets:
+			if bullet["pos"].distance_to(m["pos"]) <= 24:
+				detonate = true
+				break
+		if detonate:
+			for e in enemies:
+				if e["pos"].distance_to(m["pos"]) <= 60:
+					_hurt_enemy(e, _cfg("mine.damage", 60))
+			enemy_bullets=enemy_bullets.filter(func(b): return b["pos"].distance_to(m["pos"])>60)
+			effects.append({"pos": m["pos"], "t": 0.0, "kind": "small"})
+			m["life"] = -1.0
 	mines = mines.filter(func(m: Dictionary) -> bool: return float(m["life"]) > 0.0 and COMBAT_BOUNDS.has_point(m["pos"]))
 
 

@@ -67,7 +67,7 @@ func _process(_delta: float) -> bool:
 	h.check("front gun never aims behind the car", game.bullets[-1]["vel"].y < 0)
 	game.enemies.clear()
 	key(KEY_X)
-	h.eq("X drops a mine immediately", game.mines_left, 2)
+	h.eq("X drops a mine immediately", game.mine_drops, 1)
 	key(KEY_X, false)
 	key(KEY_ESCAPE)
 	var time: float = game.game_time
