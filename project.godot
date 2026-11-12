@@ -4,8 +4,8 @@ config_version=5
 [application]
 
 config/name="Drive-By Wire"
-config/description="Yazarak sürülen roguelite araba çatışması. Arabanın yapay zekâsı MOMO komutlarını ruh haline göre yorumlar."
-config/version="0.1.0"
+config/description="Fragaria Interactive · Aionverse. Ok tuşlarıyla sür, MOMO ile 1200 metrelik kuşatmayı aş."
+config/version="0.2.0"
 run/main_scene="res://scenes/garage.tscn"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 run/max_fps=60

@@ -24,7 +24,7 @@ func _init(save_path: String = DEFAULT_PATH, trust_default: float = 50.0) -> voi
 
 
 func defaults() -> Dictionary:
-	return {"version": VERSION, "trust": default_trust, "memory": Garage.default_memory(), "upgrades": {}}
+	return {"version": VERSION, "trust": default_trust, "memory": Garage.default_memory(), "upgrades": {}, "best_score": 0, "settings": {"effects": true, "sound": true}}
 
 
 func exists() -> bool:
@@ -57,6 +57,14 @@ func sanitize(raw: Dictionary) -> Dictionary:
 	if t is float or t is int:
 		out["trust"] = clampf(float(t), 0.0, 100.0)
 	out["memory"] = Garage.sanitize_memory(raw.get("memory", {}))
+	var score: Variant = raw.get("best_score", 0)
+	if score is float or score is int:
+		out["best_score"] = maxi(0, int(score))
+	var settings: Variant = raw.get("settings", {})
+	if settings is Dictionary and settings.get("effects") is bool:
+		out["settings"]["effects"] = settings["effects"]
+	if settings is Dictionary and settings.get("sound") is bool:
+		out["settings"]["sound"] = settings["sound"]
 	var ups: Variant = raw.get("upgrades", {})
 	if ups is Dictionary:
 		var clean := {}

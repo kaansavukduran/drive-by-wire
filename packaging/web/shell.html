@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
-		<meta name="description" content="Drive-By Wire: yazarak sürülen roguelite araba çatışması. Arabanın yapay zekâsı MOMO komutlarını ruh haline göre yorumlar.">
+		<meta name="description" content="Fragaria Interactive · Aionverse. Ok tuşlarıyla sür, turboyu aç, MOMO ile otoyolu aş.">
 		<meta name="theme-color" content="#0b0d12">
 		<title>Drive-By Wire</title>
 		<link rel="icon" type="image/png" href="favicon.png">
@@ -85,7 +85,8 @@ body {
 		</noscript>
 
 		<div id="status">
-			<div id="status-title">Drive-By Wire</div>
+			<div id="status-title">DRIVE-BY WIRE</div>
+			<div>FRAGARIA INTERACTIVE · AIONVERSE</div>
 			<progress id="status-progress"></progress>
 			<div id="status-notice" role="status"></div>
 		</div>
@@ -102,7 +103,7 @@ const engine = new Engine(GODOT_CONFIG);
 	const statusProgress = document.getElementById('status-progress');
 	const statusNotice = document.getElementById('status-notice');
 
-	// The game is typed-command driven: keyboard focus must always be on the canvas.
+	// Keep direct driving focused on the canvas after entering the game.
 	function focusCanvas() {
 		if (document.activeElement !== canvas) {
 			canvas.focus({ preventScroll: true });

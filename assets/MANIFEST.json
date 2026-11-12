@@ -15,6 +15,11 @@
    "license": "assets/fonts/VT323-OFL.txt",
    "path": "assets/fonts/VT323.ttf",
    "role": "terminal font (command box)"
+  },
+  "ControlSymbols": {
+   "path": "assets/fonts/ControlSymbols.ttf",
+   "license": "assets/fonts/DEJAVU-LICENSE.txt",
+   "role": "DejaVu Sans subset: four arrow glyphs only; UI fallback"
   }
  },
  "generator": "tools/art/build.py",

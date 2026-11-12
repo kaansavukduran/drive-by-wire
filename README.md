@@ -1,49 +1,56 @@
-# Drive-By Wire
+# Drive-By Wire · 0.2.0
 
-Yazarak sürülen roguelite araba çatışması (prototip, geliştirme sürüyor). Arabanın yapay zekâsı MOMO, klavyeden yazdığın komutları ruh haline göre yorumlar.
+**Fragaria Interactive · Aionverse**
 
-## İndir ve oyna
-- **Tarayıcıda:** Vercel bağlandığında `https://<vercel-adresi>.vercel.app` (kurulum: [docs/VERCEL.md](docs/VERCEL.md)).
-- **İndirilebilir sürümler:** [Releases](https://github.com/kaansavukduran/drive-by-wire/releases/latest)
-  - Windows: `DriveByWire-<sürüm>-windows-x64-Setup.exe` (kurulum, yönetici izni gerekmez) veya `-windows-x64-portable.zip` (çıkart, `DriveByWire.exe` çalıştır)
-  - Linux: `-linux-x64.AppImage`, `-linux-x64.deb`, `-linux-x64-portable.tar.gz`
-  - Android: `-android-arm64-x64.apk` (prototip; herkese açık prototip anahtarıyla imzalı, ayrıntı [docs/BUILD.md](docs/BUILD.md))
-  - Web çevrimdışı: `-web-offline.tar.gz`
-- Platform durumu ve sürüm notları: [docs/RELEASE.md](docs/RELEASE.md)
-
-## Şu anki durum (0.1.0, geliştirme)
-Var: piksel art (yol, araçlar, efektler, MOMO yüzü, garaj, Aion ve Baykuş Ömer), garaj (MOMO selamı, 3–4 seçenekli diyalog, bu sefer için tek yükseltme), kayan üç şeritli yol, yazarak sürüş, komut kutusu açıkken %10 zaman, çarpan araba / ateş eden kamyonet / engel bırakan kamyon, hedefli ateş, mayın, kaç, çarp, can ve ekran sarsıntısı, MOMO yüzü ve ruh haline göre yorum, sefer sonu ekranı, yerel kayıt (güven + hafıza), web derlemesi.
-Henüz yok: ses ve müzik (kapsam dışı), kilometre taşı 6 dengesi için uzun oyun testi, gerçek telefonda APK denemesi, Windows kod imzası.
+MOMO ile distopik otoyolda 1.200 metrelik kuşatmayı aş. Ok tuşlarıyla sür, turboyu doğru anda kullan, takipçileri savuştur ve ikmalleri topla. MOMO artık sürüş kararlarını geciktirmez; ruh hali, güveni ve garaj hafızası yol arkadaşlığını sürdürür.
 
 ## Oyna
-- Garajda rakam tuşuyla (1–4) MOMO'ya cevap ver, bir yükseltme seç, Enter ile sefere çık.
-- Herhangi bir harfe bas: komut kutusu açılır ve zaman yavaşlar. **Enter** gönderir, **Esc** vazgeçer.
-- Örnekler: `sola geç`, `sağa geç ve ateş et`, `hızlan`, `yavaşla`, `mayın bırak`, `aferin`, `go left`, `fire`.
+
+Garajda **Space / Hızlı sürüş** ile zırhlı arabayla hemen çık. İstersen önce 1–4 ile MOMO'ya cevap ver, bir yükseltme seç ve Enter ile sefere çık.
+
+| Tuş | İşlev |
+| --- | --- |
+| Sol / Sağ ok veya A / D | Anında bir şerit değiştir |
+| Yukarı ok veya W (basılı) | Enerji tüketerek turbo |
+| Aşağı ok veya S (basılı) | Fren |
+| Space veya F (basılı) | En yakın tehdide, arka dahil, tekrarlanan ateş |
+| X | Arkaya mayın bırak |
+| Shift | Bekleme süreli sıyrılma |
+| C | MOMO'ya destek ve enerji; 8 saniye bekleme |
+| Esc veya P | Mola / devam |
+| T | İsteğe bağlı sohbet; Enter gönderir, Esc kapatır |
+
+Kumandada yön düğmeleri sürüş/turbo/fren, A ateş, X mayın, B sıyrılma, Y destek, Start mola. D-pad eşlemesi uygulanmıştır; fiziksel kumanda testi henüz yapılmadı.
+
+Dokunmatik cihazlarda sol/sağ, turbo/fren ve ateş/mayın düğmeleri görünür. Turbo ve ateş iki parmakla birlikte kullanılabilir. Mola menüsünden düğmeler elle de açılır. Yatay ekran önerilir.
+
+**Kapsüller:** Artı onarım, şimşek enerji + bir mayın, kalkan tek darbeye koruma verir. Renk yanında şekiller farklıdır. Kalkan en fazla 7 saniye sürer. Düşmanları yenmek, kapsülleri toplamak ve başarılı kaçışlar seri puanı kazandırır; hasar veya seriye katkı olmadan 5 saniye geçmesi seriyi sıfırlar. Kısa görevler puan, onarım ve mayın kazandırır. 1.200 metrede sefer başarıyla biter. Sonuçta Enter ile yeniden sür, G ile garaja dön.
+
+Ses ve ekran sarsıntısı ayrı kapatılabilir. Tercihler, rekor, güven ve garaj hafızası yereldir. Odak kaybında veya kumanda ayrılınca mola verilir. Hesap, reklam, telemetri, LLM/API bağlantısı yoktur.
 
 ## Çalıştır
-Godot 4.6.3 ile `project.godot` dosyasını aç ve F5, ya da:
 
-```bash
+Godot **4.6.3 standard** ile `project.godot` dosyasını aç ve F5:
+
+```sh
+godot --headless --editor --import --quit
 godot --path .
-```
-
-Testler:
-
-```bash
 bash tests/run_all.sh
-```
-
-Web (Vercel'in çalıştırdığı komut):
-
-```bash
 python3 packaging/build_web.py
+python3 -m http.server 8765 --directory build/web
 ```
 
-## Dosya yapısı
-- `data/balance.json`: tüm ayarlanabilir sayılar (config burada).
-- `data/intents.json`: komut kelimeleri; yeni kelime eklemek için yalnızca bu dosya.
-- `data/momo_lines.json`, `data/garage.json`: replikler ve garaj içeriği.
-- `scripts/core/`: saf oyun mantığı (ayrıştırıcı, MOMO, garaj, kayıt).
-- `scripts/game/`, `scenes/`: sahneler.
-- `assets/`, `tools/art/`: piksel art ve onu üreten betikler.
-- `packaging/`, `vercel.json`, `export_presets.cfg`: derleme ve yayın.
+Web çıktısını `http://localhost:8765` ile aç. HTML dosyasına çift tıklamak yeterli değildir. [Sürüm ve platform durumu](docs/RELEASE.md) · [Forge kaydı](docs/FORGE.md) · [Derleme](docs/BUILD.md) · [Vercel](docs/VERCEL.md).
+
+`Releases/latest` önceki 0.1.0 paketlerini gösterebilir; bu dalın paketleriyle aynı değildir.
+
+## Kaynaklar
+
+- `data/balance.json`: sürüş, düşmanlar, turbo, kapsül, görev ve puan dengesi.
+- `scripts/core/arcade.gd`: sahneden bağımsız puan, seri, görevler.
+- `scripts/game/controls.gd`, `touch_control.gd`: klavye, D-pad ve çoklu dokunma.
+- `scripts/core/`: MOMO, garaj, isteğe bağlı ayrıştırıcı ve kayıt.
+- `scripts/game/main.gd`: sefer, çatışma, HUD ve mola.
+- `scripts/game/sounds.gd`: yerel üretilen özgün kısa sesler.
+- `assets/`, `tools/art/`: mevcut piksel çizimler ve kaynak kayıtları.
+- `packaging/`, `export_presets.cfg`, `.github/`: derleme profilleri.

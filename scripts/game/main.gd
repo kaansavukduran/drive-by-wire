@@ -1,6 +1,6 @@
 extends Node2D
-## Sefer sahnesi: kayan üç şeritli yol, yazarak sürülen araba, zaman yavaşlaması,
-## üç düşman tipi, silah, mayın, hasar, MOMO'nun komutu ruh haline göre yorumlaması
+## Sefer sahnesi: doğrudan ok tuşlu sürüş, üç şeritli yol, isteğe bağlı sohbet,
+## üç düşman tipi, kapsüller, turbo, görevler, puan serisi ve MOMO ilişkisi
 ## ve sefer sonu ekranı. Oyun kuralları scripts/core/ altında, sayılar data/balance.json'da.
 
 const DataLoader := preload("res://scripts/core/data_loader.gd")
@@ -12,6 +12,11 @@ const Session := preload("res://scripts/game/session.gd")
 const MomoFace := preload("res://scripts/game/momo_face.gd")
 const Sheets := preload("res://scripts/game/sheets.gd")
 const UiSkin := preload("res://scripts/game/ui_skin.gd")
+const Controls := preload("res://scripts/game/controls.gd")
+const Arcade := preload("res://scripts/core/arcade.gd")
+const Sounds := preload("res://scripts/game/sounds.gd")
+const TouchControl := preload("res://scripts/game/touch_control.gd")
+const FONT_SYMBOLS := preload("res://assets/fonts/ControlSymbols.ttf")
 const CAR_SHEET := preload("res://assets/sprites/player_car.png")
 const FONT_FALLBACK := preload("res://assets/fonts/Lexend.ttf")
 const FONT_TERM := preload("res://assets/fonts/VT323.ttf")
@@ -88,9 +93,33 @@ var sheets := Sheets.new()
 var road_scroll := 0.0
 var decals: Array = []  # {pos, frame}
 var props: Array = []   # {pos, anim, side}
+var arcade: RefCounted
+var pickups: Array = []
+var pickup_timer := 2.5
+var energy := 100.0
+var shield_left := 0.0
+var comfort_cooldown := 0.0
+var boosting := false
+var paused := false
+var touch_held: Dictionary = {}
+var pause_panel: PanelContainer
+var mission: Label
+var score_label: Label
+var status_label: Label
+var toast: Label
+var toast_left := 0.0
+var hp_bar: ProgressBar
+var energy_bar: ProgressBar
+var route_bar: ProgressBar
+var ui_theme: Theme
+var effects_enabled := true
+var touch_controls: Array[Control] = []
+var touch_enabled := false
+var sounds: Node
 
 
 func _ready() -> void:
+	Controls.install()
 	rng.randomize()
 	var base_balance := DataLoader.load_json(DataLoader.BALANCE_PATH)
 	store = SaveStore.new()
@@ -99,6 +128,16 @@ func _ready() -> void:
 	balance = garage.effective_balance(base_balance, save.get("upgrades", {}), Session.next_run_modifiers)
 	Session.next_run_modifiers = []
 	run_cfg = balance.get("run", {})
+	arcade = Arcade.new(run_cfg.get("arcade", {}))
+	energy = _cfg("arcade.boost_capacity", 100)
+	pickup_timer = _cfg("arcade.pickup_initial", 2.5)
+	effects_enabled = bool(save.get("settings", {}).get("effects", true))
+	sounds = Sounds.new()
+	sounds.enabled = bool(save.get("settings", {}).get("sound", true))
+	add_child(sounds)
+	Input.joy_connection_changed.connect(func(_device: int, connected: bool):
+		if not connected:
+			_set_paused(true))
 	parser = CommandParser.new(DataLoader.load_json(DataLoader.INTENTS_PATH), balance)
 	momo = Momo.new(balance, DataLoader.load_json(DataLoader.MOMO_LINES_PATH), float(save.get("trust", 50.0)))
 	momo.start_run()
@@ -115,7 +154,7 @@ func _ready() -> void:
 	prev_lane = lane
 	car_x = _lane_x(lane)
 	_build_ui()
-	_say("Hazırım. Ne yapalım?")
+	_say("Direksiyon sende.\nBen yanındayım!")
 
 
 func _cfg(path: String, fallback: float) -> float:
@@ -132,20 +171,50 @@ func _build_ui() -> void:
 	add_child(ui)
 	var theme := Theme.new()
 	# Pixelify Sans digits (5 looks like S) hurt HUD readability; Lexend stays the UI font.
-	theme.default_font = FONT_FALLBACK
+	var font: FontFile = FONT_FALLBACK.duplicate()
+	font.fallbacks = [FONT_SYMBOLS]
+	theme.default_font = font
 	theme.default_font_size = 12
-	hud = _label(ui, theme, Vector2(8, 6), Vector2(190, 90))
+	ui_theme = theme
+	_panel(ui, Rect2(8, 8, 176, 151))
+	_panel(ui, Rect2(456, 8, 176, 166))
+	_panel(ui, Rect2(8, 172, 176, 97))
+	var brand := _label(ui, theme, Vector2(18, 14), Vector2(156, 16))
+	brand.text = "FRAGARIA INTERACTIVE"
+	brand.add_theme_font_size_override("font_size", 9)
+	brand.add_theme_color_override("font_color", Color("ff8fb1"))
+	score_label = _label(ui, theme, Vector2(18, 32), Vector2(158, 36))
+	score_label.add_theme_font_size_override("font_size", 20)
+	hud = _label(ui, theme, Vector2(18, 75), Vector2(155, 65))
+	hp_bar = _bar(ui, Rect2(18, 65, 154, 6), Color("7cddb5"))
+	energy_bar = _bar(ui, Rect2(18, 142, 154, 6), Color("79d4ff"))
 	face = MomoFace.new()
-	face.position = Vector2(W - 56, 6)
+	face.position = Vector2(466, 18)
 	ui.add_child(face)
-	bubble = _label(ui, theme, Vector2(W - 270, 8), Vector2(208, 70))
+	var momo_title := _label(ui, theme, Vector2(523, 20), Vector2(98, 38))
+	momo_title.text = "MOMO\nYol arkadaşın"
+	momo_title.add_theme_font_size_override("font_size", 10)
+	bubble = _label(ui, theme, Vector2(466, 68), Vector2(156, 58))
 	bubble.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	bubble.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	hint = _label(ui, theme, Vector2(0, H - 20), Vector2(W, 16))
-	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	hint.text = "Yazmaya başla: sola geç · sağa geç · hızlan · yavaşla · kamyona ateş et · mayın bırak · kaç · aferin"
+	status_label = _label(ui, theme, Vector2(466, 130), Vector2(156, 38))
+	status_label.add_theme_font_size_override("font_size", 10)
+	mission = _label(ui, theme, Vector2(18, 181), Vector2(156, 76))
+	mission.add_theme_font_size_override("font_size", 11)
+	mission.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	route_bar = _bar(ui, Rect2(224, 8, 192, 4), Color("ffce70"))
+	hint = _label(ui, theme, Vector2(456, 184), Vector2(176, 92))
+	hint.text = "← → Şerit değiştir\n↑ Turbo  ·  ↓ Fren\nSpace / F Ateş (basılı tut)\nX Mayın  ·  Shift Sıyrıl\nC Destek  ·  T Sohbet"
 	hint.add_theme_font_size_override("font_size", 10)
-	hint.modulate = Color(1, 1, 1, 0.75)
+	hint.add_theme_stylebox_override("normal", _panel_style())
+	toast = _label(ui, theme, Vector2(202, 30), Vector2(236, 42))
+	toast.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	toast.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	toast.add_theme_font_size_override("font_size", 12)
+	toast.add_theme_color_override("font_color", Color("ffce70"))
+	var pause_button := _control_button(ui, Rect2(466, 282, 156, 26), "Mola · Esc", func(): _set_paused(true))
+	pause_button.focus_mode = Control.FOCUS_NONE
+	_build_pause(ui)
+	_build_touch(ui)
 	end_panel = _label(ui, theme, Vector2(W / 2 - 170, 70), Vector2(340, 220))
 	end_panel.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	end_panel.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
@@ -185,6 +254,125 @@ func _label(parent: Node, theme: Theme, pos: Vector2, size: Vector2) -> Label:
 	return l
 
 
+func _panel_style() -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color("101622ee")
+	style.border_color = Color("34475d")
+	style.set_border_width_all(1)
+	style.set_content_margin_all(8)
+	return style
+
+
+func _panel(parent: Node, rect: Rect2) -> void:
+	var panel := Panel.new()
+	panel.position = rect.position
+	panel.size = rect.size
+	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	panel.add_theme_stylebox_override("panel", _panel_style())
+	parent.add_child(panel)
+
+
+func _bar(parent: Node, rect: Rect2, color: Color) -> ProgressBar:
+	var bar := ProgressBar.new()
+	bar.position = rect.position
+	bar.show_percentage = false
+	bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var fill := StyleBoxFlat.new()
+	fill.bg_color = color
+	var bg := StyleBoxFlat.new()
+	bg.bg_color = Color("28354a")
+	bar.add_theme_stylebox_override("fill", fill)
+	bar.add_theme_stylebox_override("background", bg)
+	parent.add_child(bar)
+	bar.size = rect.size
+	return bar
+
+
+func _control_button(parent: Node, rect: Rect2, text: String, action: Callable) -> Button:
+	var button := Button.new()
+	button.theme = ui_theme
+	button.position = rect.position
+	button.size = rect.size
+	button.text = text
+	UiSkin.style_button(button)
+	button.pressed.connect(action)
+	parent.add_child(button)
+	return button
+
+
+func _build_pause(parent: Node) -> void:
+	pause_panel = PanelContainer.new()
+	pause_panel.position = Vector2(200, 62)
+	pause_panel.size = Vector2(240, 236)
+	pause_panel.theme = ui_theme
+	pause_panel.add_theme_stylebox_override("panel", _panel_style())
+	parent.add_child(pause_panel)
+	var column := VBoxContainer.new()
+	column.add_theme_constant_override("separation", 7)
+	pause_panel.add_child(column)
+	var title := Label.new()
+	title.text = "MOLA · Yol seni bekler"
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	column.add_child(title)
+	for item in [["Devam et · Esc", func(): _set_paused(false)], ["Yeniden sür", _restart_run], ["Garaja dön", _to_garage]]:
+		var button := Button.new()
+		button.text = item[0]
+		button.custom_minimum_size.y = 27
+		UiSkin.style_button(button)
+		button.pressed.connect(item[1])
+		column.add_child(button)
+	var effects_toggle := CheckButton.new()
+	effects_toggle.text = "Ekran sarsıntısı"
+	effects_toggle.button_pressed = effects_enabled
+	effects_toggle.toggled.connect(func(value: bool):
+		effects_enabled = value
+		save["settings"]["effects"] = value
+		store.save_data(save))
+	column.add_child(effects_toggle)
+	var sound_toggle := CheckButton.new()
+	sound_toggle.text = "Ses efektleri"
+	sound_toggle.button_pressed = sounds.enabled
+	sound_toggle.toggled.connect(func(value: bool):
+		sounds.enabled = value
+		save["settings"]["sound"] = value
+		store.save_data(save))
+	column.add_child(sound_toggle)
+	var touch_toggle := CheckButton.new()
+	touch_toggle.text = "Dokunmatik kontroller"
+	touch_toggle.button_pressed = DisplayServer.is_touchscreen_available() or OS.has_feature("mobile")
+	touch_toggle.toggled.connect(func(value: bool):
+		touch_enabled = value
+		for button in touch_controls:
+			button.visible = value and not paused)
+	column.add_child(touch_toggle)
+	pause_panel.hide()
+
+
+func _build_touch(parent: Node) -> void:
+	touch_enabled = DisplayServer.is_touchscreen_available() or OS.has_feature("mobile")
+	var specs := [
+		[Rect2(8, 276, 80, 34), "←", "drive_left"], [Rect2(96, 276, 80, 34), "→", "drive_right"],
+		[Rect2(8, 316, 80, 34), "TURBO", "drive_up"], [Rect2(96, 316, 80, 34), "FREN", "drive_down"],
+		[Rect2(456, 316, 80, 34), "ATEŞ", "drive_fire"], [Rect2(544, 316, 80, 34), "MAYIN", "drive_mine"],
+	]
+	for spec in specs:
+		var action: String = spec[2]
+		var button := TouchControl.new()
+		parent.add_child(button)
+		var down := func():
+			if not paused and not over and not box.visible:
+				touch_held[action] = true
+				_direct_action(action)
+		button.setup(spec[0], spec[1], ui_theme, down, func(): touch_held.erase(action))
+		button.visible = touch_enabled
+		touch_controls.append(button)
+
+
+func _notice(text: String) -> void:
+	toast.text = text
+	toast_left = 2.0
+
+
 func _lane_x(index: int) -> float:
 	return W / 2 + (index - (lane_count - 1) / 2.0) * lane_width
 
@@ -194,34 +382,94 @@ func _lane_of(x: float) -> int:
 
 
 # ---------------------------------------------------------------------------
-# Input: the only control is typing.
+# Direct driving never passes through MOMO's probabilistic interpretation.
+# Typing is an optional conversation mode, opened explicitly with T.
 # ---------------------------------------------------------------------------
 
-func _unhandled_input(event: InputEvent) -> void:
-	if over:
-		if event is InputEventKey and event.pressed and not event.echo and event.keycode in [KEY_ENTER, KEY_KP_ENTER, KEY_SPACE]:
-			_to_garage()
-		elif event is InputEventScreenTouch and event.pressed:
-			_to_garage()
-		return
-	if box.visible:
-		return
-	if event is InputEventKey and event.pressed and not event.echo:
-		var ch := char(event.unicode) if event.unicode > 32 else ""
-		if ch != "":
-			_open_box(ch)
-			get_viewport().set_input_as_handled()
-	elif event is InputEventScreenTouch and event.pressed:
-		_open_box("")
-
-
 func _input(event: InputEvent) -> void:
-	if box.visible and event.is_action_pressed("ui_cancel"):
-		_close_box()
+	if box.visible:
+		if event.is_action_pressed("ui_cancel"):
+			_close_box()
+			get_viewport().set_input_as_handled()
+		return
+	if event.is_action_pressed("drive_pause") and not over:
+		_set_paused(not paused)
 		get_viewport().set_input_as_handled()
+		return
+	if over or paused:
+		return
+	for action in Controls.KEYS:
+		if event.is_action_pressed(action):
+			_direct_action(action)
+			get_viewport().set_input_as_handled()
+			return
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if over and event is InputEventKey and event.pressed and not event.echo:
+		if event.keycode in [KEY_ENTER, KEY_KP_ENTER]:
+			_restart_run()
+		elif event.keycode == KEY_G:
+			_to_garage()
+
+
+func _direct_action(action: String) -> void:
+	if over or paused or box.visible:
+		return
+	match action:
+		"drive_left": _change_lane(lane - 1)
+		"drive_right": _change_lane(lane + 1)
+		"drive_fire": _fire({})
+		"drive_mine": _execute({"intent": "drop_mine"})
+		"drive_dodge": _execute({"intent": "dodge"})
+		"drive_chat": _open_box("")
+		"drive_comfort":
+			if comfort_cooldown <= 0.0:
+				comfort_cooldown = _cfg("arcade.comfort_cooldown", 8)
+				_event("comfort")
+				energy = minf(_cfg("arcade.boost_capacity", 100), energy + _cfg("arcade.energy_amount", 30))
+				_notice("İyi bir ekibiz! +enerji")
+
+
+func _held(action: String) -> bool:
+	return Input.is_action_pressed(action) or bool(touch_held.get(action, false))
+
+
+func _set_paused(value: bool) -> void:
+	if over:
+		return
+	_close_box()
+	paused = value
+	if value:
+		for action in Controls.KEYS:
+			Input.action_release(action)
+	touch_held.clear()
+	boosting = false
+	pause_panel.visible = value
+	for button in touch_controls:
+		button.visible = touch_enabled and not value
+	if value:
+		(pause_panel.get_child(0).get_child(1) as Button).grab_focus()
+	else:
+		var focus := get_viewport().gui_get_focus_owner()
+		if focus:
+			focus.release_focus()
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_APPLICATION_FOCUS_OUT and is_instance_valid(pause_panel) and not over:
+		_set_paused(true)
+
+
+func _restart_run() -> void:
+	Engine.time_scale = 1.0
+	get_tree().call_deferred("reload_current_scene")
 
 
 func _open_box(first: String) -> void:
+	if paused or over:
+		return
+	touch_held.clear()
 	box.visible = true
 	box.text = first
 	box.grab_focus()
@@ -371,12 +619,14 @@ func _fire(target: Variant) -> void:
 	if fire_cooldown > 0.0:
 		return
 	fire_cooldown = _cfg("weapon.cooldown", 0.45)
+	sounds.cue("fire")
 	var origin := Vector2(car_x, PLAYER_Y - 30)
 	var dir := Vector2.UP
 	var want: Dictionary = target if target is Dictionary else {}
-	var aim := _find_target(want) if not want.is_empty() and (str(want.get("type", "")) != "" or str(want.get("position", "")) != "" or str(want.get("side", "")) != "") else _find_target({"position": "front"})
+	var aim := _find_target(want)
 	if not aim.is_empty():
-		dir = (aim["pos"] - origin).normalized()
+		dir = (aim["pos"] - Vector2(car_x, PLAYER_Y)).normalized()
+		origin = Vector2(car_x, PLAYER_Y) + dir * 30.0
 	elif not want.is_empty() and str(want.get("type", "")) != "":
 		_say("Orada %s yok ki." % TYPE_NAMES.get(str(want["type"]), "öyle bir şey"))
 	bullets.append({"pos": origin, "vel": dir * _cfg("weapon.bullet_speed", 420)})
@@ -388,22 +638,49 @@ func _fire(target: Variant) -> void:
 # ---------------------------------------------------------------------------
 
 func _process(delta: float) -> void:
-	if not over:
-		_simulate(delta)
-	_animate(delta)
-	bubble_left -= delta / maxf(Engine.time_scale, 0.01)  # the bubble ignores slow time
+	if not paused:
+		if not over:
+			if not box.visible and _held("drive_fire"):
+				_fire({})
+			_simulate(delta)
+		_animate(delta)
+		bubble_left -= delta / maxf(Engine.time_scale, 0.01)
+		toast_left -= delta
 	if bubble_left <= 0.0:
 		bubble.text = ""
-	var minutes := game_time / 60.0
-	hud.text = "Can %d/%d\nMesafe %d m · Yok edilen %d\nHız %d · Mayın %d\nGüven %d · MOMO %s" % [
-		maxi(0, int(ceil(hp))), int(max_hp), int(distance), kills, int(speed), mines_left,
-		int(momo.trust), Momo.mood_name_tr(momo.mood)]
+	toast.visible = toast_left > 0.0 and not paused and not over
+	score_label.text = "%06d" % arcade.score
+	hud.text = "CAN %d / %d\n%d m / %d m\nHız %d · Mayın %d" % [maxi(0, ceili(hp)), int(max_hp), int(distance), int(_cfg("arcade.finish_distance", 1200)), int(speed), mines_left]
+	hp_bar.value = hp / max_hp * 100.0
+	energy_bar.value = energy / _cfg("arcade.boost_capacity", 100) * 100.0
+	route_bar.value = distance / _cfg("arcade.finish_distance", 1200) * 100.0
+	var progress: Vector2 = arcade.contract_progress(distance, kills)
+	mission.text = "GÖREV %02d\n%s\n%d / %d\nSeri %d · En iyi %d" % [arcade.contract + 1, arcade.contract_title(), mini(int(progress.x), int(progress.y)), int(progress.y), arcade.chain, arcade.best_chain]
+	status_label.text = "Güven %d · %s\n%s" % [int(momo.trust), Momo.mood_name_tr(momo.mood), ("KALKAN %.1f sn" % shield_left) if shield_left > 0 else (("Destek %.0f sn" % comfort_cooldown) if comfort_cooldown > 0 else "C · Destek hazır")]
 	face.mood = momo.mood
-	hint.visible = not box.visible and not over and minutes < 1.5
+	hint.visible = not box.visible and not over
 	queue_redraw()
 
 
 func _simulate(delta: float) -> void:
+	if paused or over:
+		return
+	arcade.tick(delta)
+	shield_left = maxf(0.0, shield_left - delta)
+	comfort_cooldown = maxf(0.0, comfort_cooldown - delta)
+	var normal_speed := _cfg("player.base_speed", 220)
+	boosting = not box.visible and _held("drive_up") and energy > 0.0 and not _held("drive_down")
+	if not box.visible and _held("drive_down"):
+		target_speed = _cfg("player.min_speed", 140)
+	elif boosting:
+		target_speed = _cfg("player.max_speed", 340) + _cfg("arcade.boost_speed", 95)
+		energy = maxf(0.0, energy - _cfg("arcade.boost_drain", 24) * delta)
+		if anim == "drive":
+			_play("boost")
+	else:
+		target_speed = normal_speed
+		if not _held("drive_up"):
+			energy = minf(_cfg("arcade.boost_capacity", 100), energy + _cfg("arcade.boost_regen", 12) * delta)
 	game_time += delta
 	fire_cooldown -= delta
 	invulnerable -= delta
@@ -430,6 +707,15 @@ func _simulate(delta: float) -> void:
 	_update_mines(delta)
 	_update_obstacles(delta)
 	_update_enemies(delta)
+	if over:
+		return
+	_update_pickups(delta)
+	if arcade.complete_contract(distance, kills):
+		hp = minf(max_hp, hp + _cfg("arcade.contract_heal", 10))
+		mines_left += 1
+		_notice("GÖREV TAMAM! +%d puan\n+onarım · +mayın" % int(_cfg("arcade.contract_reward", 200)))
+	if distance >= _cfg("arcade.finish_distance", 1200):
+		_end_run("survived")
 	for fx in effects:
 		fx["t"] = float(fx["t"]) + delta
 		if not fx.get("still", false):
@@ -468,6 +754,42 @@ func _spawn(delta: float) -> void:
 	if kind == "truck":
 		y = -50.0
 	_add_enemy(kind, rng.randi_range(0, lane_count - 1), y)
+
+
+func _update_pickups(delta: float) -> void:
+	pickup_timer -= delta
+	if pickup_timer <= 0.0:
+		pickup_timer = _cfg("arcade.pickup_interval", 5.5) * rng.randf_range(0.85, 1.15)
+		# Prefer the least occupied lane; the player chooses whether to leave safety.
+		var chosen := rng.randi_range(0, lane_count - 1)
+		for index in range(lane_count):
+			if _lane_threat(index) < _lane_threat(chosen):
+				chosen = index
+		var kinds := ["repair", "energy", "shield"]
+		pickups.append({"pos": Vector2(_lane_x(chosen), -18), "kind": kinds[rng.randi_range(0, 2)]})
+	for pickup in pickups:
+		pickup["pos"] += Vector2(0, speed * delta * 0.65)
+		if _rect(pickup["pos"], Vector2(12, 12)).intersects(_player_rect()):
+			_collect_pickup(str(pickup["kind"]))
+			pickup["dead"] = true
+	pickups = pickups.filter(func(p: Dictionary) -> bool: return not p.has("dead") and p["pos"].y < H + 20)
+
+
+func _collect_pickup(kind: String) -> void:
+	sounds.cue("pickup")
+	arcade.collected += 1
+	arcade.award(int(_cfg("arcade.pickup_points", 15)))
+	match kind:
+		"repair":
+			hp = minf(max_hp, hp + _cfg("arcade.repair_amount", 18))
+			_notice("ONARIM +%d" % int(_cfg("arcade.repair_amount", 18)))
+		"energy":
+			energy = minf(_cfg("arcade.boost_capacity", 100), energy + _cfg("arcade.energy_amount", 30))
+			mines_left += 1
+			_notice("İKMAL · +enerji +mayın")
+		"shield":
+			shield_left = _cfg("arcade.shield_seconds", 7)
+			_notice("KALKAN · Bir darbeye koruma")
 
 
 ## Test hook: puts an enemy of `kind` in `e_lane` at screen y.
@@ -634,8 +956,12 @@ func _check_near(thing: Dictionary, r: Rect2, thing_lane: int) -> void:
 		return  # it came from behind and never really overlapped
 	var gap := maxf(r.position.x - pr.end.x, pr.position.x - r.end.x)
 	if game_time - lane_changed_at < 1.2 and thing_lane == prev_lane:
+		arcade.near_misses += 1
+		arcade.award(int(_cfg("arcade.near_points", 25)))
 		_event("manoeuvre_success")
 	elif gap >= 0.0 and gap < float(run_cfg.get("near_miss_distance", 18)):
+		arcade.near_misses += 1
+		arcade.award(int(_cfg("arcade.near_points", 25)))
 		_event("near_miss")
 		var side := -1.0 if r.get_center().x < car_x else 1.0
 		effects.append({"pos": Vector2(car_x + side * 16.0, PLAYER_Y), "t": 0.0, "kind": "near_miss", "still": true})
@@ -653,6 +979,8 @@ func _explode(e: Dictionary, by_player: bool) -> void:
 	effects.append({"pos": e["pos"], "t": 0.0, "kind": "wreck_" + str(e["type"])})
 	_shake(float(DataLoader.dig(run_cfg, "screen_shake.kill", 2.0)))
 	if by_player:
+		sounds.cue("kill")
+		arcade.award(int(_cfg("arcade.kill_points", 40)))
 		kills += 1
 		_event("kill")
 
@@ -660,6 +988,13 @@ func _explode(e: Dictionary, by_player: bool) -> void:
 func _damage_player(amount: float, tell := true) -> void:
 	if invulnerable > 0.0 or dodge_left > 0.0 or over:
 		return
+	if shield_left > 0.0:
+		shield_left = 0.0
+		invulnerable = _cfg("player.invulnerable_after_hit", 0.6)
+		_notice("Kalkan darbeyi emdi!")
+		return
+	arcade.break_chain()
+	sounds.cue("hit")
 	hp -= amount
 	invulnerable = _cfg("player.invulnerable_after_hit", 0.6)
 	_shake(float(DataLoader.dig(run_cfg, "screen_shake.hit", 3.0)))
@@ -672,34 +1007,54 @@ func _damage_player(amount: float, tell := true) -> void:
 
 
 func _shake(power: float) -> void:
+	if not effects_enabled:
+		return
 	shake = float(DataLoader.dig(run_cfg, "screen_shake.seconds", 0.2))
 	shake_power = power
 
 
 func _to_garage() -> void:
+	Engine.time_scale = 1.0
 	Session.came_from_run = true
-	get_tree().change_scene_to_file("res://scenes/garage.tscn")
+	get_tree().call_deferred("change_scene_to_file", "res://scenes/garage.tscn")
 
 
-func _end_run() -> void:
+func _end_run(outcome := "destroyed") -> void:
+	if over:
+		return
 	over = true
+	sounds.cue("finish" if outcome == "survived" else "hit")
+	paused = false
+	pause_panel.hide()
+	touch_held.clear()
 	_close_box()
-	anim = "destroyed"
+	anim = "destroyed" if outcome == "destroyed" else "drive"
 	anim_t = 0.0
 	pending.clear()
-	end_result = momo.end_run("destroyed", rng)
+	if outcome == "survived":
+		arcade.score += int(_cfg("arcade.finish_reward", 500))
+	end_result = momo.end_run(outcome, rng)
 	var garage := Garage.new(DataLoader.load_json(DataLoader.GARAGE_PATH), balance)
 	save["trust"] = momo.trust
 	var run_info := end_result.duplicate()
 	run_info["distance"] = distance
 	run_info["kills"] = kills
 	save["memory"] = garage.record_run(save.get("memory", {}), run_info)
+	save["best_score"] = maxi(int(save.get("best_score", 0)), arcade.score)
 	var saved: bool = store.save_data(save)
 	var d := float(end_result.get("trust_delta", 0.0))
-	end_panel.text = "SEFER BİTTİ\n\nMesafe: %d m\nYok edilen düşman: %d\nGüven: %d → %d (%s%d)\n\nMOMO: “%s”\n\n%sEnter ile garaja dön" % [
-		int(distance), kills, int(round(float(end_result.get("trust_before", 0)))), int(round(momo.trust)),
-		"+" if d >= 0 else "", int(round(d)), str(end_result.get("comment", "...")),
-		"" if saved else "(Kayıt yazılamadı)\n"]
+	end_panel.text = "%s\n\nPUAN %d · REKOR %d\nMesafe: %d m · Düşman: %d\nEn iyi seri: %d · Görev: %d\nGüven: %d (%s%d)\n\nMOMO: %s\n\n%sEnter: yeniden sür · G: garaj" % [
+		"YOLU AŞTIK!" if outcome == "survived" else "TEKRAR DENEYELİM",
+		arcade.score, int(save["best_score"]), int(distance), kills, arcade.best_chain, arcade.contract,
+		int(momo.trust), "+" if d >= 0 else "", int(round(d)), str(end_result.get("comment", "...")),
+		"" if saved else "Kayıt yazılamadı.\n"]
+	for button in touch_controls:
+		button.hide()
+	var layer := end_panel.get_parent()
+	var retry := _control_button(layer, Rect2(166, 300, 148, 30), "Yeniden sür", _restart_run)
+	retry.grab_focus()
+	_control_button(layer, Rect2(326, 300, 148, 30), "Garaj", _to_garage)
+
 	end_panel.visible = true
 
 
@@ -753,7 +1108,7 @@ func _scroll_scenery(delta: float) -> void:
 
 func _draw() -> void:
 	var off := Vector2.ZERO
-	if shake > 0.0:
+	if shake > 0.0 and effects_enabled:
 		off = Vector2(rng.randf_range(-1, 1), rng.randf_range(-1, 1)) * shake_power
 	position = off.round()
 	var road := sheets.texture("assets/road/road_tile.png")
@@ -772,6 +1127,18 @@ func _draw() -> void:
 		sheets.draw_frame(self, "road_decals", int(d["frame"]), d["pos"])
 	for pr in props:
 		sheets.draw_anim(self, "roadside_props", str(pr["anim"]), game_time, pr["pos"])
+	for pickup in pickups:
+		_draw_pickup(pickup)
+	if shield_left > 0.0 and not over:
+		draw_arc(Vector2(car_x, PLAYER_Y), 32, 0, TAU, 32, Color("79d4ff"), 2)
+	if boosting and not over:
+		for side in [-1, 1]:
+			draw_line(Vector2(car_x + side * 7, PLAYER_Y + 28), Vector2(car_x + side * 7, PLAYER_Y + 38 + sin(game_time * 40) * 5), Color("79d4ff"), 3)
+	# Offscreen pursuers receive a lane marker before entering the playfield.
+	for enemy in enemies:
+		if enemy["pos"].y > H and not enemy.has("dead"):
+			var x := _lane_x(int(enemy["lane"]))
+			draw_colored_polygon(PackedVector2Array([Vector2(x - 6, 347), Vector2(x + 6, 347), Vector2(x, 339)]), Color("ff8b8b"))
 	for m in mines:
 		var armed := float(m["arm"]) <= 0.0
 		sheets.draw_anim(self, "mine", "armed" if armed else "arming", game_time, m["pos"])
@@ -788,6 +1155,22 @@ func _draw() -> void:
 
 
 const ENEMY_SHEETS := {"rammer": "enemy_rammer", "pickup": "enemy_pickup", "truck": "enemy_truck"}
+
+
+func _draw_pickup(pickup: Dictionary) -> void:
+	var p: Vector2 = pickup["pos"]
+	var kind := str(pickup["kind"])
+	var color: Color = {"repair": Color("7cddb5"), "energy": Color("ffce70"), "shield": Color("79d4ff")}[kind]
+	draw_rect(Rect2(p - Vector2(11, 11), Vector2(22, 22)), Color("101622"))
+	draw_rect(Rect2(p - Vector2(11, 11), Vector2(22, 22)), color, false, 1)
+	match kind:
+		"repair":
+			draw_rect(Rect2(p - Vector2(2, 7), Vector2(4, 14)), color)
+			draw_rect(Rect2(p - Vector2(7, 2), Vector2(14, 4)), color)
+		"energy":
+			draw_colored_polygon(PackedVector2Array([p + Vector2(1, -8), p + Vector2(-5, 1), p + Vector2(0, 1), p + Vector2(-1, 8), p + Vector2(6, -2), p + Vector2(1, -2)]), color)
+		"shield":
+			draw_polyline(PackedVector2Array([p + Vector2(-6, -6), p + Vector2(6, -6), p + Vector2(5, 3), p + Vector2(0, 8), p + Vector2(-5, 3), p + Vector2(-6, -6)]), color, 2)
 
 
 func _draw_enemy_sprite(e: Dictionary) -> void:

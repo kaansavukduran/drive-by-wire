@@ -1,5 +1,7 @@
 # Ortak sözleşme (tüm geliştirme ajanları için)
 
+> 12 Kasım 2026: Kullanıcının yeni isteğiyle sürüm 0.2.0, doğrudan ok tuşlu sürüş olarak geliştirilir. Aşağıdaki ajan sahiplikleri önceki çalışma organizasyonunu anlatır; bu tek geliştiricili değişikliğin dosya sınırı değildir. Godot 4.6.3, 640×360, kayıt uyumluluğu ve Türkçe glif koşulları korunur. [Güncel kararlar ve doğrulama](FORGE.md).
+
 Sabitler: oyun adı "Drive-By Wire", dosya adı öneki `DriveByWire`, Android paketi `com.kaansavukduran.drivebywire`, sürüm `0.1.0`, Godot **4.6.3** (`godot` PATH'te), GL Compatibility.
 Mantıksal çözünürlük 640×360, `canvas_items` stretch, en-boy `keep`, doku filtresi nearest. 1440p'de tam 4×. Yazılar vektör font ile çizilir (Türkçe karakter şart).
 

@@ -95,9 +95,10 @@ def main() -> None:
     shutil.rmtree(OUT, ignore_errors=True)
     OUT.mkdir(parents=True)
     (ROOT / "build/.gdignore").touch()
-    godot(engine, env, "--editor", "--import", "--quit")
+    godot(engine, env, "--editor", "--import", "--quit", check_output=True)
     # Run the real main scene briefly before exporting, so a broken game fails the deploy.
     godot(engine, env, "--quit-after", "120", check_output=True)
+    godot(engine, env, "res://scenes/main.tscn", "--quit-after", "120", check_output=True)
     godot(engine, env, "--export-release", "Web", str(OUT / "index.html"))
     for name in ("index.html", "index.js", "index.wasm", "index.pck"):
         if not (OUT / name).is_file():

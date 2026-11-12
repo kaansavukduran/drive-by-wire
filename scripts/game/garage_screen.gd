@@ -12,6 +12,8 @@ const FONT_FALLBACK := preload("res://assets/fonts/Lexend.ttf")
 const FONT_TERM := preload("res://assets/fonts/VT323.ttf")
 const Sheets := preload("res://scripts/game/sheets.gd")
 const UiSkin := preload("res://scripts/game/ui_skin.gd")
+const Controls := preload("res://scripts/game/controls.gd")
+const FONT_SYMBOLS := preload("res://assets/fonts/ControlSymbols.ttf")
 
 const W := 640.0
 const H := 360.0
@@ -38,6 +40,7 @@ var has_art := false
 
 
 func _ready() -> void:
+	Controls.install()
 	rng.randomize()
 	Engine.time_scale = 1.0
 	balance = DataLoader.load_json(DataLoader.BALANCE_PATH)
@@ -46,7 +49,9 @@ func _ready() -> void:
 	save = store.load_data()
 	momo = Momo.new(balance, DataLoader.load_json(DataLoader.MOMO_LINES_PATH), float(save.get("trust", 50.0)))
 	# Pixelify Sans digits (5 looks like S) hurt HUD readability; Lexend stays the UI font.
-	theme.default_font = FONT_FALLBACK
+	var font: FontFile = FONT_FALLBACK.duplicate()
+	font.fallbacks = [FONT_SYMBOLS]
+	theme.default_font = font
 	theme.default_font_size = 12
 	var ui := CanvasLayer.new()
 	add_child(ui)
@@ -77,6 +82,21 @@ func _ready() -> void:
 	buttons.size = Vector2(500, 150)
 	buttons.add_theme_constant_override("separation", 6)
 	ui.add_child(buttons)
+	var brand := _label(ui, Vector2(326, 10), Vector2(298, 17), 10)
+	brand.text = "FRAGARIA INTERACTIVE · AIONVERSE"
+	brand.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	brand.add_theme_color_override("font_color", Color("ff8fb1"))
+	var brief := _label(ui, Vector2(16, 290), Vector2(410, 40), 11)
+	brief.text = "← → Sür · ↑ Turbo · ↓ Fren · Space Ateş\n1.200 metreyi aş. MOMO'yu eve getir."
+	var quick := Button.new()
+	quick.theme = theme
+	quick.position = Vector2(326, 32)
+	quick.size = Vector2(298, 24)
+	quick.text = "Hızlı sürüş · Space"
+	quick.pressed.connect(_quick_start)
+	UiSkin.style_button(quick)
+	ui.add_child(quick)
+	quick.grab_focus()
 
 	var greet: Dictionary = garage.greeting(momo, save.get("memory", {}), rng)
 	var opening := str(greet.get("text", "Hoş geldin."))
@@ -176,13 +196,23 @@ func _pick_upgrade(id: String) -> void:
 
 func _start_run() -> void:
 	store.save_data(save)
-	get_tree().change_scene_to_file("res://scenes/main.tscn")
+	get_tree().call_deferred("change_scene_to_file", "res://scenes/main.tscn")
+
+
+func _quick_start() -> void:
+	# A quick run always rebuilds the car with the same friendly starter armour.
+	save["upgrades"] = garage.apply_upgrade({}, "armor")
+	Session.next_run_modifiers = []
+	_start_run()
 
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not (event is InputEventKey and event.pressed and not event.echo):
 		return
 	var k: int = event.keycode
+	if k == KEY_SPACE:
+		_quick_start()
+		return
 	if stage == "ready" and k in [KEY_ENTER, KEY_KP_ENTER, KEY_SPACE]:
 		_start_run()
 		return
@@ -203,8 +233,8 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _update_info() -> void:
 	var mem: Dictionary = save.get("memory", {})
-	info.text = "Güven %d · MOMO %s · Sefer %d · En uzun %d m  ·  Rakam tuşu seçer, Enter sefere çıkar" % [
-		int(momo.trust), Momo.mood_name_tr(momo.mood), int(mem.get("runs", 0)), int(mem.get("best_distance", 0))]
+	info.text = "v0.2.0 · Güven %d · Sefer %d · Rekor %d · En uzun %d m · 1–4 seç / Space hızlı sürüş" % [
+		int(momo.trust), int(mem.get("runs", 0)), int(save.get("best_score", 0)), int(mem.get("best_distance", 0))]
 	face.mood = momo.mood
 
 
