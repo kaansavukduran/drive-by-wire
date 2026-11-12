@@ -4,7 +4,7 @@ Mevcut Godot 4.6.3/GDScript altyapısını kullan. Yeni oyun motoru veya framewo
 
 Mobil/tablet kontrol şemasını değiştirmeden önce tür, kamera/hareket modeli, temel eylemler, tek/çift el ergonomisi, ekran yönleri ve hedef cihazları incele. En uygun 2–4 tarzı avantaj/dezavantajlarıyla sırala, birincil öneriyi belirt ve kullanıcının seçimini sor. Açık onay gelmeden şemayı değiştirme.
 
-12 Kasım 2026 güncel açık seçim: **sağa/sola kaydırma + eylem düğmeleri**, telefon ve tablette. Önceki virtual joystick isteğinin yerini bu son seçim aldı. PC oklar/WASD + fare; kontrolcü analog/D-pad ve düğmeler. Bu kararı yeni bir kontrol tarzına sessizce dönüştürme. Ayrıntı docs/CONTROLS.md.
+12 Kasım 2026 güncel açık seçim (0.7.0): kullanıcı serbest dört yönlü sürüş için **sabit sanal joystick + eylem düğmeleri** önerisini açıkça seçti. Önceki sağa/sola kaydırma kararı bu yeni oyun mekaniği için değişti. PC oklar/WASD ile XY hareket, E turbo/Q fren, fare; gamepad sol çubuk/D-pad, RB turbo/LT fren. Ön silah öne ateş eder; mayın aracın arkasından bırakılır. Hareket, animasyon pivotu, silah/mayın çıkışı ve hitbox aynı fizik koordinatlarını kullanmalı; render veya sprite alpha sınırından fizik merkezi üretilmez. Ayrıntı docs/CONTROLS.md.
 
 Dikey/yatay yönler, çoklu dokunma, odak kaybı ve yeniden boyutlandırmayı test et. Gerçek oyuncu kaydına yazmamak için bash tests/run_all.sh kullan. Web uçtan uca testi tests/browser_forge.cjs; geliştirme araçları yalnız test bağımlılığıdır. ?qa yalnız salt okunur yerel tarayıcı durumudur, oynanışa değer yazdırma.
 

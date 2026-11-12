@@ -2110,6 +2110,72 @@
     60,
     12
    ]
+  },
+  "aion_roadster": {
+   "path": "assets/sprites/aion_roadster.png",
+   "frame_width": 64,
+   "frame_height": 96,
+   "columns": 4,
+   "anchor": [
+    32,
+    45
+   ],
+   "display_size": [
+    48,
+    80
+   ],
+   "animations": {
+    "drive": {
+     "frames": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "fps": 12,
+     "loop": true
+    },
+    "boost": {
+     "frames": [
+      4,
+      5
+     ],
+     "fps": 14,
+     "loop": true
+    },
+    "fire": {
+     "frames": [
+      6
+     ],
+     "fps": 10,
+     "loop": false
+    },
+    "hurt": {
+     "frames": [
+      7
+     ],
+     "fps": 10,
+     "loop": false
+    }
+   }
+  },
+  "aionverse_portraits": {
+   "path": "assets/sprites/aionverse_portraits.png",
+   "frame_width": 64,
+   "frame_height": 64,
+   "columns": 3,
+   "anchor": [
+    32,
+    32
+   ],
+   "order": [
+    "aion",
+    "kurt",
+    "kuzu",
+    "omer",
+    "emre"
+   ],
+   "animations": {}
   }
  },
  "texture_filter": "nearest",

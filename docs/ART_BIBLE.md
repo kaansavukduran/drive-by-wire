@@ -48,3 +48,15 @@ Normal UI tek koyu/açık palet ve sistem tercihiyle çalışır; oyun dünyası
 0.6.0 oyun simgesi de yeni İLİN çiziminden gelir: `assets/brand/ilin-icon.svg` özgün pixel geometri; `tools/art/render_ilin_icon.gd` PNG çıktısını üretir. Eski MOMO ikonu arşiv varlığı olarak kaldı, uygulama/favicon/export onu kullanmaz. Garajın eski terminal yüzeyi runtime paneliyle kapatılıp İLİN gösterilir; kaynak arka plan değiştirilmez.
 
 Yayın kapısı: bu sürümde özel referansların, kaynak ağacının ve test ekranlarının public GitHub aktarımı onaylanmadı. Yerel geliştirme/inceleme tamamlandı; dal ve uzak önizleme 0.6 olarak yayımlanmadı.
+
+## 0.7.0 · Aion sürücü ve tutarlı dünya koordinatları
+
+Kullanıcı eski sürücüyü değiştirmeyi ve diğer karakterlerle konuşmayı istedi. Ana Aion referansı ve dört karakterin paftaları yeniden incelendi. Yeni araç/portreler AI destekli oyun uyarlamasıdır; mevcut kaynaklar korunur, final ANA kanon varyantı ilan edilmez. Kaynak özeti, orijinal üretim hash'i ve işlenmiş dosya hash'i `assets/sources/OMEGA3_ART.json` içindedir.
+
+- Araç: 4×2 hücre, her hücre 64×96; sabit pivot (32,45), çizim 48×80. Gövde animasyonun alfa sınırına göre hizalanmaz. Oyuncu hitbox merkezi fizik `(car_x,car_y)`; sprite yalnız görüntü için en fazla yarım mantıksal piksele yuvarlanır.
+- Ön namlu `(0,-30)`, arka mayın `(0,+30)` aynı fizik merkezine bağlıdır. Namlu parlaması/elektrik görseli araç merkezini izler; fırlatılan mermi ve mayın kendi dünya hareketine geçer. Kamera sarsıntısı bütün dünya katmanına uygulanır; UI CanvasLayer'da kalır.
+- 8 ayrı araç pozu vardır: dört sürüş/ifade, iki turbo, bir ön ateş, bir hasar. Yeni yürüme/koşma karakter animasyonları varmış gibi gösterilmez. Sakin göz kırpma yaklaşık 3,8 sn aralıklıdır; azaltılmış harekette dekoratif sürüş pozu sabittir.
+- Portre: 3×2 atlas, 64×64 hücre, beş karakter ve bir kullanılmayan hücre. Portreler statiktir. Runtime alfa eşiği 0,94, kare en-boy oranı ve eşit hücreler korunur. Replik boyu portreyi esnetmez.
+- Büyük üretimler `tools/art/import_omega_atlas.gd` ile hücre hücre nearest örneklenir. Bu bir oyun varlığı içe alma adımıdır; yeni motor veya renderer değildir. Orijinal üretimler değiştirilmez. Atlas PNG toplamı 131.244 byte; gerçek GPU bellek tahsisi ölçülmüş sayılmaz.
+
+Sabit joystick sekizgen piksel kontur ve ortak UiSkin paleti kullanır. Aynı eylem ailesi eşit ölçü/kenar/boşluk kullanır; joystick, mola ve eylem hitbox'ları için dört native ve altı tarayıcı düzeni denetlenir. [Kontrol kararı](CONTROLS.md).

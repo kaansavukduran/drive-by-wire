@@ -1,4 +1,5 @@
 extends SceneTree
+const Pilot := preload("res://tests/autopilot.gd")
 const H := preload("res://tests/harness.gd")
 const Book := preload("res://scripts/core/story_book.gd")
 const Store := preload("res://scripts/core/save_store.gd")
@@ -58,10 +59,7 @@ func run() -> void:
    game._direct_action("drive_comfort")
    for tick in 60*70:
     if game.over: break
-    game._fire({})
-    if not game.pickups.is_empty():
-     var pos: Vector2=game.pickups[0]["pos"]
-     if pos.y>130 and pos.y<250: game._change_lane(game._lane_of(pos.x))
+    Pilot.drive(game)
     if tick%600==0: game._direct_action("drive_comfort")
     game._simulate(1.0/60.0)
    h.check("%s leg %d survives real arcade" % [item["id"],stage+1],game.over and game.end_result.get("outcome")=="survived","hp %.0f, distance %.0f" % [game.hp,game.distance])

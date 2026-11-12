@@ -1,5 +1,5 @@
 {
-  "_comment": "Garaj içeriği. dialogues: İLİN sorusu + 3-4 seçenek. effects.trust güveni, effects.mood ruh halini değiştirir; effects.next_run bir sonraki sefere özel denge değişiklikleri (path/op/value, op: add|mul|set). tag hafızada sayılır (feed/repair/talk/tease/insult). upgrades: kalıcı yükseltmeler; levels[i] = o seviyede eklenen değiştiriciler.",
+  "_comment": "Garaj içeriği. dialogues: Omega-3 sorusu + 3-4 seçenek. effects.trust güveni, effects.mood ruh halini değiştirir; effects.next_run bir sonraki sefere özel denge değişiklikleri (path/op/value, op: add|mul|set). tag hafızada sayılır (feed/repair/talk/tease/insult). upgrades: kalıcı yükseltmeler; levels[i] = o seviyede eklenen değiştiriciler.",
   "version": 1,
   "dialogues": [
     {

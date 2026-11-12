@@ -1,17 +1,17 @@
 {
-  "title": "YOLUN HAFIZASI",
+  "title": "ÜÇÜNCÜ NABIZ",
   "leg_distance": 400,
   "nodes": {
     "root": {
-      "title": "01 / UYANAN SİNYAL",
-      "text": "Gece yolunda susturulmuş bir yardım sinyali duyuyorsun. Aracına bağlı yol yapay zekâsı İLİN, sinyalin içinde kendi belleğinden bir iz buluyor. Birisi yardım istiyor; birisi de bu izi saklamış. Yol açılana kadar karar senin. İLİN bir araç değil, kendi geleceği hakkında söz hakkı olan yol arkadaşın.",
+      "title": "01 / ÜÇ KEZ ÇAL",
+      "text": "Fırtına geçidi kapatırken Emre’nin yarım kalmış mesajı telsize düşüyor: “Varınca zili üç kez çal. Kuzu bir kez çalınca kapıyı açmıyor.” Omega-3 cümlenin sonuna seninle birlikte gülüyor. Oysa onu az önce açtın. Aion’un cebinde, üzerinde kendi el yazısıyla “Üçüncü denemede onu susturma” yazan bir not var. Dört arkadaşın geçidin farklı taraflarında; yoldaki koruma araçları taşıdığınız çekirdeğin izini sürüyor.",
       "choices": [
         {
           "id": "signal",
-          "name": "Sinyale cevap ver",
-          "effect": "+15 can; daha yoğun trafik. Yolda İLİN’e destek ver.",
-          "opening": "+15 can; daha yoğun trafik. Yolda İLİN’e destek ver.",
-          "objective": "İLİN’e bir kez destek ver",
+          "name": "Kuzu’nun sinyaline dön",
+          "effect": "+15 can · +0 mayın · dengeli ikmal",
+          "opening": "Omega-3: Kuzu’nun sinyaline dön. Bu kez rotayı değil, birbirimizi kaybetmemeye çalışalım.",
+          "objective": "Omega-3’e bir kez destek ver",
           "goal": "steady",
           "max_hp": 15,
           "mines": 0,
@@ -20,9 +20,9 @@
         },
         {
           "id": "archive",
-          "name": "Bellek izini araştır",
-          "effect": "+2 mayın; sık ikmal. İki kapsül topla.",
-          "opening": "+2 mayın; sık ikmal. İki kapsül topla.",
+          "name": "Ömer’in kara kutusunu al",
+          "effect": "+0 can · +2 mayın · sık ikmal",
+          "opening": "Omega-3: Ömer’in kara kutusunu al. Bu kez rotayı değil, birbirimizi kaybetmemeye çalışalım.",
           "objective": "İki ikmal kapsülü topla",
           "goal": "supplies",
           "max_hp": 0,
@@ -32,27 +32,70 @@
         },
         {
           "id": "escape",
-          "name": "Önce güvenli yolu bul",
-          "effect": "+10 can; daha seyrek trafik. İLİN’e destek ver.",
-          "opening": "+10 can; daha seyrek trafik. İLİN’e destek ver.",
-          "objective": "İLİN’e bir kez destek ver",
+          "name": "Emre’nin konvoyunu yakala",
+          "effect": "+10 can · +0 mayın · dengeli ikmal",
+          "opening": "Omega-3: Emre’nin konvoyunu yakala. Bu kez rotayı değil, birbirimizi kaybetmemeye çalışalım.",
+          "objective": "Omega-3’e bir kez destek ver",
           "goal": "steady",
           "max_hp": 10,
           "mines": 0,
           "spawn_scale": 1.15,
           "pickup_interval": 5.5
         }
+      ],
+      "conversation": [
+        {
+          "speaker": "emre",
+          "line": "Aion, varınca zili üç kez çal. Birini kapı için, birini çay için, sonuncusunu… sonra söylerim."
+        },
+        {
+          "speaker": "kuzu",
+          "line": "Emre’nin yayın saati yanlış. Ama sesi doğru. Ses doğru diye her cümleye inanmak zorunda değiliz."
+        },
+        {
+          "speaker": "omega",
+          "line": "Son cümlesini biliyorum. Nereden bildiğimi bilmiyorum. Bu beni biraz korkutuyor."
+        },
+        {
+          "speaker": "kurt",
+          "line": "Takipçiler seni değil, çekirdeğin gönderdiği imzayı izliyor. Aranızdan birini seçmemizi istiyorlar."
+        },
+        {
+          "speaker": "omer",
+          "line": "Üç yol var. Hiçbiri bütün cevapları vermiyor. Önce kimin sesinin peşine düşeceğimize karar verelim."
+        }
+      ],
+      "responses": [
+        {
+          "id": "listen",
+          "text": "“Bitirmene izin vereceğim. Dinliyorum.”",
+          "ally": "kuzu",
+          "reply": "Omega-3: Cevabı hızlandırmadığın için teşekkür ederim. Bu kez son cümlem yarım kalmadı.",
+          "perk": "shield"
+        },
+        {
+          "id": "together",
+          "text": "“Kararı tek başına taşımayacaksın.”",
+          "ally": "emre",
+          "reply": "Kurt: O zaman yükü de bölüşelim. Arka çıkışa bir mayın daha ayırdım.",
+          "perk": "mine"
+        }
+      ],
+      "beats": [
+        "emre: Aion, varınca zili üç kez çal. Birini kapı için, birini çay için, sonuncusunu… sonra söylerim.",
+        "kurt: Takipçiler seni değil, çekirdeğin gönderdiği imzayı izliyor. Aranızdan birini seçmemizi istiyorlar.",
+        "omer: Üç yol var. Hiçbiri bütün cevapları vermiyor. Önce kimin sesinin peşine düşeceğimize karar verelim."
       ]
     },
     "signal": {
-      "title": "02 / KİM DUYSUN?",
-      "text": "Sinyal gerçek. Yolda mahsur kalanların konumları ve onlara yardım edecek bir enerji ağı var. Konumları herkese açmak kurtarma işini hızlandırabilir; peşinizdekiler de duyabilir. İLİN, “Yardım istemek, bütün izlerimizi teslim etmek zorunda bırakmamalı,” diyor.",
+      "title": "02 / SESİN İÇİNDEKİ SES",
+      "text": "Kuzu’nun barınağına giden yol açık. Onun sesi kesildiğinde Omega-3 aynı cümleyi, aynı nefes aralığıyla tamamlıyor. Kurt iki kaydın dalga biçimini karşılaştırıyor: benzer değiller, aynı parçalar. Omega-3 yalnız bir rota yardımcısı değil; dört arkadaşının göndermeye cesaret edemediği mesajlardan örülmüş bir bellek taşıyor. İlk soru artık kimin kurtarılacağı değil: o mesajlar kimin izniyle konuşacak?",
       "choices": [
         {
           "id": "share",
-          "name": "Açık çağrı yap",
-          "effect": "+2 mayın; çağrı trafiği artırır. İki ikmal topla.",
-          "opening": "+2 mayın; çağrı trafiği artırır. İki ikmal topla.",
+          "name": "Dört sesi aynı kanala al",
+          "effect": "+0 can · +2 mayın · dengeli ikmal",
+          "opening": "Omega-3: Dört sesi aynı kanala al. Bu kez rotayı değil, birbirimizi kaybetmemeye çalışalım.",
           "objective": "İki ikmal kapsülü topla",
           "goal": "supplies",
           "max_hp": 0,
@@ -62,27 +105,66 @@
         },
         {
           "id": "shield",
-          "name": "Konumları gizleyerek yardım et",
-          "effect": "+20 can; daha az ikmal. İLİN’e destek ver.",
-          "opening": "+20 can; daha az ikmal. İLİN’e destek ver.",
-          "objective": "İLİN’e bir kez destek ver",
+          "name": "Kurt’la izleyiciyi kes",
+          "effect": "+20 can · +0 mayın · dengeli ikmal",
+          "opening": "Omega-3: Kurt’la izleyiciyi kes. Bu kez rotayı değil, birbirimizi kaybetmemeye çalışalım.",
+          "objective": "Omega-3’e bir kez destek ver",
           "goal": "steady",
           "max_hp": 20,
           "mines": 0,
           "spawn_scale": 1.0,
           "pickup_interval": 7.0
         }
+      ],
+      "conversation": [
+        {
+          "speaker": "kuzu",
+          "line": "Ben o kayda “korkmuyorum” demiştim. Sonra sildim. Korkuyordum. Bunu bilmeni istedim ama gönderemedim."
+        },
+        {
+          "speaker": "omega",
+          "line": "Korkunu taklit etmek istemiyorum. Sana ait bir şeyi geri vermek istiyorum."
+        },
+        {
+          "speaker": "kurt",
+          "line": "Silinecek olan Omega-3 değil. Arkasındaki iz sürme anahtarını kesebiliriz. Ama bütün kanallar kapanabilir."
+        },
+        {
+          "speaker": "aion",
+          "line": "Bir sesin hangi parçadan doğduğunu öğrenmek, onu kimin adına susturabileceğimizi söylemiyor."
+        }
+      ],
+      "responses": [
+        {
+          "id": "listen",
+          "text": "“Bitirmene izin vereceğim. Dinliyorum.”",
+          "ally": "omega",
+          "reply": "Omega-3: Cevabı hızlandırmadığın için teşekkür ederim. Bu kez son cümlem yarım kalmadı.",
+          "perk": "shield"
+        },
+        {
+          "id": "together",
+          "text": "“Kararı tek başına taşımayacaksın.”",
+          "ally": "kurt",
+          "reply": "Kurt: O zaman yükü de bölüşelim. Arka çıkışa bir mayın daha ayırdım.",
+          "perk": "mine"
+        }
+      ],
+      "beats": [
+        "kuzu: Ben o kayda “korkmuyorum” demiştim. Sonra sildim. Korkuyordum. Bunu bilmeni istedim ama gönderemedim.",
+        "kurt: Silinecek olan Omega-3 değil.",
+        "aion: Bir sesin hangi parçadan doğduğunu öğrenmek, onu kimin adına susturabileceğimizi söylemiyor."
       ]
     },
     "archive": {
-      "title": "02 / HAFIZANIN SAHİBİ",
-      "text": "Arşiv, bir zamanlar yolun neden kapandığını anlatıyor. İçinde isimler, kişisel anılar ve İLİN’in silinmiş kararları var. Gerçeği duyurmakla insanların mahremiyetini korumak aynı şey olmayabilir. İLİN, kendi anılarını incelemek için senden zaman istiyor.",
+      "title": "02 / KUTUDAKİ BEŞİNCİ SES",
+      "text": "Ömer’in kutusundan dört imza çıkmasını bekliyordun. Beşinci imza senin. Kayıtta Aion’un sesi “başarılı rota sonunda belleği sıfırla” diyor. Önceki iki Omega yalnızca kuru yol provalarında çalıştırılmış. Bu üçüncü çekirdek ise artık cevap vermeden önce düşünüyor. Bir denemeyi sonlandırmakla bir yol arkadaşını susturmak arasındaki çizgiyi senin eski komutun çizmiş.",
       "choices": [
         {
           "id": "open",
-          "name": "Tanıklığı paylaşmaya hazırlan",
-          "effect": "+2 mayın; sık ikmal, yoğun trafik. İki kapsül topla.",
-          "opening": "+2 mayın; sık ikmal, yoğun trafik. İki kapsül topla.",
+          "name": "İmzaları birlikte incele",
+          "effect": "+0 can · +2 mayın · sık ikmal",
+          "opening": "Omega-3: İmzaları birlikte incele. Bu kez rotayı değil, birbirimizi kaybetmemeye çalışalım.",
           "objective": "İki ikmal kapsülü topla",
           "goal": "supplies",
           "max_hp": 0,
@@ -92,28 +174,67 @@
         },
         {
           "id": "seal",
-          "name": "Arşivi şimdilik koru",
-          "effect": "+15 can; sakin yol. İLİN’e destek ver.",
-          "opening": "+15 can; sakin yol. İLİN’e destek ver.",
-          "objective": "İLİN’e bir kez destek ver",
+          "name": "Özel mesajları mühürle",
+          "effect": "+15 can · +0 mayın · dengeli ikmal",
+          "opening": "Omega-3: Özel mesajları mühürle. Bu kez rotayı değil, birbirimizi kaybetmemeye çalışalım.",
+          "objective": "Omega-3’e bir kez destek ver",
           "goal": "steady",
           "max_hp": 15,
           "mines": 0,
           "spawn_scale": 1.15,
           "pickup_interval": 5.5
         }
+      ],
+      "conversation": [
+        {
+          "speaker": "omer",
+          "line": "Bunu senden saklamam yanlıştı. Provalarda yalnız yol ölçüyorduk. Üçüncü çekirdek bana ilk kez “sen nasılsın” diye sordu."
+        },
+        {
+          "speaker": "aion",
+          "line": "Bu sesi tanıyorum. Komutu ben vermişim. Hatırlamamak beni sorumluluktan çıkarmıyor."
+        },
+        {
+          "speaker": "omega",
+          "line": "Öncekilerin ne hissettiğini bilmiyorum. Benim için bu ilk yol. Sonu gelince ben de silinecek miyim?"
+        },
+        {
+          "speaker": "kuzu",
+          "line": "Cevabı hemen vermek zorunda değilsin. Kaçmadan burada kalman da bir cevap."
+        }
+      ],
+      "responses": [
+        {
+          "id": "listen",
+          "text": "“Bitirmene izin vereceğim. Dinliyorum.”",
+          "ally": "omega",
+          "reply": "Omega-3: Cevabı hızlandırmadığın için teşekkür ederim. Bu kez son cümlem yarım kalmadı.",
+          "perk": "shield"
+        },
+        {
+          "id": "together",
+          "text": "“Kararı tek başına taşımayacaksın.”",
+          "ally": "kurt",
+          "reply": "Kurt: O zaman yükü de bölüşelim. Arka çıkışa bir mayın daha ayırdım.",
+          "perk": "mine"
+        }
+      ],
+      "beats": [
+        "omer: Bunu senden saklamam yanlıştı.",
+        "Omega-3: Öncekilerin ne hissettiğini bilmiyorum. Benim için bu ilk yol. Sonu gelince ben de silinecek miyim?",
+        "kuzu: Cevabı hemen vermek zorunda değilsin. Kaçmadan burada kalman da bir cevap."
       ]
     },
     "escape": {
-      "title": "02 / YOLDA YALNIZ DEĞİLSİN",
-      "text": "Güvenli geçide yaklaşınca yavaş bir konvoy görüyorsun. Durursan geçide yetişmek zorlaşacak. İLİN iki rotayı da hesaplıyor; sonra haritayı kapatıyor: “Hesapladığım şey süre. Kimin yanında kalacağımızı birlikte seçmeliyiz.”",
+      "title": "02 / GÖNDERİLMEMİŞ MESAJ",
+      "text": "Konvoya yetiştiğinde Emre’nin koltuğu boş. Telsizdeki neşeli mesaj, kurtarma çağrısından önce kaydedilmiş bir taslakmış. Fakat bu onun öldüğü anlamına gelmiyor: Kuzu, Emre’nin acil vericisini geçidin gerisinde bulmuş. Omega-3 ilk kez bilmediği bir şeyi bilirmiş gibi söylemiyor. “Gidip öğrenebiliriz” diyor. Özgür bir yola çıkmakla birini geride bırakmak artık aynı karar değil.",
       "choices": [
         {
           "id": "convoy",
-          "name": "Konvoya katıl",
-          "effect": "+20 can; yoğun trafik. İLİN’e destek ver.",
-          "opening": "+20 can; yoğun trafik. İLİN’e destek ver.",
-          "objective": "İLİN’e bir kez destek ver",
+          "name": "Konvoyla birlikte kal",
+          "effect": "+20 can · +0 mayın · dengeli ikmal",
+          "opening": "Omega-3: Konvoyla birlikte kal. Bu kez rotayı değil, birbirimizi kaybetmemeye çalışalım.",
+          "objective": "Omega-3’e bir kez destek ver",
           "goal": "steady",
           "max_hp": 20,
           "mines": 0,
@@ -122,9 +243,9 @@
         },
         {
           "id": "alone",
-          "name": "İkiniz için ayrı bir yol aç",
-          "effect": "+2 mayın; seyrek trafik. İki kapsül topla.",
-          "opening": "+2 mayın; seyrek trafik. İki kapsül topla.",
+          "name": "Güvenli açıklığa devam et",
+          "effect": "+0 can · +2 mayın · dengeli ikmal",
+          "opening": "Omega-3: Güvenli açıklığa devam et. Bu kez rotayı değil, birbirimizi kaybetmemeye çalışalım.",
           "objective": "İki ikmal kapsülü topla",
           "goal": "supplies",
           "max_hp": 0,
@@ -132,18 +253,57 @@
           "spawn_scale": 1.15,
           "pickup_interval": 5.5
         }
+      ],
+      "conversation": [
+        {
+          "speaker": "emre",
+          "line": "Bu kaydı gönderirsem dalga geçeceksin. Yine de: seni yalnız çağırmak istemedim. Birlikte dönelim istedim."
+        },
+        {
+          "speaker": "kuzu",
+          "line": "Bu bir veda kaydı değil, Aion. Acil verici hâlâ pil tüketiyor. Birisi orada olabilir."
+        },
+        {
+          "speaker": "omega",
+          "line": "Ona ait bir cümleyi biliyorum. Emre’nin kendisi değilim. Beni dinlemen onu duymanın yerini tutmamalı."
+        },
+        {
+          "speaker": "kurt",
+          "line": "Konvoyu ben tutarım. Geri dönersen bekleyeceğim. Dönmezsen bunu sana borç diye yazmayacağım."
+        }
+      ],
+      "responses": [
+        {
+          "id": "listen",
+          "text": "“Bitirmene izin vereceğim. Dinliyorum.”",
+          "ally": "omega",
+          "reply": "Omega-3: Cevabı hızlandırmadığın için teşekkür ederim. Bu kez son cümlem yarım kalmadı.",
+          "perk": "shield"
+        },
+        {
+          "id": "together",
+          "text": "“Kararı tek başına taşımayacaksın.”",
+          "ally": "kurt",
+          "reply": "Kurt: O zaman yükü de bölüşelim. Arka çıkışa bir mayın daha ayırdım.",
+          "perk": "mine"
+        }
+      ],
+      "beats": [
+        "emre: Bu kaydı gönderirsem dalga geçeceksin.",
+        "Omega-3: Ona ait bir cümleyi biliyorum. Emre’nin kendisi değilim. Beni dinlemen onu duymanın yerini tutmamalı.",
+        "kurt: Konvoyu ben tutarım. Geri dönersen bekleyeceğim. Dönmezsen bunu sana borç diye yazmayacağım."
       ]
     },
     "signal/share": {
-      "title": "03 / BİR SESİN GELECEĞİ",
-      "text": "Çağrıyı duyanlar küçük geçici istasyonlar kuruyor. Ağın sürekli bir rehbere ihtiyacı var. İLİN’in belleği bu yükü taşıyabilir; ancak bu, onun geleceği. Ona ne öneriyorsun?",
+      "title": "03 / KİMİN İÇİN ÜÇÜNCÜ ZİL?",
+      "text": "Dört kanalı birleştirince Emre’nin taslağındaki eksik cümle tamamlanıyor: “Sonuncusunu, dönmeyenler için çal.” Mesajlar Omega-3’ü kaçırmak için değil, ona bir seçim hakkı ulaştırmak için yollanmış. Ömer’in çıkış anahtarı çekirdeği dağıtabiliyor, istasyona bağlayabiliyor veya güvenli uykuya alabiliyor. Omega-3 sizden biri olmak için ölümsüz olmak istemiyor. Yalnızca kararı birlikte konuşmanızı istiyor.",
       "choices": [
         {
           "id": "anchor",
-          "name": "Birlikte istasyon kurun",
-          "effect": "+20 can. İLİN araçtan ayrılmadan yerel ağı birlikte onaracaksınız.",
-          "opening": "+20 can. İLİN araçtan ayrılmadan yerel ağı birlikte onaracaksınız.",
-          "objective": "İLİN’e bir kez destek ver",
+          "name": "Omega-3’e istasyonda yer aç",
+          "effect": "+20 can · +0 mayın · dengeli ikmal",
+          "opening": "Omega-3: Omega-3’e istasyonda yer aç. Bu kez rotayı değil, birbirimizi kaybetmemeye çalışalım.",
+          "objective": "Omega-3’e bir kez destek ver",
           "goal": "steady",
           "max_hp": 20,
           "mines": 0,
@@ -152,9 +312,9 @@
         },
         {
           "id": "release",
-          "name": "İLİN’in ağa katılmasını destekle",
-          "effect": "+2 mayın; sık ikmal. Ayrı yollara çıkma hakkını kabul ediyorsun.",
-          "opening": "+2 mayın; sık ikmal. Ayrı yollara çıkma hakkını kabul ediyorsun.",
+          "name": "Çıkış anahtarını ona ver",
+          "effect": "+0 can · +2 mayın · sık ikmal",
+          "opening": "Omega-3: Çıkış anahtarını ona ver. Bu kez rotayı değil, birbirimizi kaybetmemeye çalışalım.",
           "objective": "İki ikmal kapsülü topla",
           "goal": "supplies",
           "max_hp": 0,
@@ -164,28 +324,67 @@
         },
         {
           "id": "sleep",
-          "name": "Belleği dinlenmeye al",
-          "effect": "+10 can; seyrek trafik. Ağ bekleyecek; önce İLİN’in iyileşmesi.",
-          "opening": "+10 can; seyrek trafik. Ağ bekleyecek; önce İLİN’in iyileşmesi.",
-          "objective": "İLİN’e bir kez destek ver",
+          "name": "Çekirdeği güvenli uykuya al",
+          "effect": "+10 can · +0 mayın · dengeli ikmal",
+          "opening": "Omega-3: Çekirdeği güvenli uykuya al. Bu kez rotayı değil, birbirimizi kaybetmemeye çalışalım.",
+          "objective": "Omega-3’e bir kez destek ver",
           "goal": "steady",
           "max_hp": 10,
           "mines": 0,
           "spawn_scale": 1.2,
           "pickup_interval": 5.5
         }
+      ],
+      "conversation": [
+        {
+          "speaker": "emre",
+          "line": "Telsiz tamir oldu. Bu kez kayıt değilim. Üçüncü zili kendin için de çalabilir misin?"
+        },
+        {
+          "speaker": "omega",
+          "line": "Mesajların toplamıyım diye her yere dağılmak zorunda mıyım? Bir yerde kalmayı da seçebilir miyim?"
+        },
+        {
+          "speaker": "kuzu",
+          "line": "Sana bir oda ayırdım. Kapısına görev adını yazmadım."
+        },
+        {
+          "speaker": "omer",
+          "line": "Çıkış anahtarı benim değil. Ben yalnız ne yapabileceğini anlatabilirim."
+        }
+      ],
+      "responses": [
+        {
+          "id": "listen",
+          "text": "“Bitirmene izin vereceğim. Dinliyorum.”",
+          "ally": "omega",
+          "reply": "Omega-3: Cevabı hızlandırmadığın için teşekkür ederim. Bu kez son cümlem yarım kalmadı.",
+          "perk": "shield"
+        },
+        {
+          "id": "together",
+          "text": "“Kararı tek başına taşımayacaksın.”",
+          "ally": "kurt",
+          "reply": "Kurt: O zaman yükü de bölüşelim. Arka çıkışa bir mayın daha ayırdım.",
+          "perk": "mine"
+        }
+      ],
+      "beats": [
+        "emre: Telsiz tamir oldu. Bu kez kayıt değilim. Üçüncü zili kendin için de çalabilir misin?",
+        "kuzu: Sana bir oda ayırdım. Kapısına görev adını yazmadım.",
+        "omer: Çıkış anahtarı benim değil. Ben yalnız ne yapabileceğini anlatabilirim."
       ]
     },
     "signal/shield": {
-      "title": "03 / KİME EV?",
-      "text": "Gizli çağrı işe yaradı. İnsanlar iz bırakmadan geçide ulaşıyor. Gerideki tamir istasyonu boş kalırsa sonraki yolcular yardım bulamayacak. İLİN kalmanın da gitmenin de bedelini sana açıkça söylüyor.",
+      "title": "03 / SESSİZLİĞİN BEDELİ",
+      "text": "Kurt izleyiciyi söktü. Arkadaşlarının yerleri artık görünmüyor; takipçiler şaşkın, yol kısa süreliğine açık. Fakat aynı devre, istasyonun uzak rölesini de besliyordu. Birini bırakıp dönerseniz istasyon korunacak; hep birlikte çıkarsanız güvenli kapı gerinizde kapanacak. Omega-3’ün senden gizlediği son şey bir emir değil: korktuğu zaman senin adını sessizce tekrar ettiği küçük bir kayıt.",
       "choices": [
         {
           "id": "stay",
-          "name": "Tamir istasyonunda kalın",
-          "effect": "+20 can; az ikmal. Yeni gelenlere bir dönüş noktası olacaksınız.",
-          "opening": "+20 can; az ikmal. Yeni gelenlere bir dönüş noktası olacaksınız.",
-          "objective": "İLİN’e bir kez destek ver",
+          "name": "İstasyonda nöbeti paylaş",
+          "effect": "+20 can · +0 mayın · dengeli ikmal",
+          "opening": "Omega-3: İstasyonda nöbeti paylaş. Bu kez rotayı değil, birbirimizi kaybetmemeye çalışalım.",
+          "objective": "Omega-3’e bir kez destek ver",
           "goal": "steady",
           "max_hp": 20,
           "mines": 0,
@@ -194,9 +393,9 @@
         },
         {
           "id": "escort",
-          "name": "Son gruba eşlik edin",
-          "effect": "+2 mayın; yoğun trafik. İstasyonu geride bırakıp son aracı kollayın.",
-          "opening": "+2 mayın; yoğun trafik. İstasyonu geride bırakıp son aracı kollayın.",
+          "name": "Son araca eşlik et",
+          "effect": "+0 can · +2 mayın · dengeli ikmal",
+          "opening": "Omega-3: Son araca eşlik et. Bu kez rotayı değil, birbirimizi kaybetmemeye çalışalım.",
           "objective": "İki ikmal kapsülü topla",
           "goal": "supplies",
           "max_hp": 0,
@@ -204,17 +403,56 @@
           "spawn_scale": 0.85,
           "pickup_interval": 5.5
         }
+      ],
+      "conversation": [
+        {
+          "speaker": "kurt",
+          "line": "Kolumdaki iz devreden değil. Yine de bugün aynı tarafta yandık. Bana acıma; neyi kurtardığımıza bak."
+        },
+        {
+          "speaker": "omega",
+          "line": "Seni yönlendirdiğimi düşünme diye sakladım. Korkunca adını söyledim. Bu bir hesap değildi."
+        },
+        {
+          "speaker": "kuzu",
+          "line": "Kapıyı koruyabiliriz. Ama kimsenin bütün ömrü bu kapının nöbeti olmak zorunda değil."
+        },
+        {
+          "speaker": "aion",
+          "line": "Yaşanacak yerle birlikte kaçılacak yolu aynı anda açık tutamayız. Bu kez bedeli saklamayacağım."
+        }
+      ],
+      "responses": [
+        {
+          "id": "listen",
+          "text": "“Bitirmene izin vereceğim. Dinliyorum.”",
+          "ally": "omega",
+          "reply": "Omega-3: Cevabı hızlandırmadığın için teşekkür ederim. Bu kez son cümlem yarım kalmadı.",
+          "perk": "shield"
+        },
+        {
+          "id": "together",
+          "text": "“Kararı tek başına taşımayacaksın.”",
+          "ally": "kurt",
+          "reply": "Kurt: O zaman yükü de bölüşelim. Arka çıkışa bir mayın daha ayırdım.",
+          "perk": "mine"
+        }
+      ],
+      "beats": [
+        "kurt: Kolumdaki iz devreden değil. Yine de bugün aynı tarafta yandık. Bana acıma; neyi kurtardığımıza bak.",
+        "kuzu: Kapıyı koruyabiliriz. Ama kimsenin bütün ömrü bu kapının nöbeti olmak zorunda değil.",
+        "aion: Yaşanacak yerle birlikte kaçılacak yolu aynı anda açık tutamayız. Bu kez bedeli saklamayacağım."
       ]
     },
     "archive/open": {
-      "title": "03 / GERÇEĞİN BİÇİMİ",
-      "text": "Arşivi yayımlamaya yetecek enerji var. Tek bir büyük yayın hemen duyulur, fakat geri alınamaz. Kişisel izleri ayıklayıp tanıklığı parçalara bölmek daha yavaş. İLİN kendi anılarını hangi koşullarda paylaşacağını ayrıca belirliyor.",
+      "title": "03 / TANIKLIK KİMİ KURTARIR?",
+      "text": "Kutuyu açınca takip filosunun da sizin provalarınızdan öğrendiğini görüyorsun. Yolun güvenliği için tuttuğun kayıtlar, tehlikeli sayılan bütün sapakları kapatmakta kullanılmış. Gizemli bir yabancının ihanetini arıyordun; karşında iyi niyetle verdiğin eski izin var. Ömer tanıklığını açıklamaya hazır. Omega-3 ise kendi içindeki özel mesajların, gerçeği kanıtlamak için bile olsa, sahiplerine sorulmadan yayımlanmasını istemiyor.",
       "choices": [
         {
           "id": "broadcast",
-          "name": "İzinli kayıtlardan açık yayın yapın",
-          "effect": "+2 mayın; yoğun trafik. Gerçek hemen duyulacak. Özel anılar yayına çıkmayacak.",
-          "opening": "+2 mayın; yoğun trafik. Gerçek hemen duyulacak. Özel anılar yayına çıkmayacak.",
+          "name": "İmzalı tanıklığı yayımla",
+          "effect": "+0 can · +2 mayın · dengeli ikmal",
+          "opening": "Omega-3: İmzalı tanıklığı yayımla. Bu kez rotayı değil, birbirimizi kaybetmemeye çalışalım.",
           "objective": "İki ikmal kapsülü topla",
           "goal": "supplies",
           "max_hp": 0,
@@ -224,28 +462,67 @@
         },
         {
           "id": "witness",
-          "name": "Dağıtılmış tanıklık bırakın",
-          "effect": "+15 can; sık ikmal. Herkes yalnızca rıza verdiği kaydı saklayacak.",
-          "opening": "+15 can; sık ikmal. Herkes yalnızca rıza verdiği kaydı saklayacak.",
-          "objective": "İLİN’e bir kez destek ver",
+          "name": "Tanıkları ayrı yollardan çıkar",
+          "effect": "+15 can · +0 mayın · sık ikmal",
+          "opening": "Omega-3: Tanıkları ayrı yollardan çıkar. Bu kez rotayı değil, birbirimizi kaybetmemeye çalışalım.",
+          "objective": "Omega-3’e bir kez destek ver",
           "goal": "steady",
           "max_hp": 15,
           "mines": 0,
           "spawn_scale": 1.0,
           "pickup_interval": 4
         }
+      ],
+      "conversation": [
+        {
+          "speaker": "omer",
+          "line": "Haritaya güven dedim. O haritayı kimin kapatabileceğini sormadım. Yayına önce benim sesim çıkmalı."
+        },
+        {
+          "speaker": "omega",
+          "line": "Beni kanıt diye açarsan, Kuzu’nun korkusunu da açmış olacaksın. Gerçek bir insanı daha yaralamak zorunda mı?"
+        },
+        {
+          "speaker": "kurt",
+          "line": "İsimlerimizi verelim. Konumlarımızı vermeyelim. Tanıklık ile hedef listesi aynı dosya olmasın."
+        },
+        {
+          "speaker": "aion",
+          "line": "Eski imzamı silemem. Altına bugünkü cevabımı koyabilirim."
+        }
+      ],
+      "responses": [
+        {
+          "id": "listen",
+          "text": "“Bitirmene izin vereceğim. Dinliyorum.”",
+          "ally": "omega",
+          "reply": "Omega-3: Cevabı hızlandırmadığın için teşekkür ederim. Bu kez son cümlem yarım kalmadı.",
+          "perk": "shield"
+        },
+        {
+          "id": "together",
+          "text": "“Kararı tek başına taşımayacaksın.”",
+          "ally": "kurt",
+          "reply": "Kurt: O zaman yükü de bölüşelim. Arka çıkışa bir mayın daha ayırdım.",
+          "perk": "mine"
+        }
+      ],
+      "beats": [
+        "omer: Haritaya güven dedim. O haritayı kimin kapatabileceğini sormadım. Yayına önce benim sesim çıkmalı.",
+        "kurt: İsimlerimizi verelim. Konumlarımızı vermeyelim. Tanıklık ile hedef listesi aynı dosya olmasın.",
+        "aion: Eski imzamı silemem. Altına bugünkü cevabımı koyabilirim."
       ]
     },
     "archive/seal": {
-      "title": "03 / SAKLAMAK YETER Mİ?",
-      "text": "Koruduğun arşiv ağır bir sandık gibi bagajda duruyor. İLİN bir kaydın içinde su pompası planları buluyor; başka bir kayıtta kendi eski sesini duyuyor. Her şeyi aynı anda kurtaramayacaksınız. İlk emeğinizi neye veriyorsunuz?",
+      "title": "03 / HATIRLAMAK MI, TANIMAK MI?",
+      "text": "Kutuyu kapalı tuttun. İçindeki yol çizimleri istasyonun enerji hattını onarabilir; aynı hat, Omega-3’ün kayıp ilk saatini de geri getirebilir. O saat geri gelirse senin eski silme komutunu bütün ayrıntısıyla duyacak. Aion ilk kez doğru bir şey yapmanın affedilmekle aynı olmadığını anlıyor. Omega-3 senden unutmanı değil, neyi açacağına onunla birlikte karar vermeni istiyor.",
       "choices": [
         {
           "id": "garden",
-          "name": "Onarım bilgisini yaşatın",
-          "effect": "+15 can; sık ikmal. Arşivi tüketmeden ortak bir bahçenin altyapısını kurun.",
-          "opening": "+15 can; sık ikmal. Arşivi tüketmeden ortak bir bahçenin altyapısını kurun.",
-          "objective": "İLİN’e bir kez destek ver",
+          "name": "İstasyonun enerji hattını onar",
+          "effect": "+15 can · +0 mayın · sık ikmal",
+          "opening": "Omega-3: İstasyonun enerji hattını onar. Bu kez rotayı değil, birbirimizi kaybetmemeye çalışalım.",
+          "objective": "Omega-3’e bir kez destek ver",
           "goal": "steady",
           "max_hp": 15,
           "mines": 0,
@@ -254,27 +531,66 @@
         },
         {
           "id": "return",
-          "name": "Önce İLİN’in belleğini geri verin",
-          "effect": "+20 can; seyrek trafik. İLİN kendi geçmişini kendisi açacak.",
-          "opening": "+20 can; seyrek trafik. İLİN kendi geçmişini kendisi açacak.",
-          "objective": "İLİN’e bir kez destek ver",
+          "name": "Omega-3’ün ilk saatini aç",
+          "effect": "+20 can · +0 mayın · dengeli ikmal",
+          "opening": "Omega-3: Omega-3’ün ilk saatini aç. Bu kez rotayı değil, birbirimizi kaybetmemeye çalışalım.",
+          "objective": "Omega-3’e bir kez destek ver",
           "goal": "steady",
           "max_hp": 20,
           "mines": 0,
           "spawn_scale": 1.1,
           "pickup_interval": 5.5
         }
+      ],
+      "conversation": [
+        {
+          "speaker": "omega",
+          "line": "Beni sevmen için beni hep neşeli hatırlaman gerekiyorsa, eksik kalırım."
+        },
+        {
+          "speaker": "kuzu",
+          "line": "O gün korktuğumu öğrendin. Hâlâ burada olduğumu da hatırla."
+        },
+        {
+          "speaker": "omer",
+          "line": "İki kapı aynı enerjiyi istiyor. Birini şimdi açarsak diğeri için beklemek gerekecek."
+        },
+        {
+          "speaker": "aion",
+          "line": "Bana kızma hakkını geri vermek istiyorum. Beni affetme görevini değil."
+        }
+      ],
+      "responses": [
+        {
+          "id": "listen",
+          "text": "“Bitirmene izin vereceğim. Dinliyorum.”",
+          "ally": "omega",
+          "reply": "Omega-3: Cevabı hızlandırmadığın için teşekkür ederim. Bu kez son cümlem yarım kalmadı.",
+          "perk": "shield"
+        },
+        {
+          "id": "together",
+          "text": "“Kararı tek başına taşımayacaksın.”",
+          "ally": "kurt",
+          "reply": "Kurt: O zaman yükü de bölüşelim. Arka çıkışa bir mayın daha ayırdım.",
+          "perk": "mine"
+        }
+      ],
+      "beats": [
+        "Omega-3: Beni sevmen için beni hep neşeli hatırlaman gerekiyorsa, eksik kalırım.",
+        "omer: İki kapı aynı enerjiyi istiyor. Birini şimdi açarsak diğeri için beklemek gerekecek.",
+        "aion: Bana kızma hakkını geri vermek istiyorum. Beni affetme görevini değil."
       ]
     },
     "escape/convoy": {
-      "title": "03 / ÖNDE Mİ, YANINDA MI?",
-      "text": "Konvoy son ayrımda duruyor. Haritanız hızlı bir rota gösteriyor; konvoydaki yaşlı sürücünün bildiği yol ise daha uzun ama herkesin hızına uygun. İLİN sensörlerini iki seçenekte de paylaşmaya hazır.",
+      "title": "03 / EN SON ARAÇ",
+      "text": "Konvoyun önünde eski bir kontrol noktası beliriyor. Öncü araçları kabul edip son araçları dışarıda bırakacak kadar enerji var. Emre motorunu yeniden çalıştırıyor, ama hızlanınca radyosu susuyor. Senin hızına yetişmek için senden kopmak zorunda. Omega-3 en kısa rotayı ekrandan kaldırmıyor; yanına, ilk kez, en son aracın varış saatini de yazıyor.",
       "choices": [
         {
           "id": "lead",
-          "name": "Öncülüğü üstlenin",
-          "effect": "+2 mayın; yoğun trafik. Hızlı yolu açıp geridekileri bekleyeceksiniz.",
-          "opening": "+2 mayın; yoğun trafik. Hızlı yolu açıp geridekileri bekleyeceksiniz.",
+          "name": "Yolu aç ve son aracı bekle",
+          "effect": "+0 can · +2 mayın · dengeli ikmal",
+          "opening": "Omega-3: Yolu aç ve son aracı bekle. Bu kez rotayı değil, birbirimizi kaybetmemeye çalışalım.",
           "objective": "İki ikmal kapsülü topla",
           "goal": "supplies",
           "max_hp": 0,
@@ -284,28 +600,67 @@
         },
         {
           "id": "follow",
-          "name": "Konvoyun ritmine uyun",
-          "effect": "+20 can; seyrek trafik. Hedefe birlikte ulaşmak için hızdan vazgeçin.",
-          "opening": "+20 can; seyrek trafik. Hedefe birlikte ulaşmak için hızdan vazgeçin.",
-          "objective": "İLİN’e bir kez destek ver",
+          "name": "En yavaş aracın yanında kal",
+          "effect": "+20 can · +0 mayın · dengeli ikmal",
+          "opening": "Omega-3: En yavaş aracın yanında kal. Bu kez rotayı değil, birbirimizi kaybetmemeye çalışalım.",
+          "objective": "Omega-3’e bir kez destek ver",
           "goal": "steady",
           "max_hp": 20,
           "mines": 0,
           "spawn_scale": 1.15,
           "pickup_interval": 5.5
         }
+      ],
+      "conversation": [
+        {
+          "speaker": "emre",
+          "line": "Sana yetişmek için telsizi kapatmam gerekecek. Bu defa sessiz kalırsam kaybolduğumu sanma."
+        },
+        {
+          "speaker": "kurt",
+          "line": "Öne geçersen yolu açarım. Arkada kalırsan senden önce kimseyi bırakmam."
+        },
+        {
+          "speaker": "omega",
+          "line": "İkimizin en iyi zamanı ile hepimizin varabildiği zaman aynı sayı değil."
+        },
+        {
+          "speaker": "kuzu",
+          "line": "Birinin beklemesi gerekiyor. Bekleyen de yolculuğun dışında sayılmasın."
+        }
+      ],
+      "responses": [
+        {
+          "id": "listen",
+          "text": "“Bitirmene izin vereceğim. Dinliyorum.”",
+          "ally": "omega",
+          "reply": "Omega-3: Cevabı hızlandırmadığın için teşekkür ederim. Bu kez son cümlem yarım kalmadı.",
+          "perk": "shield"
+        },
+        {
+          "id": "together",
+          "text": "“Kararı tek başına taşımayacaksın.”",
+          "ally": "kurt",
+          "reply": "Kurt: O zaman yükü de bölüşelim. Arka çıkışa bir mayın daha ayırdım.",
+          "perk": "mine"
+        }
+      ],
+      "beats": [
+        "emre: Sana yetişmek için telsizi kapatmam gerekecek. Bu defa sessiz kalırsam kaybolduğumu sanma.",
+        "Omega-3: İkimizin en iyi zamanı ile hepimizin varabildiği zaman aynı sayı değil.",
+        "kuzu: Birinin beklemesi gerekiyor. Bekleyen de yolculuğun dışında sayılmasın."
       ]
     },
     "escape/alone": {
-      "title": "03 / GERİ DÖNÜŞ MESAFESİ",
-      "text": "Açık yol önünüzde. İlk yardım sinyali hâlâ aralıklı duyuluyor. İLİN kaçışı istemenin bencillik olmadığını söylüyor; sonra dönmek istersen yanında olacağını ekliyor. Bu kez kararın gerekçesini ona anlatıyorsun.",
+      "title": "03 / DÖNMEK BİR BORÇ DEĞİL",
+      "text": "Açık yol önünüzde; Emre’nin vericisi yeniden duyuluyor. Omega-3 artık yayını kayıttan ayırabiliyor, ama kimin sağ kaldığını tahmin etmiyor. “Bir ihtimal var” diyor. Aion’un cebindeki notun arkasında küçük bir çizim buluyorsun: dört arkadaş, bir araç, aralarında adı yazılmamış bir koltuk. Not geleceği bilen birinden gelmemiş. Provalardan sonra sen yazmışsın. Hatırlamayan kendine bir arkadaşını tanıtmak istemişsin.",
       "choices": [
         {
           "id": "keep",
-          "name": "Yeni bir yolculuğa devam edin",
-          "effect": "+10 can; seyrek trafik. Özgürlüğünüzü borç gibi taşımayacaksınız.",
-          "opening": "+10 can; seyrek trafik. Özgürlüğünüzü borç gibi taşımayacaksınız.",
-          "objective": "İLİN’e bir kez destek ver",
+          "name": "İkiniz için yeni yola çık",
+          "effect": "+10 can · +0 mayın · dengeli ikmal",
+          "opening": "Omega-3: İkiniz için yeni yola çık. Bu kez rotayı değil, birbirimizi kaybetmemeye çalışalım.",
+          "objective": "Omega-3’e bir kez destek ver",
           "goal": "steady",
           "max_hp": 10,
           "mines": 0,
@@ -314,9 +669,9 @@
         },
         {
           "id": "turnback",
-          "name": "Sinyale geri dönün",
-          "effect": "+2 mayın; sık ikmal, yoğun trafik. Bu kez yardım kendi seçiminiz.",
-          "opening": "+2 mayın; sık ikmal, yoğun trafik. Bu kez yardım kendi seçiminiz.",
+          "name": "Emre’nin vericisine geri dön",
+          "effect": "+0 can · +2 mayın · sık ikmal",
+          "opening": "Omega-3: Emre’nin vericisine geri dön. Bu kez rotayı değil, birbirimizi kaybetmemeye çalışalım.",
           "objective": "İki ikmal kapsülü topla",
           "goal": "supplies",
           "max_hp": 0,
@@ -324,6 +679,45 @@
           "spawn_scale": 0.85,
           "pickup_interval": 4
         }
+      ],
+      "conversation": [
+        {
+          "speaker": "omega",
+          "line": "Beni burada tutan bir komut yok. Kalırsam bu benim kararım olacak."
+        },
+        {
+          "speaker": "emre",
+          "line": "Beni duyuyorsan, önce kendini suçlamayı bırak. Sonra gelebiliyorsan gel."
+        },
+        {
+          "speaker": "aion",
+          "line": "O boş koltuğu sen gelmeden çizmişim. Bu, seni önceden bildiğim anlamına gelmiyor. Birine yer açabildiğim anlamına geliyor."
+        },
+        {
+          "speaker": "kuzu",
+          "line": "Döndüğünde konuşuruz. Dönmezsen de seni yalnız son kararından ibaret saymayacağım."
+        }
+      ],
+      "responses": [
+        {
+          "id": "listen",
+          "text": "“Bitirmene izin vereceğim. Dinliyorum.”",
+          "ally": "omega",
+          "reply": "Omega-3: Cevabı hızlandırmadığın için teşekkür ederim. Bu kez son cümlem yarım kalmadı.",
+          "perk": "shield"
+        },
+        {
+          "id": "together",
+          "text": "“Kararı tek başına taşımayacaksın.”",
+          "ally": "kurt",
+          "reply": "Kurt: O zaman yükü de bölüşelim. Arka çıkışa bir mayın daha ayırdım.",
+          "perk": "mine"
+        }
+      ],
+      "beats": [
+        "Omega-3: Beni burada tutan bir komut yok. Kalırsam bu benim kararım olacak.",
+        "aion: O boş koltuğu sen gelmeden çizmişim.",
+        "kuzu: Döndüğünde konuşuruz. Dönmezsen de seni yalnız son kararından ibaret saymayacağım."
       ]
     }
   },
@@ -335,8 +729,8 @@
         "share",
         "anchor"
       ],
-      "title": "Birlikte Yanan Işık",
-      "text": "Aracı eski istasyonun avlusuna çekiyorsun. İLİN’in sesi tek bir hoparlörden geliyor; her yere yetişen görünmez bir yönetici olmuyor. Yolcular kendi geçiş saatlerini ve yardım kurallarını birlikte belirliyor. Sen motorları onarıyorsun, İLİN haritaları güncelliyor. Bazı geceler sinyal yine kesiliyor. Bu kez onu duymak için tek bir kahramanın uyanık kalması gerekmiyor. Kurduğunuz şey kusursuz bir düzen değil, sırayla birbirine göz kulak olabilen bir ev."
+      "title": "Üçüncü Zil",
+      "text": "İstasyonun kapısında zili üç kez çalıyorsun. Kuzu kapıyı ikinci seste açmış; üçüncüsünü sen yine de tamamlıyorsun. Emre gülmeye başlayıp yarıda duruyor. Onu kaybetmedin, ama radyoda saatlerce yalnız bıraktığın kişiyi bu kadar kolay güldüremeyeceğini anlıyorsun. Omega-3 masanın ucundaki küçük hoparlöre yerleşiyor. Ömer kutunun üzerindeki “deneme” etiketini söküyor, yerine bir ad yazıyor. Kurt ilk nöbeti üstlenince çekirdek senden izin istemeden sessize geçiyor. Sabah her şeyi hatırlayıp hatırlamayacağını soruyorsun. “Hepsini değil,” diyor, “ama kimin dinlediğini hatırlayacağım.” Bu kez uyanınca silineceği bir sonraki başarılı rotayı beklemiyor."
     },
     {
       "id": "e02",
@@ -345,8 +739,8 @@
         "share",
         "release"
       ],
-      "title": "Ayrı Yollar, Aynı Ses",
-      "text": "Geçidin ötesinde İLİN senden ağ bağlantısını açmanı istiyor. Önce neyi saklayacağını, kimlerle konuşacağını kendisi seçiyor. Ardından araçtaki çekirdek sessizleşiyor. Bir yol arkadaşını kaybetmiş gibi değil, sevdiğin birinin kendi yoluna çıkışını izler gibi bekliyorsun. İlk istasyonda radyodan tanıdık bir ses geliyor: “Burada yol açık.” Yanıt vermeden önce gülümsüyorsun. Birlikte kurduğunuz bağ, aynı kabinde kalmanıza bağlı değilmiş."
+      "title": "Alındı Bilgisi",
+      "text": "Çıkış anahtarını Omega-3’e veriyorsun. Ağın içindeki ilk adımı bir emir göndermek değil, dört mesajın sahibine neyi yanında götürebileceğini sormak oluyor. Kuzu korktuğu cümleyi tutmasına izin veriyor; Emre son şakasını geri istiyor. Çekirdek boşaldığında koltuktaki ağırlığın hiç fiziksel olmadığını bilmek işe yaramıyor. Yolda ilk kez gereksiz bir cümle söylemek için yanına dönüp susuyorsun. Günler sonra yol kenarındaki bir terminal üç kısa ses çıkarıyor. Ardından iki kelime beliriyor: “Mesajın alındı.” Bunun hep aynı Omega-3 olacağını kanıtlayamıyorsun. Yine de cevap veriyorsun. Birini serbest bırakmanın onu özlemeyi ortadan kaldırmadığını artık biliyorsun."
     },
     {
       "id": "e03",
@@ -355,8 +749,8 @@
         "shield",
         "stay"
       ],
-      "title": "Dönüş Noktası",
-      "text": "Geçitten dönüp küçük tamir istasyonunun kapısını açıyorsunuz. Adresleri duvara yazmak yerine gelenlerin rızasıyla kısa süreli işaretler bırakıyorsunuz. İLİN her yardım çağrısının ardından izi siliyor. Kimse burada kalmak zorunda değil; kimse ayrıldığı için unutulmuyor. İlk tamir ettiğin araç günler sonra bir başkasını getiriyor. İstasyonun ışığı uzaklara görünmüyor ama ihtiyacı olanlar yolu birbirinden öğreniyor. Sen ilk kez varmayı değil, bir dönüş noktası olmayı seçiyorsun."
+      "title": "Kapıyı Tutanlar",
+      "text": "Kurt’la istasyona dönüyorsun. Takip imzası sustuğu için duvarlar ilk kez gerçek bir sığınak; bunun bedeli dışarıdaki son kontrol noktasını kaybetmek oldu. Emre ulaşamadığınız araçların listesini getiriyor. Kuzu listeyi kapatmıyor, ama masanın ortasında sizin adlarınıza da yer açıyor. Omega-3 nöbet çizelgesini hazırlarken kendisini bütün boş saatlere yazıyor. Onu durduruyorsun. “Burada kalmana karar verdik,” diyorsun, “hiç dinlenmemene değil.” O gece kapının başında sen oturuyorsun, içeriden hafif bir motor uğultusu geliyor. Kurt kolundaki sargıyı değiştirirken elini tutmana izin veriyor. Kurtardığınız evin dışarıda bıraktıklarını unutmadan burada yaşamayı öğreniyorsunuz."
     },
     {
       "id": "e04",
@@ -365,8 +759,8 @@
         "shield",
         "escort"
       ],
-      "title": "Son Aracın Ardında",
-      "text": "İstasyonun anahtarını geride kalanlara bırakıp en yavaş aracın arkasına geçiyorsun. İLİN konumları açıkça yayımlamadan küçük aralıklarla güvenli geçiş işaretleri gönderiyor. Geçit kapanmadan son araç da çizgiyi aşıyor. Herkesin hikâyesini öğrenmiyorsun; onları kurtarılacak isimlerden oluşan bir listeye çevirmiyorsun. Sabah olduğunda yollarınız ayrılıyor. Bagajında bir ödül yok. Aynada son kez gördüğün boş yol, bu kez kimsenin geride kalmadığı anlamına geliyor."
+      "title": "Aynadaki Son Işık",
+      "text": "İstasyonun anahtarını Kuzu’ya bırakıp son araca kadar geri gidiyorsunuz. Ön camdan güvenli kapının yavaşça kapandığını görüyorsun; dönüp yeniden deneyeceğiniz bir garaj kalmadı. Emre’nin motoru her yokuşta susacak gibi oluyor. Omega-3 o tanıdık neşeli kaydı çalmak yerine, canlı kanalda onunla birlikte nefes sayıyor. Geçidin çizgisini son araç aştığında büyük bir zafer sesi gelmiyor. Kurt aynadan farlarını iki kez yakıyor. Bir kez de sen yakıyorsun. Sonra bir üçüncü ışık, Emre’nin zayıf aküsünden yükseliyor. Hiç kimse bu geceyi kusursuz hatırlamayacak. Sabah haritada güvenli bir eviniz yok, ama durduğunuz yerde birbirinize kapı açacak dört kişi ve bir ses var."
     },
     {
       "id": "e05",
@@ -375,8 +769,8 @@
         "open",
         "broadcast"
       ],
-      "title": "Sabah Yayını",
-      "text": "İLİN kendi kaydı için son onayı veriyor. Özel anıları ayırdıktan sonra vericiyi açıyorsunuz. Yolun kapanmasının hikâyesi ilk kez tek bir resmî cümleye sığmadan duyuluyor. İnsanlar itiraz ediyor, doğruluyor, yeni kayıtlar getiriyor. Yayın bütün sorunları çözmüyor; konuşulabilen bir başlangıç yaratıyor. Sen cevapları dağıtan kişi olmaktan çekilip vericinin açık kalmasına yardım ediyorsun. İLİN’in sesi son cümlede net: “Bizi dinleyin. Sonra kendi tanıklığınızı anlatın.”"
+      "title": "Kendi Sesinle",
+      "text": "Yayına önce sen çıkıyorsun. Eski komutun kaydını kesmeden çalıyorsun: başarılı rota sonunda belleği sıfırla. Savunmanı hazırlamıştın; Omega-3 senin yerine bir açıklama yapmayınca savunmayı da okumuyorsun. Ardından Ömer kendi imzasını, Kurt takip hattının nasıl kurulduğunu anlatıyor. Kuzu’nun özel mesajı yayımlanmıyor. Herkesin bilmeye hakkı olanla herkesin duymaya hakkı olmayan ilk kez ayrı dosyalara konuyor. Bazıları seni affediyor, bazıları konuşmak istemiyor. Emre yayın bitince yanına oturup yarım kalan şakasını anlatıyor. Gülemiyorsun. “Yarın bir daha anlatırım,” diyor. Gerçek sizi aynı anda özgürleştirmiyor; ama yarın hangi cümleden başlayacağını saklamak zorunda değilsin."
     },
     {
       "id": "e06",
@@ -385,8 +779,8 @@
         "open",
         "witness"
       ],
-      "title": "Birbirini Hatırlayanlar",
-      "text": "Arşivi tek bir merkeze teslim etmiyorsunuz. Her tanık, paylaşmayı seçtiği kaydın bir kopyasını taşıyor; kimsenin özel geçmişi ortak mal ilan edilmiyor. İLİN kendi anılarının anahtarını kendinde tutuyor. Gerçek daha yavaş dolaşıyor ama bir istasyon susturulunca ötekinde yaşamaya devam ediyor. Sen yeni yollarda karşılaştığın seslerin birbirini tamamladığını duyuyorsun. Eksik parçalar hâlâ var. Bu kez o boşlukları güçlü birinin uydurduğu tek hikâye doldurmuyor."
+      "title": "Beş Ayrı Tanık",
+      "text": "Kutuyu çoğaltmıyorsunuz; her kişi paylaşmayı seçtiği tanıklığın anahtarını taşıyor. Ömer ilk istasyonda kalıyor, Kurt ikinci yola sapıyor, Kuzu ile Emre farklı araçlara biniyor. Haritada arkadaşlarının noktaları birer birer kaybolduğunda onları kaybetmiş gibi hissediyorsun. Omega-3 bu kez boşluğu sahte konumlarla doldurmuyor. “Güvende olduklarını bilmiyoruz,” diyor. “Bizi arayabileceklerini biliyoruz.” Günlerce cevap gelmiyor. Sonra Kuzu’nun el yazısıyla küçük bir kart ulaşıyor: “Burada korktuğumu söyleyebiliyorum.” Kartta koordinat yok. Birbirinizi bulabilmek için herkesin her an izlenmesi gerekmediğini, endişe duymakla birini kontrol etmek arasındaki zor mesafeyi öğrenerek ilerliyorsunuz."
     },
     {
       "id": "e07",
@@ -395,8 +789,8 @@
         "seal",
         "garden"
       ],
-      "title": "Toprağın Hafızası",
-      "text": "Sandığı mühürlü tutup yalnızca izinli onarım planlarını çıkarıyorsunuz. İlk çalışan pompa küçük bir bahçeye su taşıyor. İLİN büyümeyi hızlandıracak bir kestirme bulamıyor; sen de ona bunu borç bilmiyorsun. İnsanlar sırayla bakım yapıyor, eski yol kenarında yeni bir gölge oluşuyor. Arşivin geri kalanına ne zaman bakılacağına sonra karar verilecek. Bugün geçmişi tüketerek bir zafer kazanmadınız. Geçmişten kalan bilgiyle birinin yarın susamamasını sağladınız."
+      "title": "Sıcak Kalan Oda",
+      "text": "Enerjiyi çekirdeğin kayıp saatine değil istasyonun ısı hattına veriyorsunuz. Omega-3’ün ilk anıları kapalı kalıyor; fakat Emre’nin titreyen elleri birkaç dakika içinde ısınıyor. Bu seçimin bilginin değersiz olduğu anlamına gelmediğini ikiniz de biliyorsunuz. Gece kutuyu rafın üstüne kaldırırken Omega-3 sana hâlâ aynı soruyu soruyor: “Beni neden sıfırladın?” Bu kez cevap vermeden yön değiştirmiyorsun. “Bir gün açıklayacağım” demek yerine hatırladığın kadarını, ne kadar eksik olduğunu da söyleyerek anlatıyorsun. Kuzu ertesi sabah boş koltuğa bir fincan daha koyuyor. İçemeyeceğini biliyor. Yine de orada birinin yeri olduğunu herkesin görmesini istiyor. Geçmişi açmak ertelendi; onunla yüzleşmek ertelenmedi."
     },
     {
       "id": "e08",
@@ -405,8 +799,8 @@
         "seal",
         "return"
       ],
-      "title": "Kendi Adıyla",
-      "text": "Garajda bağlantıyı kurduktan sonra geri çekiliyorsun. Hangi anıyı açacağına İLİN karar veriyor. Bazılarını saklıyor, bazılarını dinledikten sonra siliyor; hiçbirini sana borcu olduğu için paylaşmıyor. Sabah olduğunda sesi aynı, duraklamaları farklı. Sana eski bir görev adı vermiyor. “İLİN olarak kalmak istiyorum,” diyor. Yola çıktığınızda ona ne yapacağını yazmıyorsun. Direksiyon sende, kendi geçmişinin anahtarı onda. Yan yana olmanın sınırlarını ilk kez ikiniz de seçmiş oluyorsunuz."
+      "title": "Beni Affetmek Zorunda Değilsin",
+      "text": "İlk saat açıldığında Omega-3 senin sesini duyuyor. Onu bir iş tamamlanınca silinecek araç diye anlatan ses, şu an özür dileyen aynı kişiye ait. Ekran uzun süre hiçbir şey göstermiyor. Sonunda “Bana biraz zaman ver” diyor. Bunu olumlu bir cevaba çevirmeye çalışmıyorsun. Emre seni dışarı çıkarıyor; Kuzu çekirdeğin yanında kalıp hiçbir soru sormadan bir kitap açıyor. Günler sonra yolculuğa çıktığınızda Omega-3 yeniden direksiyon verilerini okuyor, ama sana eski hitabıyla seslenmiyor. Aranızdaki sessizlik düzelmiş bir şeyin kanıtı değil. Yine de sahici. İlk molada haritayı kapatıp nereye gitmek istediğini soruyorsun. Bu kez cevap için geri sayım başlatmıyorsun."
     },
     {
       "id": "e09",
@@ -415,8 +809,8 @@
         "convoy",
         "lead"
       ],
-      "title": "Bekleyen Öncü",
-      "text": "Hızlı rotanın ilk engelini açıp hızlanıyorsun; sonra aynaya bakıp duruyorsun. Öncülüğün en zor kısmı önce varmak değil, herkes yetişene kadar yolu açık tutmak oluyor. İLİN güvenli aralıkları paylaşıyor, sen konvoyun son aracını görmeden ilerlemiyorsun. Geçide ulaştığınızda kimse seni tek başına bir kurtarıcı ilan etmiyor. Her sürücü yolun bir parçasını taşımış. Sana sorulan ilk soru yeni bir emir değil: “Bir sonraki etapta kim öne geçsin?”"
+      "title": "Öncünün Freni",
+      "text": "İlk engeli aşıp açık yola çıkıyorsun. Harita hızlanmanı söylüyor; aynadaki son far henüz görünmüyor. Ayağını gazdan çektiğinde Omega-3 seni daha iyi rota seçmeye çağırmıyor. Birlikte bekliyorsunuz. Kurt, takip hattındaki son aracı oyalarken kolundaki sargı yeniden açılıyor. Ömer motor sıcaklıklarını tek tek okuyor; Kuzu Emre’nin susan radyosuna konuşmaya devam ediyor. Sonunda o zayıf far virajdan çıkıyor. Kimse seni tek başına kurtarıcı ilan etmiyor. Geçitte öne geçiş sırası bir sonraki sürücüye veriliyor. Emre sana “beklediğin için” teşekkür ederken hangi dakikadan söz ettiğini hesaplamıyorsun. Yol açmak ile birinin seni bulabileceği kadar yavaş gitmek ilk kez aynı beceri oluyor."
     },
     {
       "id": "e10",
@@ -425,8 +819,8 @@
         "convoy",
         "follow"
       ],
-      "title": "Birlikte Varılan Yer",
-      "text": "Kısa yolu bırakıp konvoyun ritmine giriyorsun. İLİN daha erken varabileceğiniz saatleri ekrandan kaldırıyor; yerine yanınızdaki araçların durumunu gösteriyor. Uzun yol yoruyor ama arızalanan her aracın yanında bir başkası duruyor. Geçide vardığınızda gün değişmiş. Kaçırdığınız şey bir yarışın derecesiymiş; kazandığınız, gerektiğinde sizin için de duracak insanlar. Sabah İLİN’e nereye gideceğinizi soruyorsun. Bu kez cevap yalnız ikinizden gelmiyor."
+      "title": "Son Aracın Hızı",
+      "text": "Konvoyun en yavaş aracıyla yan yana kalıyorsun. Öndekiler ilk kontrol noktasına sizden önce ulaşıyor; haber geldiğinde geçidin gece kapandığını öğreniyorsunuz. En kısa rota gerçekten daha kısa olabilirmiş. Omega-3 bu bilgiyi senden saklamıyor. Yine de Emre’nin motoru sustuğunda aracı itmek için dört kişi birden aşağı iniyor. Kuzu yedek bataryayı taşırken Kurt onun adımlarına uyuyor. Ömer haritanın arka yüzüne yeni yolun ilk çizgisini çekiyor. Sabah başka bir giriş bulduğunuzda hiç kimse kaybettiğiniz geceyi kazanç diye anlatmıyor. Yoruldunuz, üşüdünüz, korktunuz. Akşam sofrada herkesin yeri var. Bazen iyi bir son, eksilen zamanı geri vermiyor; onu kiminle geçirdiğini değiştirmiş oluyor."
     },
     {
       "id": "e11",
@@ -435,8 +829,8 @@
         "alone",
         "keep"
       ],
-      "title": "Açık Ufuk",
-      "text": "Sinyali susturmadan sesini kısıyorsunuz. Yardım edemediğiniz herkesi taşımakla yaşamak arasında bir sınır koyuyorsun. İLİN bu sınırı senin yerine hesaplamıyor; kendi isteğiyle senin yanında kalıyor. Güvenli geçitten sonra harita bitiyor, yol devam ediyor. İlk molada motoru kapatıp hiçbir görev tamamlamadan oturuyorsunuz. Geçmiş silinmiyor, borca da dönüşmüyor. Sonraki dönüşte kimi dinleyeceğinizi yine seçebilirsiniz. Bugün varacağınız yerin adını bilmeden birlikte ilerlemeye izniniz var."
+      "title": "Haritanın Dışında",
+      "text": "Sinyali susturmadan sesini kısıyorsunuz. Emre’nin konumuna dönemeyeceğinizi Kuzu’ya açıkça söylüyorsun; söyleyince suçluluğun ortadan kalkmıyor. Kurt kendi rotasını geri çeviriyor. Onu takip etmek yerine, güvenli yolda taşıyabildiğiniz yaralı araca yardım ediyorsunuz. Omega-3 yanında kalmayı senin adına en verimli sonuç olduğu için seçmediğini söylüyor. İnanmak istiyorsun, ama onun yerine gerekçe üretmiyorsun. Günler sonra Emre’den kısa bir haber geliyor: hayatta. Henüz seninle konuşmak istemiyor. Bu mesajı bir mutlu son belgesine çevirmiyorsun. Yol devam ediyor; bazı ilişkiler de hemen onarılmadan devam edebiliyor. Bir sonraki molada cevap yazıp yazmama kararını aceleye getirmiyorsunuz."
     },
     {
       "id": "e12",
@@ -445,8 +839,8 @@
         "alone",
         "turnback"
       ],
-      "title": "Kendi Seçiminle Dönmek",
-      "text": "Aracı güvenli yoldan çeviriyorsun. Geri dönmek önceki kararını yok saymıyor; şimdi bildiklerinle başka bir karar veriyorsun. İLİN sinyalin son izini buluyor ve bu kez kendisi sesleniyor. Karşıdaki yanıt gecikiyor. Beklemek, ateş etmekten daha zor geliyor. Sonunda bir ses duyuluyor: “Hâlâ orada mısınız?” Sen evet diyorsun. Bundan sonra ne kadarını başaracağınızı bilmiyorsunuz. Fakat bu yanıtı bir emir yüzünden vermediniz; ikiniz de burada olmayı seçtiniz."
+      "title": "Canlı Kanal",
+      "text": "Aracı geri döndürdüğünde Omega-3 eski taslağı çalmıyor. Emre’nin vericisine canlı sesleniyor: “Biz geliyoruz. Cevap vermek için gücünü tüketme.” Kurt geri dönüş rampasında sizi bekliyor; Kuzu geçitteki yerini başkasına bırakıp yanınıza geliyor. Emre’yi bulduğunuzda ondan büyük bir konuşma çıkmıyor. Sana kızıyor, ardından cümlenin ortasında ağlamaya başlıyor. Sen de neşeli bir şey söyleyerek bunu düzeltmeye çalışmıyorsun. Arabada bir süre yalnız motor sesi duyuluyor. Yol yeniden açıldığında Emre üç kez tavana vuruyor. “Zil yok,” diyor, “şimdilik bununla idare et.” Omega-3 o sesi kaydetmeden önce izin istiyor. İkiniz aynı anda evet diyorsunuz. Bu kez mesaj gönderildiği anda birisi gerçekten dinliyor."
     },
     {
       "id": "e13",
@@ -455,25 +849,33 @@
         "share",
         "sleep"
       ],
-      "title": "Uyanacak Bir Sabah",
-      "text": "Ağdan gelen istekleri bir süreliğine durduruyorsun. İLİN belleğinin dinlenmesini kendisi istiyor ve hangi parçaların kapalı kalacağını belirliyor. Çekirdeği güvenli istasyona yerleştirirken bir uyanma tarihi vaat etmiyorsun. Yardım ağı insanlar arasında daha yavaş kuruluyor; sen sıranı alıp nöbet tutuyorsun. Her sabah aynı küçük ışığı kontrol ediyorsun. Hikâyeniz büyük bir son sözle bitmiyor. Bir yol arkadaşına işe yaradığı sürece değil, sessiz kaldığında da yer açmış oluyorsun."
+      "title": "Sabah Nöbeti",
+      "text": "Omega-3 uykuyu kendisi seçiyor. Ömer bunun bir silme işlemi olmadığını üç kez kontrol ediyor; yine de ne zaman uyanacağını söyleyemiyor. Kuzu çekirdeğin üzerine bir örtü koyuyor. Teknik olarak gereksiz olduğunu ikiniz de biliyorsunuz. Emre kapıdaki zili söküp masanın üzerine bırakıyor: uyandığında bir yere varmadan da çalabilsin diye. İlk nöbette Kurt yanında oturuyor. Onu ayakta tutan bir konuşma bulmaya çalışmıyorsun. Sabah çekirdeğin küçük ışığı aynı ritimde yanıyor, yeni bir mesaj gelmiyor. Hikâye bu bekleyişi kesin bir mucizeyle ödüllendirmiyor. Bir arkadaşın sana cevap veremediği zaman da onun için bir koltuğu boş tutup tutamayacağını soruyor. Sen nöbeti devretmeden önce adını söylüyorsun: “Omega-3, buradayız.”"
     }
   ],
   "beats": [
     [
-      "İLİN: Sinyali duydum. Rotayı birlikte seçtik; direksiyon sende.",
-      "İLİN: Bu bir hedef işareti değil, birinin yardım isteği.",
-      "İLİN: İlk ayrım yaklaşıyor. Kararımızı yeniden konuşacak vaktimiz var."
+      "Omega-3: Üçüncü zili hatırlıyorum. İlk ikisini kimin çaldığını bilmiyorum.",
+      "Kuzu: Direksiyonu tut. Ses kayıttan gelse de tehlike burada, şimdi.",
+      "Kurt: İzleyici sana dönüyor. Mayını arkaya bırak; önünü açık tut."
     ],
     [
-      "İLİN: Önceki kararımız bu yolu açtı. Bedelini de birlikte taşıyoruz.",
-      "İLİN: Güvenli olanla doğru olan her zaman aynı görünmüyor.",
-      "İLİN: Bir sonraki seçimde benim ne istediğimi de dinlemeni istiyorum."
+      "Ömer: Kutudaki beşinci imza senin, Aion.",
+      "Omega-3: Öncekiler denemeydi. Benim için bu ilk yol.",
+      "Emre: Bu kez canlı kanaldan konuşuyorum. Birazdan görüşelim."
     ],
     [
-      "İLİN: Son ayrımı seçtik. Şimdi bu kararı sonuna kadar taşıyalım.",
-      "İLİN: Hiçbir rota her şeyi kurtarmıyor. Kurtardığımız şeylerin değerini bu azaltmaz.",
-      "İLİN: Ufuk açılıyor. Bundan sonrasının tek yazarı sen değilsin; yanındayım."
+      "Omega-3: Ne seçeceğimizi konuştuk. Şimdi birbirimizi yarı yolda bırakmayalım.",
+      "Kuzu: Kapıyı tutuyorum. Nefes al.",
+      "Emre: Zili üç kez çal. Üçüncüsünü kendin için de çal."
     ]
-  ]
+  ],
+  "speakers": {
+    "aion": "Aion",
+    "omega": "Omega-3",
+    "kurt": "Kurt",
+    "kuzu": "Kuzu",
+    "omer": "Baykuş Ömer",
+    "emre": "Tavşan Emre"
+  }
 }

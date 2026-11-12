@@ -1,7 +1,7 @@
 extends Node2D
 const QA := preload("res://scripts/game/qa_snapshot.gd")
 ## Sefer sahnesi: doğrudan ok tuşlu sürüş, üç şeritli yol, isteğe bağlı sohbet,
-## üç düşman tipi, kapsüller, turbo, görevler, puan serisi ve İLİN ilişkisi
+## üç düşman tipi, kapsüller, turbo, görevler, puan serisi ve Omega-3 ilişkisi
 ## ve sefer sonu ekranı. Oyun kuralları scripts/core/ altında, sayılar data/balance.json'da.
 
 const DataLoader := preload("res://scripts/core/data_loader.gd")
@@ -19,18 +19,19 @@ const Sounds := preload("res://scripts/game/sounds.gd")
 const SettingsPanel := preload("res://scripts/game/settings_panel.gd")
 const Book := preload("res://scripts/core/story_book.gd")
 const Journey := preload("res://scripts/core/journey.gd")
-const SwipeSteering := preload("res://scripts/game/swipe_steering.gd")
+const Joystick := preload("res://scripts/game/touch_joystick.gd")
 const WarningView := preload("res://scripts/game/enemy_warning_view.gd")
 const TouchControl := preload("res://scripts/game/touch_control.gd")
+const Cast := preload("res://scripts/game/cast_portrait.gd")
 const FONT_SYMBOLS := preload("res://assets/fonts/ControlSymbols.ttf")
-const CAR_SHEET := preload("res://assets/sprites/player_car.png")
+const CAR_SHEET := preload("res://assets/sprites/aion_roadster.png")
 const FONT_FALLBACK := preload("res://assets/fonts/Lexend.ttf")
 const FONT_TERM := preload("res://assets/fonts/VT323.ttf")
 
 const W := 640.0
 const H := 360.0
-const FW := 48
-const FH := 80
+const FW := 64
+const FH := 96
 const PLAYER_Y := 290.0
 const PLAYER_HALF := Vector2(11, 26)
 # Match the live enemy band: shots can hit pursuers, then leave bounded memory.
@@ -62,6 +63,10 @@ var lane := 1
 var prev_lane := 1
 var lane_changed_at := -10.0
 var car_x := 0.0
+var car_y := PLAYER_Y
+var drive_velocity := Vector2.ZERO
+var lane_target := NAN
+var last_drive := Vector2.UP
 var speed := 220.0
 var target_speed := 220.0
 var hp := 100.0
@@ -100,6 +105,7 @@ var hint: Label
 var end_panel: Label
 var bubble_left := 0.0
 var face: Control
+var radio_portrait: Control
 var sheets := Sheets.new()
 var road_scroll := 0.0
 var decals: Array = []  # {pos, frame}
@@ -140,7 +146,7 @@ var abandon_dialog: ConfirmationDialog
 var pending_exit: Callable
 var journey: RefCounted
 var comfort_count := 0
-var swipe := SwipeSteering.new()
+var joystick: Control
 var road_touch_rect := Rect2()
 var mouse_fire := false
 var world_origin := Vector2.ZERO
@@ -211,6 +217,10 @@ func _ready() -> void:
 	max_hp += float(journey.spec()["max_hp"])
 	hp = max_hp
 	mines_left = int(_cfg("mine.count", 3)) + int(journey.spec()["mines"])
+	if Session.story_mode:
+		var aid: Dictionary=Book.radio_reply(campaign)
+		if aid.get("perk")=="mine": mines_left+=1
+		elif aid.get("perk")=="shield": shield_left=7.0
 	spawn_timer = _cfg("spawn.initial_delay", 2.0)
 	slow_scale = float(DataLoader.dig(balance, "time.command_box_time_scale", 0.1))
 	lane = lane_count / 2
@@ -249,7 +259,10 @@ func _build_ui() -> void:
 	car = Sprite2D.new()
 	car.texture = CAR_SHEET
 	car.region_enabled = true
-	car.position = Vector2(car_x, PLAYER_Y)
+	car.centered=false
+	car.offset=-Vector2(32,45)
+	car.scale=Vector2(48.0/FW,80.0/FH)
+	car.position = Vector2(car_x, car_y)
 	add_child(car)
 	var warning_view := WarningView.new()
 	warning_view.name="EnemyWarnings"
@@ -281,8 +294,14 @@ func _build_ui() -> void:
 	face = MomoFace.new()
 	face.position = Vector2(466, 18)
 	ui.add_child(face)
+	radio_portrait=Cast.new()
+	ui.add_child(radio_portrait)
+	radio_portrait.custom_minimum_size=Vector2(44,44)
+	radio_portrait.size=Vector2(44,44)
+	radio_portrait.position=face.position
+	radio_portrait.visible=false
 	momo_title = _label(ui, theme, Vector2(523, 20), Vector2(98, 38))
-	momo_title.text = "İLİN\nYol arkadaşın"
+	momo_title.text = "Omega-3\nYol arkadaşın"
 	momo_title.add_theme_font_size_override("font_size", 10)
 	bubble = _label(ui, theme, Vector2(466, 68), Vector2(156, 58))
 	bubble.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -293,7 +312,7 @@ func _build_ui() -> void:
 	mission.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	route_bar = _bar(ui, Rect2(224, 8, 192, 4), Color("ffce70"))
 	hint = _label(ui, theme, Vector2(456, 184), Vector2(176, 82))
-	hint.text = "← → Şerit değiştir\n↑ Turbo  ·  ↓ Fren\nSpace / F Ateş (basılı tut)\nX Mayın  ·  Shift Sıyrıl\nC Destek  ·  T Sohbet"
+	hint.text = Controls.run_hint()
 	hint.add_theme_font_size_override("font_size", 10)
 	hint.add_theme_stylebox_override("normal", UiSkin.caption())
 	toast = _label(ui, theme, Vector2(202, 30), Vector2(236, 42))
@@ -332,7 +351,7 @@ func _build_ui() -> void:
 	box.position = Vector2(W / 2 - 160, H - 48)
 	box.size = Vector2(320, 24)
 	box.add_theme_font_size_override("font_size", 16)
-	box.placeholder_text = "İLİN’e yaz · Enter gönderir · Esc vazgeçer"
+	box.placeholder_text = "Omega-3’e yaz · Enter gönderir · Esc vazgeçer"
 	box.visible = false
 	box.add_theme_stylebox_override("normal", UiSkin.box("assets/ui/command_box.png", 6))
 	box.add_theme_stylebox_override("focus", UiSkin.box("assets/ui/command_box.png", 6))
@@ -479,7 +498,7 @@ func _to_title() -> void:
 func _build_touch(parent: Node) -> void:
 	touch_enabled = DisplayServer.is_touchscreen_available() or OS.has_feature("mobile")
 	var specs := [
-		[Rect2(8, 316, 80, 42), "TURBO", "drive_up"], [Rect2(96, 316, 80, 42), "FREN", "drive_down"],
+		[Rect2(8, 316, 80, 42), "TURBO", "drive_boost"], [Rect2(96, 316, 80, 42), "FREN", "drive_brake"],
 		[Rect2(456, 220, 80, 42), "SIYRIL", "drive_dodge"], [Rect2(544, 220, 80, 42), "DESTEK", "drive_comfort"],
 		[Rect2(456, 316, 80, 42), "ATEŞ", "drive_fire"], [Rect2(544, 316, 80, 42), "MAYIN", "drive_mine"],
 	]
@@ -495,8 +514,10 @@ func _build_touch(parent: Node) -> void:
 		button.visible = touch_enabled
 		touch_controls.append(button)
 		touch_by_action[action]=button
+	joystick=Joystick.new()
+	parent.add_child(joystick)
 	touch_hint = _label(parent,ui_theme,Vector2(8,278),Vector2(176,30))
-	touch_hint.text="YOLDA KAYDIR · ← →"
+	touch_hint.text="SÜRÜŞ · 4 YÖN"
 	touch_hint.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 	touch_hint.add_theme_font_size_override("font_size",10)
 	touch_hint.visible=touch_enabled
@@ -516,7 +537,7 @@ func _lane_of(x: float) -> int:
 
 
 # ---------------------------------------------------------------------------
-# Direct driving never passes through İLİN's probabilistic interpretation.
+# Direct driving never passes through Omega-3's probabilistic interpretation.
 # Typing is an optional conversation mode, opened explicitly with T.
 # ---------------------------------------------------------------------------
 
@@ -554,14 +575,6 @@ func _input(event: InputEvent) -> void:
 		return
 	if over or paused:
 		return
-	if event is InputEventScreenTouch and touch_enabled:
-		swipe.touch(event.index,event.position,event.pressed,road_touch_rect,event.canceled)
-	elif event is InputEventScreenDrag and touch_enabled:
-		var direction := swipe.drag(event.index,event.position)
-		if direction:
-			_change_lane(lane+direction)
-			get_viewport().set_input_as_handled()
-		return
 	if event is InputEventMouseButton and event.device != -1:
 		if event.button_index==MOUSE_BUTTON_LEFT and not event.pressed:
 			mouse_fire=false
@@ -572,16 +585,6 @@ func _input(event: InputEvent) -> void:
 			elif event.button_index==MOUSE_BUTTON_RIGHT:
 				_direct_action("drive_dodge")
 			get_viewport().set_input_as_handled()
-		return
-	if event is InputEventJoypadMotion and event.axis == JOY_AXIS_LEFT_X:
-		if absf(event.axis_value) < Controls.deadzone * 0.7:
-			pad_lane_latch = 0
-		elif absf(event.axis_value) >= Controls.deadzone:
-			var direction := 1 if event.axis_value > 0 else -1
-			if direction != pad_lane_latch:
-				_change_lane(lane + direction)
-				pad_lane_latch = direction
-		get_viewport().set_input_as_handled()
 		return
 	for action in Controls.KEYS:
 		if event.is_action_pressed(action):
@@ -606,8 +609,7 @@ func _direct_action(action: String) -> void:
 	if over or paused or box.visible:
 		return
 	match action:
-		"drive_left": _change_lane(lane - 1)
-		"drive_right": _change_lane(lane + 1)
+		"drive_left", "drive_right", "drive_up", "drive_down": pass
 		"drive_fire": _fire({})
 		"drive_mine": _execute({"intent": "drop_mine"})
 		"drive_dodge": _execute({"intent": "dodge"})
@@ -619,6 +621,11 @@ func _direct_action(action: String) -> void:
 				_event("comfort")
 				energy = minf(_cfg("arcade.boost_capacity", 100), energy + _cfg("arcade.energy_amount", 30))
 				_notice("İyi bir ekibiz! +enerji")
+				effects.append({"pos":Vector2(car_x,car_y),"t":0.0,"kind":"pulse","still":true})
+				sounds.cue("pulse")
+				for projectile in enemy_bullets:
+					if projectile["pos"].distance_to(Vector2(car_x,car_y))<90: projectile["dead"]=true
+				enemy_bullets=enemy_bullets.filter(func(b): return not b.get("dead",false))
 
 
 func _held(action: String) -> bool:
@@ -641,6 +648,7 @@ func _set_paused(value: bool) -> void:
 	face.queue_redraw()
 	_clear_pointers()
 	boosting = false
+	drive_velocity=Vector2.ZERO
 	pause_panel.visible = value
 	_sync_touch()
 	if value:
@@ -692,7 +700,7 @@ func _on_submit(text: String) -> void:
 		var action := str(res.get("action", "none"))
 		if action == "execute" or action == "delay":
 			var wait := float(res.get("delay", 0.0)) if action == "delay" else 0.0
-			# Mood speed: >1 means İLİN reacts faster (escapes when scared, everything when excited).
+			# Mood speed: >1 means Omega-3 reacts faster (escapes when scared, everything when excited).
 			wait += 0.08 / maxf(float(res.get("speed", 1.0)), 0.25)
 			pending.append({"t": wait, "command": command})
 			for extra in res.get("extra", []):
@@ -702,7 +710,14 @@ func _on_submit(text: String) -> void:
 func _say(line: String) -> void:
 	if line == "":
 		return
-	bubble.text = line
+	var parts:=line.split(": ",true,1)
+	var who: String=parts[0].to_lower() if parts.size()>1 else "omega"
+	if who in ["omega-3","omega"]: who="omega"
+	if is_instance_valid(radio_portrait):
+		radio_portrait.speaker=who
+		radio_portrait.visible=who in Cast.IDS
+		face.visible=not radio_portrait.visible
+	bubble.text = (str(Cast.NAMES[who])+": "+parts[1]) if parts.size()>1 and Cast.NAMES.has(who) else line
 	bubble_left = 3.5
 	if face:
 		face.talking = 1.2
@@ -737,6 +752,7 @@ func _change_lane(to: int) -> void:
 	lane_changed_at = game_time
 	_play("shift_left" if to < lane else "shift_right")
 	lane = to
+	lane_target = _lane_x(to)
 
 
 func _execute(command: Dictionary) -> void:
@@ -772,7 +788,8 @@ func _execute(command: Dictionary) -> void:
 		"drop_mine":
 			if mines_left > 0:
 				mines_left -= 1
-				mines.append({"pos": Vector2(car_x, PLAYER_Y + 30), "arm": _cfg("mine.arm_seconds", 0.3), "life": _cfg("mine.lifetime", 8.0)})
+				sounds.cue("mine")
+				mines.append({"pos": Vector2(car_x, car_y + 30), "arm": _cfg("mine.arm_seconds", 0.3), "life": _cfg("mine.lifetime", 8.0)})
 			else:
 				_say("Mayın kalmadı!")
 
@@ -784,7 +801,7 @@ func _lane_threat(index: int) -> float:
 		if int(e["lane"]) == index:
 			t += 1.0
 	for o in obstacles:
-		if _lane_of(o["pos"].x) == index and o["pos"].y < PLAYER_Y:
+		if _lane_of(o["pos"].x) == index and o["pos"].y < car_y:
 			t += 1.0
 	return t
 
@@ -800,15 +817,15 @@ func _find_target(target: Variant) -> Dictionary:
 		if kind != "" and str(e["type"]) != kind:
 			continue
 		var p: Vector2 = e["pos"]
-		if position in ["front", "ahead", "öndeki", "ondeki"] and p.y > PLAYER_Y:
+		if position in ["front", "ahead", "öndeki", "ondeki"] and p.y > car_y:
 			continue
-		if position in ["behind", "back", "arkadaki"] and p.y < PLAYER_Y:
+		if position in ["behind", "back", "arkadaki"] and p.y < car_y:
 			continue
 		if side == "left" and p.x >= car_x - 4:
 			continue
 		if side == "right" and p.x <= car_x + 4:
 			continue
-		var score := p.distance_to(Vector2(car_x, PLAYER_Y))
+		var score := p.distance_to(Vector2(car_x, car_y))
 		if score < best_score:
 			best_score = score
 			best = e
@@ -820,16 +837,17 @@ func _fire(target: Variant) -> void:
 		return
 	fire_cooldown = _cfg("weapon.cooldown", 0.45)
 	sounds.cue("fire")
-	var origin := Vector2(car_x, PLAYER_Y - 30)
+	var origin := Vector2(car_x, car_y - 30)
 	var dir := Vector2.UP
-	var want: Dictionary = target if target is Dictionary else {}
+	var want: Dictionary = (target if target is Dictionary else {}).duplicate()
+	want["position"]="front"
 	var aim := _find_target(want)
-	if not aim.is_empty():
-		dir = (aim["pos"] - Vector2(car_x, PLAYER_Y)).normalized()
-		origin = Vector2(car_x, PLAYER_Y) + dir * 30.0
+	if not aim.is_empty() and aim["pos"].y<car_y-35 and absf(aim["pos"].x-car_x)<90:
+		dir = (aim["pos"] - origin).normalized()
 	elif not want.is_empty() and str(want.get("type", "")) != "":
 		_say("Orada %s yok ki." % TYPE_NAMES.get(str(want["type"]), "öyle bir şey"))
 	bullets.append({"pos": origin, "vel": dir * _cfg("weapon.bullet_speed", 420)})
+	effects.append({"pos":origin,"offset":origin-Vector2(car_x,car_y),"t":0.0,"kind":"muzzle","still":true})
 	_play("fire")
 
 
@@ -843,7 +861,7 @@ func _process(delta: float) -> void:
 		qa_clock=0
 		var targets := {}
 		for action in touch_by_action: targets[action]=QA.rect(touch_by_action[action])
-		QA.publish("run",{"view":[get_viewport_rect().size.x,get_viewport_rect().size.y],"chapter":campaign.get("stage",-1),"hp":hp,"kills":kills,"collected":arcade.collected,"finish":_cfg("arcade.finish_distance",1200),"warnings":_enemy_warnings().map(func(w): return {"kind":w["kind"],"lane":w["lane"],"progress":w["progress"],"origin":[w["origin"].x,w["origin"].y],"target":[w["target"].x,w["target"].y]}),"pickup_targets":pickups.map(func(p): return {"lane":_lane_of(p["pos"].x),"y":p["pos"].y}),"result":result_buttons.map(func(b): return QA.rect(b)),"ending_text":end_panel.text if over else "","lane":lane,"paused":paused,"over":over,"fire":_held("drive_fire"),"boost":boosting,"distance":distance,"speed":speed,"energy":energy,"road":[road_touch_rect.position.x,road_touch_rect.position.y,road_touch_rect.size.x,road_touch_rect.size.y],"actions":targets,"pause":QA.rect(pause_button),"journal":journal_panel.visible,"touch":touch_enabled,"portrait_hud":({"health":QA.rect(hud),"meters":QA.rect(distance_caption),"hp_bar":QA.rect(hp_bar),"energy_bar":QA.rect(energy_bar),"energy":QA.rect(energy_caption)} if was_portrait else {}),"route":journey.route,"mines":mines_left,"dodge":dodge_cooldown,"settings":settings_panel.visible,"settings_ui":QA.settings(settings_panel),"settings_rect":QA.rect(settings_panel),"settings_back":QA.rect(settings_panel.back),"pause_menu":pause_panel.get_child(0).get_children().filter(func(child): return child is Button).map(func(child): return QA.rect(child)),"journal_rect":QA.rect(journal_panel),"journal_back":QA.rect(journal_panel.get_child(0).get_child(2))})
+		QA.publish("run",{"view":[get_viewport_rect().size.x,get_viewport_rect().size.y],"chapter":campaign.get("stage",-1),"hp":hp,"kills":kills,"collected":arcade.collected,"finish":_cfg("arcade.finish_distance",1200),"warnings":_enemy_warnings().map(func(w): return {"kind":w["kind"],"lane":w["lane"],"progress":w["progress"],"origin":[w["origin"].x,w["origin"].y],"target":[w["target"].x,w["target"].y]}),"traffic":enemies.map(func(e): return {"type":e["type"],"x":e["pos"].x,"y":e["pos"].y,"lane":e["lane"]}),"hazards":obstacles.map(func(o): return {"x":o["pos"].x,"y":o["pos"].y}),"shield":shield_left,"bonds":campaign.get("bonds",{}),"pickup_targets":pickups.map(func(p): return {"lane":_lane_of(p["pos"].x),"y":p["pos"].y}),"result":result_buttons.map(func(b): return QA.rect(b)),"ending_text":end_panel.text if over else "","lane":lane,"player":[car_x,car_y],"sprite":[car.position.x,car.position.y],"hitbox":[_player_rect().position.x,_player_rect().position.y,_player_rect().size.x,_player_rect().size.y],"joystick":QA.rect(joystick),"stick":[joystick.value.x,joystick.value.y],"paused":paused,"over":over,"fire":_held("drive_fire"),"boost":boosting,"distance":distance,"speed":speed,"energy":energy,"road":[road_touch_rect.position.x,road_touch_rect.position.y,road_touch_rect.size.x,road_touch_rect.size.y],"actions":targets,"pause":QA.rect(pause_button),"journal":journal_panel.visible,"touch":touch_enabled,"portrait_hud":({"health":QA.rect(hud),"meters":QA.rect(distance_caption),"hp_bar":QA.rect(hp_bar),"energy_bar":QA.rect(energy_bar),"energy":QA.rect(energy_caption)} if was_portrait else {}),"route":journey.route,"mines":mines_left,"dodge":dodge_cooldown,"settings":settings_panel.visible,"settings_ui":QA.settings(settings_panel),"settings_rect":QA.rect(settings_panel),"settings_back":QA.rect(settings_panel.back),"pause_menu":pause_panel.get_child(0).get_children().filter(func(child): return child is Button).map(func(child): return QA.rect(child)),"journal_rect":QA.rect(journal_panel),"journal_back":QA.rect(journal_panel.get_child(0).get_child(2))})
 	metrics_clock += delta
 	if OS.has_feature("web") and metrics_clock > 5.0:
 		metrics_clock = 0.0
@@ -894,6 +912,33 @@ func _physics_process(delta: float) -> void:
 	_simulate(delta)
 
 
+func _move_player(delta: float) -> void:
+	var axis := Vector2(Input.get_action_strength("drive_right")-Input.get_action_strength("drive_left"),Input.get_action_strength("drive_down")-Input.get_action_strength("drive_up"))
+	if is_instance_valid(joystick) and joystick.enabled and joystick.value.length()>0.0:
+		axis=joystick.value
+	axis=axis.limit_length(1.0) if not box.visible else Vector2.ZERO
+	if axis.length()>0.01:
+		lane_target=NAN
+		last_drive=axis.normalized()
+	var desired := axis*155.0
+	drive_velocity=drive_velocity.move_toward(desired,2400.0*delta)
+	if not is_nan(lane_target) and axis.length()<0.01:
+		car_x=move_toward(car_x,lane_target,256.0*delta)
+		drive_velocity.x=0.0
+		if is_equal_approx(car_x,lane_target): lane_target=NAN
+	var proposed := Vector2(car_x,car_y)+drive_velocity*delta
+	var bounded := proposed.clamp(Vector2(235,86),Vector2(405,318))
+	if bounded.x!=proposed.x: drive_velocity.x=0.0
+	if bounded.y!=proposed.y: drive_velocity.y=0.0
+	car_x=bounded.x
+	car_y=bounded.y
+	var nearest := _lane_of(car_x)
+	if nearest!=lane:
+		prev_lane=lane
+		lane_changed_at=game_time
+		lane=nearest
+
+
 func _simulate(delta: float) -> void:
 	if paused or over:
 		return
@@ -901,8 +946,8 @@ func _simulate(delta: float) -> void:
 	shield_left = maxf(0.0, shield_left - delta)
 	comfort_cooldown = maxf(0.0, comfort_cooldown - delta)
 	var normal_speed := _cfg("player.base_speed", 220)
-	boosting = not box.visible and _held("drive_up") and energy > 0.0 and not _held("drive_down")
-	if not box.visible and _held("drive_down"):
+	boosting = not box.visible and _held("drive_boost") and energy > 0.0 and not _held("drive_brake")
+	if not box.visible and _held("drive_brake"):
 		target_speed = _cfg("player.min_speed", 140)
 	elif boosting:
 		target_speed = _cfg("player.max_speed", 340) + _cfg("arcade.boost_speed", 95)
@@ -911,7 +956,7 @@ func _simulate(delta: float) -> void:
 			_play("boost")
 	else:
 		target_speed = normal_speed
-		if not _held("drive_up"):
+		if not _held("drive_boost"):
 			energy = minf(_cfg("arcade.boost_capacity", 100), energy + _cfg("arcade.boost_regen", 12) * delta)
 	game_time += delta
 	fire_cooldown -= delta
@@ -927,15 +972,14 @@ func _simulate(delta: float) -> void:
 	for item in due:
 		_execute(item["command"])
 
-	var change := maxf(float(run_cfg.get("lane_change_seconds", 0.25)), 0.01)
-	car_x = move_toward(car_x, _lane_x(lane), lane_width / change * delta)
+	_move_player(delta)
 	speed = move_toward(speed, target_speed, _cfg("player.acceleration", 160) * delta)
 	scroll = fposmod(scroll + speed * delta, 48.0)
 	distance += speed * delta * float(run_cfg.get("distance_per_pixel", 0.05))
 	for line in journey.advance(distance):
 		_say(line)
 		bubble_left=7.0
-	car.position = Vector2(round(car_x), PLAYER_Y)
+	car.position = Vector2(round(car_x),round(car_y))
 
 	_spawn(delta)
 	_update_bullets(delta)
@@ -1045,7 +1089,7 @@ func _add_enemy(kind: String, e_lane: int, y: float) -> void:
 
 
 func _player_rect() -> Rect2:
-	return Rect2(Vector2(car_x, PLAYER_Y) - PLAYER_HALF, PLAYER_HALF * 2)
+	return Rect2(Vector2(car_x, car_y) - PLAYER_HALF, PLAYER_HALF * 2)
 
 
 func _rect(pos: Vector2, half: Vector2) -> Rect2:
@@ -1091,7 +1135,7 @@ func _update_mines(delta: float) -> void:
 				effects.append({"pos": m["pos"], "t": 0.0, "kind": "small"})
 				m["life"] = -1.0
 				break
-	mines = mines.filter(func(m: Dictionary) -> bool: return float(m["life"]) > 0.0 and m["pos"].y < H + 20)
+	mines = mines.filter(func(m: Dictionary) -> bool: return float(m["life"]) > 0.0 and COMBAT_BOUNDS.has_point(m["pos"]))
 
 
 func _update_obstacles(delta: float) -> void:
@@ -1124,7 +1168,7 @@ func _update_enemies(delta: float) -> void:
 		var vy := speed - e_speed  # positive = moves down the screen
 		match kind:
 			"rammer":
-				var dist := absf(e["pos"].y - PLAYER_Y)
+				var dist := absf(e["pos"].y - car_y)
 				if dist < float(cfg.get("aggro_distance", 180)) and float(e["lane_cd"]) <= 0.0 and int(e["lane"]) != lane:
 					e["lane"] = lane
 					e["lane_cd"] = float(cfg.get("lane_change_seconds", 0.6)) * 2.0
@@ -1145,7 +1189,7 @@ func _update_enemies(delta: float) -> void:
 					elif float(e["cd"]) <= 0.0:
 						e["cd"] = float(cfg.get("fire_cooldown", 1.6))
 						e["state"] = "windup"
-						e["aim"] = Vector2(car_x, PLAYER_Y)
+						e["aim"] = Vector2(car_x, car_y)
 						e["t"] = 0.0
 					if float(e["lane_cd"]) <= 0.0 and rng.randf() < 0.01:
 						e["lane"] = clampi(int(e["lane"]) + (1 if rng.randf() < 0.5 else -1), 0, lane_count - 1)
@@ -1153,14 +1197,14 @@ func _update_enemies(delta: float) -> void:
 			"truck":
 				vy = minf(vy, 70.0) if e["pos"].y < 120 else vy
 				if str(e["state"]) == "windup":
-					if e["pos"].y >= PLAYER_Y - 80:
+					if e["pos"].y >= car_y - 80:
 						# A passed truck cannot drop an untelegraphed obstacle onto the car.
 						e["state"] = "drive"
 					elif float(e["t"]) >= _warning_seconds(kind):
 						obstacles.append({"pos":e["pos"]+Vector2(0,52),"kind":e["drop_kind"],"hp":20.0,"dmg":float(cfg.get("obstacle_damage",20)),"near":false,"passed":false})
 						e["state"] = "attack"
 						e["t"] = 0.0
-				elif float(e["cd"]) <= 0.0 and e["pos"].y > 0.0 and e["pos"].y < PLAYER_Y - 80:
+				elif float(e["cd"]) <= 0.0 and e["pos"].y > 0.0 and e["pos"].y < car_y - 80:
 					e["cd"] = float(cfg.get("obstacle_cooldown", 3.0))
 					e["state"] = "windup"
 					e["t"] = 0.0
@@ -1181,14 +1225,14 @@ func _collide(e: Dictionary, cfg: Dictionary) -> void:
 		ram_left = 0.0
 		_hurt_enemy(e, _cfg("player.ram_damage", 40))
 		_damage_player(_cfg("player.ram_self_damage", 10), false)
-		e["pos"] = e["pos"] + Vector2(0, -24 if e["pos"].y < PLAYER_Y else 24)
+		e["pos"] = e["pos"] + Vector2(0, -24 if e["pos"].y < car_y else 24)
 		return
 	_damage_player(float(cfg.get("contact_damage", 15)))
 	if str(e["type"]) == "rammer":
 		e["hp"] = 0.0
 		_explode(e, false)
 	else:
-		e["pos"] = e["pos"] + Vector2(0, -30 if e["pos"].y < PLAYER_Y else 30)
+		e["pos"] = e["pos"] + Vector2(0, -30 if e["pos"].y < car_y else 30)
 
 
 ## Near miss / successful manoeuvre: something passed the car without touching it.
@@ -1197,7 +1241,7 @@ func _check_near(thing: Dictionary, r: Rect2, thing_lane: int) -> void:
 		return
 	var pr := _player_rect()
 	var center_y := r.get_center().y
-	if center_y < PLAYER_Y:
+	if center_y < car_y:
 		return
 	thing["passed"] = true
 	if r.position.y > pr.end.y + 40:
@@ -1212,7 +1256,7 @@ func _check_near(thing: Dictionary, r: Rect2, thing_lane: int) -> void:
 		arcade.award(int(_cfg("arcade.near_points", 25)))
 		_event("near_miss")
 		var side := -1.0 if r.get_center().x < car_x else 1.0
-		effects.append({"pos": Vector2(car_x + side * 16.0, PLAYER_Y), "t": 0.0, "kind": "near_miss", "still": true})
+		effects.append({"pos": Vector2(car_x + side * 16.0, car_y), "t": 0.0, "kind": "near_miss", "still": true})
 
 
 func _hurt_enemy(e: Dictionary, amount: float) -> void:
@@ -1243,6 +1287,7 @@ func _damage_player(amount: float, tell := true) -> void:
 		return
 	arcade.break_chain()
 	if bool(save["settings"]["vibration"]):
+		if touch_enabled: Input.vibrate_handheld(35)
 		for device in Input.get_connected_joypads():
 			Input.start_joy_vibration(device, 0.25, 0.4, 0.15)
 	sounds.cue("hit")
@@ -1305,7 +1350,7 @@ func _end_run(outcome := "destroyed") -> void:
 	var d := float(end_result.get("trust_delta", 0.0))
 	var final_line: String=journey.ending(outcome=="survived",comfort_count,arcade.collected)
 	journey.log_lines.append(final_line)
-	end_panel.text = "%s\n%s\n\nİLİN: %s\n\nPUAN %d · REKOR %d\nMesafe: %d m · %d düşman · Seri %d\n%s\nGüven: %d (%s%d)\n%s" % [
+	end_panel.text = "%s\n%s\n\nOmega-3: %s\n\nPUAN %d · REKOR %d\nMesafe: %d m · %d düşman · Seri %d\n%s\nGüven: %d (%s%d)\n%s" % [
 		("ÜÇ ETAP TAMAMLANDI" if campaign.get("stage",0)==3 else "ETAP TAMAMLANDI") if outcome=="survived" and Session.story_mode else ("EVE DÖNDÜK" if outcome=="survived" else "BU AYRIMDAN YENİDEN"),str(journey.spec()["name"]),final_line,
 		arcade.score,int(save["best_score"]),int(distance),kills,arcade.best_chain,
 		"Yol hedefi tamamlandı" if journey.goal_met(comfort_count,arcade.collected) else "Yol hedefi bir sonraki sefere kaldı",
@@ -1347,7 +1392,14 @@ func _animate(delta: float) -> void:
 			anim_t = 0.0
 			frame = 0
 			a = ANIMS["drive"]
-	car.region_rect = Rect2(frame * FW, int(a[0]) * FH, FW, FH)
+	var index := frame%4
+	if name=="drive":
+		var blink_phase:=fposmod(game_time,3.8)
+		index=(2 if blink_phase>3.62 else int(game_time*3)%2) if motion_enabled else 0
+	if anim=="boost": index=4+frame%2
+	elif anim=="fire": index=6
+	elif name in ["hit","damaged","critical","destroyed"]: index=7
+	car.region_rect=Rect2((index%4)*FW,(index/4)*FH,FW,FH)
 	car.visible = not (invulnerable > 0.0 and int(game_time * 20) % 2 == 0 and not over)
 	car.modulate = Color(0.7, 0.9, 1.0, 0.75) if dodge_left > 0.0 else Color.WHITE
 
@@ -1376,7 +1428,7 @@ func _scroll_scenery(delta: float) -> void:
 
 func _camera_offset() -> Vector2:
 	# Sample simulation time, not a random stream or render-frame count.
-	if shake <= 0.0 or not effects_enabled or paused or over:
+	if shake <= 0.0 or not effects_enabled or not motion_enabled or paused or over:
 		return Vector2.ZERO
 	return (Vector2(sin(game_time*83.13+2.7),sin(game_time*107.71+0.9))*shake_power).round()
 
@@ -1427,10 +1479,10 @@ func _draw() -> void:
 	for pickup in pickups:
 		_draw_pickup(pickup)
 	if shield_left > 0.0 and not over:
-		draw_arc(Vector2(car_x, PLAYER_Y), 32, 0, TAU, 32, Color("79d4ff"), 2)
+		draw_arc(Vector2(car_x, car_y), 32, 0, TAU, 32, Color("79d4ff"), 2)
 	if boosting and not over:
 		for side in [-1, 1]:
-			draw_line(Vector2(car_x + side * 7, PLAYER_Y + 28), Vector2(car_x + side * 7, PLAYER_Y + 38 + sin(game_time * 40) * 5), Color("79d4ff"), 3)
+			draw_line(Vector2(car_x + side * 7, car_y + 28), Vector2(car_x + side * 7, car_y + 38 + sin(game_time * 40) * 5), Color("79d4ff"), 3)
 	for m in mines:
 		var armed := float(m["arm"]) <= 0.0
 		sheets.draw_anim(self, "mine", "armed" if armed else "arming", game_time, m["pos"])
@@ -1488,7 +1540,7 @@ func _draw_enemy_sprite(e: Dictionary) -> void:
 		var mount: Array = sheets.sheet(name).get("turret_mount", [24, 52])
 		var anchor: Array = sheets.sheet(name).get("anchor", [24, 40])
 		var tp := p + Vector2(float(mount[0]) - float(anchor[0]), float(mount[1]) - float(anchor[1]))
-		var aim: Vector2 = e.get("aim",Vector2(car_x,PLAYER_Y)) if str(e["state"]) in ["windup","attack"] else Vector2(car_x,PLAYER_Y)
+		var aim: Vector2 = e.get("aim",Vector2(car_x,car_y)) if str(e["state"]) in ["windup","attack"] else Vector2(car_x,car_y)
 		var dir := aim - tp
 		var idx := posmod(roundi((atan2(dir.y, dir.x) - PI / 2.0) / deg_to_rad(22.5)), 16)
 		var firing := str(e["state"]) == "attack" and float(e["t"]) < 0.15
@@ -1506,7 +1558,23 @@ func _draw_effect_sprite(fx: Dictionary) -> void:
 	var kind := str(fx["kind"])
 	var t := float(fx["t"])
 	var p: Vector2 = fx["pos"]
-	if kind.begins_with("wreck_"):
+	if kind=="muzzle": p=Vector2(car_x,car_y)+fx.get("offset",Vector2(0,-30))
+	elif kind=="pulse": p=Vector2(car_x,car_y)
+	if kind=="pulse":
+		if t>0.45: return
+		var radius:=18.0+t*160.0 if motion_enabled else 36.0
+		var tint:=Color("79d4ff")
+		tint.a=clampf(1.0-t/0.45,0,1)
+		for i in 8:
+			var direction:=Vector2.from_angle(i*TAU/8)
+			var tangent:=Vector2(-direction.y,direction.x)
+			var points:=PackedVector2Array([p+direction*12,p+direction*(radius*0.45)+tangent*4,p+direction*(radius*0.7)-tangent*3,p+direction*radius])
+			draw_polyline(points,tint,2,false)
+	elif kind=="muzzle":
+		if t>0.1: return
+		draw_rect(Rect2(p-Vector2(3,7),Vector2(6,10)),Color("ffce70"))
+		draw_line(p+Vector2(-7,-3),p+Vector2(7,-3),Color("fff2df"),2,false)
+	elif kind.begins_with("wreck_"):
 		var name: String = ENEMY_SHEETS.get(kind.substr(6), "")
 		if name != "" and t < sheets.anim_length(name, "destroyed"):
 			sheets.draw_frame(self, name, sheets.frame_at(name, "destroyed", t, 0), p + Vector2(0, speed * 0.0))
@@ -1576,7 +1644,7 @@ func _draw_enemy(e: Dictionary) -> void:
 			_box(p + Vector2(0, 9), Vector2(8, 10), Color("8a6a10"))  # bed
 			var turret := p + Vector2(0, 9)
 			_box(turret, Vector2(4, 4), Color("3a3d4d"))
-			var dir: Vector2 = (Vector2(car_x, PLAYER_Y) - turret).normalized()
+			var dir: Vector2 = (Vector2(car_x, car_y) - turret).normalized()
 			for i in range(3, 10):
 				draw_rect(Rect2((turret + dir * i).round(), Vector2(2, 2)), Color("1a1a22"))
 			if str(e["state"]) == "attack" and float(e["t"]) < 0.12:
@@ -1635,7 +1703,7 @@ func _draw_effect(fx: Dictionary) -> void:
 
 func _clear_pointers() -> void:
 	touch_held.clear()
-	swipe.clear()
+	if is_instance_valid(joystick): joystick.reset()
 	mouse_fire=false
 	for button in touch_controls:
 		button.release_visual()
@@ -1645,6 +1713,10 @@ func _sync_touch() -> void:
 	var show_controls := touch_enabled and not paused and not over and not box.visible
 	for button in touch_controls:
 		button.visible=show_controls
+	if is_instance_valid(joystick):
+		joystick.enabled=show_controls
+		joystick.visible=show_controls
+		if not show_controls: joystick.reset()
 	if is_instance_valid(touch_hint): touch_hint.visible=show_controls
 
 
@@ -1666,10 +1738,10 @@ func _layout() -> void:
 	for node in base_rects:
 		if is_instance_valid(node): _place(node,Rect2(base_rects[node].position+offset,base_rects[node].size))
 	momo_title.visible=not portrait
-	status_label.visible=not portrait
-	mission.visible=not portrait
+	status_label.visible=not portrait and not touch_enabled
+	mission.visible=not portrait and not touch_enabled
 	distance_caption.visible=portrait
-	ui_panels[2].visible=not portrait
+	ui_panels[2].visible=not portrait and not touch_enabled
 	face.scale=Vector2.ONE
 	bubble.add_theme_font_size_override("font_size",11 if portrait else 12)
 	score_label.add_theme_font_size_override("font_size",16 if portrait else 20)
@@ -1696,6 +1768,7 @@ func _layout() -> void:
 		pause_button.text="Mola"
 		_place(ui_panels[1],Rect2(8,94,width-16,68))
 		face.position=Vector2(16,104)
+		radio_portrait.position=face.position
 		_place(bubble,Rect2(76,102,width-94,52))
 		_place(story_caption,Rect2(8,166,width-16,28))
 		_place(toast,Rect2(30,200,width-60,42))
@@ -1704,25 +1777,32 @@ func _layout() -> void:
 		scale=Vector2.ONE*zoom
 		world_origin=Vector2(width/2-320*zoom,196)
 		road_touch_rect=Rect2(12,196,width-24,play_height)
-		_place(touch_hint,Rect2(12,view.y-166,width-24,22))
+		_place(touch_hint,Rect2(10,view.y-29,122,20))
 		touch_hint.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
 		var gap := 8.0
-		var button_width: float = floorf((width-24-gap*2)/3)
-		var buttons_left: float=floorf((width-(button_width*3+gap*2))/2)
-		var actions := ["drive_up","drive_down","drive_comfort","drive_dodge","drive_fire","drive_mine"]
+		var button_width: float = floorf((width-148-gap)/2)
+		var buttons_left: float=140
+		joystick.fit(Rect2(10,view.y-150,120,120))
+		var actions := ["drive_boost","drive_brake","drive_comfort","drive_dodge","drive_fire","drive_mine"]
 		for i in actions.size():
-			touch_by_action[actions[i]].fit(Rect2(buttons_left+(i%3)*(button_width+gap),view.y-136+(i/3)*64,button_width,56))
+			touch_by_action[actions[i]].fit(Rect2(buttons_left+(i%2)*(button_width+gap),view.y-162+(i/2)*50,button_width,44))
 		_place(pause_panel,Rect2(20,40,width-40,minf(view.y-80,440)))
 		_place(end_panel,Rect2(12,174,width-24,view.y-254))
 		_place(box,Rect2(12,view.y-56,width-24,40))
 	else:
 		scale=Vector2.ONE
 		world_origin=offset
+		radio_portrait.position=face.position
+		if touch_enabled:
+			_place(ui_panels[1],Rect2(offset+Vector2(456,8),Vector2(176,136)))
+			_place(pause_button,Rect2(offset+Vector2(456,152),Vector2(176,44)))
 		road_touch_rect=Rect2(offset+Vector2(192,12),Vector2(256,336))
 		pause_button.text="Mola · Start" if Controls.last_device=="pad" else "Mola · Esc"
 		energy_caption.add_theme_font_size_override("font_size",9)
+		joystick.fit(Rect2(offset+Vector2(18,206),Vector2(144,144)))
+		_place(touch_hint,Rect2(offset+Vector2(8,180),Vector2(176,20)))
 		touch_hint.horizontal_alignment=HORIZONTAL_ALIGNMENT_LEFT
-		var rects := {"drive_up":Rect2(8,316,80,42),"drive_down":Rect2(96,316,80,42),"drive_dodge":Rect2(456,220,80,42),"drive_comfort":Rect2(544,220,80,42),"drive_fire":Rect2(456,316,80,42),"drive_mine":Rect2(544,316,80,42)}
+		var rects := {"drive_boost":Rect2(456,252,80,44),"drive_brake":Rect2(544,252,80,44),"drive_dodge":Rect2(456,202,80,44),"drive_comfort":Rect2(544,202,80,44),"drive_fire":Rect2(456,302,80,44),"drive_mine":Rect2(544,302,80,44)}
 		for action in rects:
 			var rect: Rect2=rects[action]
 			touch_by_action[action].fit(Rect2(rect.position+offset,rect.size))
@@ -1745,7 +1825,7 @@ func _build_journal(parent: Node) -> void:
 	column.add_theme_constant_override("separation",8)
 	journal_panel.add_child(column)
 	var title := Label.new()
-	title.text="YOL GÜNLÜĞÜ · İLİN"
+	title.text="YOL GÜNLÜĞÜ · Omega-3"
 	column.add_child(title)
 	journal_scroll=ScrollContainer.new()
 	journal_scroll.horizontal_scroll_mode=ScrollContainer.SCROLL_MODE_DISABLED

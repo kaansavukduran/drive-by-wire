@@ -16,7 +16,7 @@ func _ready() -> void:
 		player.volume_db = -17
 		add_child(player)
 		players.append(player)
-	for name in ["fire", "hit", "pickup", "kill", "finish"]:
+	for name in ["fire", "hit", "pickup", "kill", "finish", "mine", "pulse"]:
 		streams[name] = _make_tone(name)
 
 func cue(name: String) -> void:
@@ -30,7 +30,7 @@ func cue(name: String) -> void:
 
 func _make_tone(name: String) -> AudioStreamWAV:
 	var sample_rate := 22050
-	var duration: float = {"fire": 0.07, "hit": 0.18, "pickup": 0.24, "kill": 0.18, "finish": 0.6}[name]
+	var duration: float = {"fire": 0.07, "hit": 0.18, "pickup": 0.24, "kill": 0.18, "finish": 0.6, "mine":0.12,"pulse":0.28}[name]
 	var count := int(duration * sample_rate)
 	var bytes := PackedByteArray()
 	bytes.resize(count * 2)
@@ -43,6 +43,8 @@ func _make_tone(name: String) -> AudioStreamWAV:
 			"fire": frequency = lerpf(1000, 250, progress)
 			"hit": frequency = lerpf(160, 45, progress)
 			"kill": frequency = lerpf(280, 70, progress)
+			"mine": frequency = lerpf(240,80,progress)
+			"pulse": frequency = lerpf(1200,420,progress)
 			"pickup": frequency = 660.0 if progress < 0.5 else 880.0
 			"finish": frequency = [523.25, 659.25, 783.99, 1046.5][mini(3, int(progress * 4))]
 		phase += TAU * frequency / sample_rate

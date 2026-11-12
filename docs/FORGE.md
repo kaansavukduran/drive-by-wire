@@ -90,3 +90,15 @@ Standart bağlantısında güncel başlık v1.5 bulundu. Varsayılan koyu, açı
 ## 0.6.1 · Adil rastgelelik ve okunabilir saldırılar
 
 Görsel hareket açık/kapalı iki aynı koşu eski kodda ilk fizik adımında ayrıştı. Kamera/dekor/konuşma RNG'si trafikten ayrıldı; 60 saniyelik gerçek sahne karşılaştırması aynı trafik, ikmal, can, puan ve fizik durumunu koruyor. Nişan çizgisi, engel hazırlığı ve şerit kırma işaretleri native Godot katmanında eklendi. Yatay mermi birikmesi ve arka takipçiye atışın erken silinmesi düzeltildi. Yeni otomatik testler QA.md içindedir. Bu güncellemede dışarıya paylaşım denenmedi; yerel paket hazırlanır.
+
+## 0.7.0 · Omega-3 / Üçüncü Nabız
+
+Yetkili kaynak `/workspace/drive-by-wire-public`, GitHub `kaansavukduran/drive-by-wire`, geliştirme dalı `codex/omega3-free-drive`; başlangıç main commit'i `b9e5d7a5374f6cff9d40d78d2aaefb835efb831c`. Eski özel yerel checkout başka dalda korunur. Web hedefi aynı `drive-by-wire.vercel.app`; `main` otomatik Vercel dağıtımını kullanır.
+
+Kullanıcı sabit joystick + eylemleri açıkça seçti. Fizik X/Y hareketine taşındı; PC/gamepad/dokunma ortak modeli kullanır. Ön silah ve arka mayın ayrıldı. Yeni Aion araç atlası, beş statik portre, NPC yanıtları/etap desteği, Üçüncü Nabız ve 13 yeni epilog eklendi. Kalıcı son kimlikleri ve eski kayıtlar korunur. Godot 4.6.3 dışında motor/framework eklenmedi.
+
+Konum regresyonları iki gerçek hata yakaladı: yatay turbo/mola çakışması ve arka mayının erken temizlenmesi. İkisi giderildi. Yeni `test_free_drive.gd` diyagonal normalizasyon, durunca kaymama, sınırlar, parmak sahipliği, odağın/yerleşimin fizik konumunu değiştirmemesi, bütün atlas hücrelerinde gövde pivotu ve kayıt uyumunu denetler. 878 kontrol / 17 takım PASS. Native bot 13×3 etabı fizik/cephane/hasar/çarpışmalarla oynar; teleport/ek HP/ölümsüzlük yoktur. Tam web hikâyesi gerçek klavye/mouse girdileriyle üç etabı tamamladı; dört NPC konuşması ve epilog/reload geçti.
+
+Görsel üretim orijinalleri yerelde korunur. Oyuna alınan atlaslar Godot Image ile sabit piksel hücrelerine nearest örneklenir; PNG boyutu 3.645.688 → 131.244 byte. Büyük blob yükleme çağrısı sonuçlanmadı; küçük işlenmiş dosyalar GitHub blob olarak hash'leri doğrulanarak alındı. Özel Drive orijinalleri/bağlantıları ve Git geçmişi yayımlanmaz.
+
+Sonraki öncelik: fiziksel Firefox Android, Safari/iOS, Xbox ve insan oyuncu denge/anlatı testi. Firefox 144.0.2 Linux otomasyonu bu ortamda WebGL2 sunamadığından BLOCKED; başarılı Chromium emülasyonu bunun yerine sunulmaz. Normal yazılım renderer 60 FPS hedefi FAIL; düşük güç ölçümü ayrı raporlanır. Güncel sonuçlar QA.md, yayından sonraki kesin commit/giriş adresi `/version.json` ve yayın doğrulama raporundadır.

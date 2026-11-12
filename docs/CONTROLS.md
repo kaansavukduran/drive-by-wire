@@ -1,28 +1,25 @@
-# Kontrol kararı · 0.5.0
+# Kontrol kararı · 0.7.0
 
-12 Kasım 2026. Tür: üç şeritli, üstten görünen otoyol aksiyonu. Kamera doğrultusu sabit, araç şeritler arasında geçer. Temel eylemler: yön, turbo/fren, ateş, mayın, sıyrılma ve İLİN desteği. Hedefler: telefon/tablet dikey-yatay, PC ve gamepad. İki başparmak kullanımında eylem basılıyken yön değiştirilebilmelidir.
+Son açık kullanıcı seçimi: **sabit sanal joystick + eylem düğmeleri**. Önceki kaydırma şeması, kullanıcının istediği dört yönlü serbest sürüşe geçiş nedeniyle değişti. Üstten sabit kamera ve akan yol korunur; araç yol içinde X/Y eksenlerinde ilerler ve geri çekilir. Açık dünya veya gerçekçi geri vites simülatörü değildir.
 
-Kontrol şemasını seçmeden önce 2–4 uygun seçenek karşılaştırılır, birincil öneri sunulur ve kullanıcının seçimi beklenir. Açık onay olmadan değişiklik yapılmaz. Kullanıcının son açık seçimi, önceki virtual joystick isteğini değiştirmiştir: **“Sağa/sola kaydırma + eylem düğmeleri olsun mobil ve tabletten oynarken.”**
+Seçim öncesinde üç seçenek uygunluk sırasıyla sunuldu:
 
-| Sıra | Tarz | Avantaj | Dezavantaj / karar |
+| Sıra | Kontrol | Avantaj | Dezavantaj |
 | --- | --- | --- | --- |
-| 1 · Öneri ve onaylanan | Sağa/sola kaydırma + eylem düğmeleri | Şerit modeliyle doğal, daha az yön düğmesi; ayrı parmak ateşte kalabilir | Dikey/çapraz hareket ve küçük titreşim ayrılmalı; hareket kısıtı olan kullanıcılar için evrensel çözüm iddiası yok |
-| 2 | Sabit sol/sağ + eylem düğmeleri | Kesin ve öğrenmesi kolay | Fazla ekran alanı ve eşzamanlı dokunma ihtiyacı |
-| 3 | Sol/sağ bölgeye dokunma + eylemler | Büyük hedef ve hızlı tepki | Eylem düğmelerine yakın yanlış yön girişi riski |
-| 4 | Virtual joystick + eylemler | Sürekli yön hissi, serbest hareketli oyunlarda tanıdık | Bu üç şeritli modelde çubuk/nötr eşikleri gerekir; kalıcı parmak ve ekran alanı tüketir. Son seçim bu tarz değildir |
+| 1 · Kullanıcının seçimi | Sabit joystick + eylemler | Dört yön, hassas çapraz hareket ve tutarlı başlangıç noktası | Sol alt alanı kaplar |
+| 2 | Dokunulan yerde beliren joystick | Parmağın konumuna uyum | Başlangıç noktası değişir, görsel yerleşimi takip etmek daha zor |
+| 3 | Dört yön düğmesi + eylemler | Net basışlar | Analog hassasiyet sınırlı, daha fazla hedef |
 
-## Uygulanan davranış
+Joystick’in merkezi sabittir; her dokunuş için yeniden konumlanmaz. Tek bir parmak sahibi olur. Ayrı parmak ateş/turbo tutabilir. Radyal ölü bölge %13; çapraz hareket normalize edilir. Girdisiz araç kısa sürede durur, yol kenarında gizli hız birikmez. Mola, yön değişimi ve odak kaybı parmak sahipliğini temizler. UI ekran koordinatlarında, dünya kendi ölçek/dönüşümünde kalır.
 
-Yol alanında başlayan yatay kaydırma 30 mantıksal piksel eşiğini ve yatay/dikey oranını geçince tek şerit değiştirir. Uzun veya geri dönen aynı hareket ikinci bir şerit atlatmaz; parmak kaldırılıp yeni hareket başlatılır. Küçük titreşim, dikey hareket ve yol dışında başlayan dokunma yön vermez. İkinci parmak ilk hareketin sahipliğini alamaz. Eşik Godot'un ölçeklenmiş UI koordinatlarındadır; düşük güç tamponu ve ekran ölçeği fazladan dönüşüm yaratmaz.
+| Platform | Hareket | Ateş / mayın | Diğer |
+| --- | --- | --- | --- |
+| Telefon/tablet | Sol altta sabit joystick, dört yön | Sağda Öne Ateş / Arkaya Mayın | Turbo, fren, sıyrılma, Omega-3 desteği |
+| PC | Oklar / WASD, basılı süre boyunca sürekli XY | Space/F veya fare sol; X mayın | E turbo, Q fren, Shift/fare sağ sıyrılma, C destek, Esc/P mola |
+| Gamepad | Sol çubuk / D-pad | A/RT öne ateş; X arkaya mayın | RB turbo, LT fren, B/LB sıyrılma, Y destek, Start mola |
 
-Ateş ve turbo basılı tutulabilir. Fren, mayın, sıyrılma ve destek açık etiketli düğmelerdir. Dikeyde iki sıra; yatayda yan alanlar kullanılır. Mola, odak kaybı ve yön değişiminde işaretçi/eylem durumları temizlenir. Ekran yönü değişince mola verilir; kullanıcı devam eder. Ayarlar içindeki otomatik ateş mevcut isteğe bağlı erişim tercihidir; kendiliğinden açılmaz.
+Menü ve NPC konuşmaları fare/dokunma veya yönler+A/Enter ile kullanılabilir. Uzun konuşmalar kaydırılabilir. Yeniden atama, gamepad ölü bölgesi, otomatik ateş, ses ve hareket tercihleri korunur. T sohbeti isteğe bağlı eski uyumluluk yoludur; sürüş metin gerektirmez.
 
-PC: sol/sağ veya A/D bir şerit; yukarı/W turbo; aşağı/S fren; Space/F ateş; X mayın; Shift sıyrıl; C destek. Yol alanında fare sol basılı ateş, sağ sıyrılma; menüye tıklamak ateş etmez, yol dışında bırakmak ateşi keser. Sürüş için metin girmek gerekmez. T ile eski isteğe bağlı sohbet sistemi korunur.
+Ön silah, arkadaki hedef için yönünü tersine çevirmez. Ön hedefe küçük nişan yardımı vardır; çıkış noktası her zaman aracın ön merkezidir. Mayın arka merkezden çıkar. İki silahın da çıkışı, oyuncu hitbox'ı ve sprite pivotu aynı fizik X/Y konumuna bağlıdır.
 
-Kumanda: analog/D-pad, A/RT ateş, RB turbo, LT fren, X mayın, B/LB sıyrıl, Y destek, Start mola. Menülerde A onay, B geri; tüm ana akış kontrolcüyle ilerler. Yeniden tuş/düğme atama ve ölü bölge ayarı korunur. Fiziksel cihaz testiyle yazılım emülasyonu aynı kabul edilmez.
-
-[Gerçek test kapsamı](QA.md).
-
-0.6.0: kullanıcı “Öneri 1’i uygula, onaylıyorum” diyerek kaydırma + eylemleri yeniden onayladı. Yeni seçim kitabı sürüşün türünü/kamerasını/hareket modelini değiştirmez. Onaylı şema korunur; eşit tam pixel düğme genişlikleri ve mobil menü hedefleri mevcut şema içinde iyileştirilir.
-
-0.6.1: kontrol şeması aynı kalır. Kesik çizgi yaklaşan atışın kilitli hedefini, `!` işareti hazırlanmakta olan engeli gösterir; oyuncu onaylı şerit/sıyrılma girdileriyle kaçabilir. Yeni kontrol seçimi veya joystick eklenmedi.
+Portre: joystick solda; sağda eşit geometriye sahip iki sütun/üç sıra eylem. Yatay: sol joystick; sağ tarafta konuşma, ayrı mola ve üç sıra eylem. Joystick, eylemler ve mola alanları için taşma/çakışma regresyonu vardır. Fiziksel telefon/tablet veya Xbox testi, yazılım emülasyonu yerine gösterilmez.

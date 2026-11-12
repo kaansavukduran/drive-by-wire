@@ -12,13 +12,14 @@ const manifest=JSON.parse(fs.readFileSync(path.join(current,'version.json')));
 assert(fs.existsSync(path.join(legacy,'index.pck')),'prepare the previous flat web export first');
 fs.mkdirSync(output,{recursive:true});
 let active=legacy,future=false;
-const futureEntry='/play/0.6.3-222222222222/';
+const futureVersion=manifest.version.split('.').map((n,i)=>i===2?Number(n)+1:n).join('.');
+const futureEntry=`/play/${futureVersion}-222222222222/`;
 const types={'.html':'text/html; charset=utf-8','.js':'text/javascript','.wasm':'application/wasm','.json':'application/json','.png':'image/png','.ttf':'font/ttf'};
 const server=http.createServer((req,res)=>{
  const url=new URL(req.url,'http://localhost');
  if(future&&url.pathname==='/version.json'){
   res.writeHead(200,{'Content-Type':'application/json','Cache-Control':'no-store'});
-  res.end(JSON.stringify({...manifest,commit:'2'.repeat(40),entry:futureEntry}));return;
+  res.end(JSON.stringify({...manifest,version:futureVersion,commit:'2'.repeat(40),entry:futureEntry}));return;
  }
  if(future&&url.pathname===futureEntry){res.writeHead(200,{'Content-Type':'text/html'});res.end('<h1>Test update destination</h1>');return;}
  let file=path.resolve(active,'.'+decodeURIComponent(url.pathname));

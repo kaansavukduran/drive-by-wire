@@ -1,30 +1,15 @@
-# Drive-By Wire 0.6.2 · Güncel oyuna güvenilir giriş
+# Drive-By Wire 0.7.0 · Omega-3 / Üçüncü Nabız
 
-[Oyunu aç](https://drive-by-wire.vercel.app/play/). Kök adres bu girişe yönlenir. GitHub `main` gönderimi Vercel'i otomatik tetikler; web yayını GitHub Release beklemez.
+[Oyunu aç](https://drive-by-wire.vercel.app/play/). Godot 4.6.3/GDScript korunur. `main` gönderimleri mevcut Git bağlantısıyla Vercel'e otomatik dağıtılır; web yayını GitHub Release beklemez. Sürüm/commit/giriş adresi `/version.json` içindedir.
 
-- Godot HTML, JS, WASM ve PCK aynı sürüm/commit klasöründe; önceki dosyalarla aynı URL kullanılmaz.
-- Giriş ve sürüm bilgisi önbelleğe alınmaz. Sürüm klasöründeki büyük dosyalar değişmediği için tekrar kullanılabilir.
-- 0.6.2 ve sonrası, sayfaya dönünce yeni sürümü haber verir. Güncelleme oyuncunun düğmeye basmasıyla açılır; etap kendiliğinden yenilenmez.
-- Origin ve Godot kayıt alanı korunur; kullanıcıdan veri silmesi istenmez. Eski önbellekle geçiş ve gerçek kayıt içeriği tarayıcı testiyle doğrulandı.
+İLİN adı oyuncu arayüzünde Omega-3 oldu. Kullanıcının açık seçimiyle üç şeritli giriş yerine yol içinde dört yönlü serbest hareket ve sabit sanal joystick geldi. PC oklar/WASD; gamepad sol çubuk/D-pad aynı fizik modelini kullanır. Turbo artık E/RB, fren Q/LT. Ön silah öne, mayın arkaya gider; bütün çıkışlar aynı araç merkezine bağlıdır.
 
-Önceki 0.6.1 oynanış iyileştirmeleri:
+- Yeni Aion sürücülü araç atlası: 8 poz, 64×96 hücre, sabit (32,45) pivot; oyun içi 48×80 boyut. Sakin göz kırpma, turbo, ön ateş ve hasar ifadeleri. Yeni beş kişilik statik portre atlası; oran/padding korunur.
+- Üçüncü Nabız: 10 ayrım düğümü, 13 ayrı kapanış; Kurt, Kuzu, Baykuş Ömer ve Tavşan Emre ile ilerletilebilir konuşmalar. Yanıtlar ilişkiyi ve etap başındaki 7 sn kalkan veya +1 mayını etkiler. Aynı konuşma yanıtı tekrar ödül vermez.
+- Namlu parlaması, mevcut patlama/duman paftaları, Omega-3 elektrik darbesi ve iki yeni sentez ses. Destek, yakın düşman mermilerini temizler. Hareket/sarsıntı/ses/titreşim tercihleri korunur.
+- Yatay ekrandaki turbo/mola alanı çakışması düzeltildi. Arka mayın, ekran dışındaki takipçiye ulaşmadan silinmez. Sprite gövdesi, hitbox, kalkan ve silah çıkışları X/Y hareketinde birlikte kalır.
+- Yeni görüntüler hücre hücre nearest örneklemeyle sabit piksel ızgarasına alındı; orijinal üretimler yerelde korundu. PNG toplamı 3.645.688 → 131.244 byte. İşlenmiş varlıklar repo içindedir; çalışma anında Drive gerekmez.
 
-Fragaria Interactive · AIONIA
+Mevcut güven, rekor, etap kaydı ve 13 sonun kimlikleri korunur. Eski `momo`/`ilin` dosya adları kayıt/kod uyumluluğu için kalabilir; görünen karakter adı Omega-3'tür. Önceki kayıtlar veri silinmeden açılır. Sürümlü HTML/JS/WASM/PCK ve açık oyunda isteğe bağlı güncelleme bildirimi korunur.
 
-Üç arcade etap ve seçimlere göre 13 son korunur. Mobil/tablette onaylı kaydırma + eylem düğmeleri, PC oklar/WASD/fare, gamepad analog/D-pad aynı şekilde çalışır.
-
-- Ateş eden kamyonet, 0.55 saniye önceden nişan çizgisini ve dolan hazırlık çubuğunu gösterir. Atış bu noktaya kilitlenir; oyuncu şerit değiştirerek kaçabilir.
-- Kamyon, engel bırakacağı yeri 0.65 saniye önceden `!` işaretiyle gösterir. Güvenli bırakma alanını geçmişse geç kalan saldırı iptal edilir.
-- Şerit kıran çarpan araç yönünü gösterir; aynı şeritteki birden fazla arka takipçi tek işaret kullanır. İşaretler araçların üstünde, menülerin altında çizilir. Azaltılmış harekette önemli bilgiler korunur.
-- Kamera, dekoratif yol ve İLİN replikleri düşman/ikmal rastgeleliğini tüketmez. Aynı fizik girdilerinde görsel tercihler canı, puanı ve trafiği değiştirmez.
-- Yatay kaçan mermiler sınırlı alanın dışına çıkınca silinir. Arka takipçiye ateş, hedefe varmadan kesilmez.
-- Menü/garaj sürüm yazısı artık project.godot değerinden gelir.
-- Dikey telefonda mesafe, can ve enerji ayrı alanlarda gösterilir; mesafe yazısı enerji çubuğunun altında kalmaz.
-
-Godot 4.6.3 ve mevcut görsel kaynaklar korunur; yeni motor, framework veya runtime bağımlılığı yoktur. [Hikâye/İLİN](JOURNEY.md) OYUN/TASLAK statüsündedir. [Gerçek test raporu](QA.md) ve önceki [0.6.0 raporu](history/QA-v060.md) ayrı tutulur.
-
-12 Kasım 2026'da PR #1 main'e birleşti; 0.6.1 Vercel production üzerinde READY oldu. Canlı oyun: https://drive-by-wire.vercel.app. GitHub: `kaansavukduran/drive-by-wire`. `/version.json` sürüm/commit bilgisi verir. Girişsiz canlı tarayıcı testleri PC, telefon dikey ve telefon yatay akışlarını doğruladı; kapsam [QA raporunda](QA.md). Özel Drive içeriği public sürüme alınmadı.
-
-Tam Git geçmişi başka servise/pakete aktarılmaz. İLİN ve yeni anlatı OYUN/TASLAK; çilek görseli onaylı final logo ilan edilmez. Fiziksel cihaz ve insan eğlence testi tamamlanmış gösterilmez.
-
-Public edition: private Drive/Docs URLs, private strawberry art and its test screenshots are excluded. The running game uses the Fragaria pixel wordmark; gameplay, İLİN and all 13 endings are included. Public deployment is verified separately.
+Yeni senaryo ve görsel uyarlamalar **OYUN/TASLAK** statüsündedir. Özel referans paftaları, belge bağlantıları, çilek görseli ve Git geçmişi bu yayına taşınmaz. Yeni ana kanon veya resmî logo onayı iddia edilmez. [Gerçek test kapsamı](QA.md).

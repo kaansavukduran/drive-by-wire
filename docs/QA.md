@@ -1,65 +1,44 @@
-# AIONIA kalite raporu · Drive-By Wire 0.6.2
+# Drive-By Wire 0.7.0 · gerçek doğrulama raporu
 
-## Güncelleme geçişi · 12 Kasım 2026
+Godot 4.6.3 korunur. PASS çalıştırılmış kapsam, FAIL karşılanmayan hedef, NOT TESTED denenmeyen kapsamdır. Yeni karakter portreleri ve Üçüncü Nabız anlatısı OYUN/TASLAK; ana evren kanonu onayı iddia edilmez. Önceki yayın raporu [QA-v062](history/QA-v062.md), güncel standart kapsamı [AIONIA_CURRENT_REFERENCE](AIONIA_CURRENT_REFERENCE.md).
 
-| Kontrol | Sonuç | Gerçek kapsam |
+| Kontrol | Sonuç | Gerçek kapsam / sınır |
 | --- | --- | --- |
-| Native regresyon | PASS | 0.6.2 ile 821 kontrol / 16 takım yeniden geçti. |
-| Önbellekli sürümden geçiş | PASS | `tests/browser_update.cjs`: aynı Chromium profili ve origin'de önceki 0.6.1 HTML/JS/WASM/PCK dosyaları uzun süreli HTTP önbelleğine alındı. Sunucu 0.6.2'ye geçtiğinde eski HTML'nin kaldığı doğrulandı; `/play/` yeni commit klasöründeki JS/WASM/PCK ile gerçek oyunu açtı. Kullanıcının telefonundaki kesin nedenin tespiti değildir. |
-| Kayıtların korunması | PASS | Eski oyunda gerçek garaj seçimi yapıldı ve Godot IndexedDB `save.json` kaydı oluştu. Yeni klasörden açılış sonrası kayıt içeriği birebir aynı; güven 54 kaldı. localStorage değeri de korundu. Veri silme/Cache Storage temizleme yapılmadı. |
-| Gelecek sürüm bildirimi | PASS | Yerel test manifesti daha yeni commit sunduğunda bildirim çıktı; moladaki mesafe değişmedi. Yalnız düğmeye basınca testin yeni giriş adresine gidildi. Bu, gelecekteki 0.6.3 oyununun tamamlandığı anlamına gelmez. |
-| Temiz kök adres açılışı | PASS | Yerel Chromium kök adresten sürümlü girişe otomatik ulaştı; dikey telefon düzeninde oyun açıldı. Vercel 307 ve canlı yanıt başlıkları dağıtım sonrasında ayrıca doğrulanır. |
-| Kullanıcının fiziksel telefonu / Firefox Android | NOT TESTED | Kullanıcının tarayıcı oturumuna erişim yok; ekran görüntüsü eski MOMO arayüzünü gösteriyor. Yeni bağlantının fiziksel cihazdaki sonucu kullanıcıda gözlenebilir. |
-
-Yerel komut: `NODE_PATH=<Playwright kurulumu> node tests/browser_update.cjs`. Önceki düz web derlemesi `work/legacy-v061` içine kopyalanır; yeni sürüm `python3 packaging/build_web.py` ile hazırlanır. Bu test gerçek oynanışı açar ve kaydı okur; QA oynanışa değer yazmaz. Dağıtım sonrası kontrol gerçek `/version.json`, sürümlü PCK, HTTP başlıkları ve PC/dikey/yatay dokunma girdileriyle yapılır; yerel sonuç canlı sonuç diye sunulmaz.
-
-## Önceki oynanış ve yayın doğrulamaları · 0.6.1
-
-Aşağıdaki ayrıntıların 0.6.1 tarihli kapsamı [arşiv raporunda](history/QA-v061.md) da korunur. 0.6.2 değişikliği web güncelleme/teslim akışıdır; 60 FPS, gerçek Canvas OS fontu ve fiziksel cihaz sınırları giderilmiş sayılmaz.
-
-12 Kasım 2026. PASS çalıştırılmış kapsam, FAIL karşılanmayan hedef, NOT TESTED denenmeyen kapsamdır. Godot 4.6.3/GDScript korunur. Fiziksel cihaz veya insan eğlence testi emülasyonla eşdeğer sayılmaz. Standart kapsamı [AIONIA_CURRENT_REFERENCE.md](AIONIA_CURRENT_REFERENCE.md), önceki sonuçlar [0.6.0 raporunda](history/QA-v060.md).
-
-| Kontrol | Sonuç | Kanıt / sınır |
-| --- | --- | --- |
-| Native regresyon toplamı | PASS | **821 kontrol, 0 başarısız; 16 takım.** Her takım ayrı geçici XDG dizininde. Script/parse hatası başarısız sayılır. |
-| Önceki kontrol ve kayıt davranışı | PASS | Parser 110, ilişki 89, garaj/kayıt 72, sefer 15, arcade 32, eski tam sefer 4, başlık 13, kurtarma 18, kontrolcü 32, ayarlar 9, kaydırma/eski bölüm 38. Eski ani ateş varsayımı yeni ön uyarı + ateş davranışıyla güncellendi; saldırı hâlâ gerçek mermi üretir. |
-| 13 son ve seçim yolları | PASS | 257 kontrol; her son için üç gerçek fizik etabı, toplam 39. Yeni düşman kurallarıyla yeniden tamamlandı. Teleport, ek HP veya ölümsüzlük yok. Ham sonuçlar story-runs.json. |
-| Kitap UI / görünüm | PASS | 32 / 24 kontrol. Üç karar, üç etap, kapanış/sonlar kitabı, yeni hikâyede sonları koruma, başarısızlık ve etabın başından devam. Tema/font kaydı, ok glifleri ve palet kontrastı korunur. |
-| Görsel ayarlar altında aynı oynanış | PASS | 44 yeni kontrol. Aynı fizik girdilerinde 60 saniyelik iki gerçek sahne: hareket/sarsıntı kapalı ve açık, farklı dekor seed'leri, fazladan kamera örnekleri. Trafik, mermiler, ikmal, can, puan ve gameplay RNG durumu aynı. Eski kod ilk fizik adımında ayrıştı; before/after logları kanıtta. |
-| Uyarı, saldırı ve mermi yaşam döngüsü | PASS | 32 yeni kontrol: ateşten önce süre ve kilitli hedef; ilan edilen yöne gerçek mermi; mola sırasında sabit zaman/işaret; 0.65 sn kamyon hazırlığı, geç kalan engeli iptal; şerit kırma ve tek arka şerit işareti; renk dışı şekiller için ayrı katman. Ekran dışı yatay/düşman mermileri temizlenir; arka takipçiye atış gerçek HP azaltır. |
-| PC / telefon / tablet | PASS | Gerçek Chromium klavye/fare/CDP touch. 1280×720; 390×844 / 844×390; 768×1024 / 1024×768; düşük güç telefon. Garaj sınırları, kaydırma+ateş, turbo+ateş, tek hareket/tek şerit, dikey ret, ayarlar/günlük ve yön değişiminde güvenli mola. |
-| Dikey HUD çakışma regresyonu | PASS | Telefon, tablet ve düşük güç görünümünde gerçek Godot kontrol dikdörtgenleri doğrulandı: can yazısı enerji çubuğuna taşmaz; mesafe can çubuğunun altında, enerji yazısının solunda kalır. Altı tarayıcı düzeni ve Gamepad API akışı düzeltmeden sonra tekrar geçti. |
-| Gamepad API | PASS | Emüle D-pad/A garaj, konuşma, yükseltme ve karar; analog, RB/RT, Start/B, kopunca mola ve yeniden bağlanınca otomatik sürmeme. Fiziksel Xbox değildir. |
-| Tam web hikâyesi | PASS | Gerçek girdilerle üç 400 m etap: 15/16/12 düşman, 6/7/6 ikmal. e01 açıldı; sonlar kitabı dokunmayla kullanıldı ve reload sonrası korundu. |
-| Canlı saldırı uyarısı | PASS | Gerçek trafikte arka/şerit kırma/nişan işaretleri gözlendi. Mevcut T sohbet yavaşlatması gerçek tuşla açılarak canlı nişan çizgisi görüntülendi; mola hedef ve ilerlemeyi sabit tuttu. QA yalnız okur, oyuna değer yazmaz. |
-| Varsayılan koyu / native font / HTML system-ui | PASS | Native görünüm regresyonu ve gerçek ekran düzenleri. Önceki web görünüm testi 0.6.0 raporunda; bu sürümde o test yeniden çalıştırılmadı. |
-| Web Canvas gerçek OS font ailesi | FAIL | Tarayıcı OS font dosyalarını Godot'a açmaz; gömülü font yedeği kullanılır. Sistem fontuyla tam eşleşme iddiası yok. Lexend alternatif, HTML gerçek system-ui. |
-| Normal mod 60 FPS hedefi | FAIL | Chromium SwiftShader, fiziksel GPU yok: [21, 20, 18] FPS; medyan **20**. 1280×720. |
-| Düşük güç 30 FPS ara hedefi | PASS | Aynı viewport, 640×360 tampon: [41, 38, 38] FPS; medyan **38**. Donanım garantisi değildir. |
-| HTML yardım ve %200 metin | PASS | Odak, yatay taşmadan akış, açılınca mola ve kapanınca molada kalma. Tam canvas ekran okuyucu oyunu değildir. |
-| Fiziksel cihaz, Safari, gerçek gamepad/titreşim | NOT TESTED | Ortamda donanım yok. Yazılım olayları fiziksel test diye sunulmaz. |
-| İnsan eğlence / denge / anlatı | NOT TESTED | 13 otomatik yol ve tam web koşusu insan değerlendirmesi değildir. |
-| Tam ekran okuyucu / WCAG AA / toplam cihaz bellek ve enerji | NOT TESTED | Kontrast kontrolleri ve semantik HTML yardım kapsamı ayrı. JS heap toplam WASM/GPU belleği değildir. |
-| Yeni imzalı native kurulum | NOT TESTED | Bu web yayını kapsamında native kurulum paketi üretilmedi. |
-| GitHub / Vercel yayını | PASS | PR #1 main'e birleşti: `1cb9f21fcc21b79a8191c91d42413405dac37a87`. Vercel production `dpl_7cyyd4i3ZdtpwcexraAi6K3Brse2` READY; `drive-by-wire.vercel.app` bu dağıtıma bağlı. İlk canlı sürüm 0.6.1; sonraki commit bilgisi `/version.json` üzerinden okunur. |
-| Herkese açık canlı sürüm | PASS | Önizleme çerezi veya giriş kullanmayan yeni Chromium oturumları: PC 1280×720, telefon 390×844 ve 844×390. Gerçek canlı `/version.json` commit/sürüm ve indirilen PCK kontrolü; başlat → seçim → 400 m etap, PC A/D, iki parmak kaydırma+ateş ve molada sabit mesafe. Üçünde sıfır tarayıcı runtime hatası. Fiziksel telefon testi değildir. |
+| Native regresyon | PASS | 878 kontrol, 0 başarısız; 17 takım. Her takım geçici XDG dizininde, parse/script hatası başarısız sayılır. Son atlas ve odak düzeltmesiyle yeniden çalıştırıldı. |
+| 13 son / kayıt uyumu | PASS | 13×3 gerçek fizik etabı. Eski son kimlikleri, kayıt kurtarma, etaba dönüş ve bitirilen sonların korunması. Bot direksiyon/cephane/hasar kurallarını kullanır; teleport, ek HP veya ölümsüzlük yoktur. |
+| Serbest sürüş / konum regresyonu | PASS | 58 kontrol: dört yön, normalize çapraz hız, durunca kaymama, dört sınır, yeniden boyutlandırmada sabit fizik konumu, sekiz araç hücresinde ortak pivot, öne silah/arkaya mayın. Arka mayının erken temizlenmesi düzeltildi. |
+| Dokunma sahipliği | PASS | Sabit merkez, deadzone, bağımsız ateş parmağı, mola/odak/yön değişiminde bırakma. Turbo ve mola çakışması giderildi. Fiziksel dokunmatik ekran testi değildir. |
+| PC / telefon / tablet tarayıcı akışı | PASS | Chromium gerçek klavye/fare/CDP touch; 1280×720, 390×844, 844×390, 768×1024, 1024×768 ve düşük güç telefon. Joystick+ateş, ters çapraz hareket, mayın, HUD/eylem sınırları, ayarlar/günlük ve yön değişimi. Tablet seçim odağının kaydırma alanında görünmesi ayrıca doğrulanır. |
+| Gamepad API | PASS | Emüle analog/D-pad, A, RB/RT, Start/B, kopunca mola ve yeniden bağlanınca otomatik sürmeme. Fiziksel Xbox testi değildir. |
+| Tam web hikâyesi | PASS | Gerçek klavye/fareyle üç 400 m etap. Kurt, Kuzu, Baykuş Ömer, Tavşan Emre ve Omega-3 konuşmaları; yanıt ve bölüm desteği. Etap sonunda can 20/52/60, düşman 5/9/5, ikmal 4/5/6. e01, dokunmalı sonlar kitabı ve reload kalıcılığı. QA yalnız durum okur; oynanışa değer yazmaz. |
+| Yanıt / ilişki | PASS | Her bölümde tek yanıt; tekrar ödül toplama engeli. Yedi saniye kalkan veya bir mayın desteği; bağlara göre kişisel kapanış. |
+| Önbellekli eski sürümden geçiş | PASS | Aynı Chromium profili/origin üzerinde uzun önbellekli 0.6.1 fixture'ından 0.7.0 sürümlü JS/WASM/PCK'ya geçiş. Gerçek garaj güven kaydı 54 ve IndexedDB save.json birebir korundu; localStorage korundu. Kullanıcının telefonundaki kesin eski sürüm nedenini kanıtlamaz. |
+| Güncelleme bildirimi | PASS | Test manifesti yeni commit sunduğunda bildirim; yalnız düğmeyle geçiş ve mola sırasında sabit mesafe. Kayıt/veri temizleme yapılmaz. |
+| HTML yardım / %200 metin | PASS | Odak ve yatay taşmadan akış; açılınca mola, kapanınca molada kalma. Canvas için tam ekran okuyucu erişimi değildir. |
+| Normal mod 60 FPS hedefi | FAIL | Chromium SwiftShader, fiziksel GPU yok: 20/21/18 FPS, medyan 20. Donanım performansı sonucu değildir. |
+| Düşük güç 30 FPS ara hedefi | PASS | Aynı yazılım ortamı: 41/44/42 FPS, medyan 42. 640×360 tampon; fiziksel donanım garantisi değildir. |
+| Açılış / JS heap | PASS | Ölçülen 3234/2067 ms; JS heap 12.2/9.9 MB. Yalnız JS kısmıdır; toplam WASM/GPU belleği veya kontrollü A/B kazancı iddiası yoktur. Runtime hata ve üçüncü taraf istek listesi boş. |
+| Pixel atlas / dosya hacmi | PASS | İki atlas toplam 131244 byte; hücre bazında nearest import. Orijinaller korunur. Araç 8×64×96, portreler 6×64×64; beş portre statiktir, animasyon diye sunulmaz. |
+| Varsayılan koyu / native sistem fontu / HTML system-ui | PASS | Paylaşılan tema, ayar kaydı ve native görünüm regresyonu. |
+| Web Canvas gerçek OS font ailesi | FAIL | Tarayıcı OS font dosyalarını Godot'a açmaz; gömülü yedek kullanılır. |
+| Firefox Linux otomatik açılış | NOT TESTED | BLOCKED: Firefox 144.0.2 bu headless ortamda WebGL2 sunamadı. Yükleyici WebGL2 gereksinimini açıkça gösterdi; oynanış doğrulanmadı. |
+| Fiziksel mobil/tablet, Firefox Android, Safari/iOS, Xbox/titreşim | NOT TESTED | Donanım ve ilgili gerçek tarayıcılar mevcut değil. |
+| İnsan eğlence / denge / anlatı | NOT TESTED | Otomatik etapların tamamlanması insan değerlendirmesine eşdeğer değildir. |
+| Tam ekran okuyucu / WCAG AA / toplam bellek ve enerji | NOT TESTED | Kontrast, şekil ve semantik HTML yardım kontrollerinin ötesinde sertifikasyon iddia edilmez. |
+| Yeni imzalı native kurulum | NOT TESTED | Bu teslim web yayınıdır; beş platformda kurulum testi yapılmadı. |
 
 ## Yeniden üretim
 
 ```sh
-bash tests/run_all.sh
+GODOT=godot bash tests/run_all.sh
 python3 packaging/build_web.py
-python3 -m http.server 8765 --directory build/web
-node tests/browser_forge.cjs
-node tests/browser_warnings.cjs
-node tests/browser_book.cjs
-node tests/browser_quality.cjs
+python3 -m http.server 8877 --directory build/web
+DBW_URL=http://127.0.0.1:8877 node tests/browser_forge.cjs
+DBW_URL=http://127.0.0.1:8877 node tests/browser_book.cjs
+DBW_URL=http://127.0.0.1:8877 node tests/browser_quality.cjs
+node tests/browser_update.cjs
 ```
 
-Playwright test aracıdır; runtime bağımlılığı değildir. NODE_PATH mevcut kuruluma göre verilir. ?qa salt okunur snapshot açar. Native fixture'lar kontrollü durumlarda fizik kodunu; web testleri gerçek tuş/fare/dokunma/Gamepad API yollarını kullanır. Kamera/dekor rastgeleliği ayrılması bir render performansı garantisi değildir. Native bitiş yollarının değişen sayıları yeni kanıtta tutulur.
+Playwright yalnız geliştirme/test aracıdır; runtime bağımlılığı değildir. NODE_PATH mevcut kuruluma göre verilir. Yerel kanıtlar `work/evidence-v070-final`, `work/evidence-v070-story`, `work/evidence-v070-compact`, `work/evidence-v070-update` altındadır; geçici URL/özel oturum bilgisi public kaynakta yoktur.
 
-Özel çilek görseli ve referans bağlantıları yerelde korunur. İLİN/hikâye OYUN/TASLAK'tır; nihai logo veya ANA kanon onayı iddia edilmez. Kullanıcı 12 Kasım 2026 son talebinde kaynak ve oyundaki referansların GitHub/Vercel yayınını açıkça istedi. Bu onay yalnız proje yayını içindir; tam Git geçmişini başka yere taşımayı kapsamaz.
-
-Ölçülen açılış 3184 / 2047 ms; önbellek ve VM etkisi olabilir. CDP JS heap 12.2 / 12.3 MB, yalnız JS kısmıdır. Ölçümde üçüncü taraf istek ve runtime hata listeleri boştu. Önceki ölçümle fark kontrollü bir A/B sonucu değildir; FPS artışı iddia edilmez.
-
-Public edition: private Drive/Docs URLs, private strawberry art and its test screenshots are excluded. The running game uses the Fragaria pixel wordmark; gameplay, İLİN and all 13 endings are included. Public deployment is verified separately.
+Canlı dağıtım ayrıca `/version.json` commit/sürüm/giriş, indirilen PCK hash'i, HTTP başlıkları ve yeni oturumlarda PC/dikey/yatay gerçek girdilerle kontrol edilir. Yerel PASS tek başına canlı PASS anlamına gelmez. GitHub PR ve Vercel yayın sonucu ayrı yayın kaydında raporlanır.
