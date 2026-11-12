@@ -11,7 +11,7 @@
 | D · Mevcut görsel kimliği koruma | PASS | Karakter paftaları değiştirilmedi; yeni hazır grafik paketi alınmadı. Yeni UI aynı kod stili ve paletle çizilir. |
 | D · Yeni beş karakter animasyonu | NOT TESTED | Bu oyuna beş yeni oynanabilir karakter eklenmedi. Referansların varlığı animasyon entegrasyonu sayılmadı. |
 | E · Parser / MOMO / garaj ve kayıt | PASS | 110 / 89 / 72 başarılı kontrol. |
-| E · Eski sefer / yeni arcade / tam sefer / başlık UI | PASS | 14 / 32 / 4 / 9 başarılı kontrol. Toplam 330 PASS, 0 FAIL. |
+| E · Eski sefer / yeni arcade / tam sefer / başlık UI | PASS | 14 / 32 / 4 / 11 başarılı kontrol. Toplam 332 PASS, 0 FAIL. |
 | E · Gerçek klavye ve iki parmak olayları | PASS | Küs MOMO sırasında anında ok tuşu, turbo/fren, ön/arka ateş, mayın, ayrı parmak bırakma. |
 | E · HUD, menü, yardım, ayar, mola | PASS | 1280×720 Chromium ekranları incelendi. Mola sırasında yol görüntüsü sabit. Arka menü odağı kapatılır; geri dönünce odak doğru düğmeye gelir. |
 | E · Kayıt ve hata durumu | PASS | Rekor ve ses/hareket tercihleri kaydedilir; yazılamayan hedefte UI açıklama gösterir ve oturum ayarı uygulanır. |

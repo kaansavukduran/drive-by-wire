@@ -10,7 +10,7 @@ Resmî AIONIA başlangıç belgesi, standart v1.0, çilek referansı ve 18 karak
 
 ## Test ve yayın
 
-[QA raporu](QA.md) PASS / FAIL / NOT TESTED durumlarını verir. 330 headless kontrol; Chromium masaüstü/dokunma akışı; Web Audio başlangıcı; yükleme hatasında yeniden deneme doğrulandı. Yazılım grafik ortamında 60 render FPS hedefi sağlanmadı. Bu açık performans eksikliği nedeniyle tam yayın kapısı geçilmiş sayılmaz.
+[QA raporu](QA.md) PASS / FAIL / NOT TESTED durumlarını verir. 332 headless kontrol; Chromium masaüstü/dokunma akışı; Web Audio başlangıcı; yükleme hatasında yeniden deneme doğrulandı. Yazılım grafik ortamında 60 render FPS hedefi sağlanmadı. Bu açık performans eksikliği nedeniyle tam yayın kapısı geçilmiş sayılmaz.
 
 Web ZIP'i üretildi. Çıkartıp o klasörde `python3 -m http.server 8765` çalıştır; `http://localhost:8765` aç. HTML dosyasına çift tıklamak yeterli değildir. Kaynak ZIP'i Godot 4.6.3 projesidir. Git bundle tam geçmişi taşır. Eski 0.2.0 paketleri ayrı önizlemedir.
 

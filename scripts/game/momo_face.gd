@@ -7,6 +7,7 @@ var talking := 0.0
 var hurt := 0.0
 var confused := 0.0
 var _t := 0.0
+var decorative_motion := true
 
 const SCREEN := Color("10202a")
 const GLOW := {"calm": Color("7fe7ff"), "scared": Color("b8c4ff"), "excited": Color("ffd84a"), "sulky": Color("ff8fb1")}
@@ -18,7 +19,8 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-	_t += delta / maxf(Engine.time_scale, 0.01)
+	if decorative_motion:
+		_t += delta / maxf(Engine.time_scale, 0.01)
 	talking = maxf(0.0, talking - delta / maxf(Engine.time_scale, 0.01))
 	hurt = maxf(0.0, hurt - delta / maxf(Engine.time_scale, 0.01))
 	confused = maxf(0.0, confused - delta / maxf(Engine.time_scale, 0.01))

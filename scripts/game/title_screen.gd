@@ -40,7 +40,7 @@ func _ready() -> void:
 	face = MomoFace.new()
 	face.position = Vector2(454, 103)
 	face.scale = Vector2(2, 2)
-	face.set_process(motion)
+	face.decorative_motion = motion
 	ui.add_child(face)
 	var line := _label(ui, Rect2(410, 208, 196, 64), "Direksiyon sende.\nBirlikte eve döneceğiz.", 13)
 	line.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -50,7 +50,7 @@ func _ready() -> void:
 	settings.z_index = 20
 	settings.changed.connect(func(value: Dictionary):
 		motion = bool(value["motion"])
-		face.set_process(motion))
+		face.decorative_motion = motion)
 	settings.closed.connect(func():
 		settings.hide()
 		_set_menu_enabled(true)

@@ -60,6 +60,7 @@ func _ready() -> void:
 	title.text = "" if has_art else "DRIVE-BY WIRE · GARAJ"
 	title.add_theme_color_override("font_color", Color("e0b84a"))
 	face = MomoFace.new()
+	face.decorative_motion = bool(save.get("settings", {}).get("motion", true))
 	var term: Array = sheets.image("garage_bg").get("terminal_screen_rect", [40, 64, 48, 44])
 	face.position = Vector2(float(term[0]), float(term[1])) if has_art else Vector2(40, 64)
 	face.scale = Vector2.ONE if has_art else Vector2(2, 2)

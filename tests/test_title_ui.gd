@@ -26,6 +26,11 @@ func _process(_delta: float) -> bool:
 	var column := panel.get_child(0)
 	(column.get_child(3) as CheckButton).button_pressed = false
 	h.check("reduced motion applies to the actual title", not title.motion)
+	var face_time: float = title.face._t
+	title.face.hurt = 0.35
+	title.face._process(0.5)
+	h.near("reduced motion freezes decorative frames", title.face._t, face_time, 0.001)
+	h.near("reduced motion still expires damage feedback", title.face.hurt, 0.0, 0.001)
 	var saved: Dictionary = panel.store.load_data()
 	h.eq("reduced motion persists through the settings UI", saved["settings"]["motion"], false)
 	var slider := column.get_child(4).get_child(1) as HSlider

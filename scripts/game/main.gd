@@ -161,7 +161,7 @@ func _ready() -> void:
 	prev_lane = lane
 	car_x = _lane_x(lane)
 	_build_ui()
-	face.set_process(motion_enabled)
+	face.decorative_motion = motion_enabled
 	_say("Oklar sende.\nSpace ile ateş!")
 
 
@@ -358,7 +358,8 @@ func _apply_settings(value: Dictionary) -> void:
 	sounds.volume = float(value["volume"])
 	if not effects_enabled:
 		shake = 0.0
-	face.set_process(motion_enabled and not paused)
+	face.decorative_motion = motion_enabled
+	face.set_process(not paused)
 
 
 func _to_title() -> void:
@@ -465,7 +466,7 @@ func _set_paused(value: bool) -> void:
 	paused = value
 	for action in Controls.KEYS:
 		Input.action_release(action)
-	face.set_process(motion_enabled and not value)
+	face.set_process(not value)
 	face.queue_redraw()
 	touch_held.clear()
 	boosting = false
