@@ -8,6 +8,8 @@ const CommandParser := preload("res://scripts/core/command_parser.gd")
 const Momo := preload("res://scripts/core/momo.gd")
 const SaveStore := preload("res://scripts/core/save_store.gd")
 const Garage := preload("res://scripts/core/garage.gd")
+const Session := preload("res://scripts/game/session.gd")
+const MomoFace := preload("res://scripts/game/momo_face.gd")
 const CAR_SHEET := preload("res://assets/sprites/player_car.png")
 const FONT := preload("res://assets/fonts/Lexend.ttf")
 
@@ -78,15 +80,19 @@ var hud: Label
 var hint: Label
 var end_panel: Label
 var bubble_left := 0.0
+var face: Control
 
 
 func _ready() -> void:
 	rng.randomize()
-	balance = DataLoader.load_json(DataLoader.BALANCE_PATH)
-	run_cfg = balance.get("run", {})
-	parser = CommandParser.new(DataLoader.load_json(DataLoader.INTENTS_PATH), balance)
+	var base_balance := DataLoader.load_json(DataLoader.BALANCE_PATH)
 	store = SaveStore.new()
 	save = store.load_data()
+	var garage := Garage.new(DataLoader.load_json(DataLoader.GARAGE_PATH), base_balance)
+	balance = garage.effective_balance(base_balance, save.get("upgrades", {}), Session.next_run_modifiers)
+	Session.next_run_modifiers = []
+	run_cfg = balance.get("run", {})
+	parser = CommandParser.new(DataLoader.load_json(DataLoader.INTENTS_PATH), balance)
 	momo = Momo.new(balance, DataLoader.load_json(DataLoader.MOMO_LINES_PATH), float(save.get("trust", 50.0)))
 	momo.start_run()
 	lane_count = int(run_cfg.get("lane_count", 3))
@@ -121,7 +127,10 @@ func _build_ui() -> void:
 	theme.default_font = FONT
 	theme.default_font_size = 12
 	hud = _label(ui, theme, Vector2(8, 6), Vector2(190, 90))
-	bubble = _label(ui, theme, Vector2(W - 218, 6), Vector2(210, 70))
+	face = MomoFace.new()
+	face.position = Vector2(W - 56, 6)
+	ui.add_child(face)
+	bubble = _label(ui, theme, Vector2(W - 270, 8), Vector2(208, 70))
 	bubble.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	bubble.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	hint = _label(ui, theme, Vector2(0, H - 20), Vector2(W, 16))
@@ -177,9 +186,9 @@ func _lane_of(x: float) -> int:
 func _unhandled_input(event: InputEvent) -> void:
 	if over:
 		if event is InputEventKey and event.pressed and not event.echo and event.keycode in [KEY_ENTER, KEY_KP_ENTER, KEY_SPACE]:
-			get_tree().reload_current_scene()
+			_to_garage()
 		elif event is InputEventScreenTouch and event.pressed:
-			get_tree().reload_current_scene()
+			_to_garage()
 		return
 	if box.visible:
 		return
@@ -220,6 +229,8 @@ func _on_submit(text: String) -> void:
 		var res: Dictionary = momo.interpret(command, rng, game_time)
 		if str(res.get("line", "")) != "":
 			_say(str(res["line"]))
+		if str(command.get("intent", "")) == "unknown":
+			face.confused = 1.5
 		var action := str(res.get("action", "none"))
 		if action == "execute" or action == "delay":
 			var wait := float(res.get("delay", 0.0)) if action == "delay" else 0.0
@@ -233,8 +244,10 @@ func _on_submit(text: String) -> void:
 func _say(line: String) -> void:
 	if line == "":
 		return
-	bubble.text = "MOMO: " + line
+	bubble.text = line
 	bubble_left = 3.5
+	if face:
+		face.talking = 1.2
 
 
 func _event(ev: Variant) -> void:
@@ -371,6 +384,7 @@ func _process(delta: float) -> void:
 	hud.text = "Can %d/%d\nMesafe %d m · Yok edilen %d\nHız %d · Mayın %d\nGüven %d · MOMO %s" % [
 		maxi(0, int(ceil(hp))), int(max_hp), int(distance), kills, int(speed), mines_left,
 		int(momo.trust), Momo.mood_name_tr(momo.mood)]
+	face.mood = momo.mood
 	hint.visible = not box.visible and not over and minutes < 1.5
 	queue_redraw()
 
@@ -626,6 +640,7 @@ func _damage_player(amount: float, tell := true) -> void:
 	invulnerable = _cfg("player.invulnerable_after_hit", 0.6)
 	_shake(float(DataLoader.dig(run_cfg, "screen_shake.hit", 3.0)))
 	_play("hit")
+	face.hurt = 0.35
 	if tell:
 		_event({"type": "damage", "amount": amount})
 	if hp <= 0.0:
@@ -635,6 +650,11 @@ func _damage_player(amount: float, tell := true) -> void:
 func _shake(power: float) -> void:
 	shake = float(DataLoader.dig(run_cfg, "screen_shake.seconds", 0.2))
 	shake_power = power
+
+
+func _to_garage() -> void:
+	Session.came_from_run = true
+	get_tree().change_scene_to_file("res://scenes/garage.tscn")
 
 
 func _end_run() -> void:
@@ -652,7 +672,7 @@ func _end_run() -> void:
 	save["memory"] = garage.record_run(save.get("memory", {}), run_info)
 	var saved: bool = store.save_data(save)
 	var d := float(end_result.get("trust_delta", 0.0))
-	end_panel.text = "SEFER BİTTİ\n\nMesafe: %d m\nYok edilen düşman: %d\nGüven: %d → %d (%s%d)\n\nMOMO: “%s”\n\n%sEnter ile yeni sefer" % [
+	end_panel.text = "SEFER BİTTİ\n\nMesafe: %d m\nYok edilen düşman: %d\nGüven: %d → %d (%s%d)\n\nMOMO: “%s”\n\n%sEnter ile garaja dön" % [
 		int(distance), kills, int(round(float(end_result.get("trust_before", 0)))), int(round(momo.trust)),
 		"+" if d >= 0 else "", int(round(d)), str(end_result.get("comment", "...")),
 		"" if saved else "(Kayıt yazılamadı)\n"]

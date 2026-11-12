@@ -48,3 +48,16 @@ credentials.write_text(
 )
 credentials.chmod(0o600)
 print(f"Android export configured: preset {index}, settings {settings}, credentials {credentials}")
+
+# Android export refuses to run unless ETC2/ASTC texture import is enabled.
+# The canonical place is project.godot ([rendering] textures/vram_compression/import_etc2_astc=true);
+# if it is missing, add it to this build checkout only and say so loudly.
+project = ROOT / "project.godot"
+text = project.read_text(encoding="utf-8")
+if "textures/vram_compression/import_etc2_astc=true" not in text:
+    if "[rendering]\n" in text:
+        text = text.replace("[rendering]\n", "[rendering]\n\ntextures/vram_compression/import_etc2_astc=true\n", 1)
+    else:
+        text += "\n[rendering]\n\ntextures/vram_compression/import_etc2_astc=true\n"
+    project.write_text(text, encoding="utf-8")
+    print("::warning::project.godot lacks textures/vram_compression/import_etc2_astc=true; added for this build only. Re-run the import step.")

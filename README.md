@@ -3,10 +3,11 @@
 Yazarak sürülen roguelite araba çatışması (prototip, geliştirme sürüyor). Arabanın yapay zekâsı MOMO, klavyeden yazdığın komutları ruh haline göre yorumlar.
 
 ## Şu anki durum (0.1.0, geliştirme)
-Var: kayan üç şeritli yol, yazarak şerit değiştirme / hız / ateş / mayın, komut kutusu açıkken %10 zaman, Türkçe-İngilizce ayrıştırıcı, MOMO güven ve ruh hali, web derlemesi.
-Henüz yok: düşmanlar ve hasar, garaj ekranı, sefer sonu, kayıt ekranı, tam çizimler, Windows/Linux/Android paketleri ve Release.
+Var: garaj (MOMO selamı, 3–4 seçenekli diyalog, bu sefer için tek yükseltme), kayan üç şeritli yol, yazarak sürüş, komut kutusu açıkken %10 zaman, çarpan araba / ateş eden kamyonet / engel bırakan kamyon, hedefli ateş, mayın, kaç, çarp, can ve ekran sarsıntısı, MOMO yüzü ve ruh haline göre yorum, sefer sonu ekranı, yerel kayıt (güven + hafıza), web derlemesi.
+Henüz yok: düşmanların, yolun, MOMO yüzünün ve garajın son piksel art çizimleri (şimdilik kodla çizilmiş geçici çizimler), Windows/Linux/Android paketleri ve GitHub Release.
 
 ## Oyna
+- Garajda rakam tuşuyla (1–4) MOMO'ya cevap ver, bir yükseltme seç, Enter ile sefere çık.
 - Herhangi bir harfe bas: komut kutusu açılır ve zaman yavaşlar. **Enter** gönderir, **Esc** vazgeçer.
 - Örnekler: `sola geç`, `sağa geç ve ateş et`, `hızlan`, `yavaşla`, `mayın bırak`, `aferin`, `go left`, `fire`.
 
@@ -20,7 +21,7 @@ godot --path .
 Testler:
 
 ```bash
-godot --headless --path . --script tests/test_parser.gd
+bash tests/run_all.sh
 ```
 
 Web (Vercel'in çalıştırdığı komut):
