@@ -8,7 +8,8 @@ const SaveStore := preload("res://scripts/core/save_store.gd")
 const Garage := preload("res://scripts/core/garage.gd")
 const Session := preload("res://scripts/game/session.gd")
 const MomoFace := preload("res://scripts/game/momo_face.gd")
-const FONT := preload("res://assets/fonts/Lexend.ttf")
+const FONT_FALLBACK := preload("res://assets/fonts/Lexend.ttf")
+const FONT_TERM := preload("res://assets/fonts/VT323.ttf")
 const Sheets := preload("res://scripts/game/sheets.gd")
 const UiSkin := preload("res://scripts/game/ui_skin.gd")
 
@@ -44,7 +45,8 @@ func _ready() -> void:
 	store = SaveStore.new()
 	save = store.load_data()
 	momo = Momo.new(balance, DataLoader.load_json(DataLoader.MOMO_LINES_PATH), float(save.get("trust", 50.0)))
-	theme.default_font = FONT
+	# Pixelify Sans digits (5 looks like S) hurt HUD readability; Lexend stays the UI font.
+	theme.default_font = FONT_FALLBACK
 	theme.default_font_size = 12
 	var ui := CanvasLayer.new()
 	add_child(ui)
@@ -218,7 +220,7 @@ func _draw() -> void:
 		if logo:
 			draw_texture(logo, Vector2(12, 8))
 		var feet := float(sheets.image("garage_bg").get("character_feet_y", 330))
-		sheets.draw_anim(self, "characters", "omer_idle", _t, Vector2(560, feet))
+		sheets.draw_anim(self, "characters", "omer_idle", _t, Vector2(560, feet), Color.WHITE, true)
 		sheets.draw_anim(self, "characters", "aion_idle", _t + 0.4, Vector2(450, feet))
 		return
 	# Placeholder pixel garage until the garage background sheet lands in assets/.

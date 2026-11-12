@@ -59,11 +59,10 @@ func draw_frame(ci: CanvasItem, name: String, index: int, pos: Vector2, modulate
 	var src := Rect2((index % cols) * fw, (index / cols) * fh, fw, fh)
 	var dst := Rect2((pos - Vector2(float(anchor[0]), float(anchor[1]))).round(), Vector2(fw, fh))
 	if flip_h:
-		dst.size.x = -dst.size.x
-		dst.position.x += fw
+		dst.size.x = -dst.size.x  # Godot mirrors in place for a negative width
 	ci.draw_texture_rect_region(tex, dst, src, modulate)
 	return true
 
 
-func draw_anim(ci: CanvasItem, name: String, anim: String, t: float, pos: Vector2, modulate := Color.WHITE) -> bool:
-	return draw_frame(ci, name, frame_at(name, anim, t), pos, modulate)
+func draw_anim(ci: CanvasItem, name: String, anim: String, t: float, pos: Vector2, modulate := Color.WHITE, flip_h := false) -> bool:
+	return draw_frame(ci, name, frame_at(name, anim, t), pos, modulate, flip_h)

@@ -13,7 +13,8 @@ const MomoFace := preload("res://scripts/game/momo_face.gd")
 const Sheets := preload("res://scripts/game/sheets.gd")
 const UiSkin := preload("res://scripts/game/ui_skin.gd")
 const CAR_SHEET := preload("res://assets/sprites/player_car.png")
-const FONT := preload("res://assets/fonts/Lexend.ttf")
+const FONT_FALLBACK := preload("res://assets/fonts/Lexend.ttf")
+const FONT_TERM := preload("res://assets/fonts/VT323.ttf")
 
 const W := 640.0
 const H := 360.0
@@ -130,7 +131,8 @@ func _build_ui() -> void:
 	var ui := CanvasLayer.new()
 	add_child(ui)
 	var theme := Theme.new()
-	theme.default_font = FONT
+	# Pixelify Sans digits (5 looks like S) hurt HUD readability; Lexend stays the UI font.
+	theme.default_font = FONT_FALLBACK
 	theme.default_font_size = 12
 	hud = _label(ui, theme, Vector2(8, 6), Vector2(190, 90))
 	face = MomoFace.new()
@@ -160,6 +162,10 @@ func _build_ui() -> void:
 	box.theme = theme
 	box.position = Vector2(W / 2 - 160, H - 48)
 	box.size = Vector2(320, 24)
+	var term_font: FontFile = FONT_TERM.duplicate()
+	term_font.fallbacks = [FONT_FALLBACK]
+	box.add_theme_font_override("font", term_font)
+	box.add_theme_font_size_override("font_size", 16)
 	box.placeholder_text = "MOMO'ya yaz · Enter gönderir · Esc vazgeçer"
 	box.visible = false
 	box.add_theme_stylebox_override("normal", UiSkin.box("assets/ui/command_box.png", 6))
@@ -426,7 +432,13 @@ func _simulate(delta: float) -> void:
 	_update_enemies(delta)
 	for fx in effects:
 		fx["t"] = float(fx["t"]) + delta
-		fx["pos"] = fx["pos"] + Vector2(0, speed * delta * (0.6 if str(fx["kind"]).begins_with("wreck_") else 1.0))
+		if not fx.get("still", false):
+			var k := str(fx["kind"])
+			var mul := 0.6 if k.begins_with("wreck_") else (3.0 if k == "speed" else 1.0)
+			fx["pos"] = fx["pos"] + Vector2(0, speed * delta * mul)
+	if speed > _cfg("player.base_speed", 220) + 20.0 and rng.randf() < delta * 18.0:
+		var sx := rng.randf_range(200, 230) if rng.randf() < 0.5 else rng.randf_range(410, 440)
+		effects.append({"pos": Vector2(sx, rng.randf_range(-40, 200)), "t": 0.0, "kind": "speed"})
 	effects = effects.filter(func(f: Dictionary) -> bool: return float(f["t"]) < 1.0)
 	_scroll_scenery(delta)
 
@@ -625,6 +637,8 @@ func _check_near(thing: Dictionary, r: Rect2, thing_lane: int) -> void:
 		_event("manoeuvre_success")
 	elif gap >= 0.0 and gap < float(run_cfg.get("near_miss_distance", 18)):
 		_event("near_miss")
+		var side := -1.0 if r.get_center().x < car_x else 1.0
+		effects.append({"pos": Vector2(car_x + side * 16.0, PLAYER_Y), "t": 0.0, "kind": "near_miss", "still": true})
 
 
 func _hurt_enemy(e: Dictionary, amount: float) -> void:
@@ -822,6 +836,12 @@ func _draw_effect_sprite(fx: Dictionary) -> void:
 			sheets.draw_frame(self, name, sheets.frame_at(name, "destroyed", t, 0), p + Vector2(0, speed * 0.0))
 		if t < sheets.anim_length("explosion", "explode"):
 			sheets.draw_frame(self, "explosion", sheets.frame_at("explosion", "explode", t, 0), p)
+	elif kind == "near_miss":
+		if t < sheets.anim_length("near_miss", "streak"):
+			sheets.draw_frame(self, "near_miss", sheets.frame_at("near_miss", "streak", t, 0), p)
+	elif kind == "speed":
+		if t < sheets.anim_length("speed_lines", "line"):
+			sheets.draw_frame(self, "speed_lines", sheets.frame_at("speed_lines", "line", t, 0), p)
 	elif kind == "small":
 		if t < sheets.anim_length("explosion_small", "explode"):
 			sheets.draw_frame(self, "explosion_small", sheets.frame_at("explosion_small", "explode", t, 0), p)
