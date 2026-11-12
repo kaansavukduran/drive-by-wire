@@ -51,13 +51,13 @@ Web export resmî SHA-512 doğrulamalı şablonlarla üretildi. Derleme kontrol�
 
 Web ZIP'i HTTP sunucusundan oynanır; çift tıklamayla açılmaz. Kaynak ZIP'i Godot projesidir. GitHub geliştirme dalı ana sürümden ayrıdır. Bu çalışma üretim Vercel sitesini değiştirmez ve yeni Windows/Linux/Android native paketi yayımlamaz. Bu hedeflerin mevcut CI/export profilleri korunur; fiziksel kumanda ve telefon, Safari, native kurulumlar ve insanlarla uzun denge testi sonraki doğrulama hedefleridir. Oyun arayüzü Türkçedir. Dikey telefonda alan küçülür; yatay ekran önerilir.
 
-[Drive önizleme paketleri](https://drive.google.com/drive/folders/1bvUEq2Q_bgTZApV2xbQXnNgVmJdONoPU): kaynak, web ve doğrulama arşivi. Eski kaynak yedekleri aynı kimlik ve konumlarıyla korundu.
+Drive önizleme paketleri (özel teslim; bağlantı kullanıcıyla ayrıca paylaşılır): kaynak, web ve doğrulama arşivi. Eski kaynak yedekleri aynı kimlik ve konumlarıyla korundu.
 
 ## 0.3 · Resmî AIONIA uyarlaması
 
 Resmî kaynaklar kullanıcı tarafından sağlandıktan sonra ana menü, yardım, ortak ayarlar, ses düzeyi, dekoratif hareket seçimi, yükleme/hata akışı ve marka hiyerarşisi uygulandı. 332 kontrol PASS. Bulut yazılım renderer 60 FPS hedefi FAIL; fiziksel cihaz ve üretim yayını NOT TESTED. Ayrıntı QA.md içindedir.
 
-[0.3 AIONIA teslimleri](https://drive.google.com/drive/folders/1bzZ-QZvfMDH04NjI_tXkCazlc-PmPKi4) · Önceki 0.2 paketleri korunur.
+0.3 AIONIA teslimleri (özel teslim; bağlantı kullanıcıyla ayrıca paylaşılır) · Önceki 0.2 paketleri korunur.
 
 ## 0.4 · Evrensel kalite, kontroller ve yerel veri
 
@@ -65,7 +65,7 @@ Yeni resmî belge okundu; erişimde başlık v1.2 olduğundan istenen v1.1 kapsa
 
 390 otomatik kontrol PASS. Yazılım renderer normal mod 60 FPS kapısı FAIL; düşük güç 30 FPS ara hedefi PASS. Fiziksel cihaz/yardımcı teknoloji/insan eğlence testi ve üretim yayını NOT TESTED. Ayrıntılar QA.md'de.
 
-[0.4 teslimleri](https://drive.google.com/drive/folders/1-AJSBd8mt-o2dZgBm2CWC9W8LiOGABMV). 0.2 ve 0.3 yedekleri korundu.
+0.4 teslimleri (özel teslim; bağlantı kullanıcıyla ayrıca paylaşılır). 0.2 ve 0.3 yedekleri korundu.
 
 ## 0.5 · Onaylı kaydırma ve Eve Giden Yol
 
@@ -75,4 +75,4 @@ Kullanıcı son olarak telefon/tablette sağa/sola kaydırma + eylem düğmeleri
 
 429 headless kontrol / 11 takım PASS. Chromium PC, telefon/tablet dikey-yatay, düşük güç telefon ve emüle gamepad akışları PASS. Normal 60 FPS yazılım renderer hedefi FAIL; düşük güç 30 FPS ara hedefi PASS. Fiziksel/yardımcı teknoloji/insan eğlence testleri NOT TESTED. Ayrıntılar QA.md ve teslim kanıtlarında.
 
-[0.5 kaynak, web ve doğrulama teslimleri](https://drive.google.com/drive/folders/1Ti_FI_vlt2HG9kMmlchkPjW-SHDCWNrA). Önceki sürümler korunur.
+0.5 kaynak, web ve doğrulama teslimleri (özel teslim; bağlantı kullanıcıyla ayrıca paylaşılır). Önceki sürümler korunur.
