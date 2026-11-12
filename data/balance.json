@@ -69,7 +69,7 @@
       "run_destroyed": -2
     },
     "heavy_damage_amount": 25,
-    "run_end_flat_band": 2
+    "run_end_flat_band": 3
   },
   "garage": {
     "trust_bands": { "low_below": 35, "high_from": 70 },
