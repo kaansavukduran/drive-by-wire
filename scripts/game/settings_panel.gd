@@ -89,12 +89,12 @@ func _ready() -> void:
  _make_appearance(_page("Görünüm"))
  _make_controls(_page("Kontroller"))
  var privacy := _page("Veri")
- _note(privacy, "Rekor, hikâye kitabı, İLİN hafızası ve tercihler yalnızca bu cihazda saklanır. Hesap, reklam, analiz servisi veya sunucuya gönderim yoktur.\n\nSıfırlama ilerlemeyi, tercihleri ve kurtarma kopyasını siler.")
+ _note(privacy, "Rekor, hikâye kitabı, Omega-3 hafızası ve tercihler yalnızca bu cihazda saklanır. Hesap, reklam, analiz servisi veya sunucuya gönderim yoktur.\n\nSıfırlama ilerlemeyi, tercihleri ve kurtarma kopyasını siler.")
  reset_button = _button(privacy,"Bu cihazdaki verileri sıfırla",func(): _show_reset())
  reset_dialog = ConfirmationDialog.new()
  UiSkin.prepare_confirmation(reset_dialog)
  reset_dialog.title = "Yerel verileri sıfırla?"
- reset_dialog.dialog_text = "Rekor, hikâye kitabı, İLİN hafızası ve tercihler bu cihazdan silinecek. Bu işlem geri alınamaz."
+ reset_dialog.dialog_text = "Rekor, hikâye kitabı, Omega-3 hafızası ve tercihler bu cihazdan silinecek. Bu işlem geri alınamaz."
  reset_dialog.ok_button_text = "Verileri sil"
  reset_dialog.cancel_button_text = "Vazgeç"
  reset_dialog.confirmed.connect(_reset_data)

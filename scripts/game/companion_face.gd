@@ -1,5 +1,5 @@
 extends Control
-## İLİN · original game/TASLAK character: a travelling memory compass, not a CRT.
+## Omega-3 · original game/TASLAK character: a travelling memory compass, not a CRT.
 ## Pixel geometry stays on a 48×44 grid; no random external artwork.
 var mood := "calm"
 var talking := 0.0

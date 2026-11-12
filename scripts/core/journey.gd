@@ -38,11 +38,18 @@ func configure_book(state: Dictionary) -> void:
 	var stage: int=state["stage"]
 	var chapter: String=Book.node(state)["title"]
 	data={"chapter":chapter,"premise":Book.node(state)["text"],"routes":{route:selected},"beats":[],"failure":"Bu etap tamamlanmadı. Önceki kararların korunuyor; bu ayrımdan yeniden deneyebiliriz."}
+	var lines: Array=Book.node(state).get("beats",Book.data()["beats"][stage])
 	for i in 3:
-		data["beats"].append({"distance":[100,220,340][i],"line":Book.data()["beats"][stage][i]})
+		data["beats"].append({"distance":[100,220,340][i],"line":lines[i]})
 	data["routes"][route]=selected.duplicate(true)
 	data["routes"][route]["success"]="Kararımızın yolunu açtık. Bir sonraki ayrımı birlikte seçelim."
 	data["routes"][route]["partial"]="Geçide ulaştık. Yol hedefini kaçırdık; seçimimiz ve hikâyemiz yine de ilerliyor."
 	log_lines.clear()
 	next_beat=0
 	log_lines.assign([chapter,"Kararların: "+" → ".join(Book.path_labels(state)),str(data["premise"]),str(selected["name"]),str(selected["effect"])])
+	for line in Book.node(state).get("conversation",[]):
+		log_lines.append(str(Book.data().get("speakers",{}).get(line["speaker"],line["speaker"]))+": "+str(line["line"]))
+	var reply: Dictionary=Book.radio_reply(state)
+	if not reply.is_empty():
+		log_lines.append("Aion: "+str(reply["text"]))
+		log_lines.append(str(reply["reply"]))

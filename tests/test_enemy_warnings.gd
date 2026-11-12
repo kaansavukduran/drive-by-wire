@@ -113,9 +113,12 @@ func run() -> void:
  var pursuer: Dictionary=game.enemies[0]
  game.fire_cooldown=0
  game._fire({})
- for i in 30: game._update_bullets(1.0/60.0)
- h.eq("rear fire actually hits a warned offscreen pursuer",pursuer["hp"],pursuer["max_hp"]-game._cfg("weapon.damage",20))
- h.eq("impact consumes rear projectile",game.bullets.size(),0)
+ h.check("front gun cannot target an offscreen rear pursuer",game.bullets[-1]["vel"].y<0)
+ game._execute({"intent":"drop_mine"})
+ for i in 90:
+  game._update_mines(1.0/60.0)
+  game._update_enemies(1.0/60.0)
+ h.check("rear mine actually damages or destroys warned pursuer",pursuer["hp"]<pursuer["max_hp"])
  game.over=true
  h.eq("result screen removes action cues",game._enemy_warnings(),[])
  game.store.clear()

@@ -9,3 +9,5 @@ Fragaria Interactive · Fragaria Games · AIONIA
 - Yeni UI çerçeveleri ve web yükleme deseni: projeye özgü Godot/CSS çizimi. Yeni hazır grafik paketi veya oyun motoru eklenmedi.
 
 Projenin mevcut LICENSE dosyası değiştirilmedi. Referans dosyaları için ayrıca bir üçüncü tarafa yeniden dağıtım lisansı varsayılmadı; büyük Drive paftaları runtime paketine gömülmedi.
+
+0.7.0: Aion sürücülü yeni araç paftası ve beş karakterlik konuşma portresi atlası, kullanıcının bu oyunda kullanma isteğiyle referanslar incelenerek AI destekli üretildi. Çilek logosu veya kesin kanon varyantı ilan edilmez. Eski kaynak atlasları değiştirilmedi. Hücre/pivot/kaynak özeti ve SHA-256 kayıtları `assets/sources/OMEGA3_ART.json` içinde; özel Drive paftaları pakete eklenmez. Portreler statiktir, animasyon diye sunulmaz.

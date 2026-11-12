@@ -1,6 +1,6 @@
 extends Node2D
 const QA := preload("res://scripts/game/qa_snapshot.gd")
-## Garaj: İLİN selamlar (güven + hafıza), 3–4 seçenekli kısa diyalog, tek yükseltme
+## Garaj: Omega-3 selamlar (güven + hafıza), 3–4 seçenekli kısa diyalog, tek yükseltme
 ## seçimi, "Sefere çık". Klavye: 1–4 seçer, Enter devam/sefere çık. Fare/dokunma da çalışır.
 
 const DataLoader := preload("res://scripts/core/data_loader.gd")
@@ -93,7 +93,7 @@ func _ready() -> void:
 
 	var brief := _label(ui, Vector2(16, 290), Vector2(410, 40), 11)
 	brief_label=brief
-	brief.text = "← → Sür · ↑ Turbo · ↓ Fren · Space Ateş\nÜç etabı aş. İLİN ile geleceğini seç."
+	brief.text = "← → Sür · ↑ Turbo · ↓ Fren · Space Ateş\nÜç etabı aş. Omega-3 ile geleceğini seç."
 	var quick := Button.new()
 	quick_button = quick
 	quick.theme = theme
@@ -215,7 +215,7 @@ func _pick_upgrade(id: String) -> void:
 	if stage != "upgrade":
 		return
 	chosen_upgrade = id
-	save["upgrades"] = garage.apply_upgrade({}, id)  # the car is rebuilt every run; İLİN is what persists
+	save["upgrades"] = garage.apply_upgrade({}, id)  # the car is rebuilt every run; Omega-3 is what persists
 	store.save_data(save)
 	stage = "ready"
 	_clear_buttons()
@@ -374,7 +374,7 @@ func _layout() -> void:
 	brief_label.visible=not touch_landscape
 	brief_label.position=Vector2(16,view.y-136) if portrait else offset+Vector2(16,308)
 	brief_label.size=Vector2(view.x-32,44) if portrait else Vector2(410,20)
-	brief_label.text="Yolda sağa / sola kaydır.\nEylem düğmeleriyle İLİN ile yolu aç." if portrait else "3 etap · 13 son. Önce kararını seç, sonra yolu aç."
+	brief_label.text="Yolda sağa / sola kaydır.\nEylem düğmeleriyle Omega-3 ile yolu aç." if portrait else "3 etap · 13 son. Önce kararını seç, sonra yolu aç."
 	info.position=Vector2(16,view.y-80) if portrait else offset+Vector2(16,336)
 	info.size=Vector2(view.x-32,40) if portrait else Vector2(608,18)
 	info.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART

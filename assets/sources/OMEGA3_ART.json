@@ -1,0 +1,93 @@
+{
+  "assets/sprites/aion_roadster.png": {
+    "grid": [
+      4,
+      2
+    ],
+    "frame_size": [
+      64,
+      96
+    ],
+    "frames": 8,
+    "pivot": [
+      32,
+      45
+    ],
+    "render_size": [
+      48,
+      80
+    ],
+    "animations": {
+      "drive": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "boost": [
+        4,
+        5
+      ],
+      "fire": [
+        6
+      ],
+      "hurt": [
+        7
+      ]
+    },
+    "reference_names": [
+      "Aion_Ana_Karakter_Referansi.png"
+    ],
+    "notes": "Fixed chassis pivot across blink, turbo, front muzzle and hurt poses. Driver and chassis are one sprite; collisions use the independent shared physics center.",
+    "sha256": "b2681654157f35ff6d25bfeede100b03aa5b9545f425e4fc717e960b3e8686fc",
+    "method": "AI-assisted original game adaptation with inspected owner character references",
+    "generated_by": "OpenAI image generation; 0.7.0",
+    "rights": "Owner-requested use of original AIONIA characters in this game. Not a new official canon or logo approval.",
+    "reference_hashes": {
+      "Aion_Ana_Karakter_Referansi.png": "76b3e45de9187a89473d84f70f13b120ff73fde8f5cd44bc5fcfb9de40ab7f11"
+    },
+    "status": "GAME_ADAPTATION_DRAFT",
+    "original_generated_sha256": "5f1a6077abd6a291efed987fccc7406b7f3ac6fb5a08ae7b28f9898d3b8ded5d",
+    "pixel_import": "tools/art/import_omega_atlas.gd: cell-by-cell nearest sampling; original high-resolution generated art retained locally. No original Drive reference pixels shipped."
+  },
+  "assets/sprites/aionverse_portraits.png": {
+    "grid": [
+      3,
+      2
+    ],
+    "frame_size": [
+      64,
+      64
+    ],
+    "frames": 5,
+    "order": [
+      "aion",
+      "kurt",
+      "kuzu",
+      "omer",
+      "emre"
+    ],
+    "reference_names": [
+      "Aion_Ana_Karakter_Referansi.png",
+      "Kurt_Modelleme_Paftasi.png",
+      "Kuzu_Modelleme_Paftasi_v01.png",
+      "Omer_Modelleme_Paftasi.png",
+      "Tavsan_Emre_Modelleme_Paftasi.png"
+    ],
+    "notes": "Static dialogue portraits, not five animated characters. Sixth cell unused. Runtime alpha cutoff 0.94 removes residual translucent background; square aspect retained.",
+    "sha256": "22f2ecb3971553a84c9f87c038139b9ab79f1dcfa72fb6b24558e35171aa46c6",
+    "method": "AI-assisted original game adaptation with inspected owner character references",
+    "generated_by": "OpenAI image generation; 0.7.0",
+    "rights": "Owner-requested use of original AIONIA characters in this game. Not a new official canon or logo approval.",
+    "reference_hashes": {
+      "Aion_Ana_Karakter_Referansi.png": "76b3e45de9187a89473d84f70f13b120ff73fde8f5cd44bc5fcfb9de40ab7f11",
+      "Kurt_Modelleme_Paftasi.png": "98462238f944593a4547fc2f8498c17ba580ebfc6ce0f5e62a2adeaf0465b62e",
+      "Kuzu_Modelleme_Paftasi_v01.png": "05e857bacfae107fb46614bfc77bf1ccd1e4130982f596cc8272f2bda9406839",
+      "Omer_Modelleme_Paftasi.png": "bf4e8cf799d43df1e4f014a17f201defe12ba2a88d9120f6899ca047e3bf6ca2",
+      "Tavsan_Emre_Modelleme_Paftasi.png": "4c955e003fe771d91ac7673cec71076efca37dc6624ca173547d86ca80578e60"
+    },
+    "status": "GAME_ADAPTATION_DRAFT",
+    "original_generated_sha256": "52524f20d5f5a80293f41037d0b7b7420ef35591443796337a9c5ece4c480097",
+    "pixel_import": "tools/art/import_omega_atlas.gd: cell-by-cell nearest sampling; original high-resolution generated art retained locally. No original Drive reference pixels shipped."
+  }
+}

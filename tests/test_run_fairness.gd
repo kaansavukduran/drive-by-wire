@@ -1,4 +1,5 @@
 extends SceneTree
+const Pilot := preload("res://tests/autopilot.gd")
 ## Rendering frequency and accessibility preferences must not alter combat.
 const Harness := preload("res://tests/harness.gd")
 const Store := preload("res://scripts/core/save_store.gd")
@@ -29,13 +30,10 @@ func run() -> void:
  detailed._damage_player(5)
  reduced._damage_player(5)
  for tick in 3600:
-  if tick%600<120: Input.action_press("drive_up")
-  else: Input.action_release("drive_up")
+  if tick%600<120: Input.action_press("drive_boost")
+  else: Input.action_release("drive_boost")
   for game in [detailed,reduced]:
-   game._fire({})
-   if not game.pickups.is_empty():
-    var pos: Vector2=game.pickups[0]["pos"]
-    if pos.y>130 and pos.y<250: game._change_lane(game._lane_of(pos.x))
+   Pilot.drive(game)
    if tick%600==0: game._direct_action("drive_comfort")
   # Simulate additional camera samples, like higher rendering frequency.
   if detailed.has_method("_camera_offset"):
@@ -44,7 +42,7 @@ func run() -> void:
   reduced._simulate(1.0/60.0)
   if state(detailed)!=state(reduced):
    h.check("visual preferences and camera samples preserve identical combat",false,"first divergent physics tick: %d" % tick)
-   Input.action_release("drive_up")
+   Input.action_release("drive_boost")
    detailed.store.clear()
    reduced.store.clear()
    quit(h.finish())
@@ -60,7 +58,7 @@ func run() -> void:
  h.eq("camera consumes no gameplay randomness",detailed.rng.state,before)
  detailed._set_paused(true)
  h.eq("pause clears camera offset",detailed._camera_offset(),Vector2.ZERO)
- Input.action_release("drive_up")
+ Input.action_release("drive_boost")
  detailed.store.clear()
  reduced.store.clear()
  detailed.queue_free()

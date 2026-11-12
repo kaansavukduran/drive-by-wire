@@ -1,5 +1,5 @@
 {
-  "_comment": "İLİN replikleri. Kategori yolu noktayla yazılır: ack.scared, run_end.destroyed.up. Her listeye satır eklenebilir; aynı satır art arda tekrarlanmaz.",
+  "_comment": "Omega-3 replikleri. Kategori yolu noktayla yazılır: ack.scared, run_end.destroyed.up. Her listeye satır eklenebilir; aynı satır art arda tekrarlanmaz.",
   "version": 1,
   "ack": {
     "scared": [
@@ -201,7 +201,7 @@
   },
   "garage_memory": {
     "first_visit": [
-      "Ben İLİN. Yol izlerini saklar, güvenli aralıkları okurum. Direksiyon sende; kararları konuşabiliriz.",
+      "Ben Omega-3. Yol izlerini saklar, güvenli aralıkları okurum. Direksiyon sende; kararları konuşabiliriz.",
       "İlk yolculuğumuzdan önce birbirimizi tanıyalım."
     ],
     "after_destroyed": [

@@ -6,7 +6,7 @@ static func data() -> Dictionary:
  if _data.is_empty(): _data=JSON.parse_string(FileAccess.get_file_as_string(PATH))
  return _data
 static func defaults(unlocked: Array = []) -> Dictionary:
- return {"stage":0,"choices":[],"active":false,"unlocked":unlocked.duplicate(),"failures":0,"score":0,"goals_completed":0}
+ return {"stage":0,"choices":[],"active":false,"unlocked":unlocked.duplicate(),"failures":0,"score":0,"goals_completed":0,"radio":{},"bonds":{}}
 static func node_key(state: Dictionary) -> String:
  var prefix: Array=state["choices"].slice(0,int(state["stage"]))
  return "root" if prefix.is_empty() else "/".join(prefix)
@@ -15,6 +15,15 @@ static func node(state: Dictionary) -> Dictionary:
 static func sanitize(raw: Variant) -> Dictionary:
  var out:=defaults()
  if not raw is Dictionary: return out
+ if raw.get("radio") is Dictionary:
+  for key in data()["nodes"]:
+   for reply in data()["nodes"][key].get("responses",[]):
+    if raw["radio"].get(key)==reply["id"]: out["radio"][key]=reply["id"]
+ if raw.get("bonds") is Dictionary:
+  for ally in ["aion","omega","kurt","kuzu","omer","emre"]:
+   var amount: Variant=raw["bonds"].get(ally,0)
+   if (amount is int or amount is float) and is_finite(float(amount)) and amount>0:
+    out["bonds"][ally]=clampi(int(amount),0,3)
  for field in ["stage","failures","score","goals_completed"]:
   var n: Variant=raw.get(field,0)
   if (n is float or n is int) and is_finite(float(n)): out[field]=int(clampf(float(n),0,2000000000))
@@ -39,6 +48,20 @@ static func sanitize(raw: Variant) -> Dictionary:
  if out["stage"]==3 and not ending(out).is_empty() and not ending(out)["id"] in out["unlocked"]:
   out["unlocked"].append(ending(out)["id"])
  return out
+static func answer(state: Dictionary,id: String) -> Dictionary:
+ var out:=sanitize(state)
+ var key:=node_key(out)
+ if out["radio"].has(key): return out
+ for reply in node(out).get("responses",[]):
+  if reply["id"]==id:
+   out["radio"][key]=id
+   out["bonds"][reply["ally"]]=mini(3,int(out["bonds"].get(reply["ally"],0))+1)
+ return out
+static func radio_reply(state: Dictionary) -> Dictionary:
+ var id: String=state.get("radio",{}).get(node_key(state),"")
+ for reply in node(state).get("responses",[]):
+  if reply["id"]==id: return reply
+ return {}
 static func choose(state: Dictionary,id: String) -> Dictionary:
  var out:=sanitize(state)
  if out["stage"]>=3: return out

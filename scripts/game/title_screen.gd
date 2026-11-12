@@ -52,13 +52,13 @@ func _ready() -> void:
 	brand.theme_type_variation="BrandLabel"
 	universe_label = _label(ui, Rect2(24, 90, 304, 20), "A I O N I A", 14)
 	universe_label.theme_type_variation="AccentLabel"
-	premise_label = _label(ui, Rect2(24, 118, 310, 38), "İLİN ile yolun geleceğini seç.\n3 arcade etap · 13 farklı son.", 13)
+	premise_label = _label(ui, Rect2(24, 118, 310, 38), "Omega-3 ile yolun geleceğini seç.\n3 arcade etap · 13 farklı son.", 13)
 	start_button = _button(ui, Rect2(24, 166, 304, 32), "Sürüşe başla · Space", _start)
 	_button(ui, Rect2(24, 204, 148, 28), "Önce garaja uğra", _garage)
 	_button(ui, Rect2(180, 204, 148, 28), "Sonlar · %d / 13" % campaign["unlocked"].size(), _endings)
 	_button(ui, Rect2(24, 240, 148, 28), "Nasıl oynanır?", _show_help)
 	_button(ui, Rect2(180, 240, 148, 28), "Ayarlar", _show_settings)
-	control_hint = _label(ui, Rect2(24, 282, 308, 43), "← → Şerit  ·  Space Ateş\n↑ Turbo  ·  ↓ Fren  ·  Esc Mola", 11)
+	control_hint = _label(ui, Rect2(24, 282, 308, 43), "Oklar / WASD Serbest sürüş\nE Turbo · Q Fren · Esc Mola", 11)
 	footer = _label(ui, Rect2(24, 338, 592, 14), "v%s  ·  Rekor %d  ·  Kayıt bu cihazda  ·  Çevrimdışı tek oyuncu" % [str(ProjectSettings.get_setting("application/config/version")),int(save["best_score"])], 9)
 	if store.last_error.begins_with("recovered_"):
 		footer.text = "İlerleme kurtarma kopyasından geri alındı. Kayıt bu cihazda."
@@ -145,7 +145,7 @@ func _make_help(parent: Node) -> void:
 	help_scroll.horizontal_scroll_mode=ScrollContainer.SCROLL_MODE_DISABLED
 	help_scroll.follow_focus=true
 	help_panel.add_child(help_scroll)
-	var body := _label(help_scroll, Rect2(0, 0, 492, 184), "1. YOLU AÇ\nPC: oklar / WASD. Mobil/tablet: yolda sağa/sola kaydır; eylem düğmelerini kullan.\n\n2. İLİN’İ KORU\nSpace / F veya fare sol ile ateş et; fare sağ sıyrılır. X mayın, Shift sıyrılma, C destek. Artı: onarım; şimşek: enerji; kalkan: koruma. Kesik çizgiden uzaklaş; ! işaretli noktaya engel düşecek.\n\n3. EVE DÖN\nÜç kez karar ver, her kararın ardından 400 m sür. 13 ayrı gelecekten birine ulaş. Başarısızlıkta önceki etaplar korunur. Mola menüsünde yol günlüğünü oku. Esc mola verir. T ile isteğe bağlı sohbet edebilirsin.", 12)
+	var body := _label(help_scroll, Rect2(0, 0, 492, 184), "1. YOLU AÇ\nPC: oklar / WASD. Mobil/tablet: sabit joystick ile dört yöne sür; sağdaki eylemleri kullan.\n\n2. Omega-3’İ KORU\nSpace / F veya fare sol ile öne ateş et; X arkaya mayın bırakır. Fare sağ sıyrılır. E turbo, Q fren. X mayın, Shift sıyrılma, C destek. Artı: onarım; şimşek: enerji; kalkan: koruma. Kesik çizgiden uzaklaş; ! işaretli noktaya engel düşecek.\n\n3. EVE DÖN\nÜç kez karar ver, her kararın ardından 400 m sür. 13 ayrı gelecekten birine ulaş. Başarısızlıkta önceki etaplar korunur. Mola menüsünde yol günlüğünü oku. Esc mola verir. T ile isteğe bağlı sohbet edebilirsin.", 12)
 	help_body=body
 	body.size_flags_horizontal=Control.SIZE_EXPAND_FILL
 	body.custom_minimum_size=Vector2(220,0)
@@ -212,10 +212,10 @@ func _process(delta: float) -> void:
 		QA.publish("title",{"view":[get_viewport_rect().size.x,get_viewport_rect().size.y],"play":QA.rect(start_button),"garage":QA.rect(menu_buttons[1]),"endings":QA.rect(menu_buttons[2]),"help":QA.rect(menu_buttons[3]),"settings":QA.rect(menu_buttons[4]),"settings_ui":QA.settings(settings),"settings_visible":settings.visible,"help_visible":help_panel.visible,"help_scroll":QA.rect(help_scroll),"help_content":QA.rect(help_body),"help_scroll_value":help_scroll.scroll_vertical})
 	var caption: String="Etap %d / 3 · Devam et" % (int(campaign["stage"])+1) if campaign["stage"]>0 and campaign["stage"]<3 else ("Yeni hikâye" if campaign["stage"]==3 else "Hikâyeye başla")
 	start_button.text = caption+(" · A" if Controls.last_device=="pad" else " · Space")
-	control_hint.text = "Sol çubuk / D-pad Şerit · %s / RT Ateş\n%s Turbo · LT Fren · Start Mola" % [Controls.binding_name("drive_fire",true),Controls.binding_name("drive_up",true)] if Controls.last_device == "pad" else "%s / %s Şerit · %s Ateş\n%s Turbo · %s Fren · Esc Mola" % [Controls.binding_name("drive_left"), Controls.binding_name("drive_right"), Controls.binding_name("drive_fire"), Controls.binding_name("drive_up"), Controls.binding_name("drive_down")]
+	control_hint.text = "Sol çubuk / D-pad Serbest sürüş\nRB Turbo · LT Fren · Start Mola" if Controls.last_device=="pad" else "Oklar / WASD Serbest sürüş\nE Turbo · Q Fren · Space Ateş"
 	if DisplayServer.is_touchscreen_available():
 		start_button.text=caption
-		control_hint.text="Yolda sağa / sola kaydır · Eylem düğmeleri\nÜç etap, üç karar. Yönünü sen seç."
+		control_hint.text="Sabit joystick · Dört yön · Öne ateş / arkaya mayın\nÜç etap, üç karar. Yönünü sen seç."
 	if motion:
 		_t += delta
 	queue_redraw()

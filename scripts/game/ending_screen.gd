@@ -5,6 +5,7 @@ const Store := preload("res://scripts/core/save_store.gd")
 const UiSkin := preload("res://scripts/game/ui_skin.gd")
 const Controls := preload("res://scripts/game/controls.gd")
 const QA := preload("res://scripts/game/qa_snapshot.gd")
+const Portrait := preload("res://scripts/game/cast_portrait.gd")
 @export var gallery := false
 var panel: PanelContainer
 var body: VBoxContainer
@@ -26,7 +27,7 @@ func _ready() -> void:
  var column:=VBoxContainer.new()
  column.add_theme_constant_override("separation",8)
  panel.add_child(column)
- heading=_label(column,"SONLAR · %d / 13" % campaign["unlocked"].size() if gallery else "YOLUN HAFIZASI · SON",18)
+ heading=_label(column,"SONLAR · %d / 13" % campaign["unlocked"].size() if gallery else "ÜÇÜNCÜ NABIZ · SON",18)
  heading.theme_type_variation="BrandLabel"
  var scroll:=ScrollContainer.new()
  scroll.size_flags_vertical=Control.SIZE_EXPAND_FILL
@@ -55,11 +56,27 @@ func _ready() -> void:
    _label(body,"Henüz bir hikâye sonuna ulaşmadın. Üç etabı tamamlayınca seçtiğin yolun sonucunu burada okuyabilirsin.",14)
   else:
    _label(body,str(item["id"]).trim_prefix("e")+" / 13 · "+str(item["title"]),20).theme_type_variation="AccentLabel"
+   var cast:=HBoxContainer.new()
+   cast.alignment=BoxContainer.ALIGNMENT_CENTER
+   cast.add_theme_constant_override("separation",6)
+   body.add_child(cast)
+   for who in Portrait.IDS:
+    var portrait:=Portrait.new()
+    portrait.speaker=who
+    cast.add_child(portrait)
+    portrait.custom_minimum_size=Vector2(48,48)
    _label(body,"Kararların: "+" → ".join(Book.path_labels({"choices":item["path"]})),12).theme_type_variation="MutedLabel"
    _label(body,str(item["text"]),14)
+   if item==Book.ending(campaign) and not campaign.get("bonds",{}).is_empty():
+    var closest: String=""
+    var best:=0
+    for who in campaign["bonds"]:
+     if int(campaign["bonds"][who])>best:
+      closest=who;best=int(campaign["bonds"][who])
+    _label(body,str(Portrait.NAMES.get(closest,"Omega-3"))+": “O yolda bana verdiğin cevabı unutmadım.”",13).theme_type_variation="AccentLabel"
    if item==Book.ending(campaign):
     _label(body,"Üç etap · Puan %d · Yol hedefi %d/3 · Yeniden deneme %d" % [campaign["score"],campaign["goals_completed"],campaign["failures"]],12)
-   _label(body,"Bu son yalnızca bu hikâyenin kapanışı. Farklı kararlar başka gelecekler açar. İLİN ve bu bölümün hikâyesi AIONIA için oyun taslağıdır.",11).theme_type_variation="MutedLabel"
+   _label(body,"Bu son yalnızca bu hikâyenin kapanışı. Farklı kararlar başka gelecekler açar. Omega-3 ve bu bölümün hikâyesi AIONIA için oyun taslağıdır.",11).theme_type_variation="MutedLabel"
  status=_label(column,"İlerleme bu cihazda." if not Session.campaign_save_failed else "Kayıt yazılamadı. İlerleme bu oturumda korunuyor; sayfayı kapatmadan yeniden dene.",11)
  primary=_button(column,"Yeni hikâye · Sonları koru" if campaign["stage"]==3 else "Hikâyeye devam et",_continue)
  if not gallery: _button(column,"13 sonun kitabı",func(): get_tree().call_deferred("change_scene_to_file","res://scenes/endings.tscn"))

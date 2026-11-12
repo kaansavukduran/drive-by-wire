@@ -11,20 +11,44 @@ const base=process.env.DBW_URL||'http://127.0.0.1:8765';
  await page.goto(base+'/?qa&qa_render=low');await wait(()=>window.__dbwQA?.screen==='title');
  await tap((await state()).play);await wait(()=>window.__dbwQA?.screen==='briefing');
  for(let stage=0;stage<3;stage++){
-  const brief=await state();assert.equal(brief.stage,stage);
+  let brief=await state();assert.equal(brief.stage,stage);
+  if(brief.radio_answers.length){
+   await page.keyboard.press('ArrowUp');
+   if(stage===0){
+    const cast=new Set([brief.speaker]);
+    for(let i=0;i<4;i++){await page.keyboard.press('Enter');await page.waitForTimeout(250);cast.add((await state()).speaker);}
+    assert.deepEqual([...cast].sort(),['emre','kurt','kuzu','omega','omer']);result.cast=[...cast];
+    await page.screenshot({path:`${out}/cast-conversation.png`});
+   }
+   await page.keyboard.press('ArrowDown');await page.keyboard.press('ArrowRight');await page.keyboard.press('Enter');
+   await wait(()=>window.__dbwQA?.screen==='briefing'&&window.__dbwQA.radio_selected==='together');
+   brief=await state();
+  }
   await tap(brief.choices[0]);await wait(()=>window.__dbwQA?.screen==='run');
   assert.equal((await state()).finish,400);await page.keyboard.press('KeyC');await page.keyboard.down('Space');
-  const started=Date.now();
+  const started=Date.now();let held='',lastMine=0,lastSupport=Date.now();
   while(true){
    const q=await state();assert.equal(q.screen,'run');
    if(q.over){assert(q.ending_text.includes('ETAP TAMAMLANDI'),'actual combat must survive');result.legs.push({stage:stage+1,distance:q.distance,hp:q.hp,kills:q.kills,collected:q.collected,wall_ms:Date.now()-started});break;}
    assert(Date.now()-started<120000,'chapter timeout');
    if(q.paused)await page.keyboard.press('Escape');
-   const pickup=q.pickup_targets.find(p=>p.y>110&&p.y<235);
-   if(pickup&&pickup.lane!==q.lane)await page.keyboard.press(pickup.lane<q.lane?'ArrowLeft':'ArrowRight');
+   const [px,py]=q.player;let best=q.lane,bestCost=Infinity;
+   for(let lane=0;lane<3;lane++){
+    let cost=Math.abs(256+lane*64-px)*.04;
+    for(const e of q.traffic){const gap=Math.abs(e.y-py);if(e.lane===lane&&gap<165)cost+=(165-gap)*2;}
+    for(const o of q.hazards){if(Math.abs(o.x-(256+lane*64))<25&&Math.abs(o.y-py)<150)cost+=250;}
+    if(q.pickup_targets.some(p=>p.lane===lane&&p.y>130&&p.y<py))cost-=30;
+    if(cost<bestCost){bestCost=cost;best=lane;}
+   }
+   const desired=256+best*64;
+   const direction=Math.abs(desired-px)<8?'':(desired<px?'ArrowLeft':'ArrowRight');
+   if(direction!==held){if(held)await page.keyboard.up(held);if(direction)await page.keyboard.down(direction);held=direction;}
+   if(q.traffic.some(e=>Math.abs(e.x-px)<25&&e.y>py+25&&e.y<py+140)&&q.mines>0&&Date.now()-lastMine>1500){await page.keyboard.press('KeyX');lastMine=Date.now();}
+   if(q.traffic.some(e=>Math.abs(e.x-px)<28&&Math.abs(e.y-py)<60)&&q.dodge<=0)await page.keyboard.press('Shift');
+   if(Date.now()-lastSupport>8500){await page.keyboard.press('KeyC');lastSupport=Date.now();}
    await page.waitForTimeout(150);
   }
-  await page.keyboard.up('Space');
+  if(held)await page.keyboard.up(held);await page.keyboard.up('Space');
   await page.screenshot({path:`${out}/book-leg-${stage+1}-complete.png`});
   await tap((await state()).result[0]);
   await wait(stage===2?()=>window.__dbwQA?.screen==='ending':()=>window.__dbwQA?.screen==='briefing');

@@ -6,16 +6,18 @@ const KEYS := {
  "drive_up": [KEY_UP, KEY_W], "drive_down": [KEY_DOWN, KEY_S],
  "drive_fire": [KEY_SPACE, KEY_F], "drive_mine": [KEY_X],
  "drive_dodge": [KEY_SHIFT], "drive_comfort": [KEY_C],
+ "drive_boost": [KEY_E], "drive_brake": [KEY_Q],
  "drive_chat": [KEY_T], "drive_pause": [KEY_ESCAPE, KEY_P],
 }
 const PAD := {
  "drive_left": [JOY_BUTTON_DPAD_LEFT], "drive_right": [JOY_BUTTON_DPAD_RIGHT],
- "drive_up": [JOY_BUTTON_DPAD_UP, JOY_BUTTON_RIGHT_SHOULDER], "drive_down": [JOY_BUTTON_DPAD_DOWN],
+ "drive_up": [JOY_BUTTON_DPAD_UP], "drive_down": [JOY_BUTTON_DPAD_DOWN],
  "drive_fire": [JOY_BUTTON_A], "drive_mine": [JOY_BUTTON_X],
  "drive_dodge": [JOY_BUTTON_B, JOY_BUTTON_LEFT_SHOULDER], "drive_comfort": [JOY_BUTTON_Y],
+ "drive_boost": [JOY_BUTTON_RIGHT_SHOULDER], "drive_brake": [],
  "drive_pause": [JOY_BUTTON_START],
 }
-const LABELS := {"drive_left":"Sol şerit", "drive_right":"Sağ şerit", "drive_up":"Turbo", "drive_down":"Fren", "drive_fire":"Ateş", "drive_mine":"Mayın", "drive_dodge":"Sıyrılma", "drive_comfort":"İLİN desteği"}
+const LABELS := {"drive_left":"Sola sür", "drive_right":"Sağa sür", "drive_up":"İleri sür", "drive_down":"Geri sür", "drive_boost":"Turbo", "drive_brake":"Fren", "drive_fire":"Ateş", "drive_mine":"Mayın", "drive_dodge":"Sıyrılma", "drive_comfort":"Omega-3 desteği"}
 const PAD_NAMES := {JOY_BUTTON_A:"A", JOY_BUTTON_B:"B", JOY_BUTTON_X:"X", JOY_BUTTON_Y:"Y", JOY_BUTTON_LEFT_SHOULDER:"LB", JOY_BUTTON_RIGHT_SHOULDER:"RB", JOY_BUTTON_DPAD_LEFT:"D-pad sol", JOY_BUTTON_DPAD_RIGHT:"D-pad sağ", JOY_BUTTON_DPAD_UP:"D-pad yukarı", JOY_BUTTON_DPAD_DOWN:"D-pad aşağı"}
 static var last_device := "keyboard"
 static var bindings: Dictionary = {}
@@ -47,7 +49,7 @@ static func install(keys: Dictionary = {}, buttons: Dictionary = {}, zone := 0.3
  _axis("drive_up", JOY_AXIS_LEFT_Y, -1)
  _axis("drive_down", JOY_AXIS_LEFT_Y, 1)
  _axis("drive_fire", JOY_AXIS_TRIGGER_RIGHT, 1)
- _axis("drive_down", JOY_AXIS_TRIGGER_LEFT, 1)
+ _axis("drive_brake", JOY_AXIS_TRIGGER_LEFT, 1)
  # Menu mappings must be explicit: built-in defaults vary by platform.
  const MENU := {"ui_accept":JOY_BUTTON_A,"ui_cancel":JOY_BUTTON_B,"ui_left":JOY_BUTTON_DPAD_LEFT,"ui_right":JOY_BUTTON_DPAD_RIGHT,"ui_up":JOY_BUTTON_DPAD_UP,"ui_down":JOY_BUTTON_DPAD_DOWN}
  for action in MENU:
@@ -96,12 +98,14 @@ static func binding_error(action: String, code: int, is_pad: bool, overrides: Di
 
 static func binding_name(action: String, is_pad := false) -> String:
  if is_pad:
-  var code := int(pad_bindings.get(action, PAD.get(action, [0])[0]))
+  var defaults: Array=PAD.get(action, [])
+  var code := int(pad_bindings.get(action, defaults[0] if not defaults.is_empty() else -1))
+  if code==-1: return "LT"
   return str(PAD_NAMES.get(code, "Tuş %d" % code))
  var code := int(bindings.get(action, KEYS[action][0]))
  return str({KEY_LEFT:"←",KEY_RIGHT:"→",KEY_UP:"↑",KEY_DOWN:"↓"}.get(code,OS.get_keycode_string(code)))
 
 static func run_hint() -> String:
  if last_device == "pad":
-  return "Sol çubuk / D-pad Şerit\n%s / ↑ Turbo · LT Fren\nRT / %s Ateş\n%s Mayın · %s Sıyrıl\n%s Destek" % [binding_name("drive_up",true),binding_name("drive_fire",true),binding_name("drive_mine",true),binding_name("drive_dodge",true),binding_name("drive_comfort",true)]
- return "%s / %s Şerit\n%s Turbo · %s Fren\n%s / Fare sol Ateş\n%s Mayın · %s Sıyrıl\n%s Destek · T Sohbet" % [binding_name("drive_left"),binding_name("drive_right"),binding_name("drive_up"),binding_name("drive_down"),binding_name("drive_fire"),binding_name("drive_mine"),binding_name("drive_dodge"),binding_name("drive_comfort")]
+  return "Sol çubuk / D-pad Serbest sürüş\nRB Turbo · LT Fren\nRT / A Öne ateş\nX Arkaya mayın · B Sıyrıl\nY Omega-3 desteği"
+ return "%s / %s · %s / %s Sürüş\n%s Turbo · %s Fren\n%s / Fare sol Öne ateş\n%s Arkaya mayın · %s Sıyrıl\n%s Omega-3 · T Sohbet" % [binding_name("drive_left"),binding_name("drive_right"),binding_name("drive_up"),binding_name("drive_down"),binding_name("drive_boost"),binding_name("drive_brake"),binding_name("drive_fire"),binding_name("drive_mine"),binding_name("drive_dodge"),binding_name("drive_comfort")]
