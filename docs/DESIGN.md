@@ -1,5 +1,7 @@
 # Drive-By Wire: tasarım (sahibinin verdiği özgün belge, özet değil)
 
+> **12 Kasım 2026 · Yeni kullanıcı kararı:** Ana sürüş ok tuşlarıyla yapılır. Aşağıdaki özgün 0.1 tasarımının yalnızca yazarak sürüş kısıtı geçerli değildir. 0.2 uygulaması: anında şerit değişimi, basılı turbo/fren/ateş, isteğe bağlı T sohbeti, puan serileri, kapsüller, kısa görevler, 1.200 m başarı hedefi ve gerçek mola. MOMO doğrudan kontrolleri reddetmez veya geciktirmez. [Forge kaydı](FORGE.md).
+
 ## Konsept
 Distopik bir otoyolda geçen roguelite araba çatışması. Arabayı direksiyonla sürmüyorsun; arabanın yapay zekâsına (adı MOMO) klavyeden komut yazıyorsun. MOMO kırılgan, ilgi bekleyen bir dijital evcil hayvan ve komutlarını kendi ruh haline göre yorumluyor.
 

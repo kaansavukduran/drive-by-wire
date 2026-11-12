@@ -1,44 +1,20 @@
-# Drive-By Wire 0.1.0 · İlk oynanabilir prototip
+# Drive-By Wire 0.6.1 · Daha adil sürüş
 
-Arabayı direksiyonla değil, yazarak sürüyorsun. Arabanın yapay zekâsı MOMO komutlarını ruh haline göre yorumluyor. Bu bir **prototip**: çekirdek döngü (garaj → sefer → sefer sonu) oynanabilir, çizimler piksel art; denge ve cila sürüyor.
+Fragaria Interactive · AIONIA
 
-- Garajda MOMO ile kısa diyalog (1–4), bir yükseltme seçimi, Enter ile sefere çıkış.
-- Herhangi bir harf komut kutusunu açar ve zamanı yavaşlatır; Enter gönderir, Esc vazgeçer.
-- Türkçe ve İngilizce komutlar, Türkçe karakter ve küçük yazım hatası toleransı, zincirli komutlar (`sağa geç ve kamyona ateş et`).
-- Üç düşman tipi, ateş, mayın, kaçış, çarpma; MOMO'nun ruh hali ve kalıcı güveni.
-- Güven ve garaj seçimleri cihazda yerel olarak kaydedilir. İnternet gerekmez (web sürümü hariç).
+Üç arcade etap ve seçimlere göre 13 son korunur. Mobil/tablette onaylı kaydırma + eylem düğmeleri, PC oklar/WASD/fare, gamepad analog/D-pad aynı şekilde çalışır.
 
-## İndir
+- Ateş eden kamyonet, 0.55 saniye önceden nişan çizgisini ve dolan hazırlık çubuğunu gösterir. Atış bu noktaya kilitlenir; oyuncu şerit değiştirerek kaçabilir.
+- Kamyon, engel bırakacağı yeri 0.65 saniye önceden `!` işaretiyle gösterir. Güvenli bırakma alanını geçmişse geç kalan saldırı iptal edilir.
+- Şerit kıran çarpan araç yönünü gösterir; aynı şeritteki birden fazla arka takipçi tek işaret kullanır. İşaretler araçların üstünde, menülerin altında çizilir. Azaltılmış harekette önemli bilgiler korunur.
+- Kamera, dekoratif yol ve İLİN replikleri düşman/ikmal rastgeleliğini tüketmez. Aynı fizik girdilerinde görsel tercihler canı, puanı ve trafiği değiştirmez.
+- Yatay kaçan mermiler sınırlı alanın dışına çıkınca silinir. Arka takipçiye ateş, hedefe varmadan kesilmez.
+- Menü/garaj sürüm yazısı artık project.godot değerinden gelir.
 
-**Assets** bölümünden cihazına uygun dosyayı seç:
+Godot 4.6.3 ve mevcut görsel kaynaklar korunur; yeni motor, framework veya runtime bağımlılığı yoktur. [Hikâye/İLİN](JOURNEY.md) OYUN/TASLAK statüsündedir. [Gerçek test raporu](QA.md) ve önceki [0.6.0 raporu](history/QA-v060.md) ayrı tutulur.
 
-| Cihaz | Dosya | Nasıl açılır |
-| --- | --- | --- |
-| Windows 10/11 x64, kurulumlu | `DriveByWire-0.1.0-windows-x64-Setup.exe` | Aç ve kur. Yönetici izni istemez; kendi kullanıcı klasörüne kurar, Başlat menüsüne kısayol ekler, Uygulamalar listesinden kaldırılır. |
-| Windows x64, taşınabilir | `DriveByWire-0.1.0-windows-x64-portable.zip` | ZIP'i tamamen çıkart, `DriveByWire.exe` dosyasını aç. Tek dosya; kurulum yok. |
-| Linux x64 | `DriveByWire-0.1.0-linux-x64.AppImage` | Çalıştırma izni ver (`chmod +x`), aç. |
-| Debian / Ubuntu | `DriveByWire-0.1.0-linux-x64.deb` | `sudo apt install ./DriveByWire-0.1.0-linux-x64.deb`; menüde "Drive-By Wire" çıkar. |
-| Linux x64, taşınabilir | `DriveByWire-0.1.0-linux-x64-portable.tar.gz` | Çıkart, `DriveByWire/DriveByWire.x86_64` dosyasını çalıştır. |
-| Android 7.0+ (ARM64 / x86_64) | `DriveByWire-0.1.0-android-arm64-x64.apk` | APK'yı açıp kur; sistem bilinmeyen kaynak izni isteyebilir. |
-| Tarayıcı, çevrimdışı kopya | `DriveByWire-0.1.0-web-offline.tar.gz` | Çıkart ve yerel bir sunucuyla aç (`python3 -m http.server`). Doğrudan çift tıklamayla açılmaz. |
+Kullanıcı 12 Kasım 2026'da kaynak ve oyunda kullanılan referansların GitHub/Vercel yayınını açıkça istedi. Yayın hedefi `https://drive-by-wire.vercel.app`; GitHub `kaansavukduran/drive-by-wire`. Yerelde hazırlanmış sürüm mevcut PR üzerinden main'e alınarak Vercel'in Git bağlantısıyla dağıtılır. `version.json` sürüm/commit bilgisi verir. Canlı sonuç ayrıca doğrulanır; eski yerel paket ve geçmiş raporlar yayın başarısı sayılmaz.
 
-`SHA256SUMS` dosyası tüm paketlerin özetlerini içerir.
+Tam Git geçmişi başka servise/pakete aktarılmaz. İLİN ve yeni anlatı OYUN/TASLAK; çilek görseli onaylı final logo ilan edilmez. Fiziksel cihaz ve insan eğlence testi tamamlanmış gösterilmez.
 
-Oyun klavyeyle oynanır. Android'de fiziksel klavye en rahatıdır; ekran klavyesiyle deneyim henüz doğrulanmadı.
-
-## Platform durumu (dürüst tablo)
-
-| Platform | Durum |
-| --- | --- |
-| Linux (tar.gz, AppImage, deb) | CI'da derlendi; her biri başsız (headless) çalıştırılıp ana sahneyi hatasız yükledi. Görüntü/ses/klavye gerçek masaüstünde doğrulanmadı. |
-| Windows (portable, Setup) | CI'da derlendi; exe başsız çalıştı, kurulum sessiz kuruldu, kurulan exe çalıştı, kaldırıcı çalıştı. Gerçek bir Windows 11 makinesinde ekranla oynanarak doğrulanmadı. |
-| Web | Chromium'da yüklenip yazarak oynandı. Canlı Vercel adresi, sahibi depoyu Vercel'e bağladığında oluşur. |
-| Android | CI'da derlendi ve imzası doğrulandı. Gerçek bir telefonda ya da emülatörde açılış doğrulanmadı. |
-| macOS / iPhone | Yok. |
-
-## Bilinen sınırlar
-
-- Windows paketleri Authenticode ile imzalı değildir; SmartScreen "Bilinmeyen yayımcı" uyarısı gösterebilir ("Ek bilgi → Yine de çalıştır").
-- Android APK, depoda **herkese açık bırakılmış bir prototip anahtarıyla** imzalanır. Bu, sonraki prototip sürümlerinin güncelleme olarak kurulabilmesi içindir; ama aynı anahtarla başkası da APK imzalayabilir. APK'yı yalnızca bu deponun Releases sayfasından indir. Gerçek anahtara geçildiğinde prototipi kaldırıp yeniden kurmak gerekir (kayıt silinir). Ayrıntı: `docs/BUILD.md`.
-- Kayıt, Godot'un kullanıcı veri klasöründedir (Windows: `%APPDATA%\Godot\app_userdata\Drive-By Wire`, Linux: `~/.local/share/godot/app_userdata/Drive-By Wire`). Kaldırma kaydı silmez.
-- Ses ve müzik yok ya da geçici.
+Public edition: private Drive/Docs URLs, private strawberry art and its test screenshots are excluded. The running game uses the Fragaria pixel wordmark; gameplay, İLİN and all 13 endings are included. Public deployment is verified separately.

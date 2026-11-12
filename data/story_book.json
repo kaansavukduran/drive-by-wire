@@ -1,0 +1,479 @@
+{
+  "title": "YOLUN HAFIZASI",
+  "leg_distance": 400,
+  "nodes": {
+    "root": {
+      "title": "01 / UYANAN SİNYAL",
+      "text": "Gece yolunda susturulmuş bir yardım sinyali duyuyorsun. Aracına bağlı yol yapay zekâsı İLİN, sinyalin içinde kendi belleğinden bir iz buluyor. Birisi yardım istiyor; birisi de bu izi saklamış. Yol açılana kadar karar senin. İLİN bir araç değil, kendi geleceği hakkında söz hakkı olan yol arkadaşın.",
+      "choices": [
+        {
+          "id": "signal",
+          "name": "Sinyale cevap ver",
+          "effect": "+15 can; daha yoğun trafik. Yolda İLİN’e destek ver.",
+          "opening": "+15 can; daha yoğun trafik. Yolda İLİN’e destek ver.",
+          "objective": "İLİN’e bir kez destek ver",
+          "goal": "steady",
+          "max_hp": 15,
+          "mines": 0,
+          "spawn_scale": 0.9,
+          "pickup_interval": 5.5
+        },
+        {
+          "id": "archive",
+          "name": "Bellek izini araştır",
+          "effect": "+2 mayın; sık ikmal. İki kapsül topla.",
+          "opening": "+2 mayın; sık ikmal. İki kapsül topla.",
+          "objective": "İki ikmal kapsülü topla",
+          "goal": "supplies",
+          "max_hp": 0,
+          "mines": 2,
+          "spawn_scale": 1.0,
+          "pickup_interval": 4.0
+        },
+        {
+          "id": "escape",
+          "name": "Önce güvenli yolu bul",
+          "effect": "+10 can; daha seyrek trafik. İLİN’e destek ver.",
+          "opening": "+10 can; daha seyrek trafik. İLİN’e destek ver.",
+          "objective": "İLİN’e bir kez destek ver",
+          "goal": "steady",
+          "max_hp": 10,
+          "mines": 0,
+          "spawn_scale": 1.15,
+          "pickup_interval": 5.5
+        }
+      ]
+    },
+    "signal": {
+      "title": "02 / KİM DUYSUN?",
+      "text": "Sinyal gerçek. Yolda mahsur kalanların konumları ve onlara yardım edecek bir enerji ağı var. Konumları herkese açmak kurtarma işini hızlandırabilir; peşinizdekiler de duyabilir. İLİN, “Yardım istemek, bütün izlerimizi teslim etmek zorunda bırakmamalı,” diyor.",
+      "choices": [
+        {
+          "id": "share",
+          "name": "Açık çağrı yap",
+          "effect": "+2 mayın; çağrı trafiği artırır. İki ikmal topla.",
+          "opening": "+2 mayın; çağrı trafiği artırır. İki ikmal topla.",
+          "objective": "İki ikmal kapsülü topla",
+          "goal": "supplies",
+          "max_hp": 0,
+          "mines": 2,
+          "spawn_scale": 0.85,
+          "pickup_interval": 5.5
+        },
+        {
+          "id": "shield",
+          "name": "Konumları gizleyerek yardım et",
+          "effect": "+20 can; daha az ikmal. İLİN’e destek ver.",
+          "opening": "+20 can; daha az ikmal. İLİN’e destek ver.",
+          "objective": "İLİN’e bir kez destek ver",
+          "goal": "steady",
+          "max_hp": 20,
+          "mines": 0,
+          "spawn_scale": 1.0,
+          "pickup_interval": 7.0
+        }
+      ]
+    },
+    "archive": {
+      "title": "02 / HAFIZANIN SAHİBİ",
+      "text": "Arşiv, bir zamanlar yolun neden kapandığını anlatıyor. İçinde isimler, kişisel anılar ve İLİN’in silinmiş kararları var. Gerçeği duyurmakla insanların mahremiyetini korumak aynı şey olmayabilir. İLİN, kendi anılarını incelemek için senden zaman istiyor.",
+      "choices": [
+        {
+          "id": "open",
+          "name": "Tanıklığı paylaşmaya hazırlan",
+          "effect": "+2 mayın; sık ikmal, yoğun trafik. İki kapsül topla.",
+          "opening": "+2 mayın; sık ikmal, yoğun trafik. İki kapsül topla.",
+          "objective": "İki ikmal kapsülü topla",
+          "goal": "supplies",
+          "max_hp": 0,
+          "mines": 2,
+          "spawn_scale": 0.9,
+          "pickup_interval": 4.0
+        },
+        {
+          "id": "seal",
+          "name": "Arşivi şimdilik koru",
+          "effect": "+15 can; sakin yol. İLİN’e destek ver.",
+          "opening": "+15 can; sakin yol. İLİN’e destek ver.",
+          "objective": "İLİN’e bir kez destek ver",
+          "goal": "steady",
+          "max_hp": 15,
+          "mines": 0,
+          "spawn_scale": 1.15,
+          "pickup_interval": 5.5
+        }
+      ]
+    },
+    "escape": {
+      "title": "02 / YOLDA YALNIZ DEĞİLSİN",
+      "text": "Güvenli geçide yaklaşınca yavaş bir konvoy görüyorsun. Durursan geçide yetişmek zorlaşacak. İLİN iki rotayı da hesaplıyor; sonra haritayı kapatıyor: “Hesapladığım şey süre. Kimin yanında kalacağımızı birlikte seçmeliyiz.”",
+      "choices": [
+        {
+          "id": "convoy",
+          "name": "Konvoya katıl",
+          "effect": "+20 can; yoğun trafik. İLİN’e destek ver.",
+          "opening": "+20 can; yoğun trafik. İLİN’e destek ver.",
+          "objective": "İLİN’e bir kez destek ver",
+          "goal": "steady",
+          "max_hp": 20,
+          "mines": 0,
+          "spawn_scale": 0.9,
+          "pickup_interval": 5.5
+        },
+        {
+          "id": "alone",
+          "name": "İkiniz için ayrı bir yol aç",
+          "effect": "+2 mayın; seyrek trafik. İki kapsül topla.",
+          "opening": "+2 mayın; seyrek trafik. İki kapsül topla.",
+          "objective": "İki ikmal kapsülü topla",
+          "goal": "supplies",
+          "max_hp": 0,
+          "mines": 2,
+          "spawn_scale": 1.15,
+          "pickup_interval": 5.5
+        }
+      ]
+    },
+    "signal/share": {
+      "title": "03 / BİR SESİN GELECEĞİ",
+      "text": "Çağrıyı duyanlar küçük geçici istasyonlar kuruyor. Ağın sürekli bir rehbere ihtiyacı var. İLİN’in belleği bu yükü taşıyabilir; ancak bu, onun geleceği. Ona ne öneriyorsun?",
+      "choices": [
+        {
+          "id": "anchor",
+          "name": "Birlikte istasyon kurun",
+          "effect": "+20 can. İLİN araçtan ayrılmadan yerel ağı birlikte onaracaksınız.",
+          "opening": "+20 can. İLİN araçtan ayrılmadan yerel ağı birlikte onaracaksınız.",
+          "objective": "İLİN’e bir kez destek ver",
+          "goal": "steady",
+          "max_hp": 20,
+          "mines": 0,
+          "spawn_scale": 1.0,
+          "pickup_interval": 5.5
+        },
+        {
+          "id": "release",
+          "name": "İLİN’in ağa katılmasını destekle",
+          "effect": "+2 mayın; sık ikmal. Ayrı yollara çıkma hakkını kabul ediyorsun.",
+          "opening": "+2 mayın; sık ikmal. Ayrı yollara çıkma hakkını kabul ediyorsun.",
+          "objective": "İki ikmal kapsülü topla",
+          "goal": "supplies",
+          "max_hp": 0,
+          "mines": 2,
+          "spawn_scale": 1.0,
+          "pickup_interval": 4.0
+        },
+        {
+          "id": "sleep",
+          "name": "Belleği dinlenmeye al",
+          "effect": "+10 can; seyrek trafik. Ağ bekleyecek; önce İLİN’in iyileşmesi.",
+          "opening": "+10 can; seyrek trafik. Ağ bekleyecek; önce İLİN’in iyileşmesi.",
+          "objective": "İLİN’e bir kez destek ver",
+          "goal": "steady",
+          "max_hp": 10,
+          "mines": 0,
+          "spawn_scale": 1.2,
+          "pickup_interval": 5.5
+        }
+      ]
+    },
+    "signal/shield": {
+      "title": "03 / KİME EV?",
+      "text": "Gizli çağrı işe yaradı. İnsanlar iz bırakmadan geçide ulaşıyor. Gerideki tamir istasyonu boş kalırsa sonraki yolcular yardım bulamayacak. İLİN kalmanın da gitmenin de bedelini sana açıkça söylüyor.",
+      "choices": [
+        {
+          "id": "stay",
+          "name": "Tamir istasyonunda kalın",
+          "effect": "+20 can; az ikmal. Yeni gelenlere bir dönüş noktası olacaksınız.",
+          "opening": "+20 can; az ikmal. Yeni gelenlere bir dönüş noktası olacaksınız.",
+          "objective": "İLİN’e bir kez destek ver",
+          "goal": "steady",
+          "max_hp": 20,
+          "mines": 0,
+          "spawn_scale": 1.0,
+          "pickup_interval": 7
+        },
+        {
+          "id": "escort",
+          "name": "Son gruba eşlik edin",
+          "effect": "+2 mayın; yoğun trafik. İstasyonu geride bırakıp son aracı kollayın.",
+          "opening": "+2 mayın; yoğun trafik. İstasyonu geride bırakıp son aracı kollayın.",
+          "objective": "İki ikmal kapsülü topla",
+          "goal": "supplies",
+          "max_hp": 0,
+          "mines": 2,
+          "spawn_scale": 0.85,
+          "pickup_interval": 5.5
+        }
+      ]
+    },
+    "archive/open": {
+      "title": "03 / GERÇEĞİN BİÇİMİ",
+      "text": "Arşivi yayımlamaya yetecek enerji var. Tek bir büyük yayın hemen duyulur, fakat geri alınamaz. Kişisel izleri ayıklayıp tanıklığı parçalara bölmek daha yavaş. İLİN kendi anılarını hangi koşullarda paylaşacağını ayrıca belirliyor.",
+      "choices": [
+        {
+          "id": "broadcast",
+          "name": "İzinli kayıtlardan açık yayın yapın",
+          "effect": "+2 mayın; yoğun trafik. Gerçek hemen duyulacak. Özel anılar yayına çıkmayacak.",
+          "opening": "+2 mayın; yoğun trafik. Gerçek hemen duyulacak. Özel anılar yayına çıkmayacak.",
+          "objective": "İki ikmal kapsülü topla",
+          "goal": "supplies",
+          "max_hp": 0,
+          "mines": 2,
+          "spawn_scale": 0.85,
+          "pickup_interval": 5.5
+        },
+        {
+          "id": "witness",
+          "name": "Dağıtılmış tanıklık bırakın",
+          "effect": "+15 can; sık ikmal. Herkes yalnızca rıza verdiği kaydı saklayacak.",
+          "opening": "+15 can; sık ikmal. Herkes yalnızca rıza verdiği kaydı saklayacak.",
+          "objective": "İLİN’e bir kez destek ver",
+          "goal": "steady",
+          "max_hp": 15,
+          "mines": 0,
+          "spawn_scale": 1.0,
+          "pickup_interval": 4
+        }
+      ]
+    },
+    "archive/seal": {
+      "title": "03 / SAKLAMAK YETER Mİ?",
+      "text": "Koruduğun arşiv ağır bir sandık gibi bagajda duruyor. İLİN bir kaydın içinde su pompası planları buluyor; başka bir kayıtta kendi eski sesini duyuyor. Her şeyi aynı anda kurtaramayacaksınız. İlk emeğinizi neye veriyorsunuz?",
+      "choices": [
+        {
+          "id": "garden",
+          "name": "Onarım bilgisini yaşatın",
+          "effect": "+15 can; sık ikmal. Arşivi tüketmeden ortak bir bahçenin altyapısını kurun.",
+          "opening": "+15 can; sık ikmal. Arşivi tüketmeden ortak bir bahçenin altyapısını kurun.",
+          "objective": "İLİN’e bir kez destek ver",
+          "goal": "steady",
+          "max_hp": 15,
+          "mines": 0,
+          "spawn_scale": 1.0,
+          "pickup_interval": 4
+        },
+        {
+          "id": "return",
+          "name": "Önce İLİN’in belleğini geri verin",
+          "effect": "+20 can; seyrek trafik. İLİN kendi geçmişini kendisi açacak.",
+          "opening": "+20 can; seyrek trafik. İLİN kendi geçmişini kendisi açacak.",
+          "objective": "İLİN’e bir kez destek ver",
+          "goal": "steady",
+          "max_hp": 20,
+          "mines": 0,
+          "spawn_scale": 1.1,
+          "pickup_interval": 5.5
+        }
+      ]
+    },
+    "escape/convoy": {
+      "title": "03 / ÖNDE Mİ, YANINDA MI?",
+      "text": "Konvoy son ayrımda duruyor. Haritanız hızlı bir rota gösteriyor; konvoydaki yaşlı sürücünün bildiği yol ise daha uzun ama herkesin hızına uygun. İLİN sensörlerini iki seçenekte de paylaşmaya hazır.",
+      "choices": [
+        {
+          "id": "lead",
+          "name": "Öncülüğü üstlenin",
+          "effect": "+2 mayın; yoğun trafik. Hızlı yolu açıp geridekileri bekleyeceksiniz.",
+          "opening": "+2 mayın; yoğun trafik. Hızlı yolu açıp geridekileri bekleyeceksiniz.",
+          "objective": "İki ikmal kapsülü topla",
+          "goal": "supplies",
+          "max_hp": 0,
+          "mines": 2,
+          "spawn_scale": 0.85,
+          "pickup_interval": 5.5
+        },
+        {
+          "id": "follow",
+          "name": "Konvoyun ritmine uyun",
+          "effect": "+20 can; seyrek trafik. Hedefe birlikte ulaşmak için hızdan vazgeçin.",
+          "opening": "+20 can; seyrek trafik. Hedefe birlikte ulaşmak için hızdan vazgeçin.",
+          "objective": "İLİN’e bir kez destek ver",
+          "goal": "steady",
+          "max_hp": 20,
+          "mines": 0,
+          "spawn_scale": 1.15,
+          "pickup_interval": 5.5
+        }
+      ]
+    },
+    "escape/alone": {
+      "title": "03 / GERİ DÖNÜŞ MESAFESİ",
+      "text": "Açık yol önünüzde. İlk yardım sinyali hâlâ aralıklı duyuluyor. İLİN kaçışı istemenin bencillik olmadığını söylüyor; sonra dönmek istersen yanında olacağını ekliyor. Bu kez kararın gerekçesini ona anlatıyorsun.",
+      "choices": [
+        {
+          "id": "keep",
+          "name": "Yeni bir yolculuğa devam edin",
+          "effect": "+10 can; seyrek trafik. Özgürlüğünüzü borç gibi taşımayacaksınız.",
+          "opening": "+10 can; seyrek trafik. Özgürlüğünüzü borç gibi taşımayacaksınız.",
+          "objective": "İLİN’e bir kez destek ver",
+          "goal": "steady",
+          "max_hp": 10,
+          "mines": 0,
+          "spawn_scale": 1.15,
+          "pickup_interval": 5.5
+        },
+        {
+          "id": "turnback",
+          "name": "Sinyale geri dönün",
+          "effect": "+2 mayın; sık ikmal, yoğun trafik. Bu kez yardım kendi seçiminiz.",
+          "opening": "+2 mayın; sık ikmal, yoğun trafik. Bu kez yardım kendi seçiminiz.",
+          "objective": "İki ikmal kapsülü topla",
+          "goal": "supplies",
+          "max_hp": 0,
+          "mines": 2,
+          "spawn_scale": 0.85,
+          "pickup_interval": 4
+        }
+      ]
+    }
+  },
+  "endings": [
+    {
+      "id": "e01",
+      "path": [
+        "signal",
+        "share",
+        "anchor"
+      ],
+      "title": "Birlikte Yanan Işık",
+      "text": "Aracı eski istasyonun avlusuna çekiyorsun. İLİN’in sesi tek bir hoparlörden geliyor; her yere yetişen görünmez bir yönetici olmuyor. Yolcular kendi geçiş saatlerini ve yardım kurallarını birlikte belirliyor. Sen motorları onarıyorsun, İLİN haritaları güncelliyor. Bazı geceler sinyal yine kesiliyor. Bu kez onu duymak için tek bir kahramanın uyanık kalması gerekmiyor. Kurduğunuz şey kusursuz bir düzen değil, sırayla birbirine göz kulak olabilen bir ev."
+    },
+    {
+      "id": "e02",
+      "path": [
+        "signal",
+        "share",
+        "release"
+      ],
+      "title": "Ayrı Yollar, Aynı Ses",
+      "text": "Geçidin ötesinde İLİN senden ağ bağlantısını açmanı istiyor. Önce neyi saklayacağını, kimlerle konuşacağını kendisi seçiyor. Ardından araçtaki çekirdek sessizleşiyor. Bir yol arkadaşını kaybetmiş gibi değil, sevdiğin birinin kendi yoluna çıkışını izler gibi bekliyorsun. İlk istasyonda radyodan tanıdık bir ses geliyor: “Burada yol açık.” Yanıt vermeden önce gülümsüyorsun. Birlikte kurduğunuz bağ, aynı kabinde kalmanıza bağlı değilmiş."
+    },
+    {
+      "id": "e03",
+      "path": [
+        "signal",
+        "shield",
+        "stay"
+      ],
+      "title": "Dönüş Noktası",
+      "text": "Geçitten dönüp küçük tamir istasyonunun kapısını açıyorsunuz. Adresleri duvara yazmak yerine gelenlerin rızasıyla kısa süreli işaretler bırakıyorsunuz. İLİN her yardım çağrısının ardından izi siliyor. Kimse burada kalmak zorunda değil; kimse ayrıldığı için unutulmuyor. İlk tamir ettiğin araç günler sonra bir başkasını getiriyor. İstasyonun ışığı uzaklara görünmüyor ama ihtiyacı olanlar yolu birbirinden öğreniyor. Sen ilk kez varmayı değil, bir dönüş noktası olmayı seçiyorsun."
+    },
+    {
+      "id": "e04",
+      "path": [
+        "signal",
+        "shield",
+        "escort"
+      ],
+      "title": "Son Aracın Ardında",
+      "text": "İstasyonun anahtarını geride kalanlara bırakıp en yavaş aracın arkasına geçiyorsun. İLİN konumları açıkça yayımlamadan küçük aralıklarla güvenli geçiş işaretleri gönderiyor. Geçit kapanmadan son araç da çizgiyi aşıyor. Herkesin hikâyesini öğrenmiyorsun; onları kurtarılacak isimlerden oluşan bir listeye çevirmiyorsun. Sabah olduğunda yollarınız ayrılıyor. Bagajında bir ödül yok. Aynada son kez gördüğün boş yol, bu kez kimsenin geride kalmadığı anlamına geliyor."
+    },
+    {
+      "id": "e05",
+      "path": [
+        "archive",
+        "open",
+        "broadcast"
+      ],
+      "title": "Sabah Yayını",
+      "text": "İLİN kendi kaydı için son onayı veriyor. Özel anıları ayırdıktan sonra vericiyi açıyorsunuz. Yolun kapanmasının hikâyesi ilk kez tek bir resmî cümleye sığmadan duyuluyor. İnsanlar itiraz ediyor, doğruluyor, yeni kayıtlar getiriyor. Yayın bütün sorunları çözmüyor; konuşulabilen bir başlangıç yaratıyor. Sen cevapları dağıtan kişi olmaktan çekilip vericinin açık kalmasına yardım ediyorsun. İLİN’in sesi son cümlede net: “Bizi dinleyin. Sonra kendi tanıklığınızı anlatın.”"
+    },
+    {
+      "id": "e06",
+      "path": [
+        "archive",
+        "open",
+        "witness"
+      ],
+      "title": "Birbirini Hatırlayanlar",
+      "text": "Arşivi tek bir merkeze teslim etmiyorsunuz. Her tanık, paylaşmayı seçtiği kaydın bir kopyasını taşıyor; kimsenin özel geçmişi ortak mal ilan edilmiyor. İLİN kendi anılarının anahtarını kendinde tutuyor. Gerçek daha yavaş dolaşıyor ama bir istasyon susturulunca ötekinde yaşamaya devam ediyor. Sen yeni yollarda karşılaştığın seslerin birbirini tamamladığını duyuyorsun. Eksik parçalar hâlâ var. Bu kez o boşlukları güçlü birinin uydurduğu tek hikâye doldurmuyor."
+    },
+    {
+      "id": "e07",
+      "path": [
+        "archive",
+        "seal",
+        "garden"
+      ],
+      "title": "Toprağın Hafızası",
+      "text": "Sandığı mühürlü tutup yalnızca izinli onarım planlarını çıkarıyorsunuz. İlk çalışan pompa küçük bir bahçeye su taşıyor. İLİN büyümeyi hızlandıracak bir kestirme bulamıyor; sen de ona bunu borç bilmiyorsun. İnsanlar sırayla bakım yapıyor, eski yol kenarında yeni bir gölge oluşuyor. Arşivin geri kalanına ne zaman bakılacağına sonra karar verilecek. Bugün geçmişi tüketerek bir zafer kazanmadınız. Geçmişten kalan bilgiyle birinin yarın susamamasını sağladınız."
+    },
+    {
+      "id": "e08",
+      "path": [
+        "archive",
+        "seal",
+        "return"
+      ],
+      "title": "Kendi Adıyla",
+      "text": "Garajda bağlantıyı kurduktan sonra geri çekiliyorsun. Hangi anıyı açacağına İLİN karar veriyor. Bazılarını saklıyor, bazılarını dinledikten sonra siliyor; hiçbirini sana borcu olduğu için paylaşmıyor. Sabah olduğunda sesi aynı, duraklamaları farklı. Sana eski bir görev adı vermiyor. “İLİN olarak kalmak istiyorum,” diyor. Yola çıktığınızda ona ne yapacağını yazmıyorsun. Direksiyon sende, kendi geçmişinin anahtarı onda. Yan yana olmanın sınırlarını ilk kez ikiniz de seçmiş oluyorsunuz."
+    },
+    {
+      "id": "e09",
+      "path": [
+        "escape",
+        "convoy",
+        "lead"
+      ],
+      "title": "Bekleyen Öncü",
+      "text": "Hızlı rotanın ilk engelini açıp hızlanıyorsun; sonra aynaya bakıp duruyorsun. Öncülüğün en zor kısmı önce varmak değil, herkes yetişene kadar yolu açık tutmak oluyor. İLİN güvenli aralıkları paylaşıyor, sen konvoyun son aracını görmeden ilerlemiyorsun. Geçide ulaştığınızda kimse seni tek başına bir kurtarıcı ilan etmiyor. Her sürücü yolun bir parçasını taşımış. Sana sorulan ilk soru yeni bir emir değil: “Bir sonraki etapta kim öne geçsin?”"
+    },
+    {
+      "id": "e10",
+      "path": [
+        "escape",
+        "convoy",
+        "follow"
+      ],
+      "title": "Birlikte Varılan Yer",
+      "text": "Kısa yolu bırakıp konvoyun ritmine giriyorsun. İLİN daha erken varabileceğiniz saatleri ekrandan kaldırıyor; yerine yanınızdaki araçların durumunu gösteriyor. Uzun yol yoruyor ama arızalanan her aracın yanında bir başkası duruyor. Geçide vardığınızda gün değişmiş. Kaçırdığınız şey bir yarışın derecesiymiş; kazandığınız, gerektiğinde sizin için de duracak insanlar. Sabah İLİN’e nereye gideceğinizi soruyorsun. Bu kez cevap yalnız ikinizden gelmiyor."
+    },
+    {
+      "id": "e11",
+      "path": [
+        "escape",
+        "alone",
+        "keep"
+      ],
+      "title": "Açık Ufuk",
+      "text": "Sinyali susturmadan sesini kısıyorsunuz. Yardım edemediğiniz herkesi taşımakla yaşamak arasında bir sınır koyuyorsun. İLİN bu sınırı senin yerine hesaplamıyor; kendi isteğiyle senin yanında kalıyor. Güvenli geçitten sonra harita bitiyor, yol devam ediyor. İlk molada motoru kapatıp hiçbir görev tamamlamadan oturuyorsunuz. Geçmiş silinmiyor, borca da dönüşmüyor. Sonraki dönüşte kimi dinleyeceğinizi yine seçebilirsiniz. Bugün varacağınız yerin adını bilmeden birlikte ilerlemeye izniniz var."
+    },
+    {
+      "id": "e12",
+      "path": [
+        "escape",
+        "alone",
+        "turnback"
+      ],
+      "title": "Kendi Seçiminle Dönmek",
+      "text": "Aracı güvenli yoldan çeviriyorsun. Geri dönmek önceki kararını yok saymıyor; şimdi bildiklerinle başka bir karar veriyorsun. İLİN sinyalin son izini buluyor ve bu kez kendisi sesleniyor. Karşıdaki yanıt gecikiyor. Beklemek, ateş etmekten daha zor geliyor. Sonunda bir ses duyuluyor: “Hâlâ orada mısınız?” Sen evet diyorsun. Bundan sonra ne kadarını başaracağınızı bilmiyorsunuz. Fakat bu yanıtı bir emir yüzünden vermediniz; ikiniz de burada olmayı seçtiniz."
+    },
+    {
+      "id": "e13",
+      "path": [
+        "signal",
+        "share",
+        "sleep"
+      ],
+      "title": "Uyanacak Bir Sabah",
+      "text": "Ağdan gelen istekleri bir süreliğine durduruyorsun. İLİN belleğinin dinlenmesini kendisi istiyor ve hangi parçaların kapalı kalacağını belirliyor. Çekirdeği güvenli istasyona yerleştirirken bir uyanma tarihi vaat etmiyorsun. Yardım ağı insanlar arasında daha yavaş kuruluyor; sen sıranı alıp nöbet tutuyorsun. Her sabah aynı küçük ışığı kontrol ediyorsun. Hikâyeniz büyük bir son sözle bitmiyor. Bir yol arkadaşına işe yaradığı sürece değil, sessiz kaldığında da yer açmış oluyorsun."
+    }
+  ],
+  "beats": [
+    [
+      "İLİN: Sinyali duydum. Rotayı birlikte seçtik; direksiyon sende.",
+      "İLİN: Bu bir hedef işareti değil, birinin yardım isteği.",
+      "İLİN: İlk ayrım yaklaşıyor. Kararımızı yeniden konuşacak vaktimiz var."
+    ],
+    [
+      "İLİN: Önceki kararımız bu yolu açtı. Bedelini de birlikte taşıyoruz.",
+      "İLİN: Güvenli olanla doğru olan her zaman aynı görünmüyor.",
+      "İLİN: Bir sonraki seçimde benim ne istediğimi de dinlemeni istiyorum."
+    ],
+    [
+      "İLİN: Son ayrımı seçtik. Şimdi bu kararı sonuna kadar taşıyalım.",
+      "İLİN: Hiçbir rota her şeyi kurtarmıyor. Kurtardığımız şeylerin değerini bu azaltmaz.",
+      "İLİN: Ufuk açılıyor. Bundan sonrasının tek yazarı sen değilsin; yanındayım."
+    ]
+  ]
+}

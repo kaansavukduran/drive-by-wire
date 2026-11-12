@@ -2,7 +2,7 @@
 
 Engine: official Godot **4.6.3** standard build (GDScript, GL Compatibility; no .NET). CI downloads the editor and export templates with `packaging/setup_godot.py` and checks them against upstream SHA-512 sums.
 
-**Version: one place.** `project.godot` → `config/version` (now `0.1.0`). `packaging/version.py` prints it; the Windows file/product version and the Android versionName are left empty in `export_presets.cfg` so Godot fills them from `config/version`; the Android versionCode is derived (`MAJOR*10000 + MINOR*100 + PATCH`, so 0.1.0 → 100) and stamped by `python3 packaging/version.py --stamp`. To release a new version, change only `config/version`, then either push the tag `v<version>` or run the workflow from the Actions tab on `main` with **publish_release** ticked (the release job then creates the `v<version>` tag itself).
+**Version: one place.** `project.godot` → `config/version` (now `0.5.0`). `packaging/version.py` prints it; the Windows file/product version and the Android versionName are left empty in `export_presets.cfg` so Godot fills them from `config/version`; the Android versionCode is derived (`MAJOR*10000 + MINOR*100 + PATCH`, so 0.1.0 → 100) and stamped by `python3 packaging/version.py --stamp`. To release a new version, change only `config/version`, then either push the tag `v<version>` or run the workflow from the Actions tab on `main` with **publish_release** ticked (the release job then creates the `v<version>` tag itself).
 
 ## Outputs
 
@@ -58,7 +58,9 @@ Needs JDK 17 and the Android SDK with `platform-tools` and `build-tools;35.0.0` 
 
 ```sh
 export JAVA_HOME=... ANDROID_HOME=...
-export DBW_KEYSTORE=packaging/android/prototype.keystore DBW_KEY_ALIAS=drivebywire-prototype DBW_KEY_PASSWORD=drivebywire-prototype
+# Set DBW_KEYSTORE and DBW_KEY_ALIAS from your local signing configuration.
+read -r -s -p "Keystore password: " DBW_KEY_PASSWORD
+export DBW_KEYSTORE DBW_KEY_ALIAS DBW_KEY_PASSWORD
 python3 packaging/android_config.py      # editor SDK paths + git-ignored .godot/export_credentials.cfg
 python3 packaging/version.py --stamp     # versionCode from config/version (do not commit the result if it differs)
 godot --headless --editor --import --quit
@@ -67,28 +69,17 @@ godot --headless --export-release Android
 
 Android export requires `textures/vram_compression/import_etc2_astc=true` under `[rendering]` in `project.godot`. If it is missing, `android_config.py` adds it to the build checkout and prints a warning; the permanent fix is to add that line to `project.godot`.
 
-## Android signing: the public prototype key
+## Android signing: owner key required
 
-Android only installs signed APKs, and only accepts an update signed with the same key as the installed app. So that CI APKs are installable and update each other without the owner setting anything up, the prototype is signed with a key that is **committed to this public repository on purpose**:
+No public prototype key fallback is allowed in the current tree. CI runs the Android job only when repository variable `DBW_ANDROID_SIGNING_READY` is `true`. Configure these Actions settings outside the repository:
 
-- File: `packaging/android/prototype.keystore` (PKCS12)
-- Alias: `drivebywire-prototype`
-- Store and key password: `drivebywire-prototype`
-- Certificate SHA-256: `C6:8A:CF:6A:8C:83:C4:0D:5D:2D:7A:04:9D:56:9E:7E:DB:1D:CD:17:BA:28:B0:34:53:68:3E:9C:01:9F:2A:F5`
+- `DBW_ANDROID_KEYSTORE_B64`: base64 of the owner's release keystore.
+- repository variable `DBW_ANDROID_KEY_ALIAS`: signing alias (defaults to `dbwrelease`).
+- `DBW_ANDROID_KEY_PASSWORD`: matching store/key password.
 
-Trade-off: because the key is public, **anyone can sign an APK that Android accepts as an update** of the installed prototype. Only install APKs from this repository's Releases or Actions. This is acceptable for a free, offline, no-permission prototype; it is not acceptable for a store release.
+The job fails if any required value is empty. Its temporary keystore uses private file permissions; credentials stay in the ignored Godot export credentials file. No new signing key has been configured or validated in this task. The release job depends on Android, so an unconfigured signing job also keeps the multi-platform release from publishing.
 
-**Switching to a real key** (recommended before any wider release or Play Store):
-
-1. Create a key outside the repository and back it up; losing it means users can never update again:
-   `keytool -genkeypair -keystore drivebywire-release.keystore -storetype PKCS12 -alias dbwrelease -keyalg RSA -keysize 4096 -validity 10000` (use the same password for store and key).
-2. GitHub → Settings → Secrets and variables → Actions:
-   - secret `DBW_ANDROID_KEYSTORE_B64` = output of `base64 -w0 drivebywire-release.keystore`
-   - secret `DBW_ANDROID_KEY_PASSWORD` = the password
-   - variable `DBW_ANDROID_KEY_ALIAS` = the alias (optional; default `dbwrelease`)
-3. The next CI run signs with that key automatically (the job log says which key it used).
-
-An APK signed with the new key cannot update one signed with the prototype key: players must uninstall the prototype first (Android then deletes its save data). Never commit the real keystore or `.godot/export_credentials.cfg` (`*.jks` and `export_credentials.cfg` are git-ignored).
+The previously published prototype key remains public in Git history. It must not be reused for distribution. A new owner key cannot update an installation signed by that key; players would need to uninstall the old prototype, losing Android local data. Real keystores and export credentials must never be committed.
 
 ## Not covered
 

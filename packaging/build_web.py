@@ -12,6 +12,8 @@ The export uses the no-threads template, so the page needs no COOP/COEP
 headers and no service worker. There is deliberately no offline/PWA layer.
 """
 import hashlib
+import json
+from version import version as game_version
 import os
 import shutil
 import subprocess
@@ -95,9 +97,10 @@ def main() -> None:
     shutil.rmtree(OUT, ignore_errors=True)
     OUT.mkdir(parents=True)
     (ROOT / "build/.gdignore").touch()
-    godot(engine, env, "--editor", "--import", "--quit")
+    godot(engine, env, "--editor", "--import", "--quit", check_output=True)
     # Run the real main scene briefly before exporting, so a broken game fails the deploy.
     godot(engine, env, "--quit-after", "120", check_output=True)
+    godot(engine, env, "res://scenes/main.tscn", "--quit-after", "120", check_output=True)
     godot(engine, env, "--export-release", "Web", str(OUT / "index.html"))
     for name in ("index.html", "index.js", "index.wasm", "index.pck"):
         if not (OUT / name).is_file():
@@ -105,12 +108,24 @@ def main() -> None:
     html = (OUT / "index.html").read_text(encoding="utf-8")
     if '<html lang="tr">' not in html or "$GODOT_" in html:
         raise SystemExit("index.html was not produced from packaging/web/shell.html")
-    for icon in ("assets/icon-192.png", "assets/icon.png"):
+    html=html.replace("__DBW_VERSION__", "v"+game_version())
+    brand=ROOT / "assets/brand/fragaria-reference.jpg"
+    if not brand.exists():
+        html=html.replace('<img id="status-brand" src="fragaria-reference.jpg" alt="Fragaria pixel-art çilek referansı">','')
+    (OUT / "index.html").write_text(html,encoding="utf-8")
+    for icon in ("assets/brand/ilin-icon.png",):
         if (ROOT / icon).is_file():
             shutil.copy2(ROOT / icon, OUT / "favicon.png")
             break
     else:
-        print("WARNING: no assets/icon-192.png or assets/icon.png; page has no favicon", flush=True)
+        print("WARNING: no assets/brand/ilin-icon.png; page has no favicon", flush=True)
+    shutil.copy2(ROOT / "assets/fonts/VT323.ttf", OUT / "brand-font.ttf")
+    if brand.exists(): shutil.copy2(brand, OUT / "fragaria-reference.jpg")
+    else: print("Brand image not included: wordmark-only preview; private asset publication approval pending.",flush=True)
+    commit=env.get("VERCEL_GIT_COMMIT_SHA", "")
+    if not commit:
+        commit=subprocess.run(["git","rev-parse","HEAD"],cwd=ROOT,capture_output=True,text=True).stdout.strip()
+    (OUT / "version.json").write_text(json.dumps({"version":game_version(),"commit":commit,"engine":VERSION},indent=2)+"\n",encoding="utf-8")
     print("Web export ready:", OUT / "index.html", flush=True)
 
 

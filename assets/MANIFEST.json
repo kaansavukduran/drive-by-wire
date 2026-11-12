@@ -15,6 +15,11 @@
    "license": "assets/fonts/VT323-OFL.txt",
    "path": "assets/fonts/VT323.ttf",
    "role": "terminal font (command box)"
+  },
+  "ControlSymbols": {
+   "path": "assets/fonts/ControlSymbols.ttf",
+   "license": "assets/fonts/DEJAVU-LICENSE.txt",
+   "role": "DejaVu Sans subset: four arrow glyphs only; UI fallback"
   }
  },
  "generator": "tools/art/build.py",
@@ -43,12 +48,13 @@
   },
   "icon": {
    "design_grid": 64,
-   "path": "assets/icon.png",
+   "path": "assets/brand/ilin-icon.png",
    "scale": 4,
    "size": [
     256,
     256
-   ]
+   ],
+   "notes": "0.6.0 original İLİN compass icon; historical MOMO art is unused."
   },
   "icon_192": {
    "design_grid": 64,
@@ -2107,5 +2113,13 @@
   }
  },
  "texture_filter": "nearest",
- "version": "0.1.0"
+ "version": "0.1.0",
+ "ui_standard": {
+  "universe": "AIONIA",
+  "brand": "Fragaria Interactive",
+  "publisher": "Fragaria Games",
+  "version": "1.0",
+  "art_bible": "docs/ART_BIBLE.md",
+  "runtime_character_art": "Existing project interpretations retained; final canon approval is not asserted"
+ }
 }

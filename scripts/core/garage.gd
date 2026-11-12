@@ -30,6 +30,9 @@ func _init(garage_data: Dictionary = {}, balance: Dictionary = {}) -> void:
 static func default_memory() -> Dictionary:
 	return {
 		"runs": 0,
+		"chapter_clears": 0,
+		"last_route": "",
+		"last_route_goal": 0,
 		"last_outcome": "",          # "", "destroyed", "survived"
 		"best_distance": 0.0,
 		"total_distance": 0.0,
@@ -53,17 +56,19 @@ static func sanitize_memory(memory: Variant) -> Dictionary:
 			continue
 		var def: Variant = out[key]
 		var v: Variant = m[key]
-		if def is int and (v is int or v is float):
-			out[key] = maxi(0, int(v))
-		elif def is float and (v is int or v is float):
-			out[key] = float(v)
+		if def is int and (v is int or v is float) and is_finite(float(v)):
+			out[key] = int(clampf(float(v), 0, 2000000000))
+		elif def is float and (v is int or v is float) and is_finite(float(v)):
+			out[key] = clampf(float(v), -2000000000, 2000000000)
 		elif def is String and v is String:
-			out[key] = v
+			out[key] = v.left(128)
 		elif def is Dictionary and v is Dictionary:
 			var counts := {}
 			for k in v:
-				if v[k] is int or v[k] is float:
-					counts[str(k)] = maxi(0, int(v[k]))
+				if counts.size() >= 64:
+					break
+				if str(k).length() <= 64 and (v[k] is int or v[k] is float) and is_finite(float(v[k])):
+					counts[str(k)] = int(clampf(float(v[k]), 0, 2000000000))
 			out[key] = counts
 	return out
 

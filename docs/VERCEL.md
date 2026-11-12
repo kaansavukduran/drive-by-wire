@@ -25,4 +25,4 @@ GitHub listesi boşsa Vercel'deki **Adjust GitHub App Permissions** bağlantıs�
 - Tek iş parçacıklı (no-threads) Godot şablonu kullanıldığı için COOP/COEP başlıkları gerekmez.
 - Kayıt (MOMO'nun güveni) tarayıcının bu alan adına ait yerel deposunda tutulur; başka tarayıcı veya alan adı ayrı kayıt demektir.
 
-Depoda `vercel.json` bulunması, yayımlanmış bir adres olduğu anlamına gelmez. İlk dağıtımdan sonra canlı adreste oyunun açıldığı ve yazarak oynanabildiği ayrıca kontrol edilmeli.
+Depoda `vercel.json` bulunması, yayımlanmış bir adres olduğu anlamına gelmez. İlk dağıtımdan sonra canlı adreste oyunun açıldığı, PC’de oklar/WASD ve fare, telefon/tablette kaydırma + eylemlerle oynanabildiği ayrıca kontrol edilmeli.

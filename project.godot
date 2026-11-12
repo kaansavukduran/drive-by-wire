@@ -4,12 +4,19 @@ config_version=5
 [application]
 
 config/name="Drive-By Wire"
-config/description="Yazarak sürülen roguelite araba çatışması. Arabanın yapay zekâsı MOMO komutlarını ruh haline göre yorumlar."
-config/version="0.1.0"
-run/main_scene="res://scenes/garage.tscn"
+config/description="Fragaria Interactive · Fragaria Games · AIONIA. Ok tuşlarıyla sür, İLİN ile üç arcade etabını aş; seçimlerinle 13 farklı gelecek aç."
+config/version="0.6.1"
+run/main_scene="res://scenes/loading.tscn"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 run/max_fps=60
-config/icon="res://assets/icon.png"
+config/icon="res://assets/brand/ilin-icon.png"
+boot_splash/show_image=false
+boot_splash/bg_color=Color(0, 0, 0, 1)
+
+[autoload]
+
+DisplayLayout="*res://scripts/game/display_layout.gd"
+Appearance="*res://scripts/game/appearance.gd"
 
 [display]
 
@@ -18,8 +25,8 @@ window/size/viewport_height=360
 window/size/window_width_override=1280
 window/size/window_height_override=720
 window/stretch/mode="canvas_items"
-window/stretch/aspect="keep"
-window/handheld/orientation=4
+window/stretch/aspect="expand"
+window/handheld/orientation=6
 
 [rendering]
 

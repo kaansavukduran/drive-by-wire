@@ -1,6 +1,6 @@
 ; Drive-By Wire per-user Windows installer (no administrator rights).
 ; Build from the repository root after exporting the "Windows Desktop" preset:
-;   python3 packaging/png_to_ico.py assets/icon.png build/DriveByWire.ico
+;   python3 packaging/png_to_ico.py assets/brand/ilin-icon.png build/DriveByWire.ico
 ;   makensis -DVERSION=0.1.0 packaging/windows.nsi
 ; Output: build/DriveByWire-<VERSION>-windows-x64-Setup.exe
 Unicode true
@@ -76,6 +76,6 @@ Section "Uninstall"
   RMDir "$SMPROGRAMS\${APP}"
   DeleteRegKey HKCU "${UNINST_KEY}"
   DeleteRegKey HKCU "Software\DriveByWire"
-  ; MOMO's trust and garage choices live in the Godot user data folder
+  ; İLİN's trust and garage choices live in the Godot user data folder
   ; (%APPDATA%\Godot\app_userdata\Drive-By Wire) and are deliberately kept.
 SectionEnd

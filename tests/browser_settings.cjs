@@ -1,0 +1,26 @@
+const {chromium}=require('playwright');const assert=require('node:assert/strict');const fs=require('node:fs');
+const output=process.env.DBW_EVIDENCE_DIR||'work/evidence-v050';fs.mkdirSync(output,{recursive:true});
+(async()=>{const browser=await chromium.launch({executablePath:process.env.DBW_CHROMIUM||'/usr/bin/chromium',headless:true,args:['--no-sandbox','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});try{
+ const page=await browser.newPage({viewport:{width:1280,height:720}});const errors=[];
+ page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
+ const q=()=>page.evaluate(()=>window.__dbwQA);
+ const wait=fn=>page.waitForFunction(fn,null,{timeout:15000});
+ const point=async rect=>{const s=await q();const b=await page.locator('#canvas').boundingBox();return {x:b.x+(rect[0]+rect[2]/2)*b.width/s.view[0],y:b.y+(rect[1]+rect[3]/2)*b.height/s.view[1]};};
+ const tap=async rect=>{const p=await point(rect);await page.mouse.click(p.x,p.y);};
+ await page.goto((process.env.DBW_URL||'http://127.0.0.1:8765')+'/?qa');await wait(()=>window.__dbwQA?.screen==='title');
+ await tap((await q()).settings);await wait(()=>window.__dbwQA.settings_ui.visible);
+ const center=await point((await q()).settings_ui.page);await page.mouse.move(center.x,center.y);await page.mouse.wheel(0,400);
+ await wait(()=>{const s=window.__dbwQA.settings_ui;return s.low_power[1]+s.low_power[3]/2>s.page[1]&&s.low_power[1]+s.low_power[3]/2<s.page[1]+s.page[3];});
+ await tap((await q()).settings_ui.low_power);await wait(()=>localStorage.getItem('dbw.low_power')==='1');
+ await tap((await q()).settings_ui.back);await page.reload();await wait(()=>window.__dbwQA?.screen==='title');
+ assert.equal(await page.evaluate(()=>document.documentElement.dataset.renderMode),'low-power');
+ assert.deepEqual(await page.locator('#canvas').evaluate(e=>[e.width,e.height]),[640,360]);
+ await tap((await q()).settings);await wait(()=>window.__dbwQA.settings_ui.visible);
+ await tap((await q()).settings_ui.tabs[2]);await page.waitForTimeout(250);await page.screenshot({path:`${output}/settings-controls.png`});
+ await tap((await q()).settings_ui.tabs[3]);await page.waitForTimeout(250);await page.screenshot({path:`${output}/settings-data.png`});
+ await tap((await q()).settings_ui.reset);await wait(()=>window.__dbwQA.settings_ui.confirm);await page.screenshot({path:`${output}/reset-confirmation.png`});
+ await page.keyboard.press('Escape');await wait(()=>!window.__dbwQA.settings_ui.confirm);
+ assert.equal(await page.evaluate(()=>localStorage.getItem('dbw.low_power')),'1');assert.deepEqual(errors,[]);
+ fs.writeFileSync(`${output}/settings-results.json`,JSON.stringify({lowPowerUiReload:'PASS',resetCancelPreservesPreference:'PASS',browserErrors:errors},null,2)+'\n');
+ console.log('Web settings -> local preference -> reload -> low-power; reset cancel: PASS');
+}finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1;});

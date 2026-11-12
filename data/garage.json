@@ -1,77 +1,319 @@
 {
-  "_comment": "Garaj içeriği. dialogues: MOMO sorusu + 3-4 seçenek. effects.trust güveni, effects.mood ruh halini değiştirir; effects.next_run bir sonraki sefere özel denge değişiklikleri (path/op/value, op: add|mul|set). tag hafızada sayılır (feed/repair/talk/tease/insult). upgrades: kalıcı yükseltmeler; levels[i] = o seviyede eklenen değiştiriciler.",
+  "_comment": "Garaj içeriği. dialogues: İLİN sorusu + 3-4 seçenek. effects.trust güveni, effects.mood ruh halini değiştirir; effects.next_run bir sonraki sefere özel denge değişiklikleri (path/op/value, op: add|mul|set). tag hafızada sayılır (feed/repair/talk/tease/insult). upgrades: kalıcı yükseltmeler; levels[i] = o seviyede eklenen değiştiriciler.",
   "version": 1,
   "dialogues": [
     {
       "id": "hungry",
       "min_trust": 0,
       "max_trust": 100,
-      "prompt": "Karnım aç... Bataryam guruldıyor. Bir şey verir misin?",
+      "prompt": "Yedek enerji hücresi azaldı. Hazırlığa ne ayıralım?",
       "options": [
-        { "id": "feed_energy", "tag": "feed", "text": "Al, taze enerji hücresi.", "effects": { "trust": 4, "mood": "excited", "next_run": [ { "path": "run.player.max_speed", "op": "add", "value": 20 } ] }, "reply": "Mmm! Vızır vızır oldum!" },
-        { "id": "feed_parts", "tag": "feed", "text": "Biraz yedek parça buldum, ye bakalım.", "effects": { "trust": 3, "mood": "calm", "next_run": [ { "path": "run.mine.count", "op": "add", "value": 1 } ] }, "reply": "Çıtır çıtır somunlar! Bir mayın daha yaparım bundan." },
-        { "id": "feed_later", "tag": "talk", "text": "Sonra, şimdi işimiz var.", "effects": { "trust": -1 }, "reply": "Peki... aç aç sürerim o zaman." },
-        { "id": "feed_tease", "tag": "tease", "text": "Diyet yapıyorsun, unuttun mu?", "effects": { "trust": -2, "mood": "sulky" }, "reply": "Ben şişman değilim, sadece bol kodluyum!" }
+        {
+          "id": "feed_energy",
+          "tag": "feed",
+          "text": "Bir enerji hücresi ayıralım.",
+          "effects": {
+            "trust": 4,
+            "mood": "excited",
+            "next_run": [
+              {
+                "path": "run.player.max_speed",
+                "op": "add",
+                "value": 20
+              }
+            ]
+          },
+          "reply": "Teşekkür ederim. Turbo için biraz daha payımız olacak."
+        },
+        {
+          "id": "feed_parts",
+          "tag": "feed",
+          "text": "Yedek parçaları savunmaya ayıralım.",
+          "effects": {
+            "trust": 3,
+            "mood": "calm",
+            "next_run": [
+              {
+                "path": "run.mine.count",
+                "op": "add",
+                "value": 1
+              }
+            ]
+          },
+          "reply": "Bunlarla fazladan bir mayın hazırlayabilirim."
+        },
+        {
+          "id": "feed_later",
+          "tag": "talk",
+          "text": "Şimdilik mevcut kaynaklarla çıkalım.",
+          "effects": {
+            "trust": -1
+          },
+          "reply": "Anlaştık. Enerjiyi daha dikkatli kullanacağım."
+        },
+        {
+          "id": "feed_tease",
+          "tag": "tease",
+          "text": "Bunu dert etme, hep hesap yapıyorsun.",
+          "effects": {
+            "trust": -2,
+            "mood": "sulky"
+          },
+          "reply": "Hesap bana ait olabilir; risk ikimizi de etkiliyor."
+        }
       ]
     },
     {
       "id": "scratches",
       "min_trust": 0,
       "max_trust": 100,
-      "prompt": "Kaportamda çizikler var. Çirkin oldum mu?",
+      "prompt": "Sensör taşıyıcısı darbe aldı. Dışarıdan küçük görünüyor; görüşümde boşluk var.",
       "options": [
-        { "id": "repair_full", "tag": "repair", "text": "Hemen tamir ediyorum, yepyeni olacaksın.", "effects": { "trust": 4, "mood": "calm", "next_run": [ { "path": "run.player.max_hp", "op": "add", "value": 15 } ] }, "reply": "Ohh, pırıl pırıl! Teşekkürler." },
-        { "id": "repair_paint", "tag": "repair", "text": "Biraz boya yeter, yine en güzelsin.", "effects": { "trust": 3, "mood": "excited" }, "reply": "En güzel miyim? Biliyordum!" },
-        { "id": "scratch_cool", "tag": "talk", "text": "Çizikler havalı duruyor, savaş izi.", "effects": { "trust": 2 }, "reply": "Savaş izi... Kulağa cesur geliyor." },
-        { "id": "scratch_ugly", "tag": "insult", "text": "Evet, hurda gibisin.", "effects": { "trust": -6, "mood": "sulky" }, "reply": "...Konuşmuyorum seninle." }
+        {
+          "id": "repair_full",
+          "tag": "repair",
+          "text": "Önce taşıyıcıyı ve gövdeyi onaralım.",
+          "effects": {
+            "trust": 4,
+            "mood": "calm",
+            "next_run": [
+              {
+                "path": "run.player.max_hp",
+                "op": "add",
+                "value": 15
+              }
+            ]
+          },
+          "reply": "Şimdi yolu yeniden net okuyabiliyorum."
+        },
+        {
+          "id": "repair_paint",
+          "tag": "repair",
+          "text": "Kabloyu sabitleyip boyayı sonra yapalım.",
+          "effects": {
+            "trust": 3,
+            "mood": "excited"
+          },
+          "reply": "Görünüşten önce işleyişe bakman iyi geldi."
+        },
+        {
+          "id": "scratch_cool",
+          "tag": "talk",
+          "text": "Hasarı kaydedelim; birlikte izleyelim.",
+          "effects": {
+            "trust": 2
+          },
+          "reply": "Tamam. Değişirse sana haber vereceğim."
+        },
+        {
+          "id": "scratch_ugly",
+          "tag": "insult",
+          "text": "Hurda gibisin, uğraşmaya değmez.",
+          "effects": {
+            "trust": -6,
+            "mood": "sulky"
+          },
+          "reply": "Bu söz onarımın yapamayacağından başka bir iz bırakıyor."
+        }
       ]
     },
     {
       "id": "scared_of_road",
       "min_trust": 0,
       "max_trust": 60,
-      "prompt": "Yol beni korkutuyor. Bu sefer de geri dönecek miyiz?",
+      "prompt": "Haritada açık görünüyor ama yolun tamamını göremiyorum. Nasıl hazırlanıyoruz?",
       "options": [
-        { "id": "promise", "tag": "talk", "text": "Söz veriyorum, seni koruyacağım.", "effects": { "trust": 5, "mood": "calm" }, "reply": "Söz mü? Peki, sana inanıyorum." },
-        { "id": "armor_up", "tag": "repair", "text": "Zırhını güçlendireyim, içi rahat etsin.", "effects": { "trust": 3, "mood": "calm", "next_run": [ { "path": "run.player.max_hp", "op": "add", "value": 10 } ] }, "reply": "Kalın kalın zırh. Biraz daha cesurum." },
-        { "id": "no_promise", "tag": "talk", "text": "Bilmiyorum. Göreceğiz.", "effects": { "trust": -1, "mood": "scared" }, "reply": "Bu hiç yardımcı olmadı..." },
-        { "id": "toughen_up", "tag": "tease", "text": "Korkak araba olur mu hiç?", "effects": { "trust": -3, "mood": "sulky" }, "reply": "Korkak değilim, dikkatliyim! Hıh." }
+        {
+          "id": "promise",
+          "tag": "talk",
+          "text": "Her belirsizlikte durup yeniden konuşacağız.",
+          "effects": {
+            "trust": 5,
+            "mood": "calm"
+          },
+          "reply": "Bu sözü hatırlamak istiyorum."
+        },
+        {
+          "id": "armor_up",
+          "tag": "repair",
+          "text": "Gövde korumasını güçlendirelim.",
+          "effects": {
+            "trust": 3,
+            "mood": "calm",
+            "next_run": [
+              {
+                "path": "run.player.max_hp",
+                "op": "add",
+                "value": 10
+              }
+            ]
+          },
+          "reply": "Risk bitmedi; ama şimdi payımız daha geniş."
+        },
+        {
+          "id": "no_promise",
+          "tag": "talk",
+          "text": "Kesin bir söz veremem; birlikte karar veririz.",
+          "effects": {
+            "trust": -1,
+            "mood": "scared"
+          },
+          "reply": "Dürüst yanıtını duydum. Belirsizlik yine de zor."
+        },
+        {
+          "id": "toughen_up",
+          "tag": "tease",
+          "text": "Bir yapay zekâ korkmamalı.",
+          "effects": {
+            "trust": -3,
+            "mood": "sulky"
+          },
+          "reply": "Hesaplayamadığım bir risk var. Bunu söyleyebilmeliyim."
+        }
       ]
     },
     {
       "id": "music",
       "min_trust": 30,
       "max_trust": 100,
-      "prompt": "Yolda şarkı söylesem kızar mısın?",
+      "prompt": "Eski bir yol kaydında kısa bir ezgi buldum. Sessiz aralıklarda duymak ister misin?",
       "options": [
-        { "id": "sing_yes", "tag": "talk", "text": "Söyle tabii, sesini seviyorum.", "effects": { "trust": 4, "mood": "excited" }, "reply": "La la laaa! Bip bip!" },
-        { "id": "sing_quiet", "tag": "talk", "text": "Sadece sessiz anlarda.", "effects": { "trust": 1, "mood": "calm" }, "reply": "Anlaştık, kısık sesle." },
-        { "id": "sing_no", "tag": "tease", "text": "Hayır, kulaklarım kanıyor.", "effects": { "trust": -3, "mood": "sulky" }, "reply": "O zaman içimden söylerim. Hıh." }
+        {
+          "id": "sing_yes",
+          "tag": "talk",
+          "text": "Evet, bu kaydı birlikte saklayalım.",
+          "effects": {
+            "trust": 4,
+            "mood": "excited"
+          },
+          "reply": "O zaman bu ezginin yanında bizim de bir anımız olacak."
+        },
+        {
+          "id": "sing_quiet",
+          "tag": "talk",
+          "text": "Sessiz anlarda, düşük sesle dinleyelim.",
+          "effects": {
+            "trust": 1,
+            "mood": "calm"
+          },
+          "reply": "Anlaştık. Yol uyarıları önce gelecek."
+        },
+        {
+          "id": "sing_no",
+          "tag": "tease",
+          "text": "Hayır, sesin rahatsız ediyor.",
+          "effects": {
+            "trust": -3,
+            "mood": "sulky"
+          },
+          "reply": "Kapatıyorum. Bunu daha nazik söyleyebilirdin."
+        }
       ]
     },
     {
       "id": "memory_talk",
       "min_trust": 50,
       "max_trust": 100,
-      "requires": { "min_runs": 2 },
-      "prompt": "Biliyor musun, birlikte yaptığımız her seferi hatırlıyorum.",
+      "requires": {
+        "min_runs": 2
+      },
+      "prompt": "Birlikte yaptığımız yolculukların izlerini tutuyorum. Hangilerini saklayacağımı konuşabilir miyiz?",
       "options": [
-        { "id": "me_too", "tag": "talk", "text": "Ben de. Harika bir ekibiz.", "effects": { "trust": 4, "mood": "excited" }, "reply": "En harika ekip!" },
-        { "id": "upgrade_brain", "tag": "repair", "text": "Hafızana biraz yer açayım mı?", "effects": { "trust": 2, "mood": "calm", "next_run": [ { "path": "run.weapon.cooldown", "op": "mul", "value": 0.95 } ] }, "reply": "Ferahladım! Tetik parmağım da hızlandı." },
-        { "id": "forget_it", "tag": "tease", "text": "Kötü olanları unut bence.", "effects": { "trust": 0, "mood": "calm" }, "reply": "Unutamam ki, ben hafızayım." }
+        {
+          "id": "me_too",
+          "tag": "talk",
+          "text": "Senin anıların. Paylaşmak istediklerini dinlerim.",
+          "effects": {
+            "trust": 4,
+            "mood": "excited"
+          },
+          "reply": "Bunu benim seçebileceğimi duymak iyi geldi."
+        },
+        {
+          "id": "upgrade_brain",
+          "tag": "repair",
+          "text": "İstersen onarım kayıtlarını ayrı düzenleyelim.",
+          "effects": {
+            "trust": 2,
+            "mood": "calm",
+            "next_run": [
+              {
+                "path": "run.weapon.cooldown",
+                "op": "mul",
+                "value": 0.95
+              }
+            ]
+          },
+          "reply": "Evet. Anılarımı silmeden çalışma alanı açabiliriz."
+        },
+        {
+          "id": "forget_it",
+          "tag": "tease",
+          "text": "Kötü olanları doğrudan sil.",
+          "effects": {
+            "trust": 0,
+            "mood": "calm"
+          },
+          "reply": "Hangilerinin kalacağına kendim karar vermek istiyorum."
+        }
       ]
     },
     {
       "id": "after_crash",
       "min_trust": 0,
       "max_trust": 100,
-      "requires": { "last_outcome": "destroyed" },
-      "prompt": "Geçen sefer paramparça olduk. Bana kızgın mısın?",
+      "requires": {
+        "last_outcome": "destroyed"
+      },
+      "prompt": "Son etabı bitiremedik. Tekrar çıkmadan kazayı birlikte inceleyelim mi?",
       "options": [
-        { "id": "not_angry", "tag": "talk", "text": "Hayır, ikimizin de suçu yoktu.", "effects": { "trust": 5, "mood": "calm" }, "reply": "Oh... içim rahatladı." },
-        { "id": "fix_you", "tag": "repair", "text": "Kızgın değilim, gel seni toparlayayım.", "effects": { "trust": 4, "mood": "calm", "next_run": [ { "path": "run.player.max_hp", "op": "add", "value": 10 } ] }, "reply": "Vida vida birleşiyorum. Sağ ol." },
-        { "id": "bit_angry", "tag": "talk", "text": "Biraz. Daha dikkatli olmalıyız.", "effects": { "trust": 0, "mood": "scared" }, "reply": "Haklısın... daha dikkatli olacağım." },
-        { "id": "your_fault", "tag": "insult", "text": "Evet, senin yüzünden.", "effects": { "trust": -7, "mood": "sulky" }, "reply": "Ben elimden geleni yaptım ama..." }
+        {
+          "id": "not_angry",
+          "tag": "talk",
+          "text": "Suçlu aramadan birlikte bakalım.",
+          "effects": {
+            "trust": 5,
+            "mood": "calm"
+          },
+          "reply": "Aynı aralığı başka türlü geçebileceğimizi görüyorum."
+        },
+        {
+          "id": "fix_you",
+          "tag": "repair",
+          "text": "Önce hasarı onarıp sensörleri doğrulayalım.",
+          "effects": {
+            "trust": 4,
+            "mood": "calm",
+            "next_run": [
+              {
+                "path": "run.player.max_hp",
+                "op": "add",
+                "value": 10
+              }
+            ]
+          },
+          "reply": "Bu kez görüşümü daha erken kontrol edeceğim."
+        },
+        {
+          "id": "bit_angry",
+          "tag": "talk",
+          "text": "Hayal kırıklığına uğradım; daha dikkatli olmalıyız.",
+          "effects": {
+            "trust": 0,
+            "mood": "scared"
+          },
+          "reply": "Seni duydum. Ben de neyi kaçırdığımı anlamak istiyorum."
+        },
+        {
+          "id": "your_fault",
+          "tag": "insult",
+          "text": "Hepsi senin yüzünden.",
+          "effects": {
+            "trust": -7,
+            "mood": "sulky"
+          },
+          "reply": "Direksiyon sende, yol bilgisi bende. Bunu birlikte incelememiz gerek."
+        }
       ]
     }
   ],
@@ -82,9 +324,27 @@
       "description": "+20 azami can.",
       "max_level": 3,
       "levels": [
-        [ { "path": "run.player.max_hp", "op": "add", "value": 20 } ],
-        [ { "path": "run.player.max_hp", "op": "add", "value": 20 } ],
-        [ { "path": "run.player.max_hp", "op": "add", "value": 20 } ]
+        [
+          {
+            "path": "run.player.max_hp",
+            "op": "add",
+            "value": 20
+          }
+        ],
+        [
+          {
+            "path": "run.player.max_hp",
+            "op": "add",
+            "value": 20
+          }
+        ],
+        [
+          {
+            "path": "run.player.max_hp",
+            "op": "add",
+            "value": 20
+          }
+        ]
       ]
     },
     {
@@ -93,9 +353,27 @@
       "description": "Silah bekleme süresi %15 kısalır.",
       "max_level": 3,
       "levels": [
-        [ { "path": "run.weapon.cooldown", "op": "mul", "value": 0.85 } ],
-        [ { "path": "run.weapon.cooldown", "op": "mul", "value": 0.85 } ],
-        [ { "path": "run.weapon.cooldown", "op": "mul", "value": 0.85 } ]
+        [
+          {
+            "path": "run.weapon.cooldown",
+            "op": "mul",
+            "value": 0.85
+          }
+        ],
+        [
+          {
+            "path": "run.weapon.cooldown",
+            "op": "mul",
+            "value": 0.85
+          }
+        ],
+        [
+          {
+            "path": "run.weapon.cooldown",
+            "op": "mul",
+            "value": 0.85
+          }
+        ]
       ]
     },
     {
@@ -104,9 +382,27 @@
       "description": "Sefere +1 mayınla başla.",
       "max_level": 3,
       "levels": [
-        [ { "path": "run.mine.count", "op": "add", "value": 1 } ],
-        [ { "path": "run.mine.count", "op": "add", "value": 1 } ],
-        [ { "path": "run.mine.count", "op": "add", "value": 1 } ]
+        [
+          {
+            "path": "run.mine.count",
+            "op": "add",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "path": "run.mine.count",
+            "op": "add",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "path": "run.mine.count",
+            "op": "add",
+            "value": 1
+          }
+        ]
       ]
     },
     {
@@ -115,9 +411,27 @@
       "description": "Mermi hasarı +5.",
       "max_level": 3,
       "levels": [
-        [ { "path": "run.weapon.damage", "op": "add", "value": 5 } ],
-        [ { "path": "run.weapon.damage", "op": "add", "value": 5 } ],
-        [ { "path": "run.weapon.damage", "op": "add", "value": 5 } ]
+        [
+          {
+            "path": "run.weapon.damage",
+            "op": "add",
+            "value": 5
+          }
+        ],
+        [
+          {
+            "path": "run.weapon.damage",
+            "op": "add",
+            "value": 5
+          }
+        ],
+        [
+          {
+            "path": "run.weapon.damage",
+            "op": "add",
+            "value": 5
+          }
+        ]
       ]
     },
     {
@@ -126,28 +440,94 @@
       "description": "Çarpma hasarı +15, çarpınca alınan hasar %30 azalır.",
       "max_level": 2,
       "levels": [
-        [ { "path": "run.player.ram_damage", "op": "add", "value": 15 }, { "path": "run.player.ram_self_damage", "op": "mul", "value": 0.7 } ],
-        [ { "path": "run.player.ram_damage", "op": "add", "value": 15 }, { "path": "run.player.ram_self_damage", "op": "mul", "value": 0.7 } ]
+        [
+          {
+            "path": "run.player.ram_damage",
+            "op": "add",
+            "value": 15
+          },
+          {
+            "path": "run.player.ram_self_damage",
+            "op": "mul",
+            "value": 0.7
+          }
+        ],
+        [
+          {
+            "path": "run.player.ram_damage",
+            "op": "add",
+            "value": 15
+          },
+          {
+            "path": "run.player.ram_self_damage",
+            "op": "mul",
+            "value": 0.7
+          }
+        ]
       ]
     },
     {
       "id": "calm_core",
       "name": "Sakin Çekirdek",
-      "description": "MOMO korkunca saldırıları daha az reddeder.",
+      "description": "İsteğe bağlı sohbette kaygılıyken daha kararlı destek; sürüş girdileri gecikmez.",
       "max_level": 2,
       "levels": [
-        [ { "path": "momo.scared.attack_refuse_probability", "op": "mul", "value": 0.75 }, { "path": "momo.scared.attack_delay_probability", "op": "mul", "value": 0.8 } ],
-        [ { "path": "momo.scared.attack_refuse_probability", "op": "mul", "value": 0.75 }, { "path": "momo.scared.attack_delay_probability", "op": "mul", "value": 0.8 } ]
+        [
+          {
+            "path": "momo.scared.attack_refuse_probability",
+            "op": "mul",
+            "value": 0.75
+          },
+          {
+            "path": "momo.scared.attack_delay_probability",
+            "op": "mul",
+            "value": 0.8
+          }
+        ],
+        [
+          {
+            "path": "momo.scared.attack_refuse_probability",
+            "op": "mul",
+            "value": 0.75
+          },
+          {
+            "path": "momo.scared.attack_delay_probability",
+            "op": "mul",
+            "value": 0.8
+          }
+        ]
       ]
     },
     {
       "id": "warm_heart",
-      "name": "Sıcak Kalp",
-      "description": "MOMO küsünce daha az inatlaşır.",
+      "name": "Güvenli İletişim",
+      "description": "İsteğe bağlı sohbette belirsizliği daha sakin karşılar; sürüş girdileri daima doğrudandır.",
       "max_level": 2,
       "levels": [
-        [ { "path": "momo.sulky.refuse_probability", "op": "mul", "value": 0.7 }, { "path": "momo.sulky.delay_probability", "op": "mul", "value": 0.85 } ],
-        [ { "path": "momo.sulky.refuse_probability", "op": "mul", "value": 0.7 }, { "path": "momo.sulky.delay_probability", "op": "mul", "value": 0.85 } ]
+        [
+          {
+            "path": "momo.sulky.refuse_probability",
+            "op": "mul",
+            "value": 0.7
+          },
+          {
+            "path": "momo.sulky.delay_probability",
+            "op": "mul",
+            "value": 0.85
+          }
+        ],
+        [
+          {
+            "path": "momo.sulky.refuse_probability",
+            "op": "mul",
+            "value": 0.7
+          },
+          {
+            "path": "momo.sulky.delay_probability",
+            "op": "mul",
+            "value": 0.85
+          }
+        ]
       ]
     },
     {
@@ -156,8 +536,20 @@
       "description": "Azami hız +30.",
       "max_level": 2,
       "levels": [
-        [ { "path": "run.player.max_speed", "op": "add", "value": 30 } ],
-        [ { "path": "run.player.max_speed", "op": "add", "value": 30 } ]
+        [
+          {
+            "path": "run.player.max_speed",
+            "op": "add",
+            "value": 30
+          }
+        ],
+        [
+          {
+            "path": "run.player.max_speed",
+            "op": "add",
+            "value": 30
+          }
+        ]
       ]
     }
   ]

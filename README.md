@@ -1,49 +1,69 @@
-# Drive-By Wire
+# Drive-By Wire · 0.6.1
 
-Yazarak sürülen roguelite araba çatışması (prototip, geliştirme sürüyor). Arabanın yapay zekâsı MOMO, klavyeden yazdığın komutları ruh haline göre yorumlar.
+**Fragaria Interactive · Fragaria Games · AIONIA**
 
-## İndir ve oyna
-- **Tarayıcıda:** Vercel bağlandığında `https://<vercel-adresi>.vercel.app` (kurulum: [docs/VERCEL.md](docs/VERCEL.md)).
-- **İndirilebilir sürümler:** [Releases](https://github.com/kaansavukduran/drive-by-wire/releases/latest)
-  - Windows: `DriveByWire-<sürüm>-windows-x64-Setup.exe` (kurulum, yönetici izni gerekmez) veya `-windows-x64-portable.zip` (çıkart, `DriveByWire.exe` çalıştır)
-  - Linux: `-linux-x64.AppImage`, `-linux-x64.deb`, `-linux-x64-portable.tar.gz`
-  - Android: `-android-arm64-x64.apk` (prototip; herkese açık prototip anahtarıyla imzalı, ayrıntı [docs/BUILD.md](docs/BUILD.md))
-  - Web çevrimdışı: `-web-offline.tar.gz`
-- Platform durumu ve sürüm notları: [docs/RELEASE.md](docs/RELEASE.md)
-
-## Şu anki durum (0.1.0, geliştirme)
-Var: piksel art (yol, araçlar, efektler, MOMO yüzü, garaj, Aion ve Baykuş Ömer), garaj (MOMO selamı, 3–4 seçenekli diyalog, bu sefer için tek yükseltme), kayan üç şeritli yol, yazarak sürüş, komut kutusu açıkken %10 zaman, çarpan araba / ateş eden kamyonet / engel bırakan kamyon, hedefli ateş, mayın, kaç, çarp, can ve ekran sarsıntısı, MOMO yüzü ve ruh haline göre yorum, sefer sonu ekranı, yerel kayıt (güven + hafıza), web derlemesi.
-Henüz yok: ses ve müzik (kapsam dışı), kilometre taşı 6 dengesi için uzun oyun testi, gerçek telefonda APK denemesi, Windows kod imzası.
+İLİN ile Yolun Hafızası’nı yaşa: üç 400 metrelik arcade etap, üç dallanan karar ve **13 ayrı son**. Direksiyon oklar/WASD, fare, gamepad veya mobilde kaydırma ile sende. Kararlar kaynakları, trafik baskısını ve geleceğinizi değiştirir.
 
 ## Oyna
-- Garajda rakam tuşuyla (1–4) MOMO'ya cevap ver, bir yükseltme seç, Enter ile sefere çık.
-- Herhangi bir harfe bas: komut kutusu açılır ve zaman yavaşlar. **Enter** gönderir, **Esc** vazgeçer.
-- Örnekler: `sola geç`, `sağa geç ve ateş et`, `hızlan`, `yavaşla`, `mayın bırak`, `aferin`, `go left`, `fire`.
+
+Ana menüde **Hikâyeye başla / Space** ile ilk ayrımı seç. Her tamamlanan etap yeni karar açar. Kaza yapınca önceki etaplar korunur; kayıtlı hikâyeye etabın başından devam edilir. **Sonlar** kitabı kazanılan 13 kapanışı saklar; yeni hikâye bu kitabı silmez. Mola menüsündeki günlük konuşmaları ve kararları gösterir. Garaj konuşmaları ve yükseltmeler isteğe bağlıdır.
+
+| Tuş | İşlev |
+| --- | --- |
+| Sol / Sağ ok veya A / D | Anında bir şerit değiştir |
+| Yukarı ok veya W (basılı) | Enerji tüketerek turbo |
+| Aşağı ok veya S (basılı) | Fren |
+| Space veya F (basılı) | En yakın tehdide, arka dahil, tekrarlanan ateş |
+| X | Arkaya mayın bırak |
+| Shift | Bekleme süreli sıyrılma |
+| C | İLİN'ya destek ve enerji; 8 saniye bekleme |
+| Esc veya P | Mola / devam |
+| T | İsteğe bağlı sohbet; Enter gönderir, Esc kapatır |
+
+Kumandada sol analog veya D-pad şerit, yukarı/RB turbo, aşağı/LT fren, A/RT ateş, X mayın, B/LB sıyrılma, Y destek, Start mola. Menülerde yönler, A onay, B geri; ayarlarda LB/RB sekme değiştirir. Tuşlar ve düğmeler yeniden atanabilir; analog ölü bölgesi ayarlanabilir. Yazılım olaylarıyla akış testlidir; fiziksel kumanda henüz doğrulanmadı.
+
+Telefon/tablette **yol üzerinde sağa/sola kaydırarak** tek şerit değiştir. Eylem düğmeleriyle ateş, turbo, fren, mayın, sıyrılma ve destek kullan. Ayrı parmakla ateşe basılıyken kaydırabilirsin. Dikey ve yatay düzenler vardır; döndürünce güvenli mola verilir. Mola menüsünden dokunmatik kontroller elle açılır. Bu şema kullanıcının açık seçimidir; virtual joystick uygulanmadı.
+
+PC'de oklar/WASD yanında yol alanında fare sol basılı ateş, fare sağ sıyrılmadır. Menüler fareyle kullanılır; tıklama sürüş komutu yazdırmaz.
+
+**Saldırı işaretleri:** Kesik nişan çizgisi yaklaşan atışı, `!` işareti kamyonun engel bırakacağı yeri gösterir. Çizginin gösterdiği şeritten çık veya sıyrıl. Önemli uyarılar azaltılmış harekette görünür kalır. Mola, uyarı süresini de dondurur.
+
+**Kapsüller:** Artı onarım, şimşek enerji + bir mayın, kalkan tek darbeye koruma verir. Renk yanında şekiller farklıdır. Kalkan en fazla 7 saniye sürer. Düşmanları yenmek, kapsülleri toplamak ve başarılı kaçışlar seri puanı kazandırır; hasar veya seriye katkı olmadan 5 saniye geçmesi seriyi sıfırlar. Kısa görevler puan, onarım ve mayın kazandırır. Her 400 metrede etap biter; sonuçta sonraki karara, üçüncü etapta seçtiğin sonun metnine geç. G veya B ile garaja dönebilirsin.
+
+Varsayılan koyu tema; açık/koyu/sistem ve font tercihi Görünüm sekmesindedir. Native sistem fontu kullanılır; Web Canvas gömülü Godot fontuna döner, HTML metinleri gerçek `system-ui` kullanır. Otomatik ateş, düşük güç web modu, titreşim, ses düzeyi, ses kapatma, ekran sarsıntısı ve dekoratif hareket ana menüden veya mola ekranından ayrı ayarlanabilir. Tercihler, rekor, güven ve garaj hafızası yereldir. Ayarlar → Veri ile onay sonrasında sıfırlanabilir. Bozuk kayıt önceki geçerli yedekten kurtarılır. Odak kaybında veya kumanda ayrılınca mola verilir. Hesap, reklam, telemetri, LLM/API bağlantısı yoktur.
 
 ## Çalıştır
-Godot 4.6.3 ile `project.godot` dosyasını aç ve F5, ya da:
 
-```bash
+Godot **4.6.3 standard** ile `project.godot` dosyasını aç ve F5:
+
+```sh
+godot --headless --editor --import --quit
 godot --path .
-```
-
-Testler:
-
-```bash
 bash tests/run_all.sh
-```
-
-Web (Vercel'in çalıştırdığı komut):
-
-```bash
 python3 packaging/build_web.py
+python3 -m http.server 8765 --directory build/web
 ```
 
-## Dosya yapısı
-- `data/balance.json`: tüm ayarlanabilir sayılar (config burada).
-- `data/intents.json`: komut kelimeleri; yeni kelime eklemek için yalnızca bu dosya.
-- `data/momo_lines.json`, `data/garage.json`: replikler ve garaj içeriği.
-- `scripts/core/`: saf oyun mantığı (ayrıştırıcı, MOMO, garaj, kayıt).
-- `scripts/game/`, `scenes/`: sahneler.
-- `assets/`, `tools/art/`: piksel art ve onu üreten betikler.
-- `packaging/`, `vercel.json`, `export_presets.cfg`: derleme ve yayın.
+Web çıktısını `http://localhost:8765` ile aç.
+
+**Önizleme durumu:** İşlev testleri geçiyor; bulut yazılım renderer ortamında 60 FPS hedefi sağlanmadı. Fiziksel hedefler ve üretim yayını henüz doğrulanmadı. Ayrıntılar QA raporunda.
+ HTML dosyasına çift tıklamak yeterli değildir. [Sürüm ve platform durumu](docs/RELEASE.md) · [Güncel AIONIA referansı](docs/AIONIA_CURRENT_REFERENCE.md) · [Kontrol kararı](docs/CONTROLS.md) · [Hikâyeli bölüm](docs/JOURNEY.md) · [Tasarım incelemesi](docs/DESIGN_BRIEF.md) · [Mahremiyet](docs/PRIVACY.md) · [Sanat kılavuzu](docs/ART_BIBLE.md) · [Test sonuçları](docs/QA.md) · [Forge kaydı](docs/FORGE.md) · [Derleme](docs/BUILD.md) · [Vercel](docs/VERCEL.md).
+
+`Releases/latest` önceki 0.1.0 paketlerini gösterebilir; bu dalın paketleriyle aynı değildir.
+
+## Kaynaklar
+
+- `data/balance.json`: sürüş, düşmanlar, turbo, kapsül, görev ve puan dengesi.
+- `scripts/core/arcade.gd`: sahneden bağımsız puan, seri, görevler.
+- `scripts/game/controls.gd`, `touch_control.gd`: klavye, analog/D-pad, yeniden atama ve çoklu dokunma.
+- `data/story_book.json`, `scripts/core/story_book.gd`: 13 sonlu seçim kitabı ve bölüm kaydı.
+- `scripts/core/`: İLİN ilişkisi (eski `momo` kimliğiyle uyumlu), garaj, isteğe bağlı ayrıştırıcı ve kayıt.
+- `scripts/game/main.gd`: sefer, çatışma, HUD ve mola.
+- `scripts/game/ui_skin.gd`, `appearance.gd`: tek paylaşılan tema, font ve yerel görünüm tercihi.
+- `scripts/game/companion_face.gd`: yeni İLİN pixel yüzü; OYUN/TASLAK.
+- `packaging/web/shell.html`, `loading_screen.gd`: gerçek ilerlemeli Fragaria yükleyiciler.
+- `scripts/game/sounds.gd`: yerel üretilen özgün kısa sesler.
+- `assets/`, `tools/art/`: mevcut piksel çizimler ve kaynak kayıtları.
+- `packaging/`, `export_presets.cfg`, `.github/`: derleme profilleri.
+
+0.6.1: görsel ayarlar ve kamera çizim sıklığı trafik/ikmal şansını değiştirmez. Ekran dışına kaçan mermiler temizlenir; arkadaki araçlara ateş hedefe ulaşabilir. Kullanıcının açık yayın talebiyle GitHub/Vercel yayını hazırlanır; canlı sürüm bilgisi `/version.json` üzerinden doğrulanabilir.

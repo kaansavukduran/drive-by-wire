@@ -2,98 +2,120 @@
 <html lang="tr">
 	<head>
 		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
-		<meta name="description" content="Drive-By Wire: yazarak sürülen roguelite araba çatışması. Arabanın yapay zekâsı MOMO komutlarını ruh haline göre yorumlar.">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="description" content="Fragaria Interactive · Fragaria Games · AIONIA. Ok tuşlarıyla sür, turboyu aç, İLİN ile üç etabı aş; kararlarınla 13 farklı gelecek aç.">
 		<meta name="theme-color" content="#0b0d12">
 		<title>Drive-By Wire</title>
 		<link rel="icon" type="image/png" href="favicon.png">
 		<link rel="apple-touch-icon" href="favicon.png">
 		<style>
-html, body, #canvas {
-	margin: 0;
-	padding: 0;
-	border: 0;
-}
+@font-face { font-family: BrandPixel; src: url('brand-font.ttf') format('truetype'); font-display: swap; }
+:root { color-scheme: dark; --bg:#0b1016; --text:#f5f1e8; --accent:#9de1c3; }
+:root[data-theme="light"] { color-scheme:light; --bg:#edece5; --text:#152633; --accent:#12664e; }
+html,body,#canvas { margin:0; padding:0; border:0; }
+html,body { width:100%; height:100%; }
+body { color:var(--text); background:var(--bg); overflow:hidden; font-family:system-ui,sans-serif; }
+#canvas { touch-action:none; display:block; background:var(--bg); }
+#canvas.low-power { image-rendering:pixelated; }
+#canvas:focus { outline:none; }
+#help-link { position:absolute; top:-100px; left:1rem; z-index:30; padding:.75rem; color:var(--bg); background:var(--text); }
+#help-link:focus { top:1rem; }
+#accessible-help { display:none; }
+#accessible-help:target { display:block; position:absolute; z-index:40; inset:0; overflow-y:auto; padding:clamp(1rem,5vw,3rem); background:var(--bg); color:var(--text); line-height:1.65; }
+#accessible-help a { color:var(--accent); }
+#status { position:absolute; inset:0; background:#000; color:#f5f1e8; display:flex; flex-direction:column; justify-content:center; align-items:center; visibility:hidden; gap:.25rem; padding:1rem 1rem 9rem; box-sizing:border-box; }
+#status-brand { width:min(23vh,160px); max-height:31vh; object-fit:contain; image-rendering:pixelated; }
+#status-title { margin:0; font:clamp(1.7rem,5vw,2.5rem)/1 BrandPixel,monospace; text-align:center; letter-spacing:.05em; }
+.status-caption { text-align:center; font-size:.8rem; margin:.3rem 0; }
+#status-bottom { position:absolute; bottom:max(1.5rem,env(safe-area-inset-bottom)); left:1rem; right:1rem; display:flex; align-items:center; flex-direction:column; gap:.5rem; }
+#status-progress { width:min(72vw,320px); height:18px; display:flex; gap:5px; }
+#status-progress span { flex:1; background:#333b43; border:1px solid #6b7580; }
+#status-progress span.loaded { background:#ed587f; border-color:#ffacbf; }
+#status-progress span.loaded:nth-child(n+8) { background:#80cf8a; border-color:#b8e9a2; }
+#status-progress.indeterminate span:nth-child(odd) { background:#6b7580; }
+#status-retry { padding:.75rem 1.5rem; border:2px solid #9de1c3; background:#223746; color:#f5f1e8; font:inherit; cursor:pointer; display:none; }
+#status-retry:focus-visible { outline:3px solid #f4a8c5; outline-offset:3px; }
+#status-notice { display:none; max-width:36rem; margin:0; text-align:center; line-height:1.4; }
+.sr-only { position:absolute; width:1px; height:1px; clip-path:inset(50%); overflow:hidden; }
+#status-version { position:absolute; bottom:.3rem; left:.6rem; font-size:.7rem; color:#b6c5ce; }
+@media (max-height:500px) { #status { padding-bottom:7.5rem; } #status-brand { width:65px; max-height:26vh; } #status-bottom { gap:.25rem; } #status-title { font-size:1.7rem; } .status-caption { font-size:.72rem; } }
 
-html, body {
-	width: 100%;
-	height: 100%;
-}
-
-body {
-	color: #e6e6e6;
-	background-color: #0b0d12;
-	overflow: hidden;
-	touch-action: none;
-}
-
-#canvas {
-	display: block;
-	background-color: #0b0d12;
-}
-
-#canvas:focus {
-	outline: none;
-}
-
-#status {
-	position: absolute;
-	inset: 0;
-	background-color: #0b0d12;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	gap: 1rem;
-	visibility: hidden;
-	font-family: system-ui, 'Noto Sans', 'Segoe UI', Arial, sans-serif;
-}
-
-#status-title {
-	font-size: 1.5rem;
-	letter-spacing: 0.08em;
-}
-
-#status-progress {
-	width: min(60%, 28rem);
-	accent-color: #7fd1ff;
-}
-
-#status-progress, #status-notice {
-	display: none;
-}
-
-#status-notice {
-	background-color: #3a2430;
-	border-radius: 0.5rem;
-	border: 1px solid #9b3943;
-	line-height: 1.4;
-	margin: 0 2rem;
-	padding: 1rem;
-	text-align: center;
-}
 		</style>
 		$GODOT_HEAD_INCLUDE
 	</head>
 	<body>
-		<canvas id="canvas" tabindex="0">
+		<canvas id="canvas" tabindex="0" role="application" aria-label="Drive-By Wire sürüş oyunu" aria-describedby="accessible-help">
 			Tarayıcın canvas öğesini desteklemiyor.
 		</canvas>
 
 		<noscript>
 			Drive-By Wire için JavaScript gerekir.
 		</noscript>
+        <a id="help-link" href="#accessible-help">Kontroller ve erişim bilgisi</a>
+        <aside id="accessible-help" tabindex="-1">
+          <h1>Drive-By Wire nasıl oynanır?</h1>
+          <p>İLİN ile üç karar ver; her kararın ardından 400 metrelik arcade etabı tamamla. Seçimlerin 13 farklı sondan birine ulaşır. Kaza yapmak bir son açmaz; önceki etaplar korunur. Sol ve sağ ok şerit değiştirir; yukarı turbo, aşağı fren. Boşluk veya F ateş eder. X mayın, Shift sıyrılma, C destek, Escape mola. WASD de sürüşü yönetir; yolda fare sol ateş, sağ sıyrılmadır.</p>
+          <p>Mobil ve tablette yolda sağa/sola kaydırarak bir şerit değiştir. Turbo, fren, ateş, mayın, sıyrılma ve destek için eylem düğmeleri vardır. Dikey ve yatay ekran desteklenir.</p>
+          <p>Kesik nişan çizgisi yaklaşan atışı, ! işareti düşecek engeli gösterir. Uyarıyı görünce şerit değiştir veya sıyrıl. Azaltılmış harekette bu önemli işaretler görünür kalır.</p>
+          <p>Kumandada sol çubuk veya D-pad yön verir; A/RT ateş, RB turbo, LT fren, X mayın, B/LB sıyrılma, Y destek, Start mola. Tuşlar Ayarlar içinden değiştirilebilir.</p>
+          <p>Ayarlar içinde koyu/açık/sistem teması, font tercihi, otomatik ateş, düşük güç, sesi kapatma, ses düzeyi ve hareket azaltma vardır. Kayıt yalnızca bu cihazda tutulur; Veri sekmesinden silinebilir.</p>
+          <p>Oyun alanı görsel bir canvas kullanır. Ekran okuyucuyla tam oynanabilirlik henüz doğrulanmadı. Tarayıcı oyun tuvalinde sistem font dosyasına erişemediği için Godot’un gömülü font yedeği kullanılır. HTML metinleri cihaz fontunu kullanır. Hikâyede her etap başından devam edilir; metre bazında kayıt yoktur. Mola menüsünden Yol günlüğünü okuyabilirsin.</p>
+          <a href="#canvas">Oyuna dön</a>
+        </aside>
 
-		<div id="status">
-			<div id="status-title">Drive-By Wire</div>
-			<progress id="status-progress"></progress>
-			<div id="status-notice" role="status"></div>
-		</div>
+        <div id="status" aria-label="Fragaria Interactive oyun yükleme ekranı">
+          <img id="status-brand" src="fragaria-reference.jpg" alt="Fragaria pixel-art çilek referansı">
+          <h1 id="status-title">FRAGARIA<br>INTERACTIVE</h1>
+          <p class="status-caption">DRIVE-BY WIRE · YOLUN HAFIZASI</p>
+          <div id="status-bottom">
+            <div id="status-progress" role="progressbar" aria-label="Oyun dosyaları yükleniyor" aria-valuemin="0" aria-valuemax="100"></div>
+            <div id="status-tip" class="status-caption" role="status" aria-live="off">Dosya boyutu bekleniyor…</div>
+            <p id="status-notice" role="status" aria-live="polite"></p>
+            <button id="status-retry" type="button">Yeniden dene</button>
+          </div>
+          <span id="status-announcement" class="sr-only" role="status" aria-live="polite"></span>
+          <span id="status-version">__DBW_VERSION__</span>
+        </div>
 
 		<script src="$GODOT_URL"></script>
 		<script>
+const storedVersion = document.getElementById('status-version');
+if (storedVersion.textContent.startsWith('__')) storedVersion.textContent = 'Yerel derleme';
+try {
+ const appearance=JSON.parse(localStorage.getItem('dbw.appearance')||'{}');
+ const theme=['light','dark','system'].includes(appearance.theme)?appearance.theme:'dark';
+ document.documentElement.dataset.theme=theme==='system'?(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'):theme;
+} catch(e) { document.documentElement.dataset.theme='dark'; }
 const GODOT_CONFIG = $GODOT_CONFIG;
 const GODOT_THREADS_ENABLED = $GODOT_THREADS_ENABLED;
+let lowPower = false;
+try { lowPower = localStorage.getItem('dbw.low_power') === '1'; } catch (e) { /* Storage may be disabled. */ }
+const qaRender = new URLSearchParams(location.search).get('qa_render');
+if (qaRender === 'low') lowPower = true;
+if (qaRender === 'normal') lowPower = false;
+if (lowPower) {
+  GODOT_CONFIG.canvasResizePolicy = 0;
+  const lowCanvas = document.getElementById('canvas');
+  lowCanvas.width = 640;
+  lowCanvas.height = 360;
+  lowCanvas.classList.add('low-power');
+  document.body.style.display = 'flex';
+  document.body.style.alignItems = 'center';
+  document.body.style.justifyContent = 'center';
+  function fitLowPower() {
+    const portrait = window.innerHeight > window.innerWidth;
+    const width = portrait ? 360 : 640;
+    const height = portrait ? 640 : 360;
+    if (lowCanvas.width !== width) lowCanvas.width = width;
+    if (lowCanvas.height !== height) lowCanvas.height = height;
+    const ratio = Math.min(window.innerWidth / width, window.innerHeight / height);
+    lowCanvas.style.width = `${Math.round(width * ratio)}px`;
+    lowCanvas.style.height = `${Math.round(height * ratio)}px`;
+  }
+  window.addEventListener('resize', fitLowPower);
+  fitLowPower();
+}
+document.documentElement.dataset.renderMode = lowPower ? 'low-power' : 'normal';
 const engine = new Engine(GODOT_CONFIG);
 
 (function () {
@@ -101,15 +123,32 @@ const engine = new Engine(GODOT_CONFIG);
 	const statusOverlay = document.getElementById('status');
 	const statusProgress = document.getElementById('status-progress');
 	const statusNotice = document.getElementById('status-notice');
+ const tip = document.getElementById('status-tip');
+ const segments=Array.from({length:10},()=>{const span=document.createElement('span');span.setAttribute('aria-hidden','true');statusProgress.appendChild(span);return span;});
+ let lastProgress=performance.now();
+ let lastBucket=-1;
+ let previousCurrent=-1;
+ let previousTotal=-1;
+ const watchdog=setInterval(()=>{
+  if(document.documentElement.dataset.gameState==='started'||document.documentElement.dataset.gameState==='failed'){clearInterval(watchdog);return;}
+  if(!navigator.onLine){statusNotice.textContent='Çevrimdışısın. Bağlantı geldiğinde yükleme devam edebilir; istersen yeniden dene.';statusNotice.style.display='block';retry.style.display='block';}
+  else if(performance.now()-lastProgress>30000){statusNotice.textContent='Yükleme beklenenden uzun sürüyor. İndirme veya oyun hazırlığı devam ediyor olabilir. Bekleyebilir ya da yeniden deneyebilirsin.';statusNotice.style.display='block';retry.style.display='block';}
+ },1000);
+ const retry = document.getElementById('status-retry');
+	retry.addEventListener('click', () => window.location.reload());
 
-	// The game is typed-command driven: keyboard focus must always be on the canvas.
+	// Keep direct driving focused on the canvas after entering the game.
 	function focusCanvas() {
-		if (document.activeElement !== canvas) {
+		if (location.hash !== '#accessible-help' && document.documentElement.dataset.gameState === 'started' && document.activeElement !== canvas) {
 			canvas.focus({ preventScroll: true });
 		}
 	}
 	window.addEventListener('pointerdown', focusCanvas, true);
 	window.addEventListener('focus', focusCanvas);
+	window.addEventListener('hashchange', () => {
+        if (location.hash === '#accessible-help') document.getElementById('accessible-help').focus();
+        else focusCanvas();
+    });
 	document.addEventListener('visibilitychange', () => {
 		if (!document.hidden) focusCanvas();
 	});
@@ -124,11 +163,12 @@ const engine = new Engine(GODOT_CONFIG);
 		if (mode === 'hidden') {
 			statusOverlay.remove();
 			initializing = false;
+            clearInterval(watchdog);
 			return;
 		}
 		statusOverlay.style.visibility = 'visible';
-		statusProgress.style.display = mode === 'progress' ? 'block' : 'none';
-		statusNotice.style.display = mode === 'notice' ? 'block' : 'none';
+		statusProgress.style.display = mode === 'progress' ? 'flex' : 'none';
+		if(mode==='notice') statusNotice.style.display='block';
 		statusMode = mode;
 	}
 
@@ -142,8 +182,14 @@ const engine = new Engine(GODOT_CONFIG);
 
 	function displayFailureNotice(err) {
 		console.error(err);
-		const detail = err instanceof Error ? err.message : (typeof err === 'string' ? err : 'Bilinmeyen hata.');
-		setStatusNotice('Oyun başlatılamadı.\n' + detail);
+		setStatusNotice('Oyun başlatılamadı.\nBağlantını kontrol edip yeniden deneyebilirsin. Sorun sürerse güncel, WebGL 2 destekli bir tarayıcıyla aç.');
+		retry.style.display = 'block';
+		tip.textContent = 'Yükleme tamamlanamadı.';
+        statusProgress.removeAttribute('aria-valuenow');
+        statusProgress.setAttribute('aria-valuetext','Yükleme başarısız');
+        clearInterval(watchdog);
+        retry.focus();
+		document.documentElement.dataset.gameState = 'failed';
 		setStatusMode('notice');
 		initializing = false;
 	}
@@ -157,19 +203,29 @@ const engine = new Engine(GODOT_CONFIG);
 	} else {
 		setStatusMode('progress');
 		engine.startGame({
-			'onProgress': function (current, total) {
-				if (current > 0 && total > 0) {
-					statusProgress.value = current;
-					statusProgress.max = total;
-				} else {
-					statusProgress.removeAttribute('value');
-					statusProgress.removeAttribute('max');
-				}
-			},
+            'onProgress': function (current, total) {
+                if(current!==previousCurrent||total!==previousTotal){lastProgress=performance.now();previousCurrent=current;previousTotal=total;}
+                if(current>=0&&total>0){
+                    const percent=Math.min(100,Math.max(0,Math.floor(current/total*100)));
+                    statusProgress.classList.remove('indeterminate');
+                    statusProgress.setAttribute('aria-valuenow',String(percent));
+                    statusProgress.setAttribute('aria-valuetext',`${percent}% oyun dosyaları indirildi`);
+                    segments.forEach((segment,i)=>segment.classList.toggle('loaded',i<Math.floor(percent/10)));
+                    const bucket=Math.floor(percent/10);
+                    tip.textContent=percent===100?'Dosyalar hazır · oyun hazırlanıyor…':`Oyun dosyaları yükleniyor · %${percent}`;
+                    if(bucket!==lastBucket){document.getElementById('status-announcement').textContent=tip.textContent;lastBucket=bucket;}
+                }else{
+                    statusProgress.removeAttribute('aria-valuenow');
+                    statusProgress.setAttribute('aria-valuetext','Dosya boyutu bilinmiyor; yükleme sürüyor');
+                    statusProgress.classList.add('indeterminate');
+                    tip.textContent='Oyun dosyaları yükleniyor · boyut bekleniyor…';
+                }
+            },
 		}).then(() => {
 			setStatusMode('hidden');
-			focusCanvas();
 			document.documentElement.dataset.gameState = 'started';
+			focusCanvas();
+			document.documentElement.dataset.loadMs = Math.round(performance.now());
 		}, displayFailureNotice);
 	}
 }());

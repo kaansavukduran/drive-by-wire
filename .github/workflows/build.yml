@@ -126,7 +126,7 @@ jobs:
           cp build/windows/DriveByWire.exe LICENSE THIRD_PARTY_NOTICES.md build/portable-windows/DriveByWire/
           [ -f README.md ] && cp README.md build/portable-windows/DriveByWire/
           (cd build/portable-windows && 7z a -tzip "../DriveByWire-${DBW_VERSION}-windows-x64-portable.zip" DriveByWire >/dev/null)
-          python packaging/png_to_ico.py assets/icon.png build/windows/DriveByWire.ico
+          python packaging/png_to_ico.py assets/brand/ilin-icon.png build/windows/DriveByWire.ico
       - uses: actions/upload-artifact@v4
         with:
           name: windows
@@ -197,6 +197,7 @@ jobs:
           if (Test-Path $game) { throw 'Uninstaller left the game executable behind' }
 
   android:
+    if: vars.DBW_ANDROID_SIGNING_READY == 'true'
     needs: test
     runs-on: ubuntu-24.04
     steps:
@@ -218,33 +219,20 @@ jobs:
           echo "sdkmanager: $SDKM"
           yes | "$SDKM" --licenses >/dev/null || true
           "$SDKM" 'platform-tools' 'build-tools;35.0.0' 'platforms;android-35' >/dev/null
-      - name: Choose signing key (owner key if configured, else public prototype key)
+      - name: Configure owner signing key (no public fallback)
         env:
           KEY_B64: ${{ secrets.DBW_ANDROID_KEYSTORE_B64 }}
+          KEY_ALIAS: ${{ vars.DBW_ANDROID_KEY_ALIAS || 'dbwrelease' }}
           KEY_PASSWORD: ${{ secrets.DBW_ANDROID_KEY_PASSWORD }}
-          KEY_ALIAS: ${{ vars.DBW_ANDROID_KEY_ALIAS }}
         run: |
-          if [ -n "$KEY_B64" ]; then
-            test -n "$KEY_PASSWORD" || { echo "::error::DBW_ANDROID_KEY_PASSWORD secret is missing"; exit 1; }
-            printf '%s' "$KEY_B64" | base64 -d > "$RUNNER_TEMP/release.keystore"
-            chmod 600 "$RUNNER_TEMP/release.keystore"
-            echo "::add-mask::$KEY_PASSWORD"
-            {
-              echo "DBW_KEYSTORE=$RUNNER_TEMP/release.keystore"
-              echo "DBW_KEY_ALIAS=${KEY_ALIAS:-dbwrelease}"
-              echo "DBW_KEY_PASSWORD=$KEY_PASSWORD"
-              echo "DBW_SIGNING=owner"
-            } >> "$GITHUB_ENV"
-            echo "Signing with the owner's release key."
-          else
-            {
-              echo "DBW_KEYSTORE=$GITHUB_WORKSPACE/packaging/android/prototype.keystore"
-              echo "DBW_KEY_ALIAS=drivebywire-prototype"
-              echo "DBW_KEY_PASSWORD=drivebywire-prototype"
-              echo "DBW_SIGNING=prototype"
-            } >> "$GITHUB_ENV"
-            echo "::warning::Signing with the PUBLIC prototype key (packaging/android/prototype.keystore). See docs/BUILD.md."
-          fi
+          test -n "$KEY_B64" && test -n "$KEY_ALIAS" && test -n "$KEY_PASSWORD" || { echo "::error::Owner signing secrets are required"; exit 1; }
+          umask 077
+          printf '%s' "$KEY_B64" | base64 --decode > "$RUNNER_TEMP/release.keystore"
+          {
+            echo "DBW_KEYSTORE=$RUNNER_TEMP/release.keystore"
+            echo "DBW_KEY_ALIAS=$KEY_ALIAS"
+            echo "DBW_KEY_PASSWORD=$KEY_PASSWORD"
+          } >> "$GITHUB_ENV"
       - name: Export APK
         run: |
           python3 packaging/android_config.py

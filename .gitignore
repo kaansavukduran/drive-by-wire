@@ -7,3 +7,9 @@ export_credentials.cfg
 *.tmp
 __pycache__/
 *.pyc
+
+# Reference distribution was explicitly authorized for this game on 2026-11-12.
+# Keep other unreviewed local references out of future commits.
+assets/brand/fragaria-reference.jpg
+assets/brand/fragaria-reference.jpg.import
+docs/evidence-v060/
