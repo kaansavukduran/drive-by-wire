@@ -2,6 +2,20 @@
  "conventions": "Frame index n is at column n % columns, row n // columns. anchor = pivot in frame pixels (place node position here). collision = suggested rect in frame pixels. Vehicles face up. Animations repeat indices to make holds.",
  "generator": "tools/art/build.py",
  "images": {
+  "momo_bezel": {
+   "notes": "Bezel only, screen window transparent.",
+   "path": "assets/ui/momo_bezel.png",
+   "screen_rect": [
+    5,
+    4,
+    38,
+    30
+   ],
+   "size": [
+    48,
+    44
+   ]
+  },
   "road_tile": {
    "drivable_x_screen": [
     224,
@@ -509,6 +523,240 @@
    "size": [
     64,
     64
+   ]
+  },
+  "momo_face": {
+   "anchor": [
+    0,
+    0
+   ],
+   "animations": {
+    "calm_idle": {
+     "fps": 8,
+     "frames": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      2,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      3,
+      3,
+      3,
+      3
+     ],
+     "loop": true
+    },
+    "calm_talk": {
+     "fps": 10,
+     "frames": [
+      4,
+      5,
+      6,
+      5
+     ],
+     "loop": true
+    },
+    "confused_idle": {
+     "fps": 8,
+     "frames": [
+      28,
+      28,
+      28,
+      28,
+      28,
+      28,
+      28,
+      28,
+      28,
+      28,
+      29,
+      30,
+      29,
+      28,
+      28,
+      28,
+      28,
+      28,
+      28,
+      31,
+      31,
+      31,
+      31
+     ],
+     "loop": true
+    },
+    "confused_talk": {
+     "fps": 10,
+     "frames": [
+      32,
+      33,
+      34,
+      33
+     ],
+     "loop": true
+    },
+    "excited_idle": {
+     "fps": 8,
+     "frames": [
+      7,
+      7,
+      7,
+      7,
+      7,
+      7,
+      7,
+      7,
+      7,
+      7,
+      8,
+      9,
+      8,
+      7,
+      7,
+      7,
+      7,
+      7,
+      7,
+      10,
+      10,
+      10,
+      10
+     ],
+     "loop": true
+    },
+    "excited_talk": {
+     "fps": 10,
+     "frames": [
+      11,
+      12,
+      13,
+      12
+     ],
+     "loop": true
+    },
+    "hurt": {
+     "fps": 12,
+     "frames": [
+      35,
+      36,
+      37
+     ],
+     "loop": false
+    },
+    "scared_idle": {
+     "fps": 8,
+     "frames": [
+      14,
+      14,
+      14,
+      14,
+      14,
+      14,
+      14,
+      14,
+      14,
+      14,
+      15,
+      16,
+      15,
+      14,
+      14,
+      14,
+      14,
+      14,
+      14,
+      17,
+      17,
+      17,
+      17
+     ],
+     "loop": true
+    },
+    "scared_talk": {
+     "fps": 10,
+     "frames": [
+      18,
+      19,
+      20,
+      19
+     ],
+     "loop": true
+    },
+    "sulky_idle": {
+     "fps": 8,
+     "frames": [
+      21,
+      21,
+      21,
+      21,
+      21,
+      21,
+      21,
+      21,
+      21,
+      21,
+      22,
+      23,
+      22,
+      21,
+      21,
+      21,
+      21,
+      21,
+      21,
+      24,
+      24,
+      24,
+      24
+     ],
+     "loop": true
+    },
+    "sulky_talk": {
+     "fps": 10,
+     "frames": [
+      25,
+      26,
+      27,
+      26
+     ],
+     "loop": true
+    }
+   },
+   "columns": 7,
+   "frame_height": 44,
+   "frame_width": 48,
+   "mood_alias": {
+    "heyecanli": "excited",
+    "korkmus": "scared",
+    "kuskun": "sulky",
+    "sakin": "calm"
+   },
+   "notes": "CRT bezel baked into every frame. Mood rows: calm, excited, scared, sulky, confused (cols 0-3 idle open/half/closed/glance, cols 4-6 talk), last row hurt flash. Idle anims repeat frames to hold and blink. Turkish moods: sakin=calm, heyecanli=excited, korkmus=scared, kuskun=sulky.",
+   "path": "assets/ui/momo_face.png",
+   "rows": 6,
+   "screen_rect": [
+    5,
+    4,
+    38,
+    30
+   ],
+   "size": [
+    336,
+    264
    ]
   },
   "near_miss": {

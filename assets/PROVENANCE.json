@@ -94,6 +94,16 @@
    "generated_by": "tools/art/gen_fx.py",
    "method": "procedural",
    "sha256": "df0aed05fc17d752165616278a20499a1f1e362a1314aedb3b70615a71551d94"
+  },
+  "assets/ui/momo_bezel.png": {
+   "generated_by": "tools/art/gen_momo.py",
+   "method": "procedural",
+   "sha256": "6754b191c18b34d4b2c4961c00355589dc959912895c605c61516b95f030dde2"
+  },
+  "assets/ui/momo_face.png": {
+   "generated_by": "tools/art/gen_momo.py",
+   "method": "procedural",
+   "sha256": "e439763ee5e74c0e04021825cd907796e44a26fcdce9698208927e3a6afbe7de"
   }
  },
  "generator": "tools/art/build.py",
