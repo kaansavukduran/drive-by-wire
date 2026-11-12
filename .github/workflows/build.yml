@@ -167,8 +167,10 @@ jobs:
           python3 packaging/setup_godot.py
           echo "$GITHUB_WORKSPACE/.ci-godot/bin" >> "$GITHUB_PATH"
           python3 packaging/version.py --github-env
-          yes | sdkmanager --licenses >/dev/null || true
-          sdkmanager 'platform-tools' 'build-tools;35.0.0' 'platforms;android-35' >/dev/null
+          SDKM="$(ls "${ANDROID_HOME:-$ANDROID_SDK_ROOT}"/cmdline-tools/*/bin/sdkmanager | sort | tail -n1)"
+          echo "sdkmanager: $SDKM"
+          yes | "$SDKM" --licenses >/dev/null || true
+          "$SDKM" 'platform-tools' 'build-tools;35.0.0' 'platforms;android-35' >/dev/null
       - name: Choose signing key (owner key if configured, else public prototype key)
         env:
           KEY_B64: ${{ secrets.DBW_ANDROID_KEYSTORE_B64 }}
