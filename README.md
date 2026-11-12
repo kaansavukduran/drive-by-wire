@@ -12,8 +12,8 @@ Yazarak sürülen roguelite araba çatışması (prototip, geliştirme sürüyor
 - Platform durumu ve sürüm notları: [docs/RELEASE.md](docs/RELEASE.md)
 
 ## Şu anki durum (0.1.0, geliştirme)
-Var: garaj (MOMO selamı, 3–4 seçenekli diyalog, bu sefer için tek yükseltme), kayan üç şeritli yol, yazarak sürüş, komut kutusu açıkken %10 zaman, çarpan araba / ateş eden kamyonet / engel bırakan kamyon, hedefli ateş, mayın, kaç, çarp, can ve ekran sarsıntısı, MOMO yüzü ve ruh haline göre yorum, sefer sonu ekranı, yerel kayıt (güven + hafıza), web derlemesi.
-Henüz yok: düşmanların, yolun, MOMO yüzünün ve garajın son piksel art çizimleri (şimdilik kodla çizilmiş geçici çizimler), Windows/Linux/Android paketleri ve GitHub Release.
+Var: piksel art (yol, araçlar, efektler, MOMO yüzü, garaj, Aion ve Baykuş Ömer), garaj (MOMO selamı, 3–4 seçenekli diyalog, bu sefer için tek yükseltme), kayan üç şeritli yol, yazarak sürüş, komut kutusu açıkken %10 zaman, çarpan araba / ateş eden kamyonet / engel bırakan kamyon, hedefli ateş, mayın, kaç, çarp, can ve ekran sarsıntısı, MOMO yüzü ve ruh haline göre yorum, sefer sonu ekranı, yerel kayıt (güven + hafıza), web derlemesi.
+Henüz yok: ses ve müzik (kapsam dışı), kilometre taşı 6 dengesi için uzun oyun testi, gerçek telefonda APK denemesi, Windows kod imzası.
 
 ## Oyna
 - Garajda rakam tuşuyla (1–4) MOMO'ya cevap ver, bir yükseltme seç, Enter ile sefere çık.

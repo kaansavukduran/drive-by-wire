@@ -1,6 +1,6 @@
 # Drive-By Wire 0.1.0 · İlk oynanabilir prototip
 
-Arabayı direksiyonla değil, yazarak sürüyorsun. Arabanın yapay zekâsı MOMO komutlarını ruh haline göre yorumluyor. Bu bir **prototip**: çekirdek döngü (garaj → sefer → sefer sonu) oynanabilir, çizimlerin bir kısmı hâlâ geçici.
+Arabayı direksiyonla değil, yazarak sürüyorsun. Arabanın yapay zekâsı MOMO komutlarını ruh haline göre yorumluyor. Bu bir **prototip**: çekirdek döngü (garaj → sefer → sefer sonu) oynanabilir, çizimler piksel art; denge ve cila sürüyor.
 
 - Garajda MOMO ile kısa diyalog (1–4), bir yükseltme seçimi, Enter ile sefere çıkış.
 - Herhangi bir harf komut kutusunu açar ve zamanı yavaşlatır; Enter gönderir, Esc vazgeçer.
