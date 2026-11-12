@@ -115,23 +115,69 @@ jobs:
           test -f build/windows/DriveByWire.exe
           test ! -f build/windows/DriveByWire.pck
           python packaging/smoke.py build/windows/DriveByWire.exe
-      - name: Portable zip and NSIS Setup
+      - name: Portable zip and installer icon
         run: |
           mkdir -p build/portable-windows/DriveByWire
           cp build/windows/DriveByWire.exe LICENSE THIRD_PARTY_NOTICES.md build/portable-windows/DriveByWire/
           [ -f README.md ] && cp README.md build/portable-windows/DriveByWire/
           (cd build/portable-windows && 7z a -tzip "../DriveByWire-${DBW_VERSION}-windows-x64-portable.zip" DriveByWire >/dev/null)
-          python packaging/png_to_ico.py assets/icon.png build/DriveByWire.ico
-          MAKENSIS="/c/Program Files (x86)/NSIS/makensis.exe"
-          if [ ! -f "$MAKENSIS" ]; then choco install nsis -y --no-progress; fi
-          ls -la build/windows
-          ROOT_WIN="$(cygpath -w "$PWD")"
-          echo "NSIS root: $ROOT_WIN"
-          "$MAKENSIS" -NOCD -DVERSION="$DBW_VERSION" -DROOT="$ROOT_WIN" packaging/windows.nsi
+          python packaging/png_to_ico.py assets/icon.png build/windows/DriveByWire.ico
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: build/DriveByWire-*-windows-x64-portable.zip
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-build
+          path: |
+            build/windows/DriveByWire.exe
+            build/windows/DriveByWire.ico
+          if-no-files-found: error
+
+  # makensis on the Windows runner reported "no files found" for an exe that
+  # `ls` showed in place (three attempts, relative and absolute paths). The same
+  # script builds fine with Linux makensis, so the installer is built here and
+  # then installed and run on a real Windows runner in the next job.
+  windows_installer:
+    needs: windows
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: windows-build
+          path: build/windows
+      - name: Build NSIS Setup.exe
+        run: |
+          python3 packaging/version.py --github-env
+          sudo apt-get update -qq
+          sudo apt-get install -y nsis >/dev/null
+          cp build/windows/DriveByWire.ico build/DriveByWire.ico
+          makensis -NOCD -DVERSION="$(python3 packaging/version.py)" packaging/windows.nsi
+          ls -l build/DriveByWire-*-windows-x64-Setup.exe
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-setup
+          path: build/DriveByWire-*-windows-x64-Setup.exe
+          if-no-files-found: error
+
+  windows_install_test:
+    needs: windows_installer
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/download-artifact@v4
+        with:
+          name: windows-setup
+          path: build
       - name: Silent per-user install, run installed game, uninstall
         shell: pwsh
         run: |
-          $setup = "build/DriveByWire-$env:DBW_VERSION-windows-x64-Setup.exe"
+          $setup = (Get-ChildItem build/DriveByWire-*-windows-x64-Setup.exe | Select-Object -First 1).FullName
           $p = Start-Process -FilePath $setup -ArgumentList '/S' -Wait -PassThru
           if ($p.ExitCode -ne 0) { throw "installer exit $($p.ExitCode)" }
           $dir = Join-Path $env:LOCALAPPDATA 'Programs/Drive-By Wire'
@@ -144,13 +190,6 @@ jobs:
           if ($u.ExitCode -ne 0) { throw "uninstaller exit $($u.ExitCode)" }
           Start-Sleep -Seconds 3   # the NSIS uninstaller re-launches itself from %TEMP%
           if (Test-Path $game) { throw 'Uninstaller left the game executable behind' }
-      - uses: actions/upload-artifact@v4
-        with:
-          name: windows
-          path: |
-            build/DriveByWire-*-windows-x64-portable.zip
-            build/DriveByWire-*-windows-x64-Setup.exe
-          if-no-files-found: error
 
   android:
     needs: test
@@ -218,7 +257,7 @@ jobs:
 
   release:
     if: startsWith(github.ref, 'refs/tags/v')
-    needs: [linux_web, windows, android]
+    needs: [linux_web, windows, windows_installer, windows_install_test, android]
     runs-on: ubuntu-24.04
     permissions:
       contents: write
@@ -245,5 +284,5 @@ jobs:
           cd ..
           prerelease=""
           case "$DBW_VERSION" in 0.*) prerelease="--prerelease" ;; esac
-          gh release create "$GITHUB_REF_NAME" release/* --verify-tag $prerelease \
+          gh release create "$GITHUB_REF_NAME" release/DriveByWire-* release/SHA256SUMS --verify-tag $prerelease \
             --title "Drive-By Wire $GITHUB_REF_NAME" --notes-file docs/RELEASE.md
