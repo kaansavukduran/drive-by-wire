@@ -50,6 +50,14 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
     await tap(page,q.supplies,device.touch);
     q=await state(page,'run');
     assert.equal(q.paused,false);assert.equal(q.route,'supplies');assert.equal(q.mines,5);
+    if(q.view[1]>q.view[0]){
+     const hud=q.portrait_hud;
+     for(const rect of Object.values(hud))assert(inside(rect,q.view),'portrait HUD must fit');
+     assert(hud.health[1]+hud.health[3]<=hud.energy_bar[1],'health text must clear energy bar');
+     assert(hud.meters[1]>=hud.hp_bar[1]+hud.hp_bar[3],'distance must clear health bar');
+     assert(hud.meters[0]+hud.meters[2]<=hud.energy[0],'distance must clear energy caption');
+     entry.portraitHud='PASS: health, distance and energy do not overlap';
+    }
     if(device.touch){
      assert(q.touch,'touch devices must work without external input');
      for(const rect of Object.values(q.actions))assert(inside(rect,q.view),'action must stay on screen');
