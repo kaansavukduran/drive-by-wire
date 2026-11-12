@@ -1,4 +1,4 @@
-# Kontrol kararı · 0.7.0
+# Kontrol kararı · 0.7.1
 
 Son açık kullanıcı seçimi: **sabit sanal joystick + eylem düğmeleri**. Önceki kaydırma şeması, kullanıcının istediği dört yönlü serbest sürüşe geçiş nedeniyle değişti. Üstten sabit kamera ve akan yol korunur; araç yol içinde X/Y eksenlerinde ilerler ve geri çekilir. Açık dünya veya gerçekçi geri vites simülatörü değildir.
 
@@ -18,8 +18,10 @@ Joystick’in merkezi sabittir; her dokunuş için yeniden konumlanmaz. Tek bir 
 | PC | Oklar / WASD, basılı süre boyunca sürekli XY | Space/F veya fare sol; X mayın | E turbo, Q fren, Shift/fare sağ sıyrılma, C destek, Esc/P mola |
 | Gamepad | Sol çubuk / D-pad | A/RT öne ateş; X arkaya mayın | RB turbo, LT fren, B/LB sıyrılma, Y destek, Start mola |
 
-Menü ve NPC konuşmaları fare/dokunma veya yönler+A/Enter ile kullanılabilir. Uzun konuşmalar kaydırılabilir. Yeniden atama, gamepad ölü bölgesi, otomatik ateş, ses ve hareket tercihleri korunur. T sohbeti isteğe bağlı eski uyumluluk yoludur; sürüş metin gerektirmez.
+Menü ve NPC konuşmaları fare/dokunma veya yönler+A/Enter ile kullanılabilir. Konuşma / Yanıt / Rota / Günlük sabit sayfaları fare tekerleği gerektirmez; uzun günlük metni Sonraki sayfa düğmesiyle ilerler. Yeniden atama, gamepad ölü bölgesi, otomatik ateş, ses ve hareket tercihleri korunur. T sohbeti isteğe bağlı eski uyumluluk yoludur; sürüş metin gerektirmez.
 
 Ön silah, arkadaki hedef için yönünü tersine çevirmez. Ön hedefe küçük nişan yardımı vardır; çıkış noktası her zaman aracın ön merkezidir. Mayın arka merkezden çıkar. İki silahın da çıkışı, oyuncu hitbox'ı ve sprite pivotu aynı fizik X/Y konumuna bağlıdır.
 
 Portre: joystick solda; sağda eşit geometriye sahip iki sütun/üç sıra eylem. Yatay: sol joystick; sağ tarafta konuşma, ayrı mola ve üç sıra eylem. Joystick, eylemler ve mola alanları için taşma/çakışma regresyonu vardır. Fiziksel telefon/tablet veya Xbox testi, yazılım emülasyonu yerine gösterilmez.
+
+0.7.1: Mayın sınırsızdır. X veya dokunmatik Mayın düğmesini basılı tutmak bekleme süresi dolunca tekrar bırakır. Varsayılan 0,7 sn, eski mayın yükseltmesi/rota desteği başına 0,05 sn daha kısa, alt sınır 0,3 sn. Mayın 0,12 sn sonra etkinleşir; arka mermi temasında patlar, 60 piksel içindeki düşmanlara hasar verir ve mermileri temizler. Mola süreyi durdurur. İkmal ve görev ödülü beklemeyi sıfırlar; eski cephane bitmesi sürüşü engellemez.

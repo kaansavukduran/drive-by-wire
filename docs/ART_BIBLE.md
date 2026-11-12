@@ -60,3 +60,7 @@ Kullanıcı eski sürücüyü değiştirmeyi ve diğer karakterlerle konuşmayı
 - Büyük üretimler `tools/art/import_omega_atlas.gd` ile hücre hücre nearest örneklenir. Bu bir oyun varlığı içe alma adımıdır; yeni motor veya renderer değildir. Orijinal üretimler değiştirilmez. Atlas PNG toplamı 131.244 byte; gerçek GPU bellek tahsisi ölçülmüş sayılmaz.
 
 Sabit joystick sekizgen piksel kontur ve ortak UiSkin paleti kullanır. Aynı eylem ailesi eşit ölçü/kenar/boşluk kullanır; joystick, mola ve eylem hitbox'ları için dört native ve altı tarayıcı düzeni denetlenir. [Kontrol kararı](CONTROLS.md).
+
+## 0.7.1 · Sürücü yönü
+
+Aion, kuzeye bakan aracın sürüş yönüne döner. Başın arkası, mavi uçlu solungaçlar ve beyaz önlük görünür; direksiyon ve eller başın kuzeyindedir. Sekiz karelik atlas aynı fizik pivotunu `(32,43.5)` kullanır; yeni çizimin gövde merkezine göre doğrulandı. Silah/mayın çıkış noktaları ve hitbox değişmedi. Üretim orijinali yerelde korunur; oyuna 64×96 hücreler nearest örneklenir. Yeni karelerde sürücü yüzü arkaya çizilmez.

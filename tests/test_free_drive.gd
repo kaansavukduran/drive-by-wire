@@ -85,6 +85,14 @@ func run() -> void:
 			for j in range(i+1,rects.size()):
 				if rects[i].intersects(rects[j]): clear=false
 		h.check("joystick, pause and all action hitboxes fit without overlap %s" % dimensions,clear)
+		for cooldown in [0.0,0.6]:
+			game.mine_cooldown=cooldown;game._update_hud()
+			await process_frame
+			var button_clear:=true
+			for action in game.touch_controls:
+				if not action.get_global_rect().grow(0.5).encloses(action.visual.get_global_rect()): button_clear=false
+			h.check("visible action buttons match hitboxes at cooldown %s view %s" % [cooldown,dimensions],button_clear)
+
 	game.car_x=320;game.car_y=200;game.car.position=Vector2(320,200)
 	var pivot: Vector2=game.car.offset
 	for pose in ["drive","boost","fire","hit","brake","shift_left","shift_right","damaged"]:
@@ -102,7 +110,7 @@ func run() -> void:
 					low=low.min(Vector2(x,y));high=high.max(Vector2(x,y))
 		var error: float=(((low+high)/2+pivot)*game.car.scale).length()
 		h.check("chassis stays aligned in art cell %d" % index,error<1.1)
-	game.enemies.clear();game.bullets.clear();game.fire_cooldown=0
+	game.enemies.clear();game.bullets.clear();game.fire_cooldown=0;game.mine_cooldown=0
 	game._spawn_enemy_for_test("rammer",1,game.car_y+100)
 	game._fire({})
 	h.check("rear enemy never reverses front gun",game.bullets[-1]["vel"].y<0 and game.bullets[-1]["pos"].y<game.car_y)

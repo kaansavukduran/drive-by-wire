@@ -448,7 +448,7 @@
       "frames": 8,
       "pivot": [
         32,
-        45
+        43.5
       ],
       "render_size": [
         48,
@@ -475,16 +475,16 @@
       "reference_names": [
         "Aion_Ana_Karakter_Referansi.png"
       ],
-      "notes": "Fixed chassis pivot across blink, turbo, front muzzle and hurt poses. Driver and chassis are one sprite; collisions use the independent shared physics center.",
-      "sha256": "b2681654157f35ff6d25bfeede100b03aa5b9545f425e4fc717e960b3e8686fc",
+      "notes": "All eight north-facing cars show the back of Aion's head, steering wheel and hands north of the driver. Fixed shared chassis pivot across poses; physics position and sockets unchanged.",
+      "sha256": "6c69b2812773ebc3afdebf0b15b768f884f74ef132bf781f84884f51b93faa8c",
       "method": "AI-assisted original game adaptation with inspected owner character references",
-      "generated_by": "OpenAI image generation; 0.7.0",
+      "generated_by": "OpenAI image generation; direction correction 0.7.1",
       "rights": "Owner-requested use of original AIONIA characters in this game. Not a new official canon or logo approval.",
       "reference_hashes": {
         "Aion_Ana_Karakter_Referansi.png": "76b3e45de9187a89473d84f70f13b120ff73fde8f5cd44bc5fcfb9de40ab7f11"
       },
       "status": "GAME_ADAPTATION_DRAFT",
-      "original_generated_sha256": "5f1a6077abd6a291efed987fccc7406b7f3ac6fb5a08ae7b28f9898d3b8ded5d",
+      "original_generated_sha256": "2ea600e64d770c79ee627a7e2beca73f7d5304543b252870fde6230d8539951f",
       "pixel_import": "tools/art/import_omega_atlas.gd: cell-by-cell nearest sampling; original high-resolution generated art retained locally. No original Drive reference pixels shipped."
     },
     "assets/sprites/aionverse_portraits.png": {

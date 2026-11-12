@@ -15,7 +15,7 @@
     },
     "supplies": {
       "name": "Dönüş için ikmal toplayalım",
-      "effect": "+2 mayın. Yol hedefi: en az iki ikmal kapsülü topla.",
+      "effect": "hızlı mayın. Yol hedefi: en az iki ikmal kapsülü topla.",
       "opening": "Garaja elimiz dolu dönelim. Kapsülleri ben işaretlerim, güvenli anı sen seç.",
       "objective": "İki ikmal kapsülü topla",
       "max_hp": 0,

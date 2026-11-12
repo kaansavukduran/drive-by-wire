@@ -65,7 +65,7 @@ func run() -> void:
  h.check("RT fires",game.bullets.size()>0)
  axis(JOY_AXIS_TRIGGER_RIGHT,0)
  await tap(JOY_BUTTON_X)
- h.eq("X drops mine",game.mines_left,2)
+ h.eq("X drops mine",game.mine_drops,1)
  await tap(JOY_BUTTON_Y)
  h.check("Y offers MOMO support",game.comfort_cooldown>0)
  h.eq("hints switch to controller",Controls.last_device,"pad")

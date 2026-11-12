@@ -46,12 +46,16 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
     await wait(page,()=>{const q=window.__dbwQA;return q.back[1]+q.back[3]<=q.view[1];});
     q=await page.evaluate(()=>window.__dbwQA);
     for(const key of ['panel','back'])assert(inside(q[key],q.view),`briefing ${key} must stay on screen`);
-    await page.screenshot({path:`${out}/${device.name}-briefing.png`});
-    await page.keyboard.press('ArrowRight');await sleep(350);q=await page.evaluate(()=>window.__dbwQA);
-    assert(q.supplies[1]>=q.reading[1]-1&&q.supplies[1]+q.supplies[3]<=q.reading[1]+q.reading[3]+1,'focused route must be visible within scroll clip');
+    for(const index of [0,1,3,2]){
+     await tap(page,q.tabs[index],device.touch);await page.waitForFunction(i=>window.__dbwQA.page===i,index);await sleep(150);q=await page.evaluate(()=>window.__dbwQA);
+     assert.equal(q.scrollbars,0);
+     for(const rect of [...q.tabs,q.back,...q.visible_controls])assert(inside(rect,q.view),'every visible page control fits without scrolling');
+     for(const rect of q.visible_controls)assert(rect[0]>=q.reading[0]-1&&rect[1]>=q.reading[1]-1&&rect[0]+rect[2]<=q.reading[0]+q.reading[2]+1&&rect[1]+rect[3]<=q.reading[1]+q.reading[3]+1,'content fits bounded page');
+     await page.screenshot({path:`${out}/${device.name}-briefing-page${index}.png`});
+    }
     await tap(page,q.supplies,device.touch);
     q=await state(page,'run');
-    assert.equal(q.paused,false);assert.equal(q.route,'supplies');assert.equal(q.mines,5);
+    assert.equal(q.paused,false);assert.equal(q.route,'supplies');assert.equal(q.mines,-1);
     if(q.view[1]>q.view[0]){
      const hud=q.portrait_hud;
      for(const rect of Object.values(hud))assert(inside(rect,q.view),'portrait HUD must fit');
@@ -105,7 +109,7 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
      await page.mouse.click(road.x,road.y,{button:'right'});await wait(page,()=>window.__dbwQA.dodge>0);
      entry.desktopInput='PASS: continuous XY arrows/WASD, E/Q, mouse fire/release and dodge';
     }
-    q=await page.evaluate(()=>window.__dbwQA);const mines=q.mines;if(device.touch)await tap(page,q.actions.drive_mine,true);else await page.keyboard.press('KeyX');await page.waitForFunction(n=>window.__dbwQA.mines===n-1,mines);q=await page.evaluate(()=>window.__dbwQA);await tap(page,q.pause,device.touch);q=await wait(page,()=>window.__dbwQA.paused);
+    q=await page.evaluate(()=>window.__dbwQA);const mines=q.mine_drops;if(device.touch)await tap(page,q.actions.drive_mine,true);else await page.keyboard.press('KeyX');await page.waitForFunction(n=>window.__dbwQA.mine_drops===n+1,mines);q=await page.evaluate(()=>window.__dbwQA);await tap(page,q.pause,device.touch);q=await wait(page,()=>window.__dbwQA.paused);
     const distance=q.distance;await sleep(400);assert.equal((await page.evaluate(()=>window.__dbwQA)).distance,distance,'pause must stop simulation');
     await tap(page,q.pause_menu[1],device.touch);q=await wait(page,()=>{const q=window.__dbwQA;return q.settings&&q.settings_back[1]+q.settings_back[3]<=q.view[1];});
     assert(inside(q.settings_rect,q.view)&&inside(q.settings_back,q.view),'settings must fit');

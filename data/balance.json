@@ -129,8 +129,9 @@
     "mine": {
       "count": 3,
       "damage": 60,
-      "arm_seconds": 0.3,
-      "lifetime": 8.0
+      "arm_seconds": 0.12,
+      "lifetime": 8.0,
+      "cooldown": 0.7
     },
     "enemies": {
       "rammer": {

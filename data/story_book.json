@@ -9,7 +9,7 @@
         {
           "id": "signal",
           "name": "Kuzu’nun sinyaline dön",
-          "effect": "+15 can · +0 mayın · dengeli ikmal",
+          "effect": "+15 can · dengeli ikmal",
           "opening": "Omega-3: Kuzu’nun sinyaline dön. Bu kez rotayı değil, birbirimizi kaybetmemeye çalışalım.",
           "objective": "Omega-3’e bir kez destek ver",
           "goal": "steady",
@@ -21,7 +21,7 @@
         {
           "id": "archive",
           "name": "Ömer’in kara kutusunu al",
-          "effect": "+0 can · +2 mayın · sık ikmal",
+          "effect": "+0 can · hızlı mayın · sık ikmal",
           "opening": "Omega-3: Ömer’in kara kutusunu al. Bu kez rotayı değil, birbirimizi kaybetmemeye çalışalım.",
           "objective": "İki ikmal kapsülü topla",
           "goal": "supplies",
@@ -33,7 +33,7 @@
         {
           "id": "escape",
           "name": "Emre’nin konvoyunu yakala",
-          "effect": "+10 can · +0 mayın · dengeli ikmal",
+          "effect": "+10 can · dengeli ikmal",
           "opening": "Omega-3: Emre’nin konvoyunu yakala. Bu kez rotayı değil, birbirimizi kaybetmemeye çalışalım.",
           "objective": "Omega-3’e bir kez destek ver",
           "goal": "steady",
@@ -94,7 +94,7 @@
         {
           "id": "share",
           "name": "Dört sesi aynı kanala al",
-          "effect": "+0 can · +2 mayın · dengeli ikmal",
+          "effect": "+0 can · hızlı mayın · dengeli ikmal",
           "opening": "Omega-3: Dört sesi aynı kanala al. Bu kez rotayı değil, birbirimizi kaybetmemeye çalışalım.",
           "objective": "İki ikmal kapsülü topla",
           "goal": "supplies",
@@ -106,7 +106,7 @@
         {
           "id": "shield",
           "name": "Kurt’la izleyiciyi kes",
-          "effect": "+20 can · +0 mayın · dengeli ikmal",
+          "effect": "+20 can · dengeli ikmal",
           "opening": "Omega-3: Kurt’la izleyiciyi kes. Bu kez rotayı değil, birbirimizi kaybetmemeye çalışalım.",
           "objective": "Omega-3’e bir kez destek ver",
           "goal": "steady",
@@ -163,7 +163,7 @@
         {
           "id": "open",
           "name": "İmzaları birlikte incele",
-          "effect": "+0 can · +2 mayın · sık ikmal",
+          "effect": "+0 can · hızlı mayın · sık ikmal",
           "opening": "Omega-3: İmzaları birlikte incele. Bu kez rotayı değil, birbirimizi kaybetmemeye çalışalım.",
           "objective": "İki ikmal kapsülü topla",
           "goal": "supplies",
@@ -175,7 +175,7 @@
         {
           "id": "seal",
           "name": "Özel mesajları mühürle",
-          "effect": "+15 can · +0 mayın · dengeli ikmal",
+          "effect": "+15 can · dengeli ikmal",
           "opening": "Omega-3: Özel mesajları mühürle. Bu kez rotayı değil, birbirimizi kaybetmemeye çalışalım.",
           "objective": "Omega-3’e bir kez destek ver",
           "goal": "steady",
@@ -232,7 +232,7 @@
         {
           "id": "convoy",
           "name": "Konvoyla birlikte kal",
-          "effect": "+20 can · +0 mayın · dengeli ikmal",
+          "effect": "+20 can · dengeli ikmal",
           "opening": "Omega-3: Konvoyla birlikte kal. Bu kez rotayı değil, birbirimizi kaybetmemeye çalışalım.",
           "objective": "Omega-3’e bir kez destek ver",
           "goal": "steady",
@@ -244,7 +244,7 @@
         {
           "id": "alone",
           "name": "Güvenli açıklığa devam et",
-          "effect": "+0 can · +2 mayın · dengeli ikmal",
+          "effect": "+0 can · hızlı mayın · dengeli ikmal",
           "opening": "Omega-3: Güvenli açıklığa devam et. Bu kez rotayı değil, birbirimizi kaybetmemeye çalışalım.",
           "objective": "İki ikmal kapsülü topla",
           "goal": "supplies",
@@ -301,7 +301,7 @@
         {
           "id": "anchor",
           "name": "Omega-3’e istasyonda yer aç",
-          "effect": "+20 can · +0 mayın · dengeli ikmal",
+          "effect": "+20 can · dengeli ikmal",
           "opening": "Omega-3: Omega-3’e istasyonda yer aç. Bu kez rotayı değil, birbirimizi kaybetmemeye çalışalım.",
           "objective": "Omega-3’e bir kez destek ver",
           "goal": "steady",
@@ -313,7 +313,7 @@
         {
           "id": "release",
           "name": "Çıkış anahtarını ona ver",
-          "effect": "+0 can · +2 mayın · sık ikmal",
+          "effect": "+0 can · hızlı mayın · sık ikmal",
           "opening": "Omega-3: Çıkış anahtarını ona ver. Bu kez rotayı değil, birbirimizi kaybetmemeye çalışalım.",
           "objective": "İki ikmal kapsülü topla",
           "goal": "supplies",
@@ -325,7 +325,7 @@
         {
           "id": "sleep",
           "name": "Çekirdeği güvenli uykuya al",
-          "effect": "+10 can · +0 mayın · dengeli ikmal",
+          "effect": "+10 can · dengeli ikmal",
           "opening": "Omega-3: Çekirdeği güvenli uykuya al. Bu kez rotayı değil, birbirimizi kaybetmemeye çalışalım.",
           "objective": "Omega-3’e bir kez destek ver",
           "goal": "steady",
@@ -382,7 +382,7 @@
         {
           "id": "stay",
           "name": "İstasyonda nöbeti paylaş",
-          "effect": "+20 can · +0 mayın · dengeli ikmal",
+          "effect": "+20 can · dengeli ikmal",
           "opening": "Omega-3: İstasyonda nöbeti paylaş. Bu kez rotayı değil, birbirimizi kaybetmemeye çalışalım.",
           "objective": "Omega-3’e bir kez destek ver",
           "goal": "steady",
@@ -394,7 +394,7 @@
         {
           "id": "escort",
           "name": "Son araca eşlik et",
-          "effect": "+0 can · +2 mayın · dengeli ikmal",
+          "effect": "+0 can · hızlı mayın · dengeli ikmal",
           "opening": "Omega-3: Son araca eşlik et. Bu kez rotayı değil, birbirimizi kaybetmemeye çalışalım.",
           "objective": "İki ikmal kapsülü topla",
           "goal": "supplies",
@@ -451,7 +451,7 @@
         {
           "id": "broadcast",
           "name": "İmzalı tanıklığı yayımla",
-          "effect": "+0 can · +2 mayın · dengeli ikmal",
+          "effect": "+0 can · hızlı mayın · dengeli ikmal",
           "opening": "Omega-3: İmzalı tanıklığı yayımla. Bu kez rotayı değil, birbirimizi kaybetmemeye çalışalım.",
           "objective": "İki ikmal kapsülü topla",
           "goal": "supplies",
@@ -463,7 +463,7 @@
         {
           "id": "witness",
           "name": "Tanıkları ayrı yollardan çıkar",
-          "effect": "+15 can · +0 mayın · sık ikmal",
+          "effect": "+15 can · sık ikmal",
           "opening": "Omega-3: Tanıkları ayrı yollardan çıkar. Bu kez rotayı değil, birbirimizi kaybetmemeye çalışalım.",
           "objective": "Omega-3’e bir kez destek ver",
           "goal": "steady",
@@ -520,7 +520,7 @@
         {
           "id": "garden",
           "name": "İstasyonun enerji hattını onar",
-          "effect": "+15 can · +0 mayın · sık ikmal",
+          "effect": "+15 can · sık ikmal",
           "opening": "Omega-3: İstasyonun enerji hattını onar. Bu kez rotayı değil, birbirimizi kaybetmemeye çalışalım.",
           "objective": "Omega-3’e bir kez destek ver",
           "goal": "steady",
@@ -532,7 +532,7 @@
         {
           "id": "return",
           "name": "Omega-3’ün ilk saatini aç",
-          "effect": "+20 can · +0 mayın · dengeli ikmal",
+          "effect": "+20 can · dengeli ikmal",
           "opening": "Omega-3: Omega-3’ün ilk saatini aç. Bu kez rotayı değil, birbirimizi kaybetmemeye çalışalım.",
           "objective": "Omega-3’e bir kez destek ver",
           "goal": "steady",
@@ -589,7 +589,7 @@
         {
           "id": "lead",
           "name": "Yolu aç ve son aracı bekle",
-          "effect": "+0 can · +2 mayın · dengeli ikmal",
+          "effect": "+0 can · hızlı mayın · dengeli ikmal",
           "opening": "Omega-3: Yolu aç ve son aracı bekle. Bu kez rotayı değil, birbirimizi kaybetmemeye çalışalım.",
           "objective": "İki ikmal kapsülü topla",
           "goal": "supplies",
@@ -601,7 +601,7 @@
         {
           "id": "follow",
           "name": "En yavaş aracın yanında kal",
-          "effect": "+20 can · +0 mayın · dengeli ikmal",
+          "effect": "+20 can · dengeli ikmal",
           "opening": "Omega-3: En yavaş aracın yanında kal. Bu kez rotayı değil, birbirimizi kaybetmemeye çalışalım.",
           "objective": "Omega-3’e bir kez destek ver",
           "goal": "steady",
@@ -658,7 +658,7 @@
         {
           "id": "keep",
           "name": "İkiniz için yeni yola çık",
-          "effect": "+10 can · +0 mayın · dengeli ikmal",
+          "effect": "+10 can · dengeli ikmal",
           "opening": "Omega-3: İkiniz için yeni yola çık. Bu kez rotayı değil, birbirimizi kaybetmemeye çalışalım.",
           "objective": "Omega-3’e bir kez destek ver",
           "goal": "steady",
@@ -670,7 +670,7 @@
         {
           "id": "turnback",
           "name": "Emre’nin vericisine geri dön",
-          "effect": "+0 can · +2 mayın · sık ikmal",
+          "effect": "+0 can · hızlı mayın · sık ikmal",
           "opening": "Omega-3: Emre’nin vericisine geri dön. Bu kez rotayı değil, birbirimizi kaybetmemeye çalışalım.",
           "objective": "İki ikmal kapsülü topla",
           "goal": "supplies",
