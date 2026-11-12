@@ -82,7 +82,7 @@ func run() -> void:
 	game.pickup_timer=99999
 	game.touch_enabled=true
 	game._sync_touch()
-	h.eq("chosen route gives extra mines in the real scene",game.mines_left,5)
+	h.eq("chosen route gives extra mines in the real scene",game.mines_left,int(game._cfg("mine.count",3))+2)
 	var road: Rect2=game.road_touch_rect
 	var origin := road.get_center()
 	var fire: Vector2=game.touch_by_action["drive_fire"].position+game.touch_by_action["drive_fire"].size/2

@@ -11,6 +11,10 @@ export XDG_CACHE_HOME="$TEST_RUNTIME/cache"
 mkdir -p "$XDG_DATA_HOME" "$XDG_CONFIG_HOME" "$XDG_CACHE_HOME"
 status=0
 for t in test_parser test_momo test_garage_save test_run_scene test_arcade_scene test_full_run test_title_ui test_save_recovery test_controller_flow test_settings_access test_swipe_story; do
+  export XDG_DATA_HOME="$TEST_RUNTIME/$t/data"
+  export XDG_CONFIG_HOME="$TEST_RUNTIME/$t/config"
+  export XDG_CACHE_HOME="$TEST_RUNTIME/$t/cache"
+  mkdir -p "$XDG_DATA_HOME" "$XDG_CONFIG_HOME" "$XDG_CACHE_HOME"
   out="$("$GODOT" --headless --quit-after 600 --path "$ROOT" --script "res://tests/$t.gd" 2>&1)"
   code=$?
   echo "$out" | grep -E "^(FAIL|-- |RESULT)|SCRIPT ERROR|Parse Error"

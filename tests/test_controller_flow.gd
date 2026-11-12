@@ -97,10 +97,11 @@ func run() -> void:
  h.check("reconnect does not unexpectedly resume",game.paused)
  h.check("duplicate remap rejected",Controls.binding_error("drive_fire",KEY_LEFT,false,{})!="")
  h.check("pause key cannot be stolen",Controls.binding_error("drive_fire",KEY_ESCAPE,false,{})!="")
- Controls.install({"drive_fire":KEY_J},{"drive_fire":JOY_BUTTON_LEFT_STICK})
+ Controls.install({"drive_fire":KEY_J,"drive_left":KEY_K},{"drive_fire":JOY_BUTTON_LEFT_STICK})
+ Controls.last_device="keyboard"
  var key := InputEventKey.new()
  key.physical_keycode=KEY_J
- h.check("custom keyboard key enters native InputMap",InputMap.event_is_action(key,"drive_fire"))
+ h.check("custom keyboard key enters native InputMap",InputMap.event_is_action(key,"drive_fire") and Controls.run_hint().contains("K") and not Controls.run_hint().contains("A/D"))
  var pad := InputEventJoypadButton.new()
  pad.button_index=JOY_BUTTON_LEFT_STICK
  h.check("custom pad button enters native InputMap",InputMap.event_is_action(pad,"drive_fire"))
