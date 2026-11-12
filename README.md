@@ -1,4 +1,4 @@
-# Drive-By Wire · 0.6.1
+# Drive-By Wire · 0.6.2
 
 **Fragaria Interactive · Fragaria Games · AIONIA**
 
@@ -66,4 +66,6 @@ Web çıktısını `http://localhost:8765` ile aç.
 - `assets/`, `tools/art/`: mevcut piksel çizimler ve kaynak kayıtları.
 - `packaging/`, `export_presets.cfg`, `.github/`: derleme profilleri.
 
-0.6.1: görsel ayarlar ve kamera çizim sıklığı trafik/ikmal şansını değiştirmez. Ekran dışına kaçan mermiler temizlenir; arkadaki araçlara ateş hedefe ulaşabilir. Kullanıcının açık yayın talebiyle GitHub/Vercel yayını hazırlanır; canlı sürüm bilgisi `/version.json` üzerinden doğrulanabilir.
+0.6.2: [Güncel oyunu aç](https://drive-by-wire.vercel.app/play/). Kök adres bu girişe yönlenir; oyun dosyaları sürüm ve commit içeren ayrı klasörden gelir. Eski HTML ile yeni PCK karışmaz. Açık oyun sonraki sürümü haber verir; oyuncu düğmeye basana kadar etap yenilenmez. Kayıt silinmez. `main` güncellenince Vercel otomatik dağıtır; GitHub Release gerekmez. Canlı sürüm/commit/giriş adresi `/version.json` üzerinden doğrulanabilir.
+
+0.6.1: görsel ayarlar ve kamera çizim sıklığı trafik/ikmal şansını değiştirmez. Ekran dışına kaçan mermiler temizlenir; arkadaki araçlara ateş hedefe ulaşabilir.

@@ -1,4 +1,21 @@
-# AIONIA kalite raporu · Drive-By Wire 0.6.1
+# AIONIA kalite raporu · Drive-By Wire 0.6.2
+
+## Güncelleme geçişi · 12 Kasım 2026
+
+| Kontrol | Sonuç | Gerçek kapsam |
+| --- | --- | --- |
+| Native regresyon | PASS | 0.6.2 ile 821 kontrol / 16 takım yeniden geçti. |
+| Önbellekli sürümden geçiş | PASS | `tests/browser_update.cjs`: aynı Chromium profili ve origin'de önceki 0.6.1 HTML/JS/WASM/PCK dosyaları uzun süreli HTTP önbelleğine alındı. Sunucu 0.6.2'ye geçtiğinde eski HTML'nin kaldığı doğrulandı; `/play/` yeni commit klasöründeki JS/WASM/PCK ile gerçek oyunu açtı. Kullanıcının telefonundaki kesin nedenin tespiti değildir. |
+| Kayıtların korunması | PASS | Eski oyunda gerçek garaj seçimi yapıldı ve Godot IndexedDB `save.json` kaydı oluştu. Yeni klasörden açılış sonrası kayıt içeriği birebir aynı; güven 54 kaldı. localStorage değeri de korundu. Veri silme/Cache Storage temizleme yapılmadı. |
+| Gelecek sürüm bildirimi | PASS | Yerel test manifesti daha yeni commit sunduğunda bildirim çıktı; moladaki mesafe değişmedi. Yalnız düğmeye basınca testin yeni giriş adresine gidildi. Bu, gelecekteki 0.6.3 oyununun tamamlandığı anlamına gelmez. |
+| Temiz kök adres açılışı | PASS | Yerel Chromium kök adresten sürümlü girişe otomatik ulaştı; dikey telefon düzeninde oyun açıldı. Vercel 307 ve canlı yanıt başlıkları dağıtım sonrasında ayrıca doğrulanır. |
+| Kullanıcının fiziksel telefonu / Firefox Android | NOT TESTED | Kullanıcının tarayıcı oturumuna erişim yok; ekran görüntüsü eski MOMO arayüzünü gösteriyor. Yeni bağlantının fiziksel cihazdaki sonucu kullanıcıda gözlenebilir. |
+
+Yerel komut: `NODE_PATH=<Playwright kurulumu> node tests/browser_update.cjs`. Önceki düz web derlemesi `work/legacy-v061` içine kopyalanır; yeni sürüm `python3 packaging/build_web.py` ile hazırlanır. Bu test gerçek oynanışı açar ve kaydı okur; QA oynanışa değer yazmaz. Dağıtım sonrası kontrol gerçek `/version.json`, sürümlü PCK, HTTP başlıkları ve PC/dikey/yatay dokunma girdileriyle yapılır; yerel sonuç canlı sonuç diye sunulmaz.
+
+## Önceki oynanış ve yayın doğrulamaları · 0.6.1
+
+Aşağıdaki ayrıntıların 0.6.1 tarihli kapsamı [arşiv raporunda](history/QA-v061.md) da korunur. 0.6.2 değişikliği web güncelleme/teslim akışıdır; 60 FPS, gerçek Canvas OS fontu ve fiziksel cihaz sınırları giderilmiş sayılmaz.
 
 12 Kasım 2026. PASS çalıştırılmış kapsam, FAIL karşılanmayan hedef, NOT TESTED denenmeyen kapsamdır. Godot 4.6.3/GDScript korunur. Fiziksel cihaz veya insan eğlence testi emülasyonla eşdeğer sayılmaz. Standart kapsamı [AIONIA_CURRENT_REFERENCE.md](AIONIA_CURRENT_REFERENCE.md), önceki sonuçlar [0.6.0 raporunda](history/QA-v060.md).
 
