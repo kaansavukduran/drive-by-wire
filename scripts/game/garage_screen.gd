@@ -33,6 +33,7 @@ var face: Control
 var speech: Label
 var info: Label
 var title: Label
+var quick_button: Button
 var buttons: VBoxContainer
 var _t := 0.0
 var sheets := Sheets.new()
@@ -40,13 +41,13 @@ var has_art := false
 
 
 func _ready() -> void:
-	Controls.install()
 	rng.randomize()
 	Engine.time_scale = 1.0
 	balance = DataLoader.load_json(DataLoader.BALANCE_PATH)
 	garage = Garage.new(DataLoader.load_json(DataLoader.GARAGE_PATH), balance)
 	store = SaveStore.new()
 	save = store.load_data()
+	Controls.install(save["settings"]["bindings"],save["settings"]["pad_bindings"],save["settings"]["deadzone"])
 	momo = Momo.new(balance, DataLoader.load_json(DataLoader.MOMO_LINES_PATH), float(save.get("trust", 50.0)))
 	# Pixelify Sans digits (5 looks like S) hurt HUD readability; Lexend stays the UI font.
 	var font: FontFile = FONT_FALLBACK.duplicate()
@@ -90,6 +91,7 @@ func _ready() -> void:
 	var brief := _label(ui, Vector2(16, 290), Vector2(410, 40), 11)
 	brief.text = "← → Sür · ↑ Turbo · ↓ Fren · Space Ateş\n1.200 metreyi aş. MOMO'yu eve getir."
 	var quick := Button.new()
+	quick_button = quick
 	quick.theme = theme
 	quick.position = Vector2(326, 32)
 	quick.size = Vector2(298, 24)
@@ -112,6 +114,7 @@ func _ready() -> void:
 			var opt: Dictionary = options[i]
 			_button("%d) %s" % [i + 1, str(opt.get("text", ""))], _choose.bind(str(opt.get("id", ""))))
 	_update_info()
+	_link_focus()
 
 
 func _label(parent: Node, pos: Vector2, size: Vector2, font_size: int) -> Label:
@@ -140,7 +143,7 @@ func _button(text: String, action: Callable) -> Button:
 
 func _clear_buttons() -> void:
 	for c in buttons.get_children():
-		buttons.remove_child(c)
+		c.hide()
 		c.queue_free()
 
 
@@ -176,6 +179,30 @@ func _show_upgrades() -> void:
 		var u: Dictionary = offers[i]
 		_button("%d) %s · %s" % [i + 1, str(u.get("name", u.get("id", ""))), str(u.get("description", ""))], _pick_upgrade.bind(str(u.get("id", ""))))
 	_update_info()
+	_focus_options()
+	_link_focus()
+
+
+func _link_focus() -> void:
+	# A fixed column needs a predictable controller route, independent of geometry.
+	var order: Array[Button] = [quick_button]
+	for child in buttons.get_children():
+		if child is Button and child.visible and not child.is_queued_for_deletion():
+			order.append(child)
+	for i in order.size():
+		var previous := order[posmod(i - 1,order.size())]
+		var next := order[(i + 1) % order.size()]
+		order[i].focus_neighbor_top = order[i].get_path_to(previous)
+		order[i].focus_neighbor_bottom = order[i].get_path_to(next)
+		order[i].focus_previous = order[i].get_path_to(previous)
+		order[i].focus_next = order[i].get_path_to(next)
+
+
+func _focus_options() -> void:
+	for child in buttons.get_children():
+		if child is Button and not child.is_queued_for_deletion():
+			child.call_deferred("grab_focus")
+			return
 
 
 func _pick_upgrade(id: String) -> void:
@@ -192,6 +219,7 @@ func _pick_upgrade(id: String) -> void:
 			name = str(u.get("name", id))
 	var go := _button("Enter) Sefere çık  ·  takılı: %s" % name, _start_run)
 	go.grab_focus()
+	_link_focus()
 	_update_info()
 
 
@@ -207,7 +235,15 @@ func _quick_start() -> void:
 	_start_run()
 
 
+func _input(event: InputEvent) -> void:
+	Controls.observe(event)
+
+
 func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_cancel"):
+		get_tree().call_deferred("change_scene_to_file", "res://scenes/title.tscn")
+		get_viewport().set_input_as_handled()
+		return
 	if not (event is InputEventKey and event.pressed and not event.echo):
 		return
 	var k: int = event.keycode
@@ -234,7 +270,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _update_info() -> void:
 	var mem: Dictionary = save.get("memory", {})
-	info.text = "v0.3.0 · Güven %d · Sefer %d · Rekor %d · En uzun %d m · 1–4 seç / Space hızlı sürüş" % [
+	info.text = "v0.4.0 · Güven %d · Sefer %d · Rekor %d · En uzun %d m · 1–4 seç / Space hızlı sürüş" % [
 		int(momo.trust), int(mem.get("runs", 0)), int(save.get("best_score", 0)), int(mem.get("best_distance", 0))]
 	face.mood = momo.mood
 
@@ -242,6 +278,10 @@ func _update_info() -> void:
 func _process(delta: float) -> void:
 	if bool(save.get("settings", {}).get("motion", true)):
 		_t += delta
+	if Controls.last_device == "pad":
+		info.text = "D-pad / sol çubuk: seçim · A: onay · B: ana menü"
+	else:
+		_update_info()
 	queue_redraw()
 
 

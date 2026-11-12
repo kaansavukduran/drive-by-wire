@@ -121,14 +121,19 @@ var settings_panel: Control
 var motion_enabled := true
 var energy_caption: Label
 var metrics_clock := 0.0
+var pad_lane_latch := 0
+var hud_clock := 0.0
+var web_help_callback: JavaScriptObject
+var abandon_dialog: ConfirmationDialog
+var pending_exit: Callable
 
 
 func _ready() -> void:
-	Controls.install()
 	rng.randomize()
 	var base_balance := DataLoader.load_json(DataLoader.BALANCE_PATH)
 	store = SaveStore.new()
 	save = store.load_data()
+	Controls.install(save["settings"]["bindings"], save["settings"]["pad_bindings"], save["settings"]["deadzone"])
 	var garage := Garage.new(DataLoader.load_json(DataLoader.GARAGE_PATH), base_balance)
 	balance = garage.effective_balance(base_balance, save.get("upgrades", {}), Session.next_run_modifiers)
 	Session.next_run_modifiers = []
@@ -144,6 +149,7 @@ func _ready() -> void:
 	add_child(sounds)
 	Input.joy_connection_changed.connect(func(_device: int, connected: bool):
 		if not connected:
+			Controls.last_device = "keyboard"
 			_set_paused(true))
 	parser = CommandParser.new(DataLoader.load_json(DataLoader.INTENTS_PATH), balance)
 	momo = Momo.new(balance, DataLoader.load_json(DataLoader.MOMO_LINES_PATH), float(save.get("trust", 50.0)))
@@ -163,6 +169,20 @@ func _ready() -> void:
 	_build_ui()
 	face.decorative_motion = motion_enabled
 	_say("Oklar sende.\nSpace ile ateş!")
+	if OS.has_feature("web"):
+		web_help_callback = JavaScriptBridge.create_callback(_on_web_help)
+		JavaScriptBridge.get_interface("window").addEventListener("hashchange", web_help_callback)
+		_on_web_help([])
+
+
+func _on_web_help(_args: Array) -> void:
+	if JavaScriptBridge.eval("location.hash === '#accessible-help'"):
+		_set_paused(true)
+
+
+func _exit_tree() -> void:
+	if OS.has_feature("web") and web_help_callback != null:
+		JavaScriptBridge.get_interface("window").removeEventListener("hashchange", web_help_callback)
 
 
 func _cfg(path: String, fallback: float) -> float:
@@ -323,7 +343,7 @@ func _build_pause(parent: Node) -> void:
 		["Ayarlar", func():
 			pause_panel.hide()
 			settings_panel.open()],
-		["Yeniden sür", _restart_run], ["Garaja dön", _to_garage], ["Ana menü", _to_title],
+		["Yeniden sür", func(): _confirm_abandon(_restart_run)], ["Garaja dön", func(): _confirm_abandon(_to_garage)], ["Ana menü", func(): _confirm_abandon(_to_title)],
 	]
 	for item in items:
 		var button := Button.new()
@@ -347,7 +367,28 @@ func _build_pause(parent: Node) -> void:
 		settings_panel.hide()
 		pause_panel.show()
 		(column.get_child(1) as Button).grab_focus())
+	settings_panel.data_reset.connect(func():
+		Session.next_run_modifiers = []
+		_to_title())
 	parent.add_child(settings_panel)
+	abandon_dialog = ConfirmationDialog.new()
+	UiSkin.prepare_confirmation(abandon_dialog)
+	abandon_dialog.title = "Bu sürüşten ayrıl?"
+	abandon_dialog.dialog_text = "Bu sürüşün tamamlanmamış puanı kaybolacak. Önceki rekor ve kayıtlar korunur."
+	abandon_dialog.ok_button_text = "Sürüşten ayrıl"
+	abandon_dialog.cancel_button_text = "Sürüşe dön"
+	abandon_dialog.confirmed.connect(func(): pending_exit.call())
+	abandon_dialog.canceled.connect(func():
+		pause_panel.show()
+		(column.get_child(1) as Button).grab_focus())
+	add_child(abandon_dialog)
+
+
+func _confirm_abandon(callback: Callable) -> void:
+	pending_exit = callback
+	pause_panel.hide()
+	abandon_dialog.popup_centered(Vector2i(400, 150))
+	abandon_dialog.get_cancel_button().grab_focus()
 
 
 func _apply_settings(value: Dictionary) -> void:
@@ -372,6 +413,7 @@ func _build_touch(parent: Node) -> void:
 	var specs := [
 		[Rect2(8, 270, 80, 42), "←", "drive_left"], [Rect2(96, 270, 80, 42), "→", "drive_right"],
 		[Rect2(8, 316, 80, 42), "TURBO", "drive_up"], [Rect2(96, 316, 80, 42), "FREN", "drive_down"],
+		[Rect2(456, 220, 80, 42), "SIYRIL", "drive_dodge"], [Rect2(544, 220, 80, 42), "DESTEK", "drive_comfort"],
 		[Rect2(456, 316, 80, 42), "ATEŞ", "drive_fire"], [Rect2(544, 316, 80, 42), "MAYIN", "drive_mine"],
 	]
 	for spec in specs:
@@ -406,9 +448,14 @@ func _lane_of(x: float) -> int:
 # ---------------------------------------------------------------------------
 
 func _input(event: InputEvent) -> void:
+	Controls.observe(event)
+	if is_instance_valid(abandon_dialog) and abandon_dialog.visible:
+		return
 	if is_instance_valid(settings_panel) and settings_panel.visible:
+		if settings_panel.capture_action != "":
+			return
 		if event.is_action_pressed("drive_pause"):
-			settings_panel.closed.emit()
+			settings_panel.close()
 			get_viewport().set_input_as_handled()
 		return
 	if box.visible:
@@ -420,7 +467,21 @@ func _input(event: InputEvent) -> void:
 		_set_paused(not paused)
 		get_viewport().set_input_as_handled()
 		return
+	if paused and event.is_action_pressed("ui_cancel"):
+		_set_paused(false)
+		get_viewport().set_input_as_handled()
+		return
 	if over or paused:
+		return
+	if event is InputEventJoypadMotion and event.axis == JOY_AXIS_LEFT_X:
+		if absf(event.axis_value) < Controls.deadzone * 0.7:
+			pad_lane_latch = 0
+		elif absf(event.axis_value) >= Controls.deadzone:
+			var direction := 1 if event.axis_value > 0 else -1
+			if direction != pad_lane_latch:
+				_change_lane(lane + direction)
+				pad_lane_latch = direction
+		get_viewport().set_input_as_handled()
 		return
 	for action in Controls.KEYS:
 		if event.is_action_pressed(action):
@@ -430,6 +491,10 @@ func _input(event: InputEvent) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if over and event.is_action_pressed("ui_cancel"):
+		_to_garage()
+		get_viewport().set_input_as_handled()
+		return
 	if over and event is InputEventKey and event.pressed and not event.echo:
 		if event.keycode in [KEY_ENTER, KEY_KP_ENTER]:
 			_restart_run()
@@ -463,7 +528,12 @@ func _set_paused(value: bool) -> void:
 	if over:
 		return
 	_close_box()
+	if value and paused:
+		return
 	paused = value
+	pad_lane_latch = 0
+	for device in Input.get_connected_joypads():
+		Input.stop_joy_vibration(device)
 	for action in Controls.KEYS:
 		Input.action_release(action)
 	face.set_process(not value)
@@ -679,6 +749,14 @@ func _process(delta: float) -> void:
 	if bubble_left <= 0.0:
 		bubble.text = ""
 	toast.visible = toast_left > 0.0 and not paused and not over
+	hud_clock += delta
+	if hud_clock >= 0.1:
+		hud_clock = 0.0
+		_update_hud()
+	queue_redraw()
+
+
+func _update_hud() -> void:
 	score_label.text = "%06d" % arcade.score
 	hud.text = "CAN %d / %d\n%d m / %d m\nHız %d · Mayın %d" % [maxi(0, ceili(hp)), int(max_hp), int(distance), int(_cfg("arcade.finish_distance", 1200)), int(speed), mines_left]
 	hp_bar.value = hp / max_hp * 100.0
@@ -687,17 +765,18 @@ func _process(delta: float) -> void:
 	route_bar.value = distance / _cfg("arcade.finish_distance", 1200) * 100.0
 	var progress: Vector2 = arcade.contract_progress(distance, kills)
 	mission.text = "GÖREV %02d\n%s\n%d / %d\nSeri %d · En iyi %d" % [arcade.contract + 1, arcade.contract_title(), mini(int(progress.x), int(progress.y)), int(progress.y), arcade.chain, arcade.best_chain]
-	status_label.text = "Güven %d · %s\n%s" % [int(momo.trust), Momo.mood_name_tr(momo.mood), ("KALKAN %.1f sn" % shield_left) if shield_left > 0 else (("Destek %.0f sn" % comfort_cooldown) if comfort_cooldown > 0 else "C · Destek hazır")]
+	status_label.text = "Güven %d · %s\n%s" % [int(momo.trust), Momo.mood_name_tr(momo.mood), ("KALKAN %.1f sn" % shield_left) if shield_left > 0 else (("Destek %.0f sn" % comfort_cooldown) if comfort_cooldown > 0 else "%s · Destek hazır" % Controls.binding_name("drive_comfort",Controls.last_device=="pad"))]
 	face.mood = momo.mood
 	face.queue_redraw()
-	hint.visible = not box.visible and not over
-	queue_redraw()
+	hint.text = Controls.run_hint()
+	hint.visible = not box.visible and not over and Controls.last_device != "touch"
+
 
 
 func _physics_process(delta: float) -> void:
 	if paused or over:
 		return
-	if not box.visible and _held("drive_fire"):
+	if not box.visible and (_held("drive_fire") or bool(save["settings"]["auto_fire"])):
 		_fire({})
 	_simulate(delta)
 
@@ -1034,6 +1113,9 @@ func _damage_player(amount: float, tell := true) -> void:
 		_notice("Kalkan darbeyi emdi!")
 		return
 	arcade.break_chain()
+	if bool(save["settings"]["vibration"]):
+		for device in Input.get_connected_joypads():
+			Input.start_joy_vibration(device, 0.25, 0.4, 0.15)
 	sounds.cue("hit")
 	hp -= amount
 	invulnerable = _cfg("player.invulnerable_after_hit", 0.6)

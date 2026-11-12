@@ -8,6 +8,7 @@ const SettingsPanel := preload("res://scripts/game/settings_panel.gd")
 const SaveStore := preload("res://scripts/core/save_store.gd")
 const Garage := preload("res://scripts/core/garage.gd")
 const DataLoader := preload("res://scripts/core/data_loader.gd")
+const Controls := preload("res://scripts/game/controls.gd")
 const Session := preload("res://scripts/game/session.gd")
 
 var sheets := Sheets.new()
@@ -19,11 +20,14 @@ var face: Control
 var motion := true
 var _t := 0.0
 var menu_buttons: Array[Button] = []
+var control_hint: Label
+var footer: Label
 
 func _ready() -> void:
 	Engine.time_scale = 1.0
 	var store := SaveStore.new()
 	var save: Dictionary = store.load_data()
+	Controls.install(save["settings"]["bindings"], save["settings"]["pad_bindings"], save["settings"]["deadzone"])
 	motion = bool(save["settings"]["motion"])
 	var ui := CanvasLayer.new()
 	add_child(ui)
@@ -35,8 +39,12 @@ func _ready() -> void:
 	_button(ui, Rect2(24, 204, 304, 28), "Önce garaja uğra", _garage)
 	_button(ui, Rect2(24, 240, 148, 28), "Nasıl oynanır?", _show_help)
 	_button(ui, Rect2(180, 240, 148, 28), "Ayarlar", _show_settings)
-	_label(ui, Rect2(24, 282, 308, 43), "← → Şerit  ·  Space Ateş\n↑ Turbo  ·  ↓ Fren  ·  Esc Mola", 11)
-	_label(ui, Rect2(24, 338, 592, 14), "v0.3.0  ·  Rekor %d  ·  Kayıt bu cihazda  ·  Çevrimdışı tek oyuncu" % int(save["best_score"]), 9)
+	control_hint = _label(ui, Rect2(24, 282, 308, 43), "← → Şerit  ·  Space Ateş\n↑ Turbo  ·  ↓ Fren  ·  Esc Mola", 11)
+	footer = _label(ui, Rect2(24, 338, 592, 14), "v0.4.0  ·  Rekor %d  ·  Kayıt bu cihazda  ·  Çevrimdışı tek oyuncu" % int(save["best_score"]), 9)
+	if store.last_error.begins_with("recovered_"):
+		footer.text = "İlerleme kurtarma kopyasından geri alındı. Kayıt bu cihazda."
+	elif store.last_error not in ["", "missing"]:
+		footer.text = "Kayıt okunamadı veya daha yeni sürümden. Bu oturumda oynayabilirsin."
 	face = MomoFace.new()
 	face.position = Vector2(454, 103)
 	face.scale = Vector2(2, 2)
@@ -55,8 +63,24 @@ func _ready() -> void:
 		settings.hide()
 		_set_menu_enabled(true)
 		start_button.grab_focus())
+	settings.data_reset.connect(func():
+		Session.next_run_modifiers = []
+		get_tree().call_deferred("reload_current_scene"))
 	ui.add_child(settings)
+	_link_menu_focus()
 	start_button.grab_focus()
+
+func _link_menu_focus() -> void:
+	# Explicit routes also work when buttons live directly under a CanvasLayer.
+	var neighbors := [[2,1,0,0],[0,2,1,1],[1,0,2,3],[1,0,2,3]]
+	for i in menu_buttons.size():
+		var button := menu_buttons[i]
+		button.focus_neighbor_top = button.get_path_to(menu_buttons[neighbors[i][0]])
+		button.focus_neighbor_bottom = button.get_path_to(menu_buttons[neighbors[i][1]])
+		button.focus_neighbor_left = button.get_path_to(menu_buttons[neighbors[i][2]])
+		button.focus_neighbor_right = button.get_path_to(menu_buttons[neighbors[i][3]])
+		button.focus_next = button.get_path_to(menu_buttons[(i+1)%menu_buttons.size()])
+		button.focus_previous = button.get_path_to(menu_buttons[posmod(i-1,menu_buttons.size())])
 
 func _label(parent: Node, rect: Rect2, text: String, font_size: int) -> Label:
 	var label := Label.new()
@@ -128,12 +152,18 @@ func _garage() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
 		if settings.visible:
-			settings.closed.emit()
+			settings.close()
 		elif help_panel.visible:
 			_hide_help()
 		get_viewport().set_input_as_handled()
 
+func _input(event: InputEvent) -> void:
+	Controls.observe(event)
+
+
 func _process(delta: float) -> void:
+	start_button.text = "Sürüşe başla · A" if Controls.last_device == "pad" else "Sürüşe başla · Space"
+	control_hint.text = "Sol çubuk / D-pad Şerit · %s / RT Ateş\n%s Turbo · LT Fren · Start Mola" % [Controls.binding_name("drive_fire",true),Controls.binding_name("drive_up",true)] if Controls.last_device == "pad" else "%s / %s Şerit · %s Ateş\n%s Turbo · %s Fren · Esc Mola" % [Controls.binding_name("drive_left"), Controls.binding_name("drive_right"), Controls.binding_name("drive_fire"), Controls.binding_name("drive_up"), Controls.binding_name("drive_down")]
 	if motion:
 		_t += delta
 	queue_redraw()

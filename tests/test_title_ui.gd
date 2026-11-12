@@ -23,8 +23,8 @@ func _process(_delta: float) -> bool:
 	panel.store = SaveStore.new("user://test_title_ui.json")
 	panel.store.clear()
 	h.check("settings opens with its own keyboard focus", panel.visible and panel.back.has_focus() and title.start_button.disabled)
-	var column := panel.get_child(0)
-	(column.get_child(3) as CheckButton).button_pressed = false
+	panel.options["motion"].button_pressed = false
+	panel.flush()
 	h.check("reduced motion applies to the actual title", not title.motion)
 	var face_time: float = title.face._t
 	title.face.hurt = 0.35
@@ -33,14 +33,16 @@ func _process(_delta: float) -> bool:
 	h.near("reduced motion still expires damage feedback", title.face.hurt, 0.0, 0.001)
 	var saved: Dictionary = panel.store.load_data()
 	h.eq("reduced motion persists through the settings UI", saved["settings"]["motion"], false)
-	var slider := column.get_child(4).get_child(1) as HSlider
+	var slider := panel.volume_slider as HSlider
 	slider.value = 35
+	panel.flush()
 	h.near("volume persists through the real slider", float(panel.store.load_data()["settings"]["volume"]), 0.35, 0.001)
 	# Explicitly unwritable destination: the UI keeps working and explains failure.
 	panel.store = SaveStore.new("res://project.godot/not-a-directory/save.json")
 	slider.value = 40
+	panel.flush()
 	h.check("save failure has an actionable visible status", panel.status.text.contains("Kayıt yazılamadı"))
-	panel.closed.emit()
+	panel.close()
 	h.check("closing settings restores the title", not panel.visible and not title.start_button.disabled)
 	SaveStore.new("user://test_title_ui.json").clear()
 	quit(h.finish())

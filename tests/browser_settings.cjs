@@ -1,0 +1,41 @@
+const {chromium}=require('playwright');
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const output=process.env.DBW_EVIDENCE_DIR||'work/evidence-v040';
+(async()=>{
+ const browser=await chromium.launch({executablePath:process.env.DBW_CHROMIUM||'/usr/bin/chromium',headless:true,args:['--no-sandbox','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
+ try {
+  const page=await browser.newPage({viewport:{width:1280,height:720}});
+  const errors=[];
+  page.on('pageerror',e=>errors.push(e.message));
+  page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
+  await page.goto(process.env.DBW_URL||'http://127.0.0.1:8765');
+  await page.waitForFunction(()=>document.documentElement.dataset.gameState==='started');
+  await page.mouse.click(500,508);
+  await page.waitForTimeout(200);
+  await page.mouse.click(980,478);
+  await page.waitForFunction(()=>localStorage.getItem('dbw.low_power')==='1');
+  await page.mouse.click(640,616);
+  await page.reload();
+  await page.waitForFunction(()=>document.documentElement.dataset.gameState==='started');
+  assert.equal(await page.evaluate(()=>document.documentElement.dataset.renderMode),'low-power');
+  assert.deepEqual(await page.locator('#canvas').evaluate(e=>[e.width,e.height]),[640,360]);
+  await page.mouse.click(500,508);
+  await page.waitForTimeout(200);
+  await page.mouse.click(415,152);
+  await page.waitForTimeout(200);
+  await page.screenshot({path:`${output}/settings-controls.png`});
+  await page.mouse.click(535,152);
+  await page.waitForTimeout(200);
+  await page.screenshot({path:`${output}/settings-data.png`});
+  await page.mouse.click(640,340);
+  await page.waitForTimeout(200);
+  await page.screenshot({path:`${output}/reset-confirmation.png`});
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(200);
+  assert.equal(await page.evaluate(()=>localStorage.getItem('dbw.low_power')),'1');
+  assert.deepEqual(errors,[]);
+  fs.writeFileSync(`${output}/settings-results.json`,JSON.stringify({lowPowerUiReload:'PASS',resetCancelPreservesPreference:'PASS',browserErrors:errors},null,2)+'\n');
+  console.log('Web settings -> local preference -> reload -> low-power: PASS');
+ } finally {await browser.close();}
+})().catch(e=>{console.error(e);process.exitCode=1;});

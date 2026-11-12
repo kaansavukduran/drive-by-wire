@@ -131,7 +131,7 @@ func _process(_delta: float) -> bool:
 	h.eq("idle timeout removes the multiplier", tally.award(40), 40)
 	saved["settings"] = {"effects": false, "sound": false, "motion": false, "volume": 0.35}
 	game.store.save_data(saved)
-	h.eq("sound and effects preferences round-trip", game.store.load_data()["settings"], saved["settings"])
+	h.check("sound and effects preferences round-trip", not game.store.load_data()["settings"]["sound"] and not game.store.load_data()["settings"]["effects"] and not game.store.load_data()["settings"]["motion"] and is_equal_approx(float(game.store.load_data()["settings"]["volume"]), 0.35))
 	game.store.clear()
 	quit(h.finish())
 	return true

@@ -1,51 +1,58 @@
-# AIONIA kalite kapıları · Drive-By Wire 0.3.0
+# AIONIA kalite kapıları · Drive-By Wire 0.4.0
 
-12 Kasım 2026. Bu dosyada PASS yalnız çalıştırılmış/gözlenmiş kapsam içindir. FAIL açık kusur veya karşılanmayan hedeftir. NOT TESTED denenmeyen ya da eksik kaynağa bağlı kapsamdır. Önizleme tam yayın onayı değildir.
+12 Kasım 2026. PASS yalnız çalıştırılmış/gözlenmiş kapsamdır; FAIL karşılanmayan hedeftir; NOT TESTED denenmeyen kapsamdır. Önizleme tam yayın onayı veya genel erişilebilirlik sertifikası değildir.
 
-| Kapı / senaryo | Sonuç | Kanıt ve sınır |
+| Senaryo | Sonuç | Kanıt ve sınır |
 | --- | --- | --- |
-| A · Drive erişimi, 00_BAŞLA ve AIONIA v1.0 | PASS | Belgeler okundu; repo kopyası ve 19 görselin URL/SHA-256/boyut kayıtları var. |
-| A · Son karakter/çilek logo kanonu | NOT TESTED | Başlangıç belgesi onayı bekliyor diyor; onaysız varyant kesinleştirilmedi. Emre sprite kaynağı bulunmadı. |
-| B · Oyuncu vaadi, üç mekanik, kazanma/kaybetme, sanat/lore sınırı | PASS | GAME_DESIGN.md, ART_BIBLE.md, LORE_LINKS.md. |
-| C · Gerçek kısa bölüm/sefer | PASS | Sabit tohumlu tam sefer gerçek düşman, ikmal, görev ve başarı ile tamamlandı. İnsan eğlence testi değildir. |
-| D · Mevcut görsel kimliği koruma | PASS | Karakter paftaları değiştirilmedi; yeni hazır grafik paketi alınmadı. Yeni UI aynı kod stili ve paletle çizilir. |
-| D · Yeni beş karakter animasyonu | NOT TESTED | Bu oyuna beş yeni oynanabilir karakter eklenmedi. Referansların varlığı animasyon entegrasyonu sayılmadı. |
-| E · Parser / MOMO / garaj ve kayıt | PASS | 110 / 89 / 72 başarılı kontrol. |
-| E · Eski sefer / yeni arcade / tam sefer / başlık UI | PASS | 14 / 32 / 4 / 11 başarılı kontrol. Toplam 332 PASS, 0 FAIL. |
-| E · Gerçek klavye ve iki parmak olayları | PASS | Küs MOMO sırasında anında ok tuşu, turbo/fren, ön/arka ateş, mayın, ayrı parmak bırakma. |
-| E · HUD, menü, yardım, ayar, mola | PASS | 1280×720 Chromium ekranları incelendi. Mola sırasında yol görüntüsü sabit. Arka menü odağı kapatılır; geri dönünce odak doğru düğmeye gelir. |
-| E · Kayıt ve hata durumu | PASS | Rekor ve ses/hareket tercihleri kaydedilir; yazılamayan hedefte UI açıklama gösterir ve oturum ayarı uygulanır. |
-| E · Yükleme hatası → Yeniden dene | PASS | index.pck isteği bilerek engellendi; hata ekranı gözlendi; engel kalkınca aynı düğmeyle açılış başarılı. |
-| E · Ses başlatma | PASS | Chromium kullanıcı girdisinden sonra AudioContext running. Ses aç/kapat ve düzeyin UI/kayıt akışı testli. Fiziksel hoparlör/işitsel kalite testi değildir. |
-| E · Türkçe, ok glifleri, kontrast, şekil işaretleri | PASS | Gerçek ekranlar; katı renkler için 15,41:1 ana metin, 11,29:1 düğme metni kontrast hesabı. |
-| E · Telefon boyutunda emülasyon | PASS | Chromium 844×390, iki parmakla turbo+ateş ve mola. Fiziksel telefon testi değildir. |
-| E · 60 render FPS hedefi, bulut yazılım renderer | FAIL | GPU cihazı bulunmayan SwiftShader ortamında son ölçüm 20 FPS; 60 Hz fizik adımı render başarısı diye sayılmadı. Viewport denemesi 24 FPS'e çıktı ancak yazı keskinliği için canvas_items korundu. |
-| E · Bellek ve gerçek GPU/cihaz performansı | NOT TESTED | Godot release web static-memory sayacı 0 döndürüyor; bu değer gerçek bellek kullanımı olarak raporlanmadı. Fiziksel GPU/Windows/telefon ölçülmedi. |
-| E · Safari, fiziksel gamepad ve insan oyuncu denge testi | NOT TESTED | Bu ortama erişim/katılımcı yok. D-pad eşlemesi uygulandı, fiziksel cihaz doğrulaması yapılmadı. |
-| F · Temiz web build / yerel HTTP açılışı | PASS | Godot 4.6.3, resmî SHA-512 doğrulamalı web şablonu; başlık ve sefer smoke; Chromium runtime hata kayıtları boş. |
-| F · Canlı Vercel URL / native yayın | NOT TESTED | Üretim yayımlanmadı; yeni native kurulum paketi bu çalışmada üretilmedi. CI/export kaynakları korunuyor. |
+| Güncel standart erişimi, amaç/kitle/teknoloji incelemesi | PASS | Verilen Google Doc okundu; başlığı v1.2, içinde istenen v1.1 kuralları var. DESIGN_BRIEF.md ve AIONIA_CURRENT_REFERENCE.md. |
+| Özgün karakter/çilek için kesin kanon onayı | NOT TESTED | Önceki 00_BAŞLA incelemesinde onay bekleniyor; onaysız varyant kesinleştirilmedi. Yeni karakter/logo çizilmedi. |
+| Mevcut Godot altyapısını ve görsel kimliği koruma | PASS | Godot 4.6.3, mevcut art ve JSON denge verileri; yeni motor/framework/runtime bağımlılığı yok. |
+| Parser / MOMO / garaj-kayıt | PASS | 110 / 89 / 72 kontrol. |
+| Eski sefer / arcade / tam sefer / başlık UI | PASS | 14 / 32 / 4 / 11 kontrol. Çalışan 1.200 m sefer korunur. |
+| Kayıt kurtarma ve arıza enjeksiyonu | PASS | 18 kontrol: bozuk/kayıp/512 KiB üstü dosya, rename hatasında mevcut kaydın korunması, yeni şema üzerine yazmama, dosya temizliği, sonlu sayı ve giriş sınırları. |
+| Kontrolcü sahne akışı | PASS | 31 kontrol: A ile başla; analog drift/histerezis; RT ateş; X/Y; Start mola; B geri; ayar sekmesi; ayrılma onayını iptal; otomatik ateş; kopma/bağlanma; yeniden atama; sonuç/garaj/yükseltme/menü. Bunlar enjekte edilmiş Godot olaylarıdır. |
+| Ayar, yeniden atama ve veri sıfırlama UI | PASS | 9 kontrol: birleşen yazım, çakışma açıklaması, J yeniden atama/kayıt/etiket, Esc iptal, güvenli onay odağı, iptalde koruma, onayda yedek dahil silme ve varsayılan kontrol. |
+| Otomatik kontrol toplamı | PASS | **390 başarılı, 0 başarısız; 10 takım.** Testler ayrı geçici XDG deposunda çalışır, oyuncunun gerçek kaydına yazmaz. |
+| Web masaüstü ve çoklu dokunma | PASS | Chromium 1280×720 ve 844×390 emülasyon; oklar, basılı ateş, iki parmakla turbo+ateş, mola sırasında sabit yol. Tarayıcı runtime hata listeleri boş. |
+| Web yükleme hatası ve tekrar deneme | PASS | index.pck isteği engellendi; görünür hata/yeniden dene; engel kalkınca aynı akışla başarılı başlangıç. |
+| Ses açılışı / ayarlar | PASS | Kullanıcı girdisinden sonra AudioContext running; ses düzeyi/kapatma kaydı gerçek UI testiyle doğrulandı. Fiziksel hoparlör değerlendirmesi değildir. |
+| Tarayıcı Gamepad API yolu | PASS | navigator.getGamepads + bağlantı olayı taklidiyle A → oyun, Start → mola; normal ve düşük güç modunda yol sabitliği. Fiziksel kumanda değildir. |
+| Düşük güç tercihi gerçek web UI → tekrar açılış | PASS | Ayar düğmesine tıklama → localStorage → reload → 640×360 arka tampon, 1280×720 görüntü. Sıfırlama iptali tercihi korur. |
+| Semantik web yardım, odak ve %200 metin | PASS | HTML yardım klavye odağı alır, metin yatay taşmadan yeniden akar. Açılınca oyun molaya geçer; kapatınca kendiliğinden sürmez. Bu, oyun canvas'ının tamamında ekran okuyucu desteği anlamına gelmez. |
+| 60 FPS normal mod hedefi | FAIL | GPU bulunmayan SwiftShader ortamında normal mod örnekleri 19 / 19 / 18 FPS; medyan 19. 60 Hz fizik render başarısı sayılmadı. |
+| Düşük güç modunda en az 30 FPS ara hedefi | PASS | Aynı 1280×720 viewport ve aynı yazılım renderer: 640×360 tamponla 33 / 35 / 40 FPS; medyan 35. Yazı/çizim keskinliği azalır; seçenek isteğe bağlı ve normal mod varsayılandır. Gerçek cihaz garantisi değildir. |
+| Bellek toplamı ve gerçek GPU/telefon FPS | NOT TESTED | CDP JS heap ~9,6–9,7 MB yalnız JS kısmıdır; WASM/GPU ve toplam bellek değildir. Godot release static-memory sayacı 0 döndürür, toplam bellek diye kullanılmaz. |
+| Fiziksel gamepad/titreşim, telefon, Safari, native kurulum | NOT TESTED | Gerekli cihazlar bu ortamda yok. Analog/düğme eşlemeleri veya tarayıcı emülasyonu bu kapıyı geçirmez. |
+| Tam ekran okuyucu ile oynama / WCAG AA / her hedefte büyük yazı | NOT TESTED | Canvas oynanışı, bütün menü/HUD ve gerçek yardımcı teknolojiyle uçtan uca denetim yapılmadı. Türkçe UI; tam dil seçimi yok. Dikey telefonda alan küçülür. |
+| İnsan oyuncu eğlence ve uzun denge testi | NOT TESTED | Sabit tohumlu tam sefer ve otomatik kontroller insan değerlendirmesi yerine sayılmadı. |
+| Yerel veri, ağ isteği ve yayın imzası incelemesi | PASS | Test edilen iki web oturumunda üçüncü taraf istek yok; hesap/analiz SDK'sı yok. Yerel sıfırlama testli. Android public-key fallback kaldırıldı; kaynak ağaçta prototip anahtarı yok. Geçmişteki anahtar hâlâ açıktır. |
+| Gerçek sahip Android imzası ve üretim güvenlik başlıkları | NOT TESTED | CI yapılandırması düzenlendi; gizli sahip anahtarı kurulmadı. Vercel başlıkları üretimde denenmedi. |
+| Temiz web build ve yerel HTTP açılışı | PASS | Resmî SHA-512 doğrulamalı Godot/şablon, başlık+sefer smoke; script hatası yok. |
+| Yeni CI platform çıktıları / canlı üretim yayını | NOT TESTED | Yeni native kurulum paketleri bu yerel çalışmada üretilmedi; main birleştirilmedi, üretim yayımlanmadı. |
 
 ## Ölçüm ve tekrar üretim
 
-Son yerel ilk ziyaret yükleme süresi 2.876 ms; internet üzerindeki Vercel performansı değildir. Paket dosyaları yaklaşık 37,70 MB WASM ve 0,58 MB PCK içerir; runtime'a büyük Drive referans atlasları gömülmedi. Sıkıştırılmış teslim boyutu teslim klasöründeki SHA256SUMS ve dosya boyutlarıyla doğrulanır. Tek örnek FPS/yükleme değeri bütün cihazların performans garantisi değildir.
+Aynı tarayıcı/viewport karşılaştırması: normal ilk yükleme 2.407 ms, düşük güç 1.944 ms. İkinci oturumda tarayıcı/disk önbelleği etkisi olabilir; bunlar internet/Vercel ilk ziyaret ölçümü veya düşük gücün yüklemeyi hızlandırdığına kanıt değildir. WASM yaklaşık 37,70 MB, PCK yaklaşık 0,60 MB; büyük Drive referans paftaları runtime'a gömülmez. İndirme sıkıştırması ve toplam paket boyutu ayrı teslim manifestindedir.
 
 ```sh
 bash tests/run_all.sh
 python3 packaging/build_web.py
 python3 -m http.server 8765 --directory build/web
 DBW_CHROMIUM=/usr/bin/chromium node tests/browser_smoke.cjs
+DBW_CHROMIUM=/usr/bin/chromium node tests/browser_quality.cjs
+DBW_CHROMIUM=/usr/bin/chromium node tests/browser_settings.cjs
 ```
 
-Browser testi Playwright'ın mevcut kurulumu ile çalıştırıldı. Yeni runtime bağımlılığı eklenmedi. Kısıtlı yazma ortamında XDG_DATA_HOME / XDG_CONFIG_HOME / XDG_CACHE_HOME proje içindeki geçici work/runtime alanına yönlendirildi. Ham sonuçlar teslimin verification ZIP'indedir.
+Browser testleri mevcut Playwright kurulumunu kullanır; `NODE_PATH` ortamın kurulumuna göre ayarlanır. Yeni runtime bağımlılığı eklenmedi. Görüntüler ve JSON/log kanıtları verification ZIP'indedir. Test sonucu yalnız ilgili kaynak/paket sürümü için geçerlidir; değişiklikten sonra gereken testler tekrarlanmalıdır.
 
-![AIONIA ana menüsü](evidence-v030/title.png)
+![Ana menü](evidence-v040/title.png)
 
-![Ortak ayarlar](evidence-v030/settings.png)
+![Yeniden atama sekmesi](evidence-v040/settings-controls.png)
 
-![Sefer](evidence-v030/run.png)
+![Yerel veri sekmesi](evidence-v040/settings-data.png)
 
-![İki parmak kontrolü](evidence-v030/mobile-multitouch.png)
+![Kontrolcü ile düşük güç sürüşü](evidence-v040/controller-low.png)
 
-![Yükleme hatası ve yeniden deneme](evidence-v030/loading-error.png)
+![Dokunmatik sürüş](evidence-v040/mobile-multitouch.png)
 
-Öncelikli açık iş: gerçek GPU'lu hedef cihazda profile alıp 60 FPS, kare süreleri ve bellek bütçesini doğrulamak; yazılım renderer sınırını kapatmak. Sonraki onay konusu: son karakter varyantları ve Fragaria çilek logosu. Bu açıklar tamamlanmış gösterilmez.
+Yayın öncesi açık kapılar: gerçek hedefte 60 FPS/kare süreleri/toplam bellek, fiziksel kontrolcü ve mobil doğrulama, yardımcı teknoloji testi, insan oyuncu dengesi ve sahip imzası. Bu sürüm incelenebilir bir önizlemedir.

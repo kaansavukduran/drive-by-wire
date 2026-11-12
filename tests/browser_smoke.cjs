@@ -4,7 +4,7 @@ const { chromium } = require('playwright');
 const fs = require('node:fs');
 const path = require('node:path');
 const assert = require('node:assert/strict');
-const output = process.env.DBW_EVIDENCE_DIR || 'work/evidence-v030';
+const output = process.env.DBW_EVIDENCE_DIR || 'work/evidence-v040';
 fs.mkdirSync(output, { recursive: true });
 const launch = { headless: true, args: ['--no-sandbox', '--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'] };
 if (process.env.DBW_CHROMIUM) launch.executablePath = process.env.DBW_CHROMIUM;

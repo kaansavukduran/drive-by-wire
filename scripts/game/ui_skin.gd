@@ -70,3 +70,19 @@ static func style_button(b: Button) -> void:
 	b.add_theme_color_override("font_focus_color", Color.WHITE)
 	b.add_theme_color_override("font_pressed_color", Color.WHITE)
 	b.add_theme_color_override("font_disabled_color", Color("94a3bb"))
+
+
+static func prepare_confirmation(dialog: ConfirmationDialog) -> void:
+	dialog.theme = theme()
+	dialog.theme.set_stylebox("panel","AcceptDialog",panel(Color("f4a8c5")))
+	style_button(dialog.get_ok_button())
+	style_button(dialog.get_cancel_button())
+	dialog.get_label().autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	dialog.get_label().custom_minimum_size.x = 340
+	# Godot's native dialog handles Escape; explicitly support controller Back too.
+	dialog.window_input.connect(func(event: InputEvent):
+		if event is InputEventJoypadButton and event.is_action_pressed("ui_cancel"):
+			dialog.hide()
+			dialog.canceled.emit()
+			dialog.set_input_as_handled())
+	dialog.about_to_popup.connect(func(): dialog.get_cancel_button().call_deferred("grab_focus"))

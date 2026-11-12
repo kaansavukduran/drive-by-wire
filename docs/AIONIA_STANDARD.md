@@ -1,3 +1,5 @@
+> Tarihsel v1.0 kopyası. Güncel kullanıcı belgesinin v1.1/v1.2 kapsamı için [güncel referans kapsamı](AIONIA_CURRENT_REFERENCE.md), uygulama için [tasarım incelemesi](DESIGN_BRIEF.md) ve [test raporu](QA.md).
+
 # AIONIA standardı · Sürümlü kaynak kopyası
 
 Normatif kaynak: https://docs.google.com/document/d/16jj2cwbm8SiVWqDy3N3dzqxTlLoK7JR2_aH6hl4noWY/edit

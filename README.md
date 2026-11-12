@@ -1,4 +1,4 @@
-# Drive-By Wire · 0.3.0
+# Drive-By Wire · 0.4.0
 
 **Fragaria Interactive · Fragaria Games · AIONIA**
 
@@ -20,13 +20,13 @@ Ana menüde **Sürüşe başla / Space** ile hemen çık. **Nasıl oynanır?** h
 | Esc veya P | Mola / devam |
 | T | İsteğe bağlı sohbet; Enter gönderir, Esc kapatır |
 
-Kumandada yön düğmeleri sürüş/turbo/fren, A ateş, X mayın, B sıyrılma, Y destek, Start mola. D-pad eşlemesi uygulanmıştır; fiziksel kumanda testi henüz yapılmadı.
+Kumandada sol analog veya D-pad şerit, yukarı/RB turbo, aşağı/LT fren, A/RT ateş, X mayın, B/LB sıyrılma, Y destek, Start mola. Menülerde yönler, A onay, B geri; ayarlarda LB/RB sekme değiştirir. Tuşlar ve düğmeler yeniden atanabilir; analog ölü bölgesi ayarlanabilir. Yazılım olaylarıyla akış testlidir; fiziksel kumanda henüz doğrulanmadı.
 
-Dokunmatik cihazlarda sol/sağ, turbo/fren ve ateş/mayın düğmeleri görünür. Turbo ve ateş iki parmakla birlikte kullanılabilir. Mola menüsünden düğmeler elle de açılır. Yatay ekran önerilir.
+Dokunmatik cihazlarda sol/sağ, turbo/fren ve ateş/mayın/sıyrılma/destek düğmeleri görünür. Turbo ve ateş iki parmakla birlikte kullanılabilir. Mola menüsünden düğmeler elle de açılır. Yatay ekran önerilir.
 
 **Kapsüller:** Artı onarım, şimşek enerji + bir mayın, kalkan tek darbeye koruma verir. Renk yanında şekiller farklıdır. Kalkan en fazla 7 saniye sürer. Düşmanları yenmek, kapsülleri toplamak ve başarılı kaçışlar seri puanı kazandırır; hasar veya seriye katkı olmadan 5 saniye geçmesi seriyi sıfırlar. Kısa görevler puan, onarım ve mayın kazandırır. 1.200 metrede sefer başarıyla biter. Sonuçta Enter ile yeniden sür, G ile garaja dön.
 
-Ses düzeyi, ses kapatma, ekran sarsıntısı ve dekoratif hareket ana menüden veya mola ekranından ayrı ayarlanabilir. Tercihler, rekor, güven ve garaj hafızası yereldir. Odak kaybında veya kumanda ayrılınca mola verilir. Hesap, reklam, telemetri, LLM/API bağlantısı yoktur.
+Otomatik ateş, düşük güç web modu, titreşim, ses düzeyi, ses kapatma, ekran sarsıntısı ve dekoratif hareket ana menüden veya mola ekranından ayrı ayarlanabilir. Tercihler, rekor, güven ve garaj hafızası yereldir. Ayarlar → Veri ile onay sonrasında sıfırlanabilir. Bozuk kayıt önceki geçerli yedekten kurtarılır. Odak kaybında veya kumanda ayrılınca mola verilir. Hesap, reklam, telemetri, LLM/API bağlantısı yoktur.
 
 ## Çalıştır
 
@@ -43,7 +43,7 @@ python3 -m http.server 8765 --directory build/web
 Web çıktısını `http://localhost:8765` ile aç.
 
 **Önizleme durumu:** İşlev testleri geçiyor; bulut yazılım renderer ortamında 60 FPS hedefi sağlanmadı. Fiziksel hedefler ve üretim yayını henüz doğrulanmadı. Ayrıntılar QA raporunda.
- HTML dosyasına çift tıklamak yeterli değildir. [Sürüm ve platform durumu](docs/RELEASE.md) · [AIONIA standardı](docs/AIONIA_STANDARD.md) · [Sanat kılavuzu](docs/ART_BIBLE.md) · [Test sonuçları](docs/QA.md) · [Forge kaydı](docs/FORGE.md) · [Derleme](docs/BUILD.md) · [Vercel](docs/VERCEL.md).
+ HTML dosyasına çift tıklamak yeterli değildir. [Sürüm ve platform durumu](docs/RELEASE.md) · [Güncel AIONIA referansı](docs/AIONIA_CURRENT_REFERENCE.md) · [Tasarım incelemesi](docs/DESIGN_BRIEF.md) · [Mahremiyet](docs/PRIVACY.md) · [Sanat kılavuzu](docs/ART_BIBLE.md) · [Test sonuçları](docs/QA.md) · [Forge kaydı](docs/FORGE.md) · [Derleme](docs/BUILD.md) · [Vercel](docs/VERCEL.md).
 
 `Releases/latest` önceki 0.1.0 paketlerini gösterebilir; bu dalın paketleriyle aynı değildir.
 
@@ -51,7 +51,7 @@ Web çıktısını `http://localhost:8765` ile aç.
 
 - `data/balance.json`: sürüş, düşmanlar, turbo, kapsül, görev ve puan dengesi.
 - `scripts/core/arcade.gd`: sahneden bağımsız puan, seri, görevler.
-- `scripts/game/controls.gd`, `touch_control.gd`: klavye, D-pad ve çoklu dokunma.
+- `scripts/game/controls.gd`, `touch_control.gd`: klavye, analog/D-pad, yeniden atama ve çoklu dokunma.
 - `scripts/core/`: MOMO, garaj, isteğe bağlı ayrıştırıcı ve kayıt.
 - `scripts/game/main.gd`: sefer, çatışma, HUD ve mola.
 - `scripts/game/sounds.gd`: yerel üretilen özgün kısa sesler.

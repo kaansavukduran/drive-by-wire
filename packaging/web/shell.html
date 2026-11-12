@@ -2,7 +2,7 @@
 <html lang="tr">
 	<head>
 		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta name="description" content="Fragaria Interactive · Fragaria Games · AIONIA. Ok tuşlarıyla sür, turboyu aç, MOMO ile otoyolu aş.">
 		<meta name="theme-color" content="#0b0d12">
 		<title>Drive-By Wire</title>
@@ -25,14 +25,21 @@ body {
 	color: #e6e6e6;
 	background-color: #0b0d12;
 	overflow: hidden;
-	touch-action: none;
+	touch-action: auto;
 }
 
 #canvas {
+	touch-action: none;
 	display: block;
 	background-color: #0b0d12;
 }
 
+#help-link { position: absolute; top: -100px; left: 1rem; z-index: 30; padding: 0.75rem; color: #111d2b; background: #fff2df; font-family: Lexend, sans-serif; }
+#help-link:focus { top: 1rem; }
+#accessible-help { display: none; }
+#accessible-help:target { display: block; position: absolute; z-index: 40; inset: 0; overflow-y: auto; padding: clamp(1rem, 5vw, 3rem); background: #111d2b; color: #fff2df; font-family: Lexend, sans-serif; line-height: 1.65; }
+#accessible-help a { color: #9de1c3; }
+#canvas.low-power { image-rendering: pixelated; }
 #canvas:focus {
 	outline: none;
 }
@@ -87,13 +94,22 @@ body {
 		$GODOT_HEAD_INCLUDE
 	</head>
 	<body>
-		<canvas id="canvas" tabindex="0">
+		<canvas id="canvas" tabindex="0" role="application" aria-label="Drive-By Wire sürüş oyunu" aria-describedby="accessible-help">
 			Tarayıcın canvas öğesini desteklemiyor.
 		</canvas>
 
 		<noscript>
 			Drive-By Wire için JavaScript gerekir.
 		</noscript>
+        <a id="help-link" href="#accessible-help">Kontroller ve erişim bilgisi</a>
+        <aside id="accessible-help" tabindex="-1">
+          <h1>Drive-By Wire nasıl oynanır?</h1>
+          <p>MOMO ile 1.200 metreye ulaş. Sol ve sağ ok şerit değiştirir; yukarı turbo, aşağı fren. Boşluk veya F ateş eder. X mayın, Shift sıyrılma, C destek, Escape mola.</p>
+          <p>Kumandada sol çubuk veya D-pad yön verir; A/RT ateş, RB turbo, LT fren, X mayın, B/LB sıyrılma, Y destek, Start mola. Tuşlar Ayarlar içinden değiştirilebilir.</p>
+          <p>Ayarlar içinde otomatik ateş, düşük güç, sesi kapatma, ses düzeyi ve hareket azaltma vardır. Kayıt yalnızca bu cihazda tutulur; Veri sekmesinden silinebilir.</p>
+          <p>Oyun alanı görsel bir canvas kullanır. Ekran okuyucuyla tam oynanabilirlik henüz doğrulanmadı. Yatay ekran önerilir.</p>
+          <a href="#canvas">Oyuna dön</a>
+        </aside>
 
 		<div id="status">
 			<div id="status-momo" aria-hidden="true"></div>
@@ -109,6 +125,29 @@ body {
 		<script>
 const GODOT_CONFIG = $GODOT_CONFIG;
 const GODOT_THREADS_ENABLED = $GODOT_THREADS_ENABLED;
+let lowPower = false;
+try { lowPower = localStorage.getItem('dbw.low_power') === '1'; } catch (e) { /* Storage may be disabled. */ }
+const qaRender = new URLSearchParams(location.search).get('qa_render');
+if (qaRender === 'low') lowPower = true;
+if (qaRender === 'normal') lowPower = false;
+if (lowPower) {
+  GODOT_CONFIG.canvasResizePolicy = 0;
+  const lowCanvas = document.getElementById('canvas');
+  lowCanvas.width = 640;
+  lowCanvas.height = 360;
+  lowCanvas.classList.add('low-power');
+  document.body.style.display = 'flex';
+  document.body.style.alignItems = 'center';
+  document.body.style.justifyContent = 'center';
+  function fitLowPower() {
+    const ratio = Math.min(window.innerWidth / 640, window.innerHeight / 360);
+    lowCanvas.style.width = `${Math.round(640 * ratio)}px`;
+    lowCanvas.style.height = `${Math.round(360 * ratio)}px`;
+  }
+  window.addEventListener('resize', fitLowPower);
+  fitLowPower();
+}
+document.documentElement.dataset.renderMode = lowPower ? 'low-power' : 'normal';
 const engine = new Engine(GODOT_CONFIG);
 
 (function () {
@@ -121,12 +160,16 @@ const engine = new Engine(GODOT_CONFIG);
 
 	// Keep direct driving focused on the canvas after entering the game.
 	function focusCanvas() {
-		if (document.documentElement.dataset.gameState === 'started' && document.activeElement !== canvas) {
+		if (location.hash !== '#accessible-help' && document.documentElement.dataset.gameState === 'started' && document.activeElement !== canvas) {
 			canvas.focus({ preventScroll: true });
 		}
 	}
 	window.addEventListener('pointerdown', focusCanvas, true);
 	window.addEventListener('focus', focusCanvas);
+	window.addEventListener('hashchange', () => {
+        if (location.hash === '#accessible-help') document.getElementById('accessible-help').focus();
+        else focusCanvas();
+    });
 	document.addEventListener('visibilitychange', () => {
 		if (!document.hidden) focusCanvas();
 	});
