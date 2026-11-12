@@ -2,7 +2,7 @@
 
 Engine: official Godot **4.6.3** standard build (GDScript, GL Compatibility; no .NET). CI downloads the editor and export templates with `packaging/setup_godot.py` and checks them against upstream SHA-512 sums.
 
-**Version: one place.** `project.godot` → `config/version` (now `0.1.0`). `packaging/version.py` prints it; the Windows file/product version and the Android versionName are left empty in `export_presets.cfg` so Godot fills them from `config/version`; the Android versionCode is derived (`MAJOR*10000 + MINOR*100 + PATCH`, so 0.1.0 → 100) and stamped by `python3 packaging/version.py --stamp`. To release a new version, change only `config/version` and tag `v<version>`.
+**Version: one place.** `project.godot` → `config/version` (now `0.1.0`). `packaging/version.py` prints it; the Windows file/product version and the Android versionName are left empty in `export_presets.cfg` so Godot fills them from `config/version`; the Android versionCode is derived (`MAJOR*10000 + MINOR*100 + PATCH`, so 0.1.0 → 100) and stamped by `python3 packaging/version.py --stamp`. To release a new version, change only `config/version`, then either push the tag `v<version>` or run the workflow from the Actions tab on `main` with **publish_release** ticked (the release job then creates the `v<version>` tag itself).
 
 ## Outputs
 
@@ -24,7 +24,7 @@ Runs on push to `main`, on pull requests, on `v*` tags and manually (`workflow_d
 
 1. `test`: import, then `bash tests/run_all.sh`.
 2. `linux_web`, `windows`, `android` (parallel, after `test`): export, package, smoke-run (`packaging/smoke.py`: `--headless --quit-after 300`, fails on non-zero exit or GDScript errors). Linux runs the raw export, the extracted tarball, the AppImage and the installed `.deb`. Windows runs the exported exe, then silently installs the Setup, runs the installed exe, checks the Start menu shortcut and uninstalls. The web job runs `packaging/build_web.py`, the same script Vercel runs.
-3. `release` (tags only): checks the tag equals `v` + `config/version`, collects the 7 files, writes `SHA256SUMS`, and creates a GitHub Release (pre-release while the version is 0.x) with `docs/RELEASE.md` as notes.
+3. `release` (on a `v*` tag, or a manual run on `main` with `publish_release`): checks the tag equals `v` + `config/version`, collects the 7 files, writes `SHA256SUMS`, and creates a GitHub Release (pre-release while the version is 0.x) with `docs/RELEASE.md` as notes.
 
 A headless smoke run proves the binary starts, loads its data and runs the main scene. It does not prove rendering, sound or input on a real desktop or phone.
 
