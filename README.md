@@ -2,6 +2,15 @@
 
 Yazarak sürülen roguelite araba çatışması (prototip, geliştirme sürüyor). Arabanın yapay zekâsı MOMO, klavyeden yazdığın komutları ruh haline göre yorumlar.
 
+## İndir ve oyna
+- **Tarayıcıda:** Vercel bağlandığında `https://<vercel-adresi>.vercel.app` (kurulum: [docs/VERCEL.md](docs/VERCEL.md)).
+- **İndirilebilir sürümler:** [Releases](https://github.com/kaansavukduran/drive-by-wire/releases/latest)
+  - Windows: `DriveByWire-<sürüm>-windows-x64-Setup.exe` (kurulum, yönetici izni gerekmez) veya `-windows-x64-portable.zip` (çıkart, `DriveByWire.exe` çalıştır)
+  - Linux: `-linux-x64.AppImage`, `-linux-x64.deb`, `-linux-x64-portable.tar.gz`
+  - Android: `-android-arm64-x64.apk` (prototip; herkese açık prototip anahtarıyla imzalı, ayrıntı [docs/BUILD.md](docs/BUILD.md))
+  - Web çevrimdışı: `-web-offline.tar.gz`
+- Platform durumu ve sürüm notları: [docs/RELEASE.md](docs/RELEASE.md)
+
 ## Şu anki durum (0.1.0, geliştirme)
 Var: garaj (MOMO selamı, 3–4 seçenekli diyalog, bu sefer için tek yükseltme), kayan üç şeritli yol, yazarak sürüş, komut kutusu açıkken %10 zaman, çarpan araba / ateş eden kamyonet / engel bırakan kamyon, hedefli ateş, mayın, kaç, çarp, can ve ekran sarsıntısı, MOMO yüzü ve ruh haline göre yorum, sefer sonu ekranı, yerel kayıt (güven + hafıza), web derlemesi.
 Henüz yok: düşmanların, yolun, MOMO yüzünün ve garajın son piksel art çizimleri (şimdilik kodla çizilmiş geçici çizimler), Windows/Linux/Android paketleri ve GitHub Release.
