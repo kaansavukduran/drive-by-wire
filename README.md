@@ -1,12 +1,12 @@
-# Drive-By Wire · 0.2.0
+# Drive-By Wire · 0.3.0
 
-**Fragaria Interactive · Aionverse**
+**Fragaria Interactive · Fragaria Games · AIONIA**
 
 MOMO ile distopik otoyolda 1.200 metrelik kuşatmayı aş. Ok tuşlarıyla sür, turboyu doğru anda kullan, takipçileri savuştur ve ikmalleri topla. MOMO artık sürüş kararlarını geciktirmez; ruh hali, güveni ve garaj hafızası yol arkadaşlığını sürdürür.
 
 ## Oyna
 
-Garajda **Space / Hızlı sürüş** ile zırhlı arabayla hemen çık. İstersen önce 1–4 ile MOMO'ya cevap ver, bir yükseltme seç ve Enter ile sefere çık.
+Ana menüde **Sürüşe başla / Space** ile hemen çık. **Nasıl oynanır?** hedefi ve kapsülleri açıklar. **Önce garaja uğra** ile MOMO'ya 1–4 üzerinden cevap verip yükseltme seçebilirsin.
 
 | Tuş | İşlev |
 | --- | --- |
@@ -26,7 +26,7 @@ Dokunmatik cihazlarda sol/sağ, turbo/fren ve ateş/mayın düğmeleri görünü
 
 **Kapsüller:** Artı onarım, şimşek enerji + bir mayın, kalkan tek darbeye koruma verir. Renk yanında şekiller farklıdır. Kalkan en fazla 7 saniye sürer. Düşmanları yenmek, kapsülleri toplamak ve başarılı kaçışlar seri puanı kazandırır; hasar veya seriye katkı olmadan 5 saniye geçmesi seriyi sıfırlar. Kısa görevler puan, onarım ve mayın kazandırır. 1.200 metrede sefer başarıyla biter. Sonuçta Enter ile yeniden sür, G ile garaja dön.
 
-Ses ve ekran sarsıntısı ayrı kapatılabilir. Tercihler, rekor, güven ve garaj hafızası yereldir. Odak kaybında veya kumanda ayrılınca mola verilir. Hesap, reklam, telemetri, LLM/API bağlantısı yoktur.
+Ses düzeyi, ses kapatma, ekran sarsıntısı ve dekoratif hareket ana menüden veya mola ekranından ayrı ayarlanabilir. Tercihler, rekor, güven ve garaj hafızası yereldir. Odak kaybında veya kumanda ayrılınca mola verilir. Hesap, reklam, telemetri, LLM/API bağlantısı yoktur.
 
 ## Çalıştır
 
@@ -40,7 +40,10 @@ python3 packaging/build_web.py
 python3 -m http.server 8765 --directory build/web
 ```
 
-Web çıktısını `http://localhost:8765` ile aç. HTML dosyasına çift tıklamak yeterli değildir. [Sürüm ve platform durumu](docs/RELEASE.md) · [Forge kaydı](docs/FORGE.md) · [Derleme](docs/BUILD.md) · [Vercel](docs/VERCEL.md).
+Web çıktısını `http://localhost:8765` ile aç.
+
+**Önizleme durumu:** İşlev testleri geçiyor; bulut yazılım renderer ortamında 60 FPS hedefi sağlanmadı. Fiziksel hedefler ve üretim yayını henüz doğrulanmadı. Ayrıntılar QA raporunda.
+ HTML dosyasına çift tıklamak yeterli değildir. [Sürüm ve platform durumu](docs/RELEASE.md) · [AIONIA standardı](docs/AIONIA_STANDARD.md) · [Sanat kılavuzu](docs/ART_BIBLE.md) · [Test sonuçları](docs/QA.md) · [Forge kaydı](docs/FORGE.md) · [Derleme](docs/BUILD.md) · [Vercel](docs/VERCEL.md).
 
 `Releases/latest` önceki 0.1.0 paketlerini gösterebilir; bu dalın paketleriyle aynı değildir.
 

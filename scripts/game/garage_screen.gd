@@ -83,7 +83,7 @@ func _ready() -> void:
 	buttons.add_theme_constant_override("separation", 6)
 	ui.add_child(buttons)
 	var brand := _label(ui, Vector2(326, 10), Vector2(298, 17), 10)
-	brand.text = "FRAGARIA INTERACTIVE · AIONVERSE"
+	brand.text = "FRAGARIA GAMES · AIONIA"
 	brand.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	brand.add_theme_color_override("font_color", Color("ff8fb1"))
 	var brief := _label(ui, Vector2(16, 290), Vector2(410, 40), 11)
@@ -233,13 +233,14 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _update_info() -> void:
 	var mem: Dictionary = save.get("memory", {})
-	info.text = "v0.2.0 · Güven %d · Sefer %d · Rekor %d · En uzun %d m · 1–4 seç / Space hızlı sürüş" % [
+	info.text = "v0.3.0 · Güven %d · Sefer %d · Rekor %d · En uzun %d m · 1–4 seç / Space hızlı sürüş" % [
 		int(momo.trust), int(mem.get("runs", 0)), int(save.get("best_score", 0)), int(mem.get("best_distance", 0))]
 	face.mood = momo.mood
 
 
 func _process(delta: float) -> void:
-	_t += delta
+	if bool(save.get("settings", {}).get("motion", true)):
+		_t += delta
 	queue_redraw()
 
 

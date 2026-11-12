@@ -2,7 +2,7 @@
 
 Engine: official Godot **4.6.3** standard build (GDScript, GL Compatibility; no .NET). CI downloads the editor and export templates with `packaging/setup_godot.py` and checks them against upstream SHA-512 sums.
 
-**Version: one place.** `project.godot` → `config/version` (now `0.2.0`). `packaging/version.py` prints it; the Windows file/product version and the Android versionName are left empty in `export_presets.cfg` so Godot fills them from `config/version`; the Android versionCode is derived (`MAJOR*10000 + MINOR*100 + PATCH`, so 0.1.0 → 100) and stamped by `python3 packaging/version.py --stamp`. To release a new version, change only `config/version`, then either push the tag `v<version>` or run the workflow from the Actions tab on `main` with **publish_release** ticked (the release job then creates the `v<version>` tag itself).
+**Version: one place.** `project.godot` → `config/version` (now `0.3.0`). `packaging/version.py` prints it; the Windows file/product version and the Android versionName are left empty in `export_presets.cfg` so Godot fills them from `config/version`; the Android versionCode is derived (`MAJOR*10000 + MINOR*100 + PATCH`, so 0.1.0 → 100) and stamped by `python3 packaging/version.py --stamp`. To release a new version, change only `config/version`, then either push the tag `v<version>` or run the workflow from the Actions tab on `main` with **publish_release** ticked (the release job then creates the `v<version>` tag itself).
 
 ## Outputs
 
@@ -58,7 +58,9 @@ Needs JDK 17 and the Android SDK with `platform-tools` and `build-tools;35.0.0` 
 
 ```sh
 export JAVA_HOME=... ANDROID_HOME=...
-export DBW_KEYSTORE=packaging/android/prototype.keystore DBW_KEY_ALIAS=drivebywire-prototype DBW_KEY_PASSWORD=drivebywire-prototype
+# Set DBW_KEYSTORE and DBW_KEY_ALIAS from your local signing configuration.
+read -r -s -p "Keystore password: " DBW_KEY_PASSWORD
+export DBW_KEYSTORE DBW_KEY_ALIAS DBW_KEY_PASSWORD
 python3 packaging/android_config.py      # editor SDK paths + git-ignored .godot/export_credentials.cfg
 python3 packaging/version.py --stamp     # versionCode from config/version (do not commit the result if it differs)
 godot --headless --editor --import --quit
@@ -72,8 +74,8 @@ Android export requires `textures/vram_compression/import_etc2_astc=true` under 
 Android only installs signed APKs, and only accepts an update signed with the same key as the installed app. So that CI APKs are installable and update each other without the owner setting anything up, the prototype is signed with a key that is **committed to this public repository on purpose**:
 
 - File: `packaging/android/prototype.keystore` (PKCS12)
-- Alias: `drivebywire-prototype`
-- Store and key password: `drivebywire-prototype`
+- Alias: supplied locally through DBW_KEY_ALIAS.
+- Store and key password: enter locally through DBW_KEY_PASSWORD; no password is recorded in this document.
 - Certificate SHA-256: `C6:8A:CF:6A:8C:83:C4:0D:5D:2D:7A:04:9D:56:9E:7E:DB:1D:CD:17:BA:28:B0:34:53:68:3E:9C:01:9F:2A:F5`
 
 Trade-off: because the key is public, **anyone can sign an APK that Android accepts as an update** of the installed prototype. Only install APKs from this repository's Releases or Actions. This is acceptable for a free, offline, no-permission prototype; it is not acceptable for a store release.

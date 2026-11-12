@@ -15,7 +15,7 @@ Kullanıcının yeni kararı tasarımı değiştirir: anında ok tuşlu sürüş
 - [Save the Planet geliştirme briefi](https://docs.google.com/document/d/1zET837DgEs98lPp9jHPhCEplHGt82VC3yctOpXe786Y/edit): Fragaria Interactive yayıncı adı, kanonik karakterleri koruma, renk yanında şekil, odak kaybında mola ve doğrulama dürüstlüğü ilkeleri. Başka oyuna ait hikâye/bölüm kapsamı bu oyuna taşınmadı.
 - [Fragaria Classification System taslağı](https://drive.google.com/file/d/1A0dxkJbgimSMA1Hg8a3WqeVT1SgnjnJC/view): belge kendi kapsamını sınıflandırma olarak tanımlıyor; kalite sertifikası sayılmadı, kayıt kimliği uydurulmadı.
 
-Aionverse için ayrı, yayımlanmış bir oyun kalite standardı belgesi aramada bulunamadı. Bu çalışma yukarıdaki gerçek referanslara dayanır; resmî sertifikasyon iddiası değildir. Mevcut Aion / Ömer, MOMO, araç ve çevre paftaları değiştirilmedi. Lexend ana yazı tipi korundu, dört ok glifi için lisanslı küçük bir DejaVu alt kümesi eklendi. Fragaria Interactive ve Aionverse isimleri garajda; Fragaria adı sürüş HUD'ında görünür.
+0.2 incelemesinde bağımsız standart henüz bulunamamıştı. Kullanıcının daha sonra verdiği resmî AIONIA klasörüne erişildi; 00_BAŞLA ve standart v1.0 ile 19 görsel incelendi. 0.3 için AIONIA_STANDARD.md, ART_BIBLE.md, GAME_DESIGN.md, LORE_LINKS.md ve QA.md bu tarihli notun önüne geçer. Bu bir sertifikasyon iddiası değildir. Mevcut Aion / Ömer, MOMO, araç ve çevre paftaları değiştirilmedi. Lexend ana yazı tipi korundu, dört ok glifi için lisanslı küçük bir DejaVu alt kümesi eklendi. Fragaria Interactive ve Aionverse isimleri garajda; Fragaria adı sürüş HUD'ında görünür.
 
 ## Yeni oyun döngüsü
 
@@ -52,3 +52,9 @@ Web export resmî SHA-512 doğrulamalı şablonlarla üretildi. Derleme kontrol�
 Web ZIP'i HTTP sunucusundan oynanır; çift tıklamayla açılmaz. Kaynak ZIP'i Godot projesidir. GitHub geliştirme dalı ana sürümden ayrıdır. Bu çalışma üretim Vercel sitesini değiştirmez ve yeni Windows/Linux/Android native paketi yayımlamaz. Bu hedeflerin mevcut CI/export profilleri korunur; fiziksel kumanda ve telefon, Safari, native kurulumlar ve insanlarla uzun denge testi sonraki doğrulama hedefleridir. Oyun arayüzü Türkçedir. Dikey telefonda alan küçülür; yatay ekran önerilir.
 
 [Drive önizleme paketleri](https://drive.google.com/drive/folders/1bvUEq2Q_bgTZApV2xbQXnNgVmJdONoPU): kaynak, web ve doğrulama arşivi. Eski kaynak yedekleri aynı kimlik ve konumlarıyla korundu.
+
+## 0.3 · Resmî AIONIA uyarlaması
+
+Resmî kaynaklar kullanıcı tarafından sağlandıktan sonra ana menü, yardım, ortak ayarlar, ses düzeyi, dekoratif hareket seçimi, yükleme/hata akışı ve marka hiyerarşisi uygulandı. 330 kontrol PASS. Bulut yazılım renderer 60 FPS hedefi FAIL; fiziksel cihaz ve üretim yayını NOT TESTED. Ayrıntı QA.md içindedir.
+
+[0.3 AIONIA teslimleri](https://drive.google.com/drive/folders/1bzZ-QZvfMDH04NjI_tXkCazlc-PmPKi4) · Önceki 0.2 paketleri korunur.

@@ -112,6 +112,8 @@ def main() -> None:
             break
     else:
         print("WARNING: no assets/icon-192.png or assets/icon.png; page has no favicon", flush=True)
+    shutil.copy2(ROOT / "assets/fonts/Lexend.ttf", OUT / "loading-font.ttf")
+    shutil.copy2(ROOT / "assets/ui/momo_face.png", OUT / "loading-momo.png")
     print("Web export ready:", OUT / "index.html", flush=True)
 
 

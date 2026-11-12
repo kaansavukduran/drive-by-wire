@@ -4,9 +4,9 @@ config_version=5
 [application]
 
 config/name="Drive-By Wire"
-config/description="Fragaria Interactive · Aionverse. Ok tuşlarıyla sür, MOMO ile 1200 metrelik kuşatmayı aş."
-config/version="0.2.0"
-run/main_scene="res://scenes/garage.tscn"
+config/description="Fragaria Interactive · Fragaria Games · AIONIA. Ok tuşlarıyla sür, MOMO ile 1200 metrelik kuşatmayı aş."
+config/version="0.3.0"
+run/main_scene="res://scenes/title.tscn"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 run/max_fps=60
 config/icon="res://assets/icon.png"

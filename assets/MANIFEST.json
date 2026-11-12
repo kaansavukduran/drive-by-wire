@@ -2112,5 +2112,13 @@
   }
  },
  "texture_filter": "nearest",
- "version": "0.1.0"
+ "version": "0.1.0",
+ "ui_standard": {
+  "universe": "AIONIA",
+  "brand": "Fragaria Interactive",
+  "publisher": "Fragaria Games",
+  "version": "1.0",
+  "art_bible": "docs/ART_BIBLE.md",
+  "runtime_character_art": "Existing project interpretations retained; final canon approval is not asserted"
+ }
 }

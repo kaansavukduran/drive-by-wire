@@ -2,6 +2,7 @@ extends Node
 ## Original short synth cues, generated locally. No samples or network services.
 
 var enabled := true
+var volume := 0.7
 var streams: Dictionary = {}
 var players: Array[AudioStreamPlayer] = []
 var next := 0
@@ -19,10 +20,11 @@ func _ready() -> void:
 		streams[name] = _make_tone(name)
 
 func cue(name: String) -> void:
-	if not enabled or not streams.has(name):
+	if not enabled or volume <= 0.0 or not streams.has(name):
 		return
 	var player := players[next % players.size()]
 	next += 1
+	player.volume_db = -17.0 + linear_to_db(maxf(volume, 0.001))
 	player.stream = streams[name]
 	player.play()
 

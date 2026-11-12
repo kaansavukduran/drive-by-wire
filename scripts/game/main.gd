@@ -15,6 +15,7 @@ const UiSkin := preload("res://scripts/game/ui_skin.gd")
 const Controls := preload("res://scripts/game/controls.gd")
 const Arcade := preload("res://scripts/core/arcade.gd")
 const Sounds := preload("res://scripts/game/sounds.gd")
+const SettingsPanel := preload("res://scripts/game/settings_panel.gd")
 const TouchControl := preload("res://scripts/game/touch_control.gd")
 const FONT_SYMBOLS := preload("res://assets/fonts/ControlSymbols.ttf")
 const CAR_SHEET := preload("res://assets/sprites/player_car.png")
@@ -116,6 +117,10 @@ var effects_enabled := true
 var touch_controls: Array[Control] = []
 var touch_enabled := false
 var sounds: Node
+var settings_panel: Control
+var motion_enabled := true
+var energy_caption: Label
+var metrics_clock := 0.0
 
 
 func _ready() -> void:
@@ -134,6 +139,8 @@ func _ready() -> void:
 	effects_enabled = bool(save.get("settings", {}).get("effects", true))
 	sounds = Sounds.new()
 	sounds.enabled = bool(save.get("settings", {}).get("sound", true))
+	sounds.volume = float(save["settings"]["volume"])
+	motion_enabled = bool(save["settings"]["motion"])
 	add_child(sounds)
 	Input.joy_connection_changed.connect(func(_device: int, connected: bool):
 		if not connected:
@@ -154,7 +161,8 @@ func _ready() -> void:
 	prev_lane = lane
 	car_x = _lane_x(lane)
 	_build_ui()
-	_say("Direksiyon sende.\nBen yanındayım!")
+	face.set_process(motion_enabled)
+	_say("Oklar sende.\nSpace ile ateş!")
 
 
 func _cfg(path: String, fallback: float) -> float:
@@ -187,7 +195,9 @@ func _build_ui() -> void:
 	score_label.add_theme_font_size_override("font_size", 20)
 	hud = _label(ui, theme, Vector2(18, 75), Vector2(155, 65))
 	hp_bar = _bar(ui, Rect2(18, 65, 154, 6), Color("7cddb5"))
-	energy_bar = _bar(ui, Rect2(18, 142, 154, 6), Color("79d4ff"))
+	energy_bar = _bar(ui, Rect2(18, 146, 154, 5), Color("79d4ff"))
+	energy_caption = _label(ui, theme, Vector2(18, 130), Vector2(154, 14))
+	energy_caption.add_theme_font_size_override("font_size", 9)
 	face = MomoFace.new()
 	face.position = Vector2(466, 18)
 	ui.add_child(face)
@@ -255,13 +265,7 @@ func _label(parent: Node, theme: Theme, pos: Vector2, size: Vector2) -> Label:
 
 
 func _panel_style() -> StyleBoxFlat:
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color("101622ee")
-	style.border_color = Color("34475d")
-	style.set_border_width_all(1)
-	style.set_content_margin_all(8)
-	return style
-
+	return UiSkin.panel()
 
 func _panel(parent: Node, rect: Rect2) -> void:
 	var panel := Panel.new()
@@ -302,8 +306,8 @@ func _control_button(parent: Node, rect: Rect2, text: String, action: Callable) 
 
 func _build_pause(parent: Node) -> void:
 	pause_panel = PanelContainer.new()
-	pause_panel.position = Vector2(200, 62)
-	pause_panel.size = Vector2(240, 236)
+	pause_panel.position = Vector2(200, 42)
+	pause_panel.size = Vector2(240, 250)
 	pause_panel.theme = ui_theme
 	pause_panel.add_theme_stylebox_override("panel", _panel_style())
 	parent.add_child(pause_panel)
@@ -314,29 +318,20 @@ func _build_pause(parent: Node) -> void:
 	title.text = "MOLA · Yol seni bekler"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	column.add_child(title)
-	for item in [["Devam et · Esc", func(): _set_paused(false)], ["Yeniden sür", _restart_run], ["Garaja dön", _to_garage]]:
+	var items := [
+		["Devam et · Esc", func(): _set_paused(false)],
+		["Ayarlar", func():
+			pause_panel.hide()
+			settings_panel.open()],
+		["Yeniden sür", _restart_run], ["Garaja dön", _to_garage], ["Ana menü", _to_title],
+	]
+	for item in items:
 		var button := Button.new()
 		button.text = item[0]
 		button.custom_minimum_size.y = 27
 		UiSkin.style_button(button)
 		button.pressed.connect(item[1])
 		column.add_child(button)
-	var effects_toggle := CheckButton.new()
-	effects_toggle.text = "Ekran sarsıntısı"
-	effects_toggle.button_pressed = effects_enabled
-	effects_toggle.toggled.connect(func(value: bool):
-		effects_enabled = value
-		save["settings"]["effects"] = value
-		store.save_data(save))
-	column.add_child(effects_toggle)
-	var sound_toggle := CheckButton.new()
-	sound_toggle.text = "Ses efektleri"
-	sound_toggle.button_pressed = sounds.enabled
-	sound_toggle.toggled.connect(func(value: bool):
-		sounds.enabled = value
-		save["settings"]["sound"] = value
-		store.save_data(save))
-	column.add_child(sound_toggle)
 	var touch_toggle := CheckButton.new()
 	touch_toggle.text = "Dokunmatik kontroller"
 	touch_toggle.button_pressed = DisplayServer.is_touchscreen_available() or OS.has_feature("mobile")
@@ -346,14 +341,37 @@ func _build_pause(parent: Node) -> void:
 			button.visible = value and not paused)
 	column.add_child(touch_toggle)
 	pause_panel.hide()
+	settings_panel = SettingsPanel.new()
+	settings_panel.changed.connect(_apply_settings)
+	settings_panel.closed.connect(func():
+		settings_panel.hide()
+		pause_panel.show()
+		(column.get_child(1) as Button).grab_focus())
+	parent.add_child(settings_panel)
+
+
+func _apply_settings(value: Dictionary) -> void:
+	save["settings"] = value.duplicate()
+	effects_enabled = bool(value["effects"])
+	motion_enabled = bool(value["motion"])
+	sounds.enabled = bool(value["sound"])
+	sounds.volume = float(value["volume"])
+	if not effects_enabled:
+		shake = 0.0
+	face.set_process(motion_enabled and not paused)
+
+
+func _to_title() -> void:
+	Engine.time_scale = 1.0
+	get_tree().call_deferred("change_scene_to_file", "res://scenes/title.tscn")
 
 
 func _build_touch(parent: Node) -> void:
 	touch_enabled = DisplayServer.is_touchscreen_available() or OS.has_feature("mobile")
 	var specs := [
-		[Rect2(8, 276, 80, 34), "←", "drive_left"], [Rect2(96, 276, 80, 34), "→", "drive_right"],
-		[Rect2(8, 316, 80, 34), "TURBO", "drive_up"], [Rect2(96, 316, 80, 34), "FREN", "drive_down"],
-		[Rect2(456, 316, 80, 34), "ATEŞ", "drive_fire"], [Rect2(544, 316, 80, 34), "MAYIN", "drive_mine"],
+		[Rect2(8, 270, 80, 42), "←", "drive_left"], [Rect2(96, 270, 80, 42), "→", "drive_right"],
+		[Rect2(8, 316, 80, 42), "TURBO", "drive_up"], [Rect2(96, 316, 80, 42), "FREN", "drive_down"],
+		[Rect2(456, 316, 80, 42), "ATEŞ", "drive_fire"], [Rect2(544, 316, 80, 42), "MAYIN", "drive_mine"],
 	]
 	for spec in specs:
 		var action: String = spec[2]
@@ -387,6 +405,11 @@ func _lane_of(x: float) -> int:
 # ---------------------------------------------------------------------------
 
 func _input(event: InputEvent) -> void:
+	if is_instance_valid(settings_panel) and settings_panel.visible:
+		if event.is_action_pressed("drive_pause"):
+			settings_panel.closed.emit()
+			get_viewport().set_input_as_handled()
+		return
 	if box.visible:
 		if event.is_action_pressed("ui_cancel"):
 			_close_box()
@@ -440,9 +463,10 @@ func _set_paused(value: bool) -> void:
 		return
 	_close_box()
 	paused = value
-	if value:
-		for action in Controls.KEYS:
-			Input.action_release(action)
+	for action in Controls.KEYS:
+		Input.action_release(action)
+	face.set_process(motion_enabled and not value)
+	face.queue_redraw()
 	touch_held.clear()
 	boosting = false
 	pause_panel.visible = value
@@ -520,6 +544,10 @@ func _event(ev: Variant) -> void:
 
 func _play(name: String) -> void:
 	if anim == "destroyed":
+		return
+	if anim == "hit" and name not in ["hit", "destroyed"]:
+		return
+	if anim.begins_with("shift_") and name == "fire":
 		return
 	anim = name
 	anim_t = 0.0
@@ -638,11 +666,12 @@ func _fire(target: Variant) -> void:
 # ---------------------------------------------------------------------------
 
 func _process(delta: float) -> void:
+	metrics_clock += delta
+	if OS.has_feature("web") and metrics_clock > 5.0:
+		metrics_clock = 0.0
+		# Local QA snapshot only. No network, analytics, player data or telemetry.
+		JavaScriptBridge.eval("document.documentElement.dataset.gameFps='%d';document.documentElement.dataset.godotMemoryBytes='%d';" % [Engine.get_frames_per_second(), OS.get_static_memory_usage()])
 	if not paused:
-		if not over:
-			if not box.visible and _held("drive_fire"):
-				_fire({})
-			_simulate(delta)
 		_animate(delta)
 		bubble_left -= delta / maxf(Engine.time_scale, 0.01)
 		toast_left -= delta
@@ -653,13 +682,23 @@ func _process(delta: float) -> void:
 	hud.text = "CAN %d / %d\n%d m / %d m\nHız %d · Mayın %d" % [maxi(0, ceili(hp)), int(max_hp), int(distance), int(_cfg("arcade.finish_distance", 1200)), int(speed), mines_left]
 	hp_bar.value = hp / max_hp * 100.0
 	energy_bar.value = energy / _cfg("arcade.boost_capacity", 100) * 100.0
+	energy_caption.text = "TURBO · ENERJİ %d%%" % int(energy_bar.value)
 	route_bar.value = distance / _cfg("arcade.finish_distance", 1200) * 100.0
 	var progress: Vector2 = arcade.contract_progress(distance, kills)
 	mission.text = "GÖREV %02d\n%s\n%d / %d\nSeri %d · En iyi %d" % [arcade.contract + 1, arcade.contract_title(), mini(int(progress.x), int(progress.y)), int(progress.y), arcade.chain, arcade.best_chain]
 	status_label.text = "Güven %d · %s\n%s" % [int(momo.trust), Momo.mood_name_tr(momo.mood), ("KALKAN %.1f sn" % shield_left) if shield_left > 0 else (("Destek %.0f sn" % comfort_cooldown) if comfort_cooldown > 0 else "C · Destek hazır")]
 	face.mood = momo.mood
+	face.queue_redraw()
 	hint.visible = not box.visible and not over
 	queue_redraw()
+
+
+func _physics_process(delta: float) -> void:
+	if paused or over:
+		return
+	if not box.visible and _held("drive_fire"):
+		_fire({})
+	_simulate(delta)
 
 
 func _simulate(delta: float) -> void:
@@ -722,7 +761,7 @@ func _simulate(delta: float) -> void:
 			var k := str(fx["kind"])
 			var mul := 0.6 if k.begins_with("wreck_") else (3.0 if k == "speed" else 1.0)
 			fx["pos"] = fx["pos"] + Vector2(0, speed * delta * mul)
-	if speed > _cfg("player.base_speed", 220) + 20.0 and rng.randf() < delta * 18.0:
+	if motion_enabled and speed > _cfg("player.base_speed", 220) + 20.0 and rng.randf() < delta * 18.0:
 		var sx := rng.randf_range(200, 230) if rng.randf() < 0.5 else rng.randf_range(410, 440)
 		effects.append({"pos": Vector2(sx, rng.randf_range(-40, 200)), "t": 0.0, "kind": "speed"})
 	effects = effects.filter(func(f: Dictionary) -> bool: return float(f["t"]) < 1.0)
@@ -1087,6 +1126,8 @@ func _animate(delta: float) -> void:
 
 
 func _scroll_scenery(delta: float) -> void:
+	if not motion_enabled:
+		return
 	road_scroll = fposmod(road_scroll + speed * delta, 256.0)
 	for d in decals:
 		d["pos"] = d["pos"] + Vector2(0, speed * delta)
@@ -1108,7 +1149,7 @@ func _scroll_scenery(delta: float) -> void:
 
 func _draw() -> void:
 	var off := Vector2.ZERO
-	if shake > 0.0 and effects_enabled:
+	if shake > 0.0 and effects_enabled and not paused:
 		off = Vector2(rng.randf_range(-1, 1), rng.randf_range(-1, 1)) * shake_power
 	position = off.round()
 	var road := sheets.texture("assets/road/road_tile.png")

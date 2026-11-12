@@ -1,23 +1,17 @@
-# Drive-By Wire 0.2.0 · Arcade Forge
+# Drive-By Wire 0.3.0 · AIONIA önizlemesi
 
-12 Kasım 2026 · Fragaria Interactive · Aionverse
+Fragaria Interactive · Fragaria Games · AIONIA
 
-Ok tuşları ana kontroldür. MOMO'nun ruh hali doğrudan direksiyon, silah veya kaçış girdisini geciktirmez. T ile açılan sohbet ve eski ayrıştırıcı isteğe bağlıdır.
+Ok tuşlarıyla doğrudan sürüş, ön/arka tehdide basılı ateş, turbo/fren, mayın, sıyrılma, MOMO desteği, kapsüller, puan serileri ve 1.200 m başarı döngüsü korunur. Yeni açılış menüsü hedefi ve ilk kontrolleri gösterir; Nasıl oynanır ekranı ve isteğe bağlı garaj vardır.
 
-Yeni: basılı turbo/fren/ateş, enerji yönetimi, onarım/enerji/kalkan kapsülleri, çarpanlı puan serisi, kısa görev ödülleri, 1.200 m başarı ekranı, yeniden sürüş düğmeleri, yerel rekor, gerçek mola, odak/kumanda kaybında mola, çoklu dokunma düğmeleri, D-pad eşlemesi, özgün kısa sesler, ayrı ses/sarsıntı tercihleri. Garajda Space ile hızlı sürüş vardır. Mevcut Aion ve Ömer çizimleri korunur.
+Bütün ana düğmeler ve paneller ortak piksel çerçeveli stil kullanır. Ana menü ve molada aynı ayarlar açılır: ses aç/kapat, ses düzeyi, kamera sarsıntısı ve dekoratif hareket. Açık/kapalı durumları yazılıdır. Yardım/ayar açıkken arkadaki düğmeler devre dışıdır. Dokunma hedefleri büyütüldü; iki parmakla ateş ve turbo birlikte kullanılabilir. Simülasyon Godot'un 60 Hz fizik adımındadır; render FPS'i bundan bağımsızdır.
 
-## Bu çalışmada doğrulananlar
+Resmî AIONIA başlangıç belgesi, standart v1.0, çilek referansı ve 18 karakter görseli incelendi. Kaynak özetleri ve onay durumları kayıtlıdır. Mevcut karakter çizimleri korunur; onaysız varyant veya resmî logo icat edilmez. Tavşan Emre sprite kaynağı doğrulanmadığından yeni animasyonu eklenmedi.
 
-| Hedef | Gerçek durum |
-| --- | --- |
-| Godot 4.6.3 | Altı headless test takımı; gerçek sefer sahnesine klavye ve iki parmak olayları gönderildi. |
-| Web | Release export üretildi; yerel HTTP sunucusunda Chromium ile garaj, sürüş, mola/devam ve telefon boyutunda çoklu dokunma incelendi. |
-| Windows / Linux / Android native | Mevcut export/CI profilleri korundu. Bu çalışma sırasında yeni native paket üretilmedi veya cihazda test edilmedi. |
-| Vercel canlı site | Üretim sitesi yayımlanmadı. Yerel web paketi canlı Vercel sürümü değildir. |
-| Fiziksel kumanda, telefon, Safari | Test edilmedi. Tarayıcı dokunma emülasyonu fiziksel cihaz testi değildir. |
+## Test ve yayın
 
-`DriveByWire-0.2.0-web.zip` dosyasını çıkartıp o klasörde `python3 -m http.server 8765` çalıştır; `http://localhost:8765` aç. Kaynak ZIP'i Godot projesidir. Releases sayfasındaki 0.1.0 kurulumları yeni sürümü içermez.
+[QA raporu](QA.md) PASS / FAIL / NOT TESTED durumlarını verir. 330 headless kontrol; Chromium masaüstü/dokunma akışı; Web Audio başlangıcı; yükleme hatasında yeniden deneme doğrulandı. Yazılım grafik ortamında 60 render FPS hedefi sağlanmadı. Bu açık performans eksikliği nedeniyle tam yayın kapısı geçilmiş sayılmaz.
 
-## Sınırlar
+Web ZIP'i üretildi. Çıkartıp o klasörde `python3 -m http.server 8765` çalıştır; `http://localhost:8765` aç. HTML dosyasına çift tıklamak yeterli değildir. Kaynak ZIP'i Godot 4.6.3 projesidir. Git bundle tam geçmişi taşır. Eski 0.2.0 paketleri ayrı önizlemedir.
 
-Bu sürüm hâlâ geliştirilen bir arcade oyunudur. İnsan oyuncularla eğlence/denge testi yapılmadı. Müzik ve tam dil seçimi yoktur; arayüz Türkçedir. Kısa ses efektleri vardır. Dikey telefonda oyun alanı küçülür; yatay ekran önerilir. Canlı sefer geri yüklenmez; rekor, güven, hafıza ve tercihler saklanır. Windows imzası ve mevcut Android prototip anahtarı için [BUILD.md](BUILD.md) geçerlidir; yeni mağaza yayını yapılmadı.
+Canlı Vercel üretim yayını yapılmadı. Bu çalışma sırasında yeni native Windows/Linux/Android paketi üretilmedi veya fiziksel cihazda denenmedi. Mevcut CI/export profilleri korunur. Fiziksel kumanda/telefon, Safari, insan oyuncu denge testi ve gerçek cihaz FPS/bellek doğrulaması NOT TESTED. Müzik ve tam dil seçimi yoktur; UI Türkçedir. Dikey telefonda oyun alanı küçülür; yatay ekran önerilir.

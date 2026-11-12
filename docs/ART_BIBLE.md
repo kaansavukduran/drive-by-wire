@@ -1,0 +1,38 @@
+# Drive-By Wire · AIONIA sanat kılavuzu
+
+Sürüm 0.3.0 · 12 Kasım 2026 · Normatif kaynak: [AIONIA v1.0](AIONIA_STANDARD.md).
+
+## Kimlik ve sınır
+
+Fragaria Interactive ana marka, Fragaria Games yayın markası, AIONIA kurgu evrenidir. Bu kısa oyunda sıcak bir dijital yol arkadaşı ile tehlikeli otoyolun gerilimi yan yana gelir. MOMO'nun ifadesi ve garajın sıcaklığı sevimli yönü; güven/hafıza derinliği; 1.200 metrelik kuşatmayı aşma hedefi ölçek ve risk hissini taşır. Ana evrene yeni tarih, tür veya coğrafya eklenmez.
+
+Fragaria çilek referansı ve 18 karakter referansı indirildi, görüntülendi, boyutları ve SHA-256 özetleri kaydedildi. Başlangıç belgesi son görsel kanon onayının beklediğini açıkça söylüyor. Dosya adındaki canonical ifadesi onay kabul edilmedi. Çilek görseli resmî logo diye yayımlanmadı; yazılı marka hiyerarşisi kullanıldı. Yeni karakter varyantı çizilmedi.
+
+## Oyun için sabit kararlar
+
+- Mantıksal alan 640×360; masaüstü varsayılan 1280×720. Godot GL Compatibility, en-boy oranı korunur. `canvas_items` UI yazısını gerçek ekran çözünürlüğünde tutar; nearest filtre piksel çizimlerini keskin büyütür. 1440p tam 4× varlık ölçeğidir. Tam kat olmayan ekranlarda piksel genişlikleri eşit olmayabilir; bu sınır fiziksel cihaz testini gerektirir.
+- Varlıklar mevcut projenin 48×80 araç paftalarını, manifestteki yol/çevre boyutlarını ve karakter paftalarını kullanır. Tüm evrene tek tile boyutu dayatılmaz.
+- Palet: mürekkep `#111d2b`, gece mavisi `#23354c`, krem `#fff2df`, nane `#9de1c3`, gül `#f4a8c5`, enerji camgöbeği `#79d4ff`, ödül altını `#ffce70`. Çevrenin mevcut toprak/bakır tonları korunur.
+- Panel ve düğmeler ortak UiSkin ile kare kenar, 1–2 piksel çerçeve, belirgin nane odak sınırı kullanır. Yazı Lexend; yalnız eksik oklar için lisanslı ControlSymbols alt kümesi. Bulanık gölge ve yeni asset kolajı yoktur.
+- Katı renkler için hesaplanan metin kontrastı: krem/mürekkep 15,41:1; krem/düğme 11,29:1; ikincil metin/devre dışı düğme 5,96:1. Bu hesap bütün olası kareler için otomatik WCAG sertifikası değildir; gerçek ekranlar ayrıca incelendi.
+- Onarım artı, enerji şimşek, koruma kalkan biçimiyle ayrılır. Sayı ve yazı rengi destekler. Ayarlar yalnız renkle anlatılmaz; Açık/Kapalı yazılır.
+
+## Animasyon, hizalama ve kamera
+
+Mevcut `assets/MANIFEST.json` kare genişliği/yüksekliği, sütun sayısı, pivot, fps, döngü ve kaynak yollarını taşır. Oyuncu animasyonları `main.gd/ANIMS` içinde 8–16 fps, MOMO ve çevre manifestte tanımlıdır. Sabit kare sayısını artırmak için yapay tekrar eklenmedi.
+
+Ön/arka ateş tehdide yönelir; mermi arabanın hedefe bakan kenarından çıkar. Ateş, hasar animasyonunu veya devam eden şerit değişimi pozunu kesmez. Hareket/çarpışmalar Godot'un 60 Hz fizik adımındadır; render FPS'i ayrı ölçülür. Kamera sabit yukarıdan görünür; yalnız isteğe bağlı kısa darbe sarsıntısı vardır. Mola sırasında dünya ve sarsıntı durur. Arka plan hareketi kapatıldığında dekoratif yol/çevre akışı ve MOMO'nun boşta hareketi durur; yaklaşan düşmanların oynanış hareketi sürer.
+
+## Referanslar ve kullanım
+
+Orijinaller Drive'da değişmeden durur; yerel indirmeler çalışma alanının attachments klasöründedir. Projeye büyük referans atlasları oyun varlığı olarak gömülmedi. `assets/sources/AIONIA_REFERENCES.json` her dosyanın URL'sini, özetini, çözünürlüğünü, renk modunu ve onay durumunu taşır. `assets/sources/.gdignore` referans kayıtlarını runtime kaynak taramasından ayırır.
+
+| Karakter | İncelenen kaynaklar | Bu oyunda karar |
+| --- | --- | --- |
+| Aion | Ana referans, canonical-base, T poz A/B, turnaround, canonical/motion sprite | Pembe gövde, mavi göz/solungaç uçları, beyaz önlük ve DNA kuyruğu korunur. Arka kuyruk A/B farkı kesinleştirilmedi. Mevcut garaj çizimi değiştirilmedi. |
+| Kurt | T poz/modelleme, canonical/motion sprite | Gri/mor kürk, açık göğüs/kuyruk ucu ve mor lanet izi referansı kaydedildi. Yeni görünüm/oynanabilir karakter eklenmedi. |
+| Kuzu | v01/v02 pafta, canonical/motion sprite | Krem yün, amber göz, koyu toynak; v02 hale/kitap farkı kayıtlıdır. Son onay varsayılmadı. |
+| Baykuş Ömer | Kanatlar açık modelleme, canonical/motion sprite | Kahverengi tüy, krem yüz/göğüs, amber göz korunur. Mevcut garaj çizimi değiştirilmedi. |
+| Tavşan Emre | T poz/modelleme paftası | Bej tüy, yeşil göz, açık mavi gömlek, kırmızı kravat, koyu pantolon kaydedildi. Sprite yok; uydurma animasyon eklenmedi. |
+
+Aion/Kurt/Kuzu motion atlasları 1536×1024; görülen 12×8 düzen için 128×128 aday hücreler vardır. Ömer ve canonical atlasların boyutları farklıdır; kullanıcı onayı, kare ayrımı, alfa temizliği ve pivot doğrulaması yapılmadan doğrudan runtime atlası sayılmazlar. Referansların tamamı final kaynak olarak onay bekler. Bu oyundaki mevcut paftaların çizim/lisans kaydı `assets/PROVENANCE.json` ve `THIRD_PARTY_NOTICES.md` içindedir.

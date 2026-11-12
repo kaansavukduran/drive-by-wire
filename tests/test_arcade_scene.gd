@@ -129,7 +129,7 @@ func _process(_delta: float) -> bool:
 	h.eq("fourth consecutive action doubles its reward", tally.award(40), 80)
 	tally.tick(6)
 	h.eq("idle timeout removes the multiplier", tally.award(40), 40)
-	saved["settings"] = {"effects": false, "sound": false}
+	saved["settings"] = {"effects": false, "sound": false, "motion": false, "volume": 0.35}
 	game.store.save_data(saved)
 	h.eq("sound and effects preferences round-trip", game.store.load_data()["settings"], saved["settings"])
 	game.store.clear()

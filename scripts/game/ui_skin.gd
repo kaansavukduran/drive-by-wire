@@ -1,5 +1,29 @@
 extends RefCounted
-## Pixel-art 9-slice styles from assets/ui (falls back to flat colours if missing).
+## AIONIA game-specific UI: square pixel borders, ink, cream, mint and rose.
+
+const FONT := preload("res://assets/fonts/Lexend.ttf")
+const SYMBOLS := preload("res://assets/fonts/ControlSymbols.ttf")
+
+static func theme() -> Theme:
+	var result := Theme.new()
+	var font: FontFile = FONT.duplicate()
+	font.fallbacks = [SYMBOLS]
+	result.default_font = font
+	result.default_font_size = 12
+	return result
+
+static func panel(accent := Color("415774")) -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color("111d2b")
+	style.border_color = accent
+	style.set_border_width_all(1)
+	style.border_width_top = 2
+	style.set_content_margin_all(10)
+	style.shadow_color = Color(0.02, 0.03, 0.06, 0.65)
+	style.shadow_size = 0
+	style.anti_aliasing = false
+	style.shadow_offset = Vector2(0, 2)
+	return style
 
 
 static func box(path: String, margin: int, content: int = -1) -> StyleBox:
@@ -20,8 +44,29 @@ static func box(path: String, margin: int, content: int = -1) -> StyleBox:
 
 
 static func style_button(b: Button) -> void:
-	b.add_theme_stylebox_override("normal", box("assets/ui/button_normal.png", 5))
-	b.add_theme_stylebox_override("hover", box("assets/ui/button_hover.png", 5))
-	b.add_theme_stylebox_override("focus", box("assets/ui/button_hover.png", 5))
-	b.add_theme_stylebox_override("pressed", box("assets/ui/button_pressed.png", 5))
-	b.add_theme_stylebox_override("disabled", box("assets/ui/button_disabled.png", 5))
+	var normal := panel(Color("526c88"))
+	normal.bg_color = Color("23354c")
+	normal.set_content_margin_all(5)
+	var hover := normal.duplicate()
+	hover.bg_color = Color("35455f")
+	hover.border_color = Color("f4a8c5")
+	var pressed := normal.duplicate()
+	pressed.bg_color = Color("245657")
+	pressed.border_color = Color("9de1c3")
+	var focus := normal.duplicate()
+	focus.bg_color = Color.TRANSPARENT
+	focus.border_color = Color("aaf2d3")
+	focus.set_border_width_all(2)
+	var disabled := normal.duplicate()
+	disabled.bg_color = Color("1a2638")
+	disabled.border_color = Color("41516b")
+	b.add_theme_stylebox_override("normal", normal)
+	b.add_theme_stylebox_override("hover", hover)
+	b.add_theme_stylebox_override("focus", focus)
+	b.add_theme_stylebox_override("pressed", pressed)
+	b.add_theme_stylebox_override("disabled", disabled)
+	b.add_theme_color_override("font_color", Color("fff2df"))
+	b.add_theme_color_override("font_hover_color", Color.WHITE)
+	b.add_theme_color_override("font_focus_color", Color.WHITE)
+	b.add_theme_color_override("font_pressed_color", Color.WHITE)
+	b.add_theme_color_override("font_disabled_color", Color("94a3bb"))
