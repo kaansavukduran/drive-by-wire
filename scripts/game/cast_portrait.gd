@@ -34,7 +34,7 @@ func _draw() -> void:
 		draw_texture_rect(OMEGA,box,false)
 		return
 	if speaker=="eren":
-		draw_texture_rect_region(EREN,box,Rect2(160,0,310,310))
+		draw_texture_rect_region(EREN,box,Rect2(130,0,400,400))
 		return
 	var index := IDS.find(speaker)
 	if index<0: return

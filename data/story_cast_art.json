@@ -1,11 +1,11 @@
 {
-  "version": "0.10.0",
+  "version": "0.10.1",
   "status": "OYUN / TASLAK · game adaptations, not final canon design approval",
-  "authoring": "Built-in image generation for the requested art revision; atlas boundaries, foot landmarks and in-game placement reviewed locally. Private Drive images were inspected locally and not uploaded to the generator. Generated Emre artwork was used as the style guide for Aion, Eren and scenery.",
+  "authoring": "User-requested correction to match the original modeling sheets while preserving the approved detailed pixel rendering. Built-in image editing used each original character reference plus the prior game sheet as a material/lighting/pose guide. Full original modeling sheets are not published. New pixels are a game adaptation, not final canon approval.",
   "character_identity": {
-    "emre": "beige rabbit, green eyes, light blue shirt, plain red tie, dark trousers; injured but alive",
-    "eren": "separate AIO-CHAR-EREN identity; orange fur, prominent eyelashes, freckles, sharp cheek tufts, dark teal blazer and orange/burgundy striped tie",
-    "aion": "pink axolotl, blue-tipped external gills, blue eyes, white science coat/badges and DNA tail"
+    "emre": "compact round beige rabbit, large green eyes, cream muzzle/two front teeth, light blue short-sleeve shirt, plain red tie, brown belt, short charcoal trousers and bare paws; injured but alive",
+    "eren": "separate AIO-CHAR-EREN; compact round orange rabbit, huge burgundy eyes, black eyelashes, freckles, sharp cheek tufts, short dark teal blazer, striped orange/burgundy tie, short dark trousers and oversized rounded brown shoes",
+    "aion": "compact round pink axolotl, large round blue eyes, three blue-tipped gills per side, bare pink belly/short limbs, white short-sleeve coat with infinity/leaf emblem and pink-white-blue badge, DNA tail; no invented dark suit or ID lanyard"
   },
   "actors": {
     "emre": {
@@ -18,36 +18,36 @@
       "frames": 6,
       "anchors": [
         [
-          475,
-          373
+          450,
+          405
         ],
         [
-          475,
-          374
+          450,
+          406
         ],
         [
-          475,
-          375
+          450,
+          406
         ],
         [
-          475,
-          376
+          450,
+          406
         ],
         [
-          475,
-          376
+          450,
+          406
         ],
         [
-          475,
-          376
+          450,
+          406
         ]
       ],
-      "scale": 0.4375,
+      "scale": 0.375,
       "world": [
         445,
         248
       ],
-      "landmark": "planted far hind paw at authored column 475",
+      "landmark": "planted far hind paw at authored column450; shorter canonical body at scene scale .375",
       "clips": {
         "hurt": {
           "frames": [
@@ -80,20 +80,20 @@
       "frames": 4,
       "anchors": [
         [
-          219,
-          578
+          290,
+          552
         ],
         [
-          219,
-          578
+          290,
+          552
         ],
         [
-          219,
-          578
+          290,
+          552
         ],
         [
-          219,
-          578
+          290,
+          552
         ]
       ],
       "scale": 0.24,
@@ -101,7 +101,7 @@
         210,
         248
       ],
-      "landmark": "planted pink toe; knee/tail base stay grounded",
+      "landmark": "planted forward pink toe at source (290,552)",
       "clips": {
         "idle": {
           "frames": [
@@ -146,19 +146,19 @@
       "anchors": [
         [
           360,
-          601
+          610
         ],
         [
           360,
-          601
+          610
         ],
         [
-          478,
-          597
+          450,
+          590
         ],
         [
-          478,
-          597
+          450,
+          590
         ]
       ],
       "scale": 0.26,
@@ -166,7 +166,7 @@
         520,
         248
       ],
-      "landmark": "planted right leather shoe; kneel is intentional body motion around the held heel",
+      "landmark": "standing right shoe sole / kneeling planted back heel; intentional crouch about the held world origin",
       "clips": {
         "idle": {
           "frames": [
@@ -208,9 +208,16 @@
     "interactive": false
   },
   "hashes": {
-    "emre_aftermath_detail.png": "d8b73ae86b88b3d8f757312d2aa6d687830c99c763d5e28d7fd931771f6484a1",
-    "aion_story.png": "56d712a40f517d0cab8676c953540d5343ff3293257c9097d7fcc43c30016a1e",
-    "eren_story.png": "25a390827fce17153d1d0bb96c5e44a36084cd6ba22a4db8b822e3ec47967b99",
+    "emre_aftermath_detail.png": "f7836e82ca4bc3b9cb927d1707800667ba87cc72910f5eb3688b1068c2c3fc62",
+    "aion_story.png": "bbbc0fb48e774cc5055927ca310a44b3ab829a81f9788e2a289df9855551e530",
+    "eren_story.png": "d7806f5aff2b1a99e465245ec4df2c1a2134d83237d95a82fec8b48139935623",
     "road_aftermath.png": "9cda261ff9c77e4d3dbbf5022aa57eb43fb2a451d4524feec3c1c48f47df9eb6"
+  },
+  "model_sheet_review": {
+    "intent": "Preserve original cute compact proportions; detailed rendering is independent of anatomical maturity.",
+    "status": "Manual reference comparison, not a claim of automatic pixel-perfect canon certification.",
+    "emre": "Large rounded eyes/cheeks, short torso and limbs, original shirt/tie/belt/paws.",
+    "eren": "Broad cheek tufts, large eyes, short legs, big shoes; original lashes/freckles/striped tie.",
+    "aion": "Round face/eyes, bare pink limbs/belly and exact coat motifs; removed adult trousers, dark shirt and ID card."
   }
 }
