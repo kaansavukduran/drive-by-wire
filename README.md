@@ -1,4 +1,4 @@
-# Drive-By Wire · 0.7.2
+# Drive-By Wire · 0.7.3
 
 **Fragaria Interactive · Fragaria Games · AIONIA**
 
@@ -12,7 +12,9 @@ Ana menüde **Hikâyeye başla**. Emre, Kuzu, Kurt ve Baykuş Ömer ile telsiz k
 
 Telefon/tablette **sabit sol joystick** ile ileri/geri/sağa/sola serbestçe sür. Sağdaki Ateş öne, Mayın arkaya gider. Mayın sınırsızdır; basılı tutunca her 0,7 saniyede bırakılır. Eski yükseltmeler ve ikmal rotaları bu süreyi kısaltır. Mayın patlaması arka mermileri de temizler. Diğer eylemler turbo, fren, sıyrılma ve Omega-3 desteğidir. Dikey/yatay düzen, bağımsız parmaklar ve yön değişiminde güvenli mola vardır.
 
-PC: **oklar/WASD** sürekli dört yönlü hareket, **Space/F/fare sol** öne ateş, **X** arka mayın, **E** turbo, **Q** fren, **Shift/fare sağ** sıyrılma, **C** Omega-3 desteği, **Esc/P** mola. Gamepad: sol çubuk/D-pad hareket, A/RT ateş, X mayın, RB turbo, LT fren, B/LB sıyrılma, Y destek, Start mola. Yeniden atama ve ölü bölgesi ayarı korunur. Sürüş için yazı yazılmaz; T sohbeti isteğe bağlıdır.
+Etap sonunda analog/D-pad ile iki eylem arasında gezip A ile onaylayabilirsin; fare gerekmez.
+
+PC: **oklar/WASD** sürekli dört yönlü hareket, **Space/F/fare sol** öne ateş, **fare sağ/X** arka mayın, **E** turbo, **Q** fren, **Shift/C** alan darbesi, **R** sıyrılma, **Esc/P** mola. Gamepad: sol çubuk/D-pad hareket, A/RT ateş, X mayın, RB turbo, LT fren, B/LB sıyrılma, Y destek, Start mola. Yeniden atama ve ölü bölgesi ayarı korunur. Sürüş için yazı yazılmaz; T sohbeti isteğe bağlıdır.
 
 Karakter/araç, hitbox, ateş ve mayın aynı fizik konumuna bağlıdır. Aion sürücülü araç atlası sabit gövde pivotu kullanır; Aion ve direksiyon aracın önüne bakar. NPC portreleri kare oranını korur. Saldırı uyarıları, patlama paftaları, ön namlu parlaması ve Omega-3 elektrik darbesi vardır. Destek yakındaki düşman mermilerini temizler. Ses, titreşim, kamera sarsıntısı ve azaltılmış hareket tercihleri korunur.
 

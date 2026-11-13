@@ -116,3 +116,11 @@ Kaynak /workspace/drive-by-wire-public; dal codex/garage-stable-stage; başlang�
 Garaj düğmeleri yatayda iki sütun; uzun konuşma fontun gerçek ölçüsüyle sayfalanır. İlk uzun metin kesilmesi testte yakalandı ve düzeltildi. Native garaj testi dört viewportta bütün altı konuşmayı, üç aşamayı, hareket açık/kapalı durumu ve yön dönüşünü denetler. Tarayıcı testi karakter alanlarının iki saniye arayla gerçek PNG piksellerini karşılaştırır. Güncel sonuç QA.md ve yayın kaydındadır. Sonraki öncelik fiziksel cihaz ve insan oyuncu değerlendirmesi.
 
 Aynı poz çevrimi ana menüde de bulundu; title_screen aynı garage_cast bileşenini kullanır. Ana menüde de zaman ve kontrol alanı çakışma regresyonları var.
+
+## 0.7.3 · Gamepad sonuç ekranı / rahat PC eylemleri
+
+Kaynak /workspace/drive-by-wire-public, dal codex/gamepad-results-mouse-actions; taban production281929a3be33df37e2aff5157129d93d2fbaea17. Native yeniden üretimde sonuç ekranının Yeniden sür odağı analog sağa rağmen değişmiyordu; açık odak komşuları eklenince Garaj seçildi ve sola geri döndü. Menü A/Enter davranışı Godot GUI yolunda kalır; özel gezinme motoru eklenmedi. Odak kaybından kumanda/klavye ile geri dönülür.
+
+Kullanıcı PC için sol tık ateş, sağ tık arka mayın, Shift alan etkisi istedi. Sağ fare basılı tekrarlanır, bırakma/mola/odak kaybı iki mouse tutulmasını temizler. R sıyrılma, X/C alternatifleri. Canvas üzerinde tarayıcı sağ tık menüsü engellenir. Mobil ve gamepad sürüş şemaları korunur. Kontrol ipuçları ve yardım güncellendi. Yeni result_input regresyonu gerçek InputEvent yollarıyla başarısız/başarılı sonuç, iki düğme, A onayı ve özel kayıtlı atamaları denetler.
+
+Browser_result_pad gerçek 400m etabı yalnız gamepad girdileriyle tamamladı: can105, düşman9, ikmal5. Analog ve D-pad ile iki eylem seçildi, A ile etap2 kararına geçildi; fare/oynanış setter yok. Sıradaki iş fiziksel Xbox ve insan kullanım testi. Yayın doğrulaması version.json/PCK ve yeni oturumlarla ayrıca yapılır.

@@ -57,7 +57,7 @@ body { color:var(--text); background:var(--bg); overflow:hidden; font-family:sys
         <a id="help-link" href="#accessible-help">Kontroller ve erişim bilgisi</a>
         <aside id="accessible-help" tabindex="-1">
           <h1>Drive-By Wire nasıl oynanır?</h1>
-          <p>Omega-3 ile üç karar ver; her kararın ardından 400 metrelik arcade etabı tamamla. Seçimlerin 13 farklı sondan birine ulaşır. Kaza yapmak bir son açmaz; önceki etaplar korunur. Oklar veya WASD arabayı yol içinde dört yöne serbest hareket ettirir. E turbo, Q fren. Boşluk veya F öne ateş eder. X arkaya mayın, Shift sıyrılma, C destek, Escape mola. WASD de sürüşü yönetir; yolda fare sol ateş, sağ sıyrılmadır.</p>
+          <p>Omega-3 ile üç karar ver; her kararın ardından 400 metrelik arcade etabı tamamla. Seçimlerin 13 farklı sondan birine ulaşır. Kaza yapmak bir son açmaz; önceki etaplar korunur. Oklar veya WASD arabayı yol içinde dört yöne serbest hareket ettirir. E turbo, Q fren. Boşluk veya F öne ateş eder. Yolda fare sol öne ateş, fare sağ arkaya sınırsız mayın bırakır. Shift / C alan darbesi, R sıyrılma, Escape mola. X alternatif mayın tuşudur.</p>
           <p>Mobil ve tablette sol alttaki sabit sanal joystick ile dört yöne sür. Turbo, fren, ateş, mayın, sıyrılma ve destek için eylem düğmeleri vardır. Dikey ve yatay ekran desteklenir.</p>
           <p>Kesik nişan çizgisi yaklaşan atışı, ! işareti düşecek engeli gösterir. Uyarıyı görünce şerit değiştir veya sıyrıl. Azaltılmış harekette bu önemli işaretler görünür kalır.</p>
           <p>Kumandada sol çubuk veya D-pad serbest hareket; A/RT öne ateş, RB turbo, LT fren, X mayın, B/LB sıyrılma, Y destek, Start mola. Tuşlar Ayarlar içinden değiştirilebilir.</p>
@@ -156,6 +156,7 @@ const engine = new Engine(GODOT_CONFIG);
 
 (function () {
 	const canvas = document.getElementById('canvas');
+	canvas.addEventListener('contextmenu', event => event.preventDefault());
 	const statusOverlay = document.getElementById('status');
 	const statusProgress = document.getElementById('status-progress');
 	const statusNotice = document.getElementById('status-notice');

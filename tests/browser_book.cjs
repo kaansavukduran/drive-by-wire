@@ -44,7 +44,7 @@ const base=process.env.DBW_URL||'http://127.0.0.1:8765';
    const direction=Math.abs(desired-px)<8?'':(desired<px?'ArrowLeft':'ArrowRight');
    if(direction!==held){if(held)await page.keyboard.up(held);if(direction)await page.keyboard.down(direction);held=direction;}
    if(q.traffic.some(e=>Math.abs(e.x-px)<25&&e.y>py+25&&e.y<py+140)&&q.mines===-1&&Date.now()-lastMine>1500){await page.keyboard.press('KeyX');lastMine=Date.now();}
-   if(q.traffic.some(e=>Math.abs(e.x-px)<28&&Math.abs(e.y-py)<60)&&q.dodge<=0)await page.keyboard.press('Shift');
+   if(q.traffic.some(e=>Math.abs(e.x-px)<28&&Math.abs(e.y-py)<60)&&q.dodge<=0)await page.keyboard.press('KeyR');
    if(Date.now()-lastSupport>8500){await page.keyboard.press('KeyC');lastSupport=Date.now();}
    await page.waitForTimeout(150);
   }

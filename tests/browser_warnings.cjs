@@ -35,7 +35,7 @@ try{
    if(danger.has(s.lane)){
     const lane=[0,1,2].filter(l=>!danger.has(l)).sort((a,b)=>Math.abs(a-s.lane)-Math.abs(b-s.lane))[0];
     if(lane!==undefined)await page.keyboard.press(lane<s.lane?'ArrowLeft':'ArrowRight');
-    else await page.keyboard.press('Shift');
+    else await page.keyboard.press('KeyR');
    }else{
     const pickup=s.pickup_targets.find(p=>p.y>100&&p.y<235&&!danger.has(p.lane));
     if(pickup&&pickup.lane!==s.lane)await page.keyboard.press(pickup.lane<s.lane?'ArrowLeft':'ArrowRight');

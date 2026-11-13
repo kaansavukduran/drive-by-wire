@@ -1,3 +1,7 @@
+# 0.7.3 · Gamepad sonuç seçimi ve PC eylemleri
+
+Etap sonunda analog/D-pad ile seçim, A ile onay; odak kaybından klavye/kumanda ile dönüş. PC yol alanında sol tık öne ateş, sağ tık sınırsız arka mayın; Shift alan darbesi, R sıyrılma. X/C alternatifleri ve kayıtlı özel atamalar korunur. Sağ tık menüsü oyun tuvalinde açılmaz. Aynı main→Vercel otomatik web yayını kullanılır.
+
 # 0.7.2 · Sabit garaj yerleşimi
 
 Ana menü ve garajda Aion ve Ömer için ayrı zemin alanları; boşta yana kaydıran poz döngüsü kaldırıldı. Diyalog/yükseltme/hazırlık ve ekran yönünden dönüşte konum sabit kalır. Uzun garaj konuşması İleri ile sayfalanır; düğmeler karakter alanına taşmaz. Önceki sürüş, sınırsız mayın ve kayıt davranışı korunur. GitHub main → Vercel yayını aynı akıştadır.
