@@ -529,51 +529,51 @@
     },
     "assets/sprites/emre_aftermath_detail.png": {
       "method": "AI-assisted original game adaptation; built-in image generation",
-      "generated_by": "OpenAI image generation; 0.10.0",
+      "generated_by": "OpenAI image editing; 0.10.1",
       "status": "GAME_ADAPTATION_DRAFT",
       "rights": "Owner-requested AIONIA game adaptation. Character identity and original reference art remain the owner’s; no final canon approval claimed.",
-      "identity": "beige rabbit, green eyes, light blue shirt, plain red tie, dark trousers; injured but alive",
+      "identity": "compact round beige rabbit, large green eyes, cream muzzle/two front teeth, light blue short-sleeve shirt, plain red tie, brown belt, short charcoal trousers and bare paws; injured but alive",
       "frame_size": [
         512,
         512
       ],
       "columns": 3,
       "frames": 6,
-      "sha256": "d8b73ae86b88b3d8f757312d2aa6d687830c99c763d5e28d7fd931771f6484a1",
+      "sha256": "f7836e82ca4bc3b9cb927d1707800667ba87cc72910f5eb3688b1068c2c3fc62",
       "registration": "data/story_cast_art.json",
-      "process": "Private Drive references inspected locally, not uploaded to the generator. Generated Emre sheet used as style reference for the other new assets. Original PNG bytes retained; authored per-frame planted contact offsets and shared cutout material applied at runtime."
+      "process": "User-requested correction toward original modeling-sheet proportions. Original character reference and prior game sheet used in built-in image editing; original references are not published. New PNG bytes retained; per-frame planted contacts measured locally. Reference dictates anatomy/outfit; prior sheet dictates material/light quality only."
     },
     "assets/sprites/aion_story.png": {
       "method": "AI-assisted original game adaptation; built-in image generation",
-      "generated_by": "OpenAI image generation; 0.10.0",
+      "generated_by": "OpenAI image editing; 0.10.1",
       "status": "GAME_ADAPTATION_DRAFT",
       "rights": "Owner-requested AIONIA game adaptation. Character identity and original reference art remain the owner’s; no final canon approval claimed.",
-      "identity": "pink axolotl, blue-tipped external gills, blue eyes, white science coat/badges and DNA tail",
+      "identity": "compact round pink axolotl, large round blue eyes, three blue-tipped gills per side, bare pink belly/short limbs, white short-sleeve coat with infinity/leaf emblem and pink-white-blue badge, DNA tail; no invented dark suit or ID lanyard",
       "frame_size": [
         627,
         627
       ],
       "columns": 2,
       "frames": 4,
-      "sha256": "56d712a40f517d0cab8676c953540d5343ff3293257c9097d7fcc43c30016a1e",
+      "sha256": "bbbc0fb48e774cc5055927ca310a44b3ab829a81f9788e2a289df9855551e530",
       "registration": "data/story_cast_art.json",
-      "process": "Private Drive references inspected locally, not uploaded to the generator. Generated Emre sheet used as style reference for the other new assets. Original PNG bytes retained; authored per-frame planted contact offsets and shared cutout material applied at runtime."
+      "process": "User-requested correction toward original modeling-sheet proportions. Original character reference and prior game sheet used in built-in image editing; original references are not published. New PNG bytes retained; per-frame planted contacts measured locally. Reference dictates anatomy/outfit; prior sheet dictates material/light quality only."
     },
     "assets/sprites/eren_story.png": {
       "method": "AI-assisted original game adaptation; built-in image generation",
-      "generated_by": "OpenAI image generation; 0.10.0",
+      "generated_by": "OpenAI image editing; 0.10.1",
       "status": "GAME_ADAPTATION_DRAFT",
       "rights": "Owner-requested AIONIA game adaptation. Character identity and original reference art remain the owner’s; no final canon approval claimed.",
-      "identity": "separate AIO-CHAR-EREN identity; orange fur, prominent eyelashes, freckles, sharp cheek tufts, dark teal blazer and orange/burgundy striped tie",
+      "identity": "separate AIO-CHAR-EREN; compact round orange rabbit, huge burgundy eyes, black eyelashes, freckles, sharp cheek tufts, short dark teal blazer, striped orange/burgundy tie, short dark trousers and oversized rounded brown shoes",
       "frame_size": [
         627,
         627
       ],
       "columns": 2,
       "frames": 4,
-      "sha256": "25a390827fce17153d1d0bb96c5e44a36084cd6ba22a4db8b822e3ec47967b99",
+      "sha256": "d7806f5aff2b1a99e465245ec4df2c1a2134d83237d95a82fec8b48139935623",
       "registration": "data/story_cast_art.json",
-      "process": "Private Drive references inspected locally, not uploaded to the generator. Generated Emre sheet used as style reference for the other new assets. Original PNG bytes retained; authored per-frame planted contact offsets and shared cutout material applied at runtime."
+      "process": "User-requested correction toward original modeling-sheet proportions. Original character reference and prior game sheet used in built-in image editing; original references are not published. New PNG bytes retained; per-frame planted contacts measured locally. Reference dictates anatomy/outfit; prior sheet dictates material/light quality only."
     },
     "assets/ui/road_aftermath.png": {
       "method": "AI-assisted original game scenery; built-in image generation",

@@ -1,4 +1,4 @@
-# AIONIA standardı · 0.10.0 uygulama kapsamı
+# AIONIA standardı · 0.10.1 uygulama kapsamı
 
 13 Kasım 2026 tarihinde yetkili Drive bağlantısından güncel belge ve başlangıç/referans indeksi okundu. **İçerik sürümü v1.7**. Önceki proje kaydı v1.6’ya dayanıyordu. Özel belge bağlantısı, paftalar ve belge metni public pakete kopyalanmaz.
 
@@ -16,3 +16,5 @@
 - 0.10.0 için standart v1.7 ve güncel başlangıç indeksi yeniden okundu. Eren’in özgün çizimi ve TASLAK modelleme paftası ayrıca incelendi: turuncu kürk, uzun kirpik, benek, sivri yanak, koyu ceket ve çizgili kravat; Emre’nin sade kırmızı kravatıyla karıştırılmaz.
 - Kullanıcının istediği sanat revizyonunda yerleşik görsel üretimiyle yeni oyun paftaları üretildi. Özel Drive görselleri üreticiye gönderilmedi; yalnız üretilen Emre paftası sonraki üretimlerde stil referansı oldu. Yayımlananlar yeni oyun kareleri/TASLAK’tır.
 - İlgili ChatGPT sohbet bağlantısı mevcut araçlarda read_thread olmadığı için okunamadı. Kurulu Fragaria Unslop SKILL.md ve ilgili proje/animasyon/oyun yönergeleri doğrudan okundu ve uygulandı.
+
+- 0.10.1 aşamasında canlı standart tekrar okundu: içerik hâlâ v1.7. Kullanıcının yeni talebiyle Aion ana referansı, Emre ve Eren modelleme paftaları yeniden karşılaştırıldı. Ayrıntı kalitesi korunurken olgunlaştırılmış oranlar/kıyafet ekleri düzeltildi. Bu tur paftalar yerleşik görsel düzenlemesinde doğrudan tasarım girdisi olarak kullanıldı; özel kaynak dosyaları public depoya taşınmadı. Önceki üretim yönteminin notu0.10.0 tarihsel kaydıdır.

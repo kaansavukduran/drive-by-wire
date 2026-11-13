@@ -1,6 +1,6 @@
 # Drive-By Wire · AIONIA sanat kılavuzu
 
-Güncel uygulama 0.10.0 · 13 Kasım 2026 · [Güncel AIONIA referansı](AIONIA_CURRENT_REFERENCE.md). Eski bölümler önceki üretim kaydını da içerir.
+Güncel uygulama 0.10.1 · 13 Kasım 2026 · [Güncel AIONIA referansı](AIONIA_CURRENT_REFERENCE.md). Eski bölümler önceki üretim kaydını da içerir.
 
 ## Kimlik ve sınır
 
@@ -101,3 +101,12 @@ Aion’un yer sahnesi mevcut sabit 72×64 ayakta karesini kullanır; yeni yürü
 `story_cast_art.gd` Sprite2D bölge/offset/ölçeğini kaynak temasına göre ayarlar; fizik veya dünya kökü alfa kutusundan hesaplanmaz. Gölgeler sabittir. Düşük alfa üretim halesi ortak cutout malzemesiyle temizlenir; gövde hareketi sahte kamera sallantısıyla üretilmez. Azaltılmış hareket nefes/kırpma döngüsünü durdurur, yardım pozunu ve seçimleri korur. Klipler kısa poz tutuşlarıdır; ara kare üretimi veya yürüme animasyonu yapılmış sayılmaz.
 
 Bu paftalar OYUN/TASLAK; özel modelleme paftalarının yerine kesin kanon ilan edilmez. Orijinal referanslar, önceki runtime çizimleri ve kaynak kayıtları korunur. Eski `author_road_story.py` yalnız 0.9.0 geometrik kaynaklarını tekrar üretir; yeni paftaların üreticisi değildir.
+
+
+## 0.10.1 · İşçilik ve özgün oranlar
+
+Kullanıcı0.10.0’ın ayrıntı/ışık kalitesini beğendi ancak karakterleri paftalara göre fazla olgun buldu. Paftayla karşılaştırmada Emre’nin uzun gövdesi/dar gözleri, Eren’in uzun bacakları/dar yüzü ve Aion’un eklenmiş koyu gömlek/pantolon/boyun kartı doğrulandı. Yeni görseller aynı modelin yalnız küçültülmesi değildir: her pafta özgün referans ve önceki oyun karesinin ayrıntı/ışık örneği birlikte kullanılarak yeniden düzenlendi. Kaynak paftalar public depoya eklenmez.
+
+Aion: geniş yuvarlak yüz, büyük mavi gözler, kısa pembe çıplak uzuv/gövde, beyaz kısa kollu önlük, özgün sonsuzluk/yaprak işareti ve küçük pembe/beyaz/mavi göğüs rozeti. Emre: iri yeşil gözler, yuvarlak krem yanak, iki ön diş, kısa açık mavi gömlek/düz kırmızı kravat/kahverengi kemer ve kısa koyu pantolon. Eren: geniş sivri yanak tüyleri, iri bordo gözler, özgün kirpik/benek/çizgili kravat, kısa ceket ve bacaklar, büyük yuvarlak ayakkabı. Kanon kimliği korunur; yeni oyun paftaları final kanon onayı diye sunulmaz.
+
+Atlas düzenleri ve14 ayrı poz korunur. Yeni gerçek kaynak temasları: Aion(290,552); Emre x450/y405–406; Eren ayakta(360,610), diz çökerken(450,590). Mantıksal dünya kökleri aynıdır; Emre’nin sahne ölçeği0.4375→0.375 ile daha kısa gövde silüetine uyarlandı. Eren’in yeni geniş yüzü/kulakları için portre kaynak kutusu400×400’e açıldı. Arka plan, klip sırası/süreleri ve kamera düzeni değiştirilmedi. Anatomik sadakat elle karşılaştırıldı; bu ölçüm otomatik bir kanon/estetik sertifikası değildir.

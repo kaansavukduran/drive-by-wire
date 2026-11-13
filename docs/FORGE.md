@@ -157,3 +157,10 @@ Onarım: üç karakter için toplam14 ayrı poz; orman/enkaz arka planı; kaynak
 İlk web paketinde kaynak metadata dosyası .gdignore altından dışa aktarılmadı: karakterler görünmedi, gerçek test FAIL verdi. Runtime dosyası data/story_cast_art.json konumuna taşındı; normal data ihracıyla aynı tarayıcı akışı PASS oldu. Bir sonraki denemede 230ms seyrek örnekleme kısa göz kırpma karesini kaçırdı; altı kare kabul koşulu korunarak örnekleme75ms ve birkaç gerçek döngüye çıkarıldı. Son tam hikâyede altı kare de görüldü, gerçek kök/temas konumları her örnekte aynı kaldı, runtime hatası0.
 
 Yerel native sonuçlar ve gerçek web/cihaz kapsamı QA.md içindedir. Kanıt görüntüleri ve loglar work/v010 altında yerel tutulur; özel paftalar ve standart metni public kaynağa eklenmez. Canlı kaynak/commit/dağıtım ayrıca kontrol edilir.
+
+
+## 0.10.1 · Olgunlaştırmadan ayrıntı
+
+Kullanıcının kaynak paftaya sadakat düzeltmesi. İnceleme0.10.0 gövdelerinin ve yüzlerinin paftadan uzadığını, Aion’da kaynak dışı koyu kıyafet/boyun kartı eklendiğini doğruladı. Ayrıntı ve ışık kalitesi istenen yöndeydi. Üç pafta özgün tasarım referansı doğrudan esas alınarak düzenlendi; yuvarlak baş/büyük göz/kısa uzuvlar ve özgün giysi işaretleri geri geldi. Yeni PNG’ler, temas metadatası, Emre sahne ölçeği ve Eren portre kesimi değişir; kontroller, hikâye/veri biçimi, kamera ve arka plan korunur.
+
+Kaynak:/workspace/drive-by-wire-public; bağlı depo kaansavukduran/drive-by-wire. Art metadata data/story_cast_art.json; yöntem/hash assets/PROVENANCE.json. Önceki canlı0.10.0/main4c15780/PR13 kaynak tabanıdır. Paftalara sadakat elle, kaynak temasları ve14 poz gerçek normal web akışıyla sınandı. Tam regresyon/yayın sonuçları QA ve bu işin PR/yayın makbuzunda kaydedilir. Fiziksel cihaz ve kullanıcı estetik onayı yapılmış sayılmaz.

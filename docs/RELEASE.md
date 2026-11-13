@@ -1,3 +1,9 @@
+# 0.10.1 · Paftadaki oranlar, ayrıntılı pixel art
+
+Aion, Emre ve Eren’in geniş/yuvarlak yüzleri, büyük gözleri, kısa gövde ve uzuvları özgün paftalara yaklaştırıldı. Aion’un eklenmiş koyu kıyafeti ve kimlik kartı kaldırıldı; özgün önlük/göğüs işaretleri/pembe gövde korundu. Ayrıntılı kürk, kumaş ve sahne ışığı korunur. Aynı14 poz için gerçek kaynak temasları yeniden ölçüldü; dünya kökleri, hikâye, kontroller, ayarlar ve kayıt biçimi aynı kalır. Eren portresi yeni baş/kulak oranına uyarlandı.
+
+Yeni kareler oyun uyarlaması/TASLAK’tır. Gerçek test ve yayın durumları [QA](QA.md) ve yayın makbuzunda ayrılır.
+
 # 0.10.0 · Yol kenarında üç kişi
 
 Aion, Emre ve yeni hikâye karakteri Tavşan Eren için ayrıntılı pixel-art sahne paftaları, ortak gece ışığı ve sabit kaynak temasları. Yeni orman/enkaz arka planı. Emre yaralı ve hayattadır; Aion elini uzatır, Eren battaniyeyle yardım eder. Eren’in kaydı mühürleme/sinyal izini paylaşma seçimi kayda ve epiloga taşınır. Mevcut motor, kontroller, 13 son ve eski kayıtlar korunur.
