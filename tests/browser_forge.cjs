@@ -47,6 +47,7 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
     entry.garageActors='PASS: fixed feet, own slots, no UI overlap and identical rendered pixels over time';
     await tap(page,q.buttons[0],device.touch);q=await wait(page,()=>window.__dbwQA.stage==='upgrade');await sleep(150);q=await page.evaluate(()=>window.__dbwQA);assert.equal(JSON.stringify(q.cast),castBefore,'upgrade must preserve actor slots');
     await page.screenshot({path:`${out}/${device.name}-garage-upgrade.png`});await tap(page,q.buttons[0],device.touch);q=await wait(page,()=>window.__dbwQA.stage==='ready');await sleep(150);q=await page.evaluate(()=>window.__dbwQA);assert.equal(JSON.stringify(q.cast),castBefore,'ready must preserve actor slots');
+    q=await page.evaluate(()=>window.__dbwQA);if(q.radio_ui)for(const w of q.radio_ui.widgets)assert(w.fits,'HUD must still fit after settings/font change: '+w.text);
     if(device.name==='phone-portrait'){
      await page.setViewportSize({width:844,height:390});await wait(page,()=>window.__dbwQA.view[0]>window.__dbwQA.view[1]);await sleep(200);await page.screenshot({path:`${out}/garage-rotated.png`});
      await page.setViewportSize({width:390,height:844});await wait(page,()=>window.__dbwQA.view[1]>window.__dbwQA.view[0]);await sleep(200);q=await page.evaluate(()=>window.__dbwQA);assert.equal(JSON.stringify(q.cast),castBefore,'rotation roundtrip restores floor marks');
@@ -69,6 +70,7 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
     await tap(page,q.supplies,device.touch);
     q=await state(page,'run');
     assert.equal(q.paused,false);assert.equal(q.route,'supplies');assert.equal(q.mines,-1);
+    for(const w of q.radio_ui.widgets)assert(w.fits,'visible HUD text must fit: '+w.text);
     if(q.view[1]>q.view[0]){
      const hud=q.portrait_hud;
      for(const rect of Object.values(hud))assert(inside(rect,q.view),'portrait HUD must fit');
@@ -129,12 +131,18 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
     await tap(page,q.pause_menu[1],device.touch);q=await wait(page,()=>{const q=window.__dbwQA;return q.settings&&q.settings_back[1]+q.settings_back[3]<=q.view[1];});
     assert(inside(q.settings_rect,q.view)&&inside(q.settings_back,q.view),'settings must fit');
     await page.screenshot({path:`${out}/${device.name}-settings.png`});
+    if(device.name==='desktop'){
+     await tap(page,q.settings_ui.tabs[q.settings_ui.tab_names.indexOf('Görünüm')],false);await sleep(200);q=await page.evaluate(()=>window.__dbwQA);await tap(page,q.settings_ui.font_option,false);await sleep(400);await page.keyboard.press('ArrowDown');await sleep(100);await page.keyboard.press('ArrowDown');await sleep(100);await page.keyboard.press('Enter');
+     q=await wait(page,()=>window.__dbwQA.settings_ui.font.choice==='lexend');entry.fontChange='PASS: actual settings selected Lexend without leaving the game';
+    }
+
     await tap(page,q.settings_back,device.touch);q=await wait(page,()=>!window.__dbwQA.settings);
     await tap(page,q.pause_menu[5],device.touch);q=await wait(page,()=>{const q=window.__dbwQA;return q.journal&&q.journal_back[1]>q.journal_rect[1]+q.journal_rect[3]-70;});
     assert(inside(q.journal_rect,q.view)&&inside(q.journal_back,q.view),'journal must fit');
     await page.screenshot({path:`${out}/${device.name}-journal.png`});
     await tap(page,q.journal_back,device.touch);q=await wait(page,()=>!window.__dbwQA.journal);
     await tap(page,q.pause_menu[0],device.touch);q=await wait(page,()=>!window.__dbwQA.paused);
+    q=await page.evaluate(()=>window.__dbwQA);if(q.radio_ui)for(const w of q.radio_ui.widgets)assert(w.fits,'HUD must still fit after settings/font change: '+w.text);
     if(device.name==='phone-portrait'){
      await page.setViewportSize({width:844,height:390});
      q=await wait(page,()=>window.__dbwQA.view[0]>window.__dbwQA.view[1]&&window.__dbwQA.paused);

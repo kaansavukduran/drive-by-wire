@@ -13,3 +13,6 @@ Sonuçları PASS / FAIL / NOT TESTED raporla. Fiziksel cihaz, yardımcı teknolo
 Garaj sahnesi: Aion ve Ömer ayrı sabit zemin alanlarında, ortak ayak pivotuyla durur. Kaydı yapılmamış farklı gövde pozları boşta döngüye eklenmez; diyalog/yükseltme/hazırlık metni veya animasyon saati karakterin alanını değiştiremez. Ekran yönünden dönüşte aynı zemin işaretleri geri gelmelidir. tests/test_garage_stage.gd ve tarayıcıdaki gerçek karakter piksel karşılaştırmasını koru.
 
 0.7.3 PC açık kullanıcı isteği: yol alanında fare sol öne ateş, fare sağ basılı sınırsız arka mayın; Shift alan darbesi, R sıyrılma. X/C alternatifleri ve özel atamalar korunur. Etap sonu düğmelerinde açık dört yön/Tab odak komşuları ve analog/D-pad/A ile fare gerektirmeyen geçiş zorunlu; test_result_input.gd ve gerçek 400m browser_result_pad.cjs regresyonlarını koru.
+
+
+0.7.4 metin yerleşimi: sabit HUD kutuları minimum içerik boyuyla komşu alanlara büyüyemez. Uzun konuşmaları TextFit ile gerçek font/fallback, genişlik, StyleBox iç boşlukları ve satır aralığına göre sayfala; metni kırparak kaybetme. Tam metin mola günlüğünde kalmalı. Konuşan kişinin adı/portresi eşleşmeli, bitmiş replik font/ekran değişiminde yeniden görünmemeli. test_hud_text.gd ve browser_book.cjs içindeki bildirilen Ömer repliği regresyonunu koru.

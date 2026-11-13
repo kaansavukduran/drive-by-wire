@@ -1,3 +1,7 @@
+# 0.7.4 · Taşmayan telsiz ve HUD
+
+Sağ telsizde uzun konuşmalar gerçek font ve satır aralığıyla sayfalanır; sayfa sayacı ve mola günlüğünde tam metin bulunur. Başlık portredeki konuşan kişiyi gösterir. Hikâye repliği bitmeden rastgele tepkiyle değiştirilmez; molada okuma süresi durur. Güven/kalkan, kontrol ipuçları, sol can/enerji, görev, hedef/bildirim ve sonuç alanları ayrıldı. Garaj aynı ölçüm yordamını kullanır. [Gerçek testler](QA.md); canlı yayın yerel testten ayrı doğrulanır.
+
 # 0.7.3 · Gamepad sonuç seçimi ve PC eylemleri
 
 Etap sonunda analog/D-pad ile seçim, A ile onay; odak kaybından klavye/kumanda ile dönüş. PC yol alanında sol tık öne ateş, sağ tık sınırsız arka mayın; Shift alan darbesi, R sıyrılma. X/C alternatifleri ve kayıtlı özel atamalar korunur. Sağ tık menüsü oyun tuvalinde açılmaz. Aynı main→Vercel otomatik web yayını kullanılır.

@@ -1,4 +1,5 @@
 extends Node2D
+const TextFit := preload("res://scripts/game/text_fit.gd")
 const QA := preload("res://scripts/game/qa_snapshot.gd")
 ## Sefer sahnesi: doğrudan ok tuşlu sürüş, üç şeritli yol, isteğe bağlı sohbet,
 ## üç düşman tipi, kapsüller, turbo, görevler, puan serisi ve Omega-3 ilişkisi
@@ -106,6 +107,12 @@ var hud: Label
 var hint: Label
 var end_panel: Label
 var bubble_left := 0.0
+var radio_text := ""
+var radio_is_story := false
+var radio_speaker := "omega"
+var radio_pages: Array[String]=[]
+var radio_page := 0
+var radio_page_caption: Label
 var face: Control
 var radio_portrait: Control
 var sheets := Sheets.new()
@@ -276,20 +283,20 @@ func _build_ui() -> void:
 	add_child(ui)
 	var theme := UiSkin.theme()
 	ui_theme = theme
-	_panel(ui, Rect2(8, 8, 176, 151))
+	_panel(ui, Rect2(8, 8, 176, 166))
 	_panel(ui, Rect2(456, 8, 176, 166))
-	_panel(ui, Rect2(8, 172, 176, 97))
+	_panel(ui, Rect2(8, 186, 176, 110))
 	var brand := _label(ui, theme, Vector2(18, 14), Vector2(156, 16))
 	brand_label = brand
 	brand.text = "FRAGARIA INTERACTIVE"
 	brand.add_theme_font_size_override("font_size", 9)
 	brand.theme_type_variation="BrandLabel"
-	score_label = _label(ui, theme, Vector2(18, 32), Vector2(158, 36))
+	score_label = _label(ui, theme, Vector2(18, 32), Vector2(158, 30))
 	score_label.add_theme_font_size_override("font_size", 20)
-	hud = _label(ui, theme, Vector2(18, 75), Vector2(155, 65))
+	hud = _label(ui, theme, Vector2(18, 75), Vector2(155, 64))
 	hp_bar = _bar(ui, Rect2(18, 65, 154, 6), Color("7cddb5"))
-	energy_bar = _bar(ui, Rect2(18, 146, 154, 5), Color("79d4ff"))
-	energy_caption = _label(ui, theme, Vector2(18, 130), Vector2(154, 14))
+	energy_bar = _bar(ui, Rect2(18, 162, 154, 5), Color("79d4ff"))
+	energy_caption = _label(ui, theme, Vector2(18, 140), Vector2(154, 16))
 	energy_caption.add_theme_font_size_override("font_size", 9)
 	distance_caption = _label(ui, theme, Vector2.ZERO, Vector2(90, 12))
 	distance_caption.add_theme_font_size_override("font_size", 9)
@@ -306,19 +313,22 @@ func _build_ui() -> void:
 	momo_title = _label(ui, theme, Vector2(523, 20), Vector2(98, 38))
 	momo_title.text = "Omega-3\nYol arkadaşın"
 	momo_title.add_theme_font_size_override("font_size", 10)
-	bubble = _label(ui, theme, Vector2(466, 68), Vector2(156, 58))
+	bubble = _label(ui, theme, Vector2(466, 68), Vector2(156, 52))
 	bubble.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	status_label = _label(ui, theme, Vector2(466, 130), Vector2(156, 38))
+	radio_page_caption = _label(ui, theme, Vector2(466, 122), Vector2(156, 12))
+	radio_page_caption.add_theme_font_size_override("font_size",8)
+	radio_page_caption.theme_type_variation="MutedLabel"
+	status_label = _label(ui, theme, Vector2(466, 136), Vector2(156, 36))
 	status_label.add_theme_font_size_override("font_size", 10)
-	mission = _label(ui, theme, Vector2(18, 181), Vector2(156, 76))
+	mission = _label(ui, theme, Vector2(18, 195), Vector2(156, 96))
 	mission.add_theme_font_size_override("font_size", 11)
 	mission.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	route_bar = _bar(ui, Rect2(224, 8, 192, 4), Color("ffce70"))
-	hint = _label(ui, theme, Vector2(456, 184), Vector2(176, 82))
+	hint = _label(ui, theme, Vector2(456, 184), Vector2(176, 104))
 	hint.text = Controls.run_hint()
 	hint.add_theme_font_size_override("font_size", 10)
 	hint.add_theme_stylebox_override("normal", UiSkin.caption())
-	toast = _label(ui, theme, Vector2(202, 30), Vector2(236, 42))
+	toast = _label(ui, theme, Vector2(202, 58), Vector2(236, 60))
 	toast.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	toast.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	toast.add_theme_font_size_override("font_size", 12)
@@ -329,13 +339,13 @@ func _build_ui() -> void:
 	_build_pause(ui)
 	_build_touch(ui)
 	_build_journal(ui)
-	story_caption = _label(ui,theme,Vector2(202,16),Vector2(236,26))
+	story_caption = _label(ui,theme,Vector2(202,16),Vector2(236,36))
 	story_caption.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 	story_caption.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
 	story_caption.add_theme_font_size_override("font_size",9)
 	story_caption.theme_type_variation="AccentLabel"
 	story_caption.add_theme_stylebox_override("normal",UiSkin.caption())
-	toast.position.y=46
+	toast.position.y=58
 	end_panel = _label(ui, theme, Vector2(W / 2 - 190, 44), Vector2(380, 250))
 	end_panel.z_index=40
 	end_panel.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -365,6 +375,8 @@ func _build_ui() -> void:
 func _label(parent: Node, theme: Theme, pos: Vector2, size: Vector2) -> Label:
 	var l := Label.new()
 	l.theme = theme
+	l.clip_text=true
+	l.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 	l.position = pos
 	l.size = size
 	parent.add_child(l)
@@ -491,6 +503,7 @@ func _apply_settings(value: Dictionary) -> void:
 		shake = 0.0
 	face.decorative_motion = motion_enabled
 	face.set_process(not paused)
+	if not radio_text.is_empty(): _reflow_radio()
 
 
 func _to_title() -> void:
@@ -718,25 +731,53 @@ func _on_submit(text: String) -> void:
 				pending.append({"t": wait + 0.3, "command": extra})
 
 
-func _say(line: String) -> void:
-	if line == "":
-		return
+func _say(line: String,story: bool=false) -> void:
+	if line == "": return
+	radio_is_story=story
 	var parts:=line.split(": ",true,1)
 	var who: String=parts[0].to_lower() if parts.size()>1 else "omega"
-	if who in ["omega-3","omega"]: who="omega"
+	who={"omega-3":"omega","baykuş ömer":"omer","baykus omer":"omer","tavşan emre":"emre","tavsan emre":"emre"}.get(who,who)
+	radio_speaker=who if Cast.NAMES.has(who) else "omega"
+	radio_text=parts[1] if parts.size()>1 and Cast.NAMES.has(who) else line
+	var full_line: String=str(Cast.NAMES.get(radio_speaker,"Omega-3"))+": "+radio_text
+	if journey!=null and not line in journey.log_lines and not full_line in journey.log_lines: journey.log_lines.append(full_line)
 	if is_instance_valid(radio_portrait):
-		radio_portrait.speaker=who
-		radio_portrait.visible=who in Cast.IDS
+		radio_portrait.speaker=radio_speaker
+		radio_portrait.visible=radio_speaker in Cast.IDS
 		face.visible=not radio_portrait.visible
-	bubble.text = (str(Cast.NAMES[who])+": "+parts[1]) if parts.size()>1 and Cast.NAMES.has(who) else line
-	bubble_left = 3.5
-	if face:
-		face.talking = 1.2
+	radio_page=0
+	_reflow_radio()
+	if face: face.talking=1.2
+
+func _reflow_radio() -> void:
+	radio_pages=TextFit.pages(radio_text,bubble)
+	radio_page=mini(radio_page,radio_pages.size()-1)
+	_show_radio_page()
+
+func _show_radio_page() -> void:
+	bubble.text=radio_pages[radio_page] if not radio_pages.is_empty() else ""
+	momo_title.text=str(Cast.NAMES.get(radio_speaker,"Omega-3"))+"\n"+("Yol arkadaşın" if radio_speaker=="omega" else "Telsiz bağlantısı")
+	radio_page_caption.text="%d / %d · Tam metin günlükte" % [radio_page+1,radio_pages.size()] if radio_pages.size()>1 else ""
+	bubble_left=maxf(3.5,bubble.text.length()*0.055)
+
+func _advance_radio(delta: float) -> void:
+	bubble_left-=delta
+	if bubble_left>0: return
+	if radio_page+1<radio_pages.size():
+		radio_page+=1
+		_show_radio_page()
+	else:
+		bubble.text=""
+		radio_page_caption.text=""
+		radio_is_story=false
+		radio_text=""
+		radio_pages.clear()
+		radio_page=0
 
 
 func _event(ev: Variant) -> void:
 	var res: Dictionary = momo.apply_event(ev, companion_rng)
-	if str(res.get("line", "")) != "":
+	if str(res.get("line", "")) != "" and not (radio_is_story and bubble_left>0):
 		_say(str(res["line"]))
 
 
@@ -875,7 +916,7 @@ func _process(delta: float) -> void:
 		qa_clock=0
 		var targets := {}
 		for action in touch_by_action: targets[action]=QA.rect(touch_by_action[action])
-		QA.publish("run",{"view":[get_viewport_rect().size.x,get_viewport_rect().size.y],"chapter":campaign.get("stage",-1),"hp":hp,"kills":kills,"collected":arcade.collected,"finish":_cfg("arcade.finish_distance",1200),"warnings":_enemy_warnings().map(func(w): return {"kind":w["kind"],"lane":w["lane"],"progress":w["progress"],"origin":[w["origin"].x,w["origin"].y],"target":[w["target"].x,w["target"].y]}),"traffic":enemies.map(func(e): return {"type":e["type"],"x":e["pos"].x,"y":e["pos"].y,"lane":e["lane"]}),"hazards":obstacles.map(func(o): return {"x":o["pos"].x,"y":o["pos"].y}),"shield":shield_left,"bonds":campaign.get("bonds",{}),"pickup_targets":pickups.map(func(p): return {"lane":_lane_of(p["pos"].x),"y":p["pos"].y}),"result_focus":result_buttons.find(get_viewport().gui_get_focus_owner()),"support":comfort_cooldown,"pulse_count":comfort_count,"mine_held":_held("drive_mine"),"result":result_buttons.map(func(b): return QA.rect(b)),"ending_text":end_panel.text if over else "","lane":lane,"player":[car_x,car_y],"sprite":[car.position.x,car.position.y],"hitbox":[_player_rect().position.x,_player_rect().position.y,_player_rect().size.x,_player_rect().size.y],"joystick":QA.rect(joystick),"stick":[joystick.value.x,joystick.value.y],"paused":paused,"over":over,"fire":_held("drive_fire"),"boost":boosting,"distance":distance,"speed":speed,"energy":energy,"road":[road_touch_rect.position.x,road_touch_rect.position.y,road_touch_rect.size.x,road_touch_rect.size.y],"actions":targets,"pause":QA.rect(pause_button),"journal":journal_panel.visible,"touch":touch_enabled,"portrait_hud":({"health":QA.rect(hud),"meters":QA.rect(distance_caption),"hp_bar":QA.rect(hp_bar),"energy_bar":QA.rect(energy_bar),"energy":QA.rect(energy_caption)} if was_portrait else {}),"route":journey.route,"mines":-1,"mine_cooldown":mine_cooldown,"mine_reload":_mine_reload(),"mine_drops":mine_drops,"active_mines":mines.map(func(m): return [m["pos"].x,m["pos"].y]),"dodge":dodge_cooldown,"settings":settings_panel.visible,"settings_ui":QA.settings(settings_panel),"settings_rect":QA.rect(settings_panel),"settings_back":QA.rect(settings_panel.back),"pause_menu":pause_panel.get_child(0).get_children().filter(func(child): return child is Button).map(func(child): return QA.rect(child)),"journal_rect":QA.rect(journal_panel),"journal_back":QA.rect(journal_panel.get_child(0).get_child(2))})
+		QA.publish("run",{"view":[get_viewport_rect().size.x,get_viewport_rect().size.y],"chapter":campaign.get("stage",-1),"hp":hp,"kills":kills,"collected":arcade.collected,"finish":_cfg("arcade.finish_distance",1200),"warnings":_enemy_warnings().map(func(w): return {"kind":w["kind"],"lane":w["lane"],"progress":w["progress"],"origin":[w["origin"].x,w["origin"].y],"target":[w["target"].x,w["target"].y]}),"traffic":enemies.map(func(e): return {"type":e["type"],"x":e["pos"].x,"y":e["pos"].y,"lane":e["lane"]}),"hazards":obstacles.map(func(o): return {"x":o["pos"].x,"y":o["pos"].y}),"shield":shield_left,"bonds":campaign.get("bonds",{}),"pickup_targets":pickups.map(func(p): return {"lane":_lane_of(p["pos"].x),"y":p["pos"].y}),"radio_ui":_radio_snapshot(),"result_focus":result_buttons.find(get_viewport().gui_get_focus_owner()),"support":comfort_cooldown,"pulse_count":comfort_count,"mine_held":_held("drive_mine"),"result":result_buttons.map(func(b): return QA.rect(b)),"ending_text":end_panel.text if over else "","lane":lane,"player":[car_x,car_y],"sprite":[car.position.x,car.position.y],"hitbox":[_player_rect().position.x,_player_rect().position.y,_player_rect().size.x,_player_rect().size.y],"joystick":QA.rect(joystick),"stick":[joystick.value.x,joystick.value.y],"paused":paused,"over":over,"fire":_held("drive_fire"),"boost":boosting,"distance":distance,"speed":speed,"energy":energy,"road":[road_touch_rect.position.x,road_touch_rect.position.y,road_touch_rect.size.x,road_touch_rect.size.y],"actions":targets,"pause":QA.rect(pause_button),"journal":journal_panel.visible,"touch":touch_enabled,"portrait_hud":({"health":QA.rect(hud),"meters":QA.rect(distance_caption),"hp_bar":QA.rect(hp_bar),"energy_bar":QA.rect(energy_bar),"energy":QA.rect(energy_caption)} if was_portrait else {}),"route":journey.route,"mines":-1,"mine_cooldown":mine_cooldown,"mine_reload":_mine_reload(),"mine_drops":mine_drops,"active_mines":mines.map(func(m): return [m["pos"].x,m["pos"].y]),"dodge":dodge_cooldown,"settings":settings_panel.visible,"settings_ui":QA.settings(settings_panel),"settings_rect":QA.rect(settings_panel),"settings_back":QA.rect(settings_panel.back),"pause_menu":pause_panel.get_child(0).get_children().filter(func(child): return child is Button).map(func(child): return QA.rect(child)),"journal_rect":QA.rect(journal_panel),"journal_back":QA.rect(journal_panel.get_child(0).get_child(2))})
 	metrics_clock += delta
 	if OS.has_feature("web") and metrics_clock > 5.0:
 		metrics_clock = 0.0
@@ -883,10 +924,8 @@ func _process(delta: float) -> void:
 		JavaScriptBridge.eval("document.documentElement.dataset.gameFps='%d';document.documentElement.dataset.godotMemoryBytes='%d';" % [Engine.get_frames_per_second(), OS.get_static_memory_usage()])
 	if not paused:
 		_animate(delta)
-		bubble_left -= delta / maxf(Engine.time_scale, 0.01)
+		_advance_radio(delta / maxf(Engine.time_scale, 0.01))
 		toast_left -= delta
-	if bubble_left <= 0.0:
-		bubble.text = ""
 	toast.visible = toast_left > 0.0 and not paused and not over
 	hud_clock += delta
 	if hud_clock >= 0.1:
@@ -997,7 +1036,7 @@ func _simulate(delta: float) -> void:
 	scroll = fposmod(scroll + speed * delta, 48.0)
 	distance += speed * delta * float(run_cfg.get("distance_per_pixel", 0.05))
 	for line in journey.advance(distance):
-		_say(line)
+		_say(line,true)
 		bubble_left=7.0
 	car.position = Vector2(round(car_x),round(car_y))
 
@@ -1381,7 +1420,7 @@ func _end_run(outcome := "destroyed") -> void:
 	var d := float(end_result.get("trust_delta", 0.0))
 	var final_line: String=journey.ending(outcome=="survived",comfort_count,arcade.collected)
 	journey.log_lines.append(final_line)
-	end_panel.text = "%s\n%s\n\nOmega-3: %s\n\nPUAN %d · REKOR %d\nMesafe: %d m · %d düşman · Seri %d\n%s\nGüven: %d (%s%d)\n%s" % [
+	end_panel.text = "%s\n%s\nOmega-3: %s\nPUAN %d · REKOR %d\nMesafe: %d m · %d düşman · Seri %d\n%s\nGüven: %d (%s%d)\n%s" % [
 		("ÜÇ ETAP TAMAMLANDI" if campaign.get("stage",0)==3 else "ETAP TAMAMLANDI") if outcome=="survived" and Session.story_mode else ("EVE DÖNDÜK" if outcome=="survived" else "BU AYRIMDAN YENİDEN"),str(journey.spec()["name"]),final_line,
 		arcade.score,int(save["best_score"]),int(distance),kills,arcade.best_chain,
 		"Yol hedefi tamamlandı" if journey.goal_met(comfort_count,arcade.collected) else "Yol hedefi bir sonraki sefere kaldı",
@@ -1799,10 +1838,10 @@ func _layout() -> void:
 		_place(brand_label,Rect2(16,10,width-110,12))
 		_place(score_label,Rect2(16,27,94,24))
 		_place(hud,Rect2(118,28,width-214,20))
-		_place(distance_caption,Rect2(16,62,90,12))
+		_place(distance_caption,Rect2(16,62,90,14))
 		_place(hp_bar,Rect2(16,55,90,5))
 		_place(energy_bar,Rect2(118,55,width-218,5))
-		_place(energy_caption,Rect2(118,62,width-214,12))
+		_place(energy_caption,Rect2(118,62,width-214,14))
 		energy_caption.add_theme_font_size_override("font_size",9)
 		_place(route_bar,Rect2(8,83,width-16,4))
 		_place(pause_button,Rect2(width-76,12,64,60))
@@ -1810,9 +1849,10 @@ func _layout() -> void:
 		_place(ui_panels[1],Rect2(8,94,width-16,68))
 		face.position=Vector2(16,104)
 		radio_portrait.position=face.position
-		_place(bubble,Rect2(76,102,width-94,52))
-		_place(story_caption,Rect2(8,166,width-16,28))
-		_place(toast,Rect2(30,200,width-60,42))
+		_place(bubble,Rect2(76,102,width-94,40))
+		_place(radio_page_caption,Rect2(76,146,width-94,12))
+		_place(story_caption,Rect2(8,166,width-16,34))
+		_place(toast,Rect2(30,206,width-60,60))
 		var play_height := maxf(220,view.y-370)
 		var zoom := minf(play_height/360.0,(width-24)/224.0)
 		scale=Vector2.ONE*zoom
@@ -1854,7 +1894,14 @@ func _layout() -> void:
 	_place(journal_panel,Rect2(Vector2(12,24),view-Vector2(24,48)) if portrait else Rect2(offset+Vector2(80,24),Vector2(480,312)))
 	_sync_touch()
 	_update_hud()
+	if not radio_text.is_empty(): _reflow_radio()
 
+func _radio_snapshot() -> Dictionary:
+	var labels: Array=[bubble,radio_page_caption,status_label,hint,story_caption,toast,mission,momo_title,hud,score_label,energy_caption,distance_caption,brand_label]
+	var widgets: Array=[]
+	for label in labels:
+		if label.visible and not label.text.is_empty(): widgets.append({"rect":QA.rect(label),"fits":TextFit.fits(label),"text":label.text})
+	return {"speaker":radio_speaker,"page":radio_page,"pages":radio_pages.size(),"bubble":QA.rect(bubble),"status":QA.rect(status_label),"caption":QA.rect(radio_page_caption),"hint":QA.rect(hint),"widgets":widgets}
 
 func _build_journal(parent: Node) -> void:
 	journal_panel=PanelContainer.new()

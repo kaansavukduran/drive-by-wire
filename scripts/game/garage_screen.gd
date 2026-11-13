@@ -1,4 +1,5 @@
 extends Node2D
+const TextFit := preload("res://scripts/game/text_fit.gd")
 const QA := preload("res://scripts/game/qa_snapshot.gd")
 ## Garaj: Omega-3 selamlar (güven + hafıza), 3–4 seçenekli kısa diyalog, tek yükseltme
 ## seçimi, "Sefere çık". Klavye: 1–4 seçer, Enter devam/sefere çık. Fare/dokunma da çalışır.
@@ -179,19 +180,7 @@ func _say(text: String) -> void:
 	face.talking = 1.5
 
 func _paginate_speech() -> void:
-	var limit:=110 if get_viewport_rect().size.y>get_viewport_rect().size.x else 120
-	speech_pages.clear()
-	var part: String=""
-	var font:=speech.get_theme_font("font")
-	for word in speech_full.split(" "):
-		var candidate: String=part+(" " if not part.is_empty() else "")+word
-		var measured: Vector2=font.get_multiline_string_size(candidate,HORIZONTAL_ALIGNMENT_LEFT,maxf(1,speech.size.x-20),speech.get_theme_font_size("font_size"))
-		if (candidate.length()>limit or measured.y>speech.size.y-20) and not part.is_empty():
-			speech_pages.append(part)
-			part=""
-		part+=(" " if not part.is_empty() else "")+word
-	if not part.is_empty(): speech_pages.append(part)
-	if speech_pages.is_empty(): speech_pages.append("")
+	speech_pages=TextFit.pages(speech_full,speech)
 	speech_page=mini(speech_page,speech_pages.size()-1)
 	_show_speech_page()
 
@@ -324,7 +313,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _update_info() -> void:
 	var mem: Dictionary = save.get("memory", {})
-	info.text = "v%s · Güven %d · Sefer %d · Rekor %d · En uzun %d m · 1–4 seç / Space hızlı sürüş" % [
+	info.text = "v%s · Güven %d · Sefer %d · Rekor %d · En uzun %d m" % [
 		app_version,int(momo.trust), int(mem.get("runs", 0)), int(save.get("best_score", 0)), int(mem.get("best_distance", 0))]
 	var view: Vector2=get_viewport_rect().size
 	if view.y>view.x:
@@ -398,7 +387,7 @@ func _layout() -> void:
 	var touch_landscape := not portrait and DisplayServer.is_touchscreen_available()
 	var offset := (view-Vector2(640,360))/2 if not portrait else Vector2.ZERO
 	quick_button.position=Vector2(16,16) if portrait else offset+Vector2(326,8 if touch_landscape else 32)
-	quick_button.size=Vector2(view.x-32,44) if portrait else Vector2(298,44 if touch_landscape else 24)
+	quick_button.size=Vector2(view.x-32,44) if portrait else Vector2(298,44 if touch_landscape else 28)
 	brand_label.visible=not touch_landscape
 	brand_label.position=Vector2(16,64) if portrait else offset+Vector2(326,10)
 	brand_label.size=Vector2(view.x-32,18) if portrait else Vector2(298,17)

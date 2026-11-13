@@ -1,10 +1,12 @@
-# Drive-By Wire · 0.7.3
+# Drive-By Wire · 0.7.4
 
 **Fragaria Interactive · Fragaria Games · AIONIA**
 
 Garajda Aion ve Ömer sabit ayak hizalarında durur; konuşma/yükseltme metinleri karakter alanına taşmaz. Uzun konuşmalar İleri düğmesiyle okunur.
 
 Omega-3 ile Üçüncü Nabız’ı yaşa: üç 400 metrelik arcade etap, üç dallanan karar ve **13 ayrı son**. Direksiyon oklar/WASD, fare, gamepad veya mobilde sabit joystick ile sende. Kararlar kaynakları, trafik baskısını ve geleceğinizi değiştirir.
+
+Sürüşte uzun telsiz konuşmaları ölçülen alana göre otomatik sayfalanır; tam metin mola günlüğünde kalır. Başlık konuşan karakteri gösterir. Konuşma, güven/kalkan durumu, kontrol ipuçları ve enerji bilgileri ayrı alanlarda görünür.
 
 ## Oyna
 
