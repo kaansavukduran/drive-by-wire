@@ -12,6 +12,7 @@ const TextFit=preload("res://scripts/game/text_fit.gd")
 const Sounds=preload("res://scripts/game/sounds.gd")
 const Sheets=preload("res://scripts/game/sheets.gd")
 const QA=preload("res://scripts/game/qa_snapshot.gd")
+const VisualArt=preload("res://scripts/game/visual_art.gd")
 const Art=preload("res://scripts/game/story_cast_art.gd")
 const CRASH=preload("res://assets/sprites/emre_trap.png")
 const DRIVER=preload("res://assets/sprites/aion_roadster.png")
@@ -55,6 +56,7 @@ var cast_sprites: Dictionary={}
 var ground_time:=0.0
 var step_time:=0.0
 func _ready() -> void:
+ material=VisualArt.material()
  Engine.time_scale=1
  save=store.load_data();car_texture=Vehicles.texture_for(save.get("vehicle"))
  campaign=Book.sanitize(Session.campaign_state if not Session.campaign_state.is_empty() else save["campaign"])
@@ -224,19 +226,7 @@ func actor_positions() -> Array[Vector2]:
  return [Vector2(270,190),Vector2(370,190-lead)]
 func injury_frame() -> int:return Art.frame("emre",ground_time,step_time,chapter.get("step","aftermath"),motion)
 func _draw_car(at: Vector2,companion: bool) -> void:
- var frame:=int(pose_time*10)%4 if motion else 0
- var texture: Texture2D=EMRE_BODY if companion else car_texture
- if companion and chapter["step"]=="trap":
-  texture=CRASH;frame=mini(7,int(elapsed*4))
- draw_texture_rect_region(texture,Rect2(at-Vector2(24,36.25),Vector2(48,80)),Rect2((frame%4)*64,(frame/4)*96,64,96))
- if companion:
-  # Back of Emre's head, ears point forward. Deliberately authored, not an upside-down face.
-  draw_rect(Rect2(at+Vector2(-9,-8),Vector2(18,17)),Color("b98a70"))
-  draw_rect(Rect2(at+Vector2(-7,-21),Vector2(5,17)),Color("ebc1a0"));draw_rect(Rect2(at+Vector2(3,-21),Vector2(5,17)),Color("ebc1a0"))
-  draw_rect(Rect2(at+Vector2(-5,-18),Vector2(1,11)),Color("dc9c97"));draw_rect(Rect2(at+Vector2(5,-18),Vector2(1,11)),Color("dc9c97"))
-  draw_rect(Rect2(at+Vector2(-8,9),Vector2(16,3)),Color("9dbee0"))
- elif Vehicles.sanitize(save.get("vehicle"))!="roadster":
-  draw_texture_rect_region(DRIVER,Rect2(at+Vector2(-12,-11.25),Vector2(24,25)),Rect2(16,30,32,30))
+ VisualArt.vehicle_at(self,3 if companion else Vehicles.index(save.get("vehicle")),at,Color(.55,.55,.55) if companion and chapter["step"]=="trap" else Color.WHITE)
 func _build_cast() -> void:
  cast_stage=Node2D.new();cast_stage.name="GroundedStoryCast";add_child(cast_stage)
  var positions:=Art.positions()
@@ -283,15 +273,11 @@ func _draw() -> void:
   draw_set_transform(origin,0,Vector2.ONE*zoom)
   var positions:=actor_positions()
   draw_rect(Rect2(90,-300,460,1100),Color("1c3835"))
-  for i in range(-2,4):draw_texture(ROAD,Vector2(192,i*256+fmod(road_time,256)))
-  for i in 10:
-   var y:=fmod(i*63+road_time*.7,640)-140
-   for x in [148,473]:
-    draw_rect(Rect2(x,y+17,5,25),Color("564c3f"));draw_rect(Rect2(x-10,y,26,27),Color("34574c"));draw_rect(Rect2(x-6,y-5,18,14),Color("477161"))
+  VisualArt.road(self,2,road_time,520)
   _draw_car(positions[0],false);_draw_car(positions[1],true)
   if chapter["step"]=="trap":
    if effects:
-    sheets.draw_frame(self,"explosion",sheets.frame_at("explosion","explode",minf(elapsed,0.8),0),positions[1])
+    VisualArt.explosion(self,positions[1],minf(elapsed,.59),90)
 
 
  draw_set_transform(Vector2.ZERO)

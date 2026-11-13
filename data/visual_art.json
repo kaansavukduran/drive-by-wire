@@ -1,0 +1,222 @@
+{
+  "version": "0.11.0",
+  "status": "GAME_ADAPTATION_DRAFT",
+  "authoring": "User-requested coherent pixel-art overhaul. Built-in image generation/editing; original character references govern identity/proportions and approved scene art governs material/light. Private reference sheets are not published.",
+  "sheets": {
+    "omega": {
+      "path": "res://assets/art/omega.png",
+      "size": [
+        1536,
+        1024
+      ],
+      "columns": 3,
+      "rows": 2,
+      "cells": 6,
+      "sha256": "a7a4cd8d1c040a2f9ef61b12d0e7adf4836780b4a740e687eceb5cd4fb9b353d"
+    },
+    "cast_a": {
+      "path": "res://assets/art/cast_a.png",
+      "size": [
+        1254,
+        1254
+      ],
+      "columns": 2,
+      "rows": 2,
+      "cells": 4,
+      "sha256": "88340a12f5a58d4b64859ffbbcf1d07408a3f496d1acceffddf783577b593088"
+    },
+    "cast_b": {
+      "path": "res://assets/art/cast_b.png",
+      "size": [
+        1254,
+        1254
+      ],
+      "columns": 2,
+      "rows": 2,
+      "cells": 4,
+      "sha256": "989008e0c820c120ea484f7b9244527e9cf9224244b355f1f2806699da9e1ec2"
+    },
+    "robots": {
+      "path": "res://assets/art/robots.png",
+      "size": [
+        1536,
+        1024
+      ],
+      "columns": 3,
+      "rows": 2,
+      "cells": 6,
+      "sha256": "f75799637b2195d352dd6016704b1f265945d3403a9d961f9dfa0f77bf0331c3"
+    },
+    "players": {
+      "path": "res://assets/art/players.png",
+      "size": [
+        1254,
+        1254
+      ],
+      "columns": 2,
+      "rows": 2,
+      "cells": 4,
+      "sha256": "17ec0878a6e822c94bc0ad1204d0c5233834fb162b799ac1945d90b87fe7766e"
+    },
+    "enemies": {
+      "path": "res://assets/art/enemies.png",
+      "size": [
+        1536,
+        1024
+      ],
+      "columns": 3,
+      "rows": 2,
+      "cells": 6,
+      "sha256": "d0934612a5bd0479608da5e8103225766230dca985cb9ec63fd3b5d4691823e8"
+    },
+    "terrain": {
+      "path": "res://assets/art/terrain.png",
+      "size": [
+        1536,
+        1024
+      ],
+      "columns": 3,
+      "rows": 2,
+      "cells": 6,
+      "sha256": "b2ba2c019e72f4ad6327c1d1ac03656fceb91c84eeebd224a053ea8db140bfa2"
+    },
+    "garage": {
+      "path": "res://assets/art/garage.png",
+      "size": [
+        1672,
+        941
+      ],
+      "columns": 1,
+      "rows": 1,
+      "cells": 1,
+      "sha256": "51fe3196465cfae00a5a81a4be2f1f389d76a7d92c78b1c92a35e3b10744562a"
+    },
+    "fx": {
+      "path": "res://assets/art/fx.png",
+      "size": [
+        1536,
+        1024
+      ],
+      "columns": 3,
+      "rows": 2,
+      "cells": 6,
+      "sha256": "cf1f01344609dc2b43c981a9dc54a5afdd83b4d05de5c884cb94de04340ce8aa"
+    },
+    "gadgets": {
+      "path": "res://assets/art/gadgets.png",
+      "size": [
+        1774,
+        887
+      ],
+      "columns": 4,
+      "rows": 2,
+      "cells": 8,
+      "sha256": "f5f55416f200ca944ba260f7f9f601cda12a70efb7e913ae568e433382eb5993"
+    },
+    "weapons": {
+      "path": "res://assets/art/weapons.png",
+      "size": [
+        1254,
+        1254
+      ],
+      "columns": 2,
+      "rows": 2,
+      "cells": 4,
+      "sha256": "fd0f41cf61951a5a028067f620179d5ec142df396951b7efbc5abbc96cdccc9d"
+    }
+  },
+  "cast": {
+    "aion": {
+      "sheet": "cast_a",
+      "index": 0,
+      "foot": [
+        268,
+        589
+      ],
+      "portrait": [
+        70,
+        18,
+        520,
+        382
+      ]
+    },
+    "kurt": {
+      "sheet": "cast_a",
+      "index": 1,
+      "foot": [
+        284,
+        588
+      ],
+      "portrait": [
+        110,
+        0,
+        410,
+        365
+      ]
+    },
+    "kuzu": {
+      "sheet": "cast_a",
+      "index": 2,
+      "foot": [
+        418,
+        580
+      ],
+      "portrait": [
+        65,
+        5,
+        540,
+        362
+      ]
+    },
+    "omer": {
+      "sheet": "cast_b",
+      "index": 0,
+      "foot": [
+        278,
+        595
+      ],
+      "portrait": [
+        140,
+        65,
+        385,
+        330
+      ]
+    },
+    "emre": {
+      "sheet": "cast_b",
+      "index": 1,
+      "foot": [
+        262,
+        595
+      ],
+      "portrait": [
+        135,
+        5,
+        355,
+        365
+      ]
+    },
+    "eren": {
+      "sheet": "cast_b",
+      "index": 2,
+      "foot": [
+        293,
+        604
+      ],
+      "portrait": [
+        120,
+        0,
+        420,
+        420
+      ]
+    }
+  },
+  "road_source_x": [
+    0,
+    138,
+    218,
+    294,
+    376,
+    512
+  ]
+}

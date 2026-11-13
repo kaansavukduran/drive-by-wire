@@ -116,17 +116,18 @@ func run() -> void:
 		game.anim=pose;game.anim_t=0;game._animate(0.05)
 		h.eq("sprite pivot fixed during %s" % pose,game.car.offset,pivot)
 		h.eq("sprite and hitbox share center during %s" % pose,game.car.position,game._player_rect().get_center())
-	# Detect art-frame drift independently of code constants: green chassis bounds.
-	var image:=Image.load_from_file("res://assets/sprites/aion_roadster.png")
-	for index in 8:
-		var low:=Vector2(99999,99999);var high:=Vector2.ZERO
-		for y in range(0,96):
-			for x in range(0,64):
-				var c:=image.get_pixel((index%4)*64+x,(index/4)*96+y)
-				if c.a>0.92 and c.g>c.r+0.098 and c.g>c.b+0.012 and c.r>0.156 and c.r<0.666 and c.g>0.313 and c.g<0.862:
-					low=low.min(Vector2(x,y));high=high.max(Vector2(x,y))
-		var error: float=(((low+high)/2+pivot)*game.car.scale).length()
-		h.check("chassis stays aligned in art cell %d" % index,error<1.1)
+	# The new atlas has one registered body per car; animation is in separate
+	# effects. Test the actual imported body and transformed physics coverage.
+	for vehicle in game.Vehicles.IDS:
+		game.save["vehicle"]=vehicle;game.anim="drive";game._animate(0)
+		var source: Rect2=game.car.region_rect
+		var image: Image=game.car.texture.get_image()
+		var source_center: Vector2=source.size/2
+		h.check("registered chassis pivot has real opaque material "+vehicle,image.get_pixelv(Vector2i(source.position+source_center)).a>=.94)
+		var projected: Vector2=game.car.to_global(source_center+game.car.offset)
+		h.check("authored chassis pivot projects to physical center "+vehicle,projected.distance_to(game.to_global(game._player_rect().get_center()))<1.1)
+		var actual: Rect2=game.car.get_global_transform()*game.car.get_rect()
+		h.check("actual rendered frame encloses physical car "+vehicle,actual.encloses(game.get_global_transform()*game._player_rect()))
 	game.enemies.clear();game.bullets.clear();game.fire_cooldown=0;game.mine_cooldown=0
 	game._spawn_enemy_for_test("rammer",1,game.car_y+100)
 	game._fire({})

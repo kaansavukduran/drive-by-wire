@@ -1,4 +1,4 @@
-# Drive-By Wire · 0.10.1
+# Drive-By Wire · 0.11.0
 
 **Fragaria Interactive · Fragaria Games · AIONIA**
 
@@ -9,6 +9,8 @@ Omega-3 ile Üçüncü Nabız’ı yaşa: iki 400 metrelik çatışma etabı ve 
 Sürüşte uzun telsiz konuşmaları ölçülen alana göre otomatik sayfalanır; tam metin mola günlüğünde kalır. Başlık konuşan karakteri gösterir. Konuşma, güven/kalkan durumu, kontrol ipuçları ve enerji bilgileri ayrı alanlarda görünür.
 
 0.9.0: Ana menüden **Yol Arkadaşı, Postacı veya Kuyruklu Yıldız** seç; gövde değişir, sürüş dengesi ve çarpışma alanı aynı kalır. Mobil sürüş panelleri daha az yer kaplar.
+
+0.11.0: Omega-3, altı karakterin portreleri/garaj görünümleri, üç oyuncu aracı ve Emre’nin yarış arabası, düşman araçlar/taret, üç robot boss, altı yol biyomu, garaj, mayın/ikmal/engel ve patlama görselleri ortak ayrıntılı pixel-art işçiliğine taşındı. Özgün paftaların kısa gövde/yuvarlak yüz oranları korunur. Fragaria Unslop bu projenin sonraki Forge çalışmalarında da uygulanır.
 
 0.10.1: Aion, Emre ve Eren’in özgün modelleme paftalarındaki yuvarlak yüzleri, büyük gözleri, kısa gövde/uzuv oranları ve özgün kıyafetleri geri getirildi. Ayrıntılı piksel kürk/kumaş ve sahnenin ışık kalitesi korunur. Aion’un eklenmiş koyu kıyafeti ve boyun kartı kaldırıldı; önlüğündeki özgün işaretleri ve pembe gövdesi görünür.
 

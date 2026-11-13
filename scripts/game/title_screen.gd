@@ -5,6 +5,7 @@ const QA := preload("res://scripts/game/qa_snapshot.gd")
 
 const UiSkin := preload("res://scripts/game/ui_skin.gd")
 const GarageCast := preload("res://scripts/game/garage_cast.gd")
+const Art=preload("res://scripts/game/visual_art.gd")
 const Sheets := preload("res://scripts/game/sheets.gd")
 const MomoFace := preload("res://scripts/game/companion_face.gd")
 const SettingsPanel := preload("res://scripts/game/settings_panel.gd")
@@ -234,7 +235,7 @@ func _draw() -> void:
 	draw_set_transform((view-Vector2(640,360))/2)
 	var background := sheets.texture("assets/ui/garage_bg.png")
 	if background:
-		draw_texture(background, Vector2.ZERO)
+		draw_texture_rect(Art.texture("garage"),Rect2(0,0,640,360),false)
 	draw_rect(Rect2(0, 0, 640, 360), Color(0.025, 0.045, 0.08, 0.42))
 	draw_rect(Rect2(0, 0, 352, 360), UiSkin.color("surface"))
 	draw_line(Vector2(352, 0), Vector2(352, 360), UiSkin.color("border"), 2)

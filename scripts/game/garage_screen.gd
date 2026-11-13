@@ -14,6 +14,7 @@ const MomoFace := preload("res://scripts/game/companion_face.gd")
 const FONT_FALLBACK := preload("res://assets/fonts/Lexend.ttf")
 const FONT_TERM := preload("res://assets/fonts/VT323.ttf")
 const GarageCast := preload("res://scripts/game/garage_cast.gd")
+const Art=preload("res://scripts/game/visual_art.gd")
 const Sheets := preload("res://scripts/game/sheets.gd")
 const UiSkin := preload("res://scripts/game/ui_skin.gd")
 const Controls := preload("res://scripts/game/controls.gd")
@@ -342,9 +343,9 @@ func _draw() -> void:
 		return
 	draw_set_transform((view-Vector2(640,360))/2)
 	if has_art:
-		draw_texture(sheets.texture("assets/ui/garage_bg.png"), Vector2.ZERO)
+		draw_texture_rect(Art.texture("garage"),Rect2(0,0,640,360),false)
 		# Runtime terminal surface covers the historical baked MOMO label.
-		draw_rect(Rect2(530,171,50,46),Color("101a23"))
+		draw_rect(Rect2(531,172,48,44),Color("101a23"))
 		for surface in [Rect2(318,6,312,24),Rect2(8,330,624,25),Rect2(8,306,420,24)]:
 			draw_rect(surface,UiSkin.color("surface"))
 		var logo := sheets.texture("assets/ui/logo.png")
