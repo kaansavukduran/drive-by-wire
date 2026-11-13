@@ -30,9 +30,14 @@ func run() -> void:
   h.check("defeated robot cannot keep firing",b.step(5,Vector2.ZERO).is_empty())
   h.eq("first biome before threshold",Biomes.index(stage,179),stage*2)
   h.eq("next biome at threshold",Biomes.index(stage,180),stage*2+1)
+ root.size=Vector2i(640,360);root.content_scale_size=Vector2i(640,360);await process_frame;await process_frame
  Session.story_mode=true;Session.campaign_state=Book.choose(Book.defaults(),"signal")
  var game=load("res://scenes/main.tscn").instantiate();root.add_child(game);await process_frame
  game.set_physics_process(false);game.set_process(false);game.store=Store.new("user://boss-fixture.json")
+ game.touch_enabled=true;game._layout();game._notice("ROBOT SALDIRISI\nMühür-01");game._process(.01)
+ var sample=Boss.new();sample.start(0);sample.position=Vector2(320,150)
+ var rendered=Rect2(game.to_global(sample.rect().position),sample.rect().size*game.scale)
+ h.check("touch landscape feedback clears front robot and steering hint",not rendered.intersects(game.toast.get_global_rect()) and not rendered.intersects(game.story_caption.get_global_rect()) and not game.touch_hint.visible)
  game.distance=279.9;game._simulate(.02)
  h.check("real story reaches an actual boss",game.boss.active and game.boss.started)
  game.distance=399.89;game._simulate(.02)

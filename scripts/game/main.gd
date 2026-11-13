@@ -950,6 +950,8 @@ func _process(delta: float) -> void:
 		_advance_radio(delta / maxf(Engine.time_scale, 0.01))
 		toast_left -= delta
 	toast.visible = toast_left > 0.0 and not paused and not over
+	if touch_enabled and not was_portrait:
+		touch_hint.visible=joystick.enabled and not box.visible and not toast.visible
 	hud_clock += delta
 	if hud_clock >= 0.1:
 		hud_clock = 0.0
@@ -1849,7 +1851,7 @@ func _sync_touch() -> void:
 		joystick.enabled=show_controls
 		joystick.visible=show_controls
 		if not show_controls: joystick.reset()
-	if is_instance_valid(touch_hint): touch_hint.visible=show_controls
+	if is_instance_valid(touch_hint): touch_hint.visible=show_controls and (was_portrait or toast_left<=0)
 
 
 func _place(control: Control, rect: Rect2) -> void:
@@ -1875,6 +1877,7 @@ func _layout() -> void:
 	distance_caption.visible=portrait
 	ui_panels[2].visible=not portrait and not touch_enabled
 	face.scale=Vector2.ONE
+	toast.add_theme_font_size_override("font_size",12)
 	radio_portrait.custom_minimum_size=Vector2.ZERO
 	radio_portrait.size=Vector2(44,44)
 	brand_label.visible=not portrait and not touch_enabled
@@ -1963,7 +1966,7 @@ func _layout() -> void:
 		_place(touch_hint,Rect2(8,view.y-162,138,20))
 		_place(route_bar,Rect2(view.x/2-138,4,276,4))
 		_place(story_caption,Rect2(view.x/2-138,10,276,36))
-		_place(toast,Rect2(view.x/2-138,50,276,60))
+		_place(toast,Rect2(8,132,138,84));toast.add_theme_font_size_override("font_size",11)
 		var actions: Array=["drive_dodge","drive_comfort","drive_boost","drive_brake","drive_fire","drive_mine"]
 		for i in actions.size():touch_by_action[actions[i]].fit(Rect2(right+(i%2)*72,view.y-158+(i/2)*50,64,44))
 	position=world_origin
