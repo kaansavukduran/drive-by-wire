@@ -1,6 +1,6 @@
 # Drive-By Wire · AIONIA sanat kılavuzu
 
-Güncel uygulama 0.10.1 · 13 Kasım 2026 · [Güncel AIONIA referansı](AIONIA_CURRENT_REFERENCE.md). Eski bölümler önceki üretim kaydını da içerir.
+Güncel uygulama 0.11.0 · 13 Kasım 2026 · [Güncel AIONIA referansı](AIONIA_CURRENT_REFERENCE.md). Eski bölümler önceki üretim kaydını da içerir.
 
 ## Kimlik ve sınır
 
@@ -110,3 +110,21 @@ Kullanıcı0.10.0’ın ayrıntı/ışık kalitesini beğendi ancak karakterleri
 Aion: geniş yuvarlak yüz, büyük mavi gözler, kısa pembe çıplak uzuv/gövde, beyaz kısa kollu önlük, özgün sonsuzluk/yaprak işareti ve küçük pembe/beyaz/mavi göğüs rozeti. Emre: iri yeşil gözler, yuvarlak krem yanak, iki ön diş, kısa açık mavi gömlek/düz kırmızı kravat/kahverengi kemer ve kısa koyu pantolon. Eren: geniş sivri yanak tüyleri, iri bordo gözler, özgün kirpik/benek/çizgili kravat, kısa ceket ve bacaklar, büyük yuvarlak ayakkabı. Kanon kimliği korunur; yeni oyun paftaları final kanon onayı diye sunulmaz.
 
 Atlas düzenleri ve14 ayrı poz korunur. Yeni gerçek kaynak temasları: Aion(290,552); Emre x450/y405–406; Eren ayakta(360,610), diz çökerken(450,590). Mantıksal dünya kökleri aynıdır; Emre’nin sahne ölçeği0.4375→0.375 ile daha kısa gövde silüetine uyarlandı. Eren’in yeni geniş yüzü/kulakları için portre kaynak kutusu400×400’e açıldı. Arka plan, klip sırası/süreleri ve kamera düzeni değiştirilmedi. Anatomik sadakat elle karşılaştırıldı; bu ölçüm otomatik bir kanon/estetik sertifikası değildir.
+
+
+## 0.11.0 · Bütün oyunda ortak işçilik
+
+Kullanıcının beğendiği0.10.1 sahne ayrıntısı; Omega-3, altı portre ve sabit garaj aktörü, dört araç gövdesi, düşmanlar, taret, bosslar, altı biyom, garaj ve çatışma nesne/efektlerine taşındı. İşçilik artışı karakteri olgunlaştırmaz: Aion ana referansı; Kurt, Kuzu v01, Ömer, Emre ve Eren paftaları kimlik/oran kaynağıdır. Kuzu’ya onaysız hale/kitap eklenmez. Yeni çizimler OYUN/TASLAK, özel paftalar kaynak olarak public depoda yoktur.
+
+`data/visual_art.json`11 yeni PNG’nin boyut/grid/hash kaydını ve6 karakterin ayrı portre/ayak bölgelerini tutar. `visual_art.gd` yalnız kaynak bölgesi/çizim kaydıdır; giriş, fizik, RNG veya genel oyun motoru sağlamaz. PNG’ler ilk import tamamlandıktan sonra yüklenir; ilk temiz editor taramasını yeni Texture preload hatasına bağlamaz. Ortak canvas cutout malzemesi düşük alfa üretim halesini temizler; tint vertex aşamasında ayrı alınarak dokunun iki kez çarpılıp kararması önlenir.
+
+- Omega-3: aynı split-anten/pusula kanadı/bellek tohumu kimliği,6 sinyal pozu: sakin/kırpma/konuşma/endişe/heyecan/hasar. Gövde boyutu/Control kökü değişmez; durum gerçek konuşma/hasar/mood verisine bağlıdır, azaltılmış hareket dekoratif kırpmayı durdurur.
+- Karakterler: iki2×2 pafta,6 özgün tam gövde; Aion/Ömer ek kırpma kareleri kaynakta bulunur fakat sabit garaj döngüsüne sokulmaz. Portreler ayrı ölçülmüş kafa bölgelerini oranı korunarak gösterir; garaj aynı kaynaklardaki gerçek ayak temaslarıyla aynı sabit alanlara oturur. Yüksek çözünürlüklü rawrect değil gerçek globaltransform sınırı doğrulanır.
+- Araçlar: üç oyuncu+Emre için4 ayrı sabit gövde. Eski8 karelik gövde döngüsü yeni animasyon diye sayılmaz; hareket/atış/turbo/hasar zamanlaması ve ayrı efektler korunur. Oyuncu gövde kayıt alanı48×74; merkez aynı fizik merkezi, mayın+30 ve namlu çıkışı mevcut dünya kökünden. Sürücü başı/solungaç veya Emre kulakları ileri bakar.
+- Düşmanlar: üç türün normal/saldırı pozları; kaynak güney yönlüdür, oyunda dikey çevrilip yol yönü kuzeye bakar. Kamyon arka yük kapağı ve pickup yuvası böyle doğru tarafta kalır. Ayrı taret aynı eski(0,12) yuvasında hedefe döner; mermi/uyarı kuralları değişmez.
+- Bosslar: üç özgün silüet/amber-cyan-rose çekirdek, normal ve gerçek uyarı anına bağlı şarj karesi.100×76 mantıksal kayıt, fizik çekirdeği ve HUD sınırları aynı.
+- Yol:6 ayrıntılı overhead yüzey. Kaynak dış kenar/iki şerit çizgisi kayıtları138/218/294/376; beş kesit bunları mevcut192/288/352/448 dünya çizgilerine taşır. Dikey atlas kenarından2px temiz iç bölge kullanılır;640px tekrar periyodu aynı dünya hızında akar. Görsel yol ilerlemesi engellerden farklı hızla kaymaz. Biyom değişimi ve azaltılmış hareket kuralları korunur; rastgele blok dekorlar artık üstüne çizilmez.
+- Garaj1536 hedefli üretilmiş1672×941 kaynak, aynı640×360 sahne koordinatına oturur; kaynakta terminal ekranı boştur, Omega-3 çalışma anında çizilir. Orijinal logo yeniden uydurulmaz. UI metni/ana eylemler önceki okunabilir tema ve ölçülerini korur.
+- Patlama6 gerçek aşama; silah/taret/iki farklı mermi/smoke paftası;8 mayın/ikmal/engel/namlu nesnesi. İkmal şekilleri artı/şimşek/kalkanla ayrılır. İnce hız/uyarı çizgileri işlevsel piksel geri bildirimidir; dekorasyon uğruna büyütülmez.
+
+Toplam55 kaynak hücresi vardır; iki kullanılmayan garaj blink alternatifi dahil tümü55 animasyon diye sunulmaz. Sonuç yalnız atlas önizlemesiyle kabul edilmez; gerçek export, sahne akışı, sabit pikseller, telefon/yatay/tablet ve kontrol ailesiyle doğrulanır. Yeni görsel kaynaklar performansın bütün fiziksel cihazlarda ölçüldüğü anlamına gelmez.

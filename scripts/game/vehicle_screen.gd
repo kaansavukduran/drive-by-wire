@@ -34,7 +34,7 @@ func _select(id: String) -> void:
  _refresh();status.text="Seçildi · Bu cihazda kaydedildi." if saved else "Kayıt yazılamadı. Yeniden seçerek dene."
 func _refresh() -> void:
  for child in preview.get_children():child.free()
- preview.texture=Vehicles.texture_for(selected);Vehicles.add_driver(preview,selected)
+ Vehicles.configure(preview,selected,1.5)
  description.text=Vehicles.ITEMS[selected]["description"]+"\nSürüş ve silah dengesi tüm araçlarda aynı."
  for i in buttons.size():buttons[i].text=("✓ " if Vehicles.IDS[i]==selected else "")+Vehicles.ITEMS[Vehicles.IDS[i]]["name"]
  status.text="Seçili: "+Vehicles.ITEMS[selected]["name"]
@@ -43,7 +43,7 @@ func _layout() -> void:
  panel.position=Vector2(12,12) if p else (v-Vector2(600,336))/2;panel.size=v-Vector2(24,24) if p else Vector2(600,336)
  var w:=panel.size.x;var bottom:=panel.size.y
  title.position=Vector2(12,10);title.size=Vector2(w-24,30)
- preview.position=Vector2(w/2,112) if p else Vector2(140,157);preview.scale=Vector2.ONE*1.5
+ preview.position=Vector2(w/2,112) if p else Vector2(140,157);Vehicles.configure(preview,selected,1.5)
  description.position=Vector2(12,208) if p else Vector2(268,55);description.size=Vector2(w-24,70) if p else Vector2(312,88)
  for i in buttons.size():
   buttons[i].position=Vector2(12,300+i*52) if p else Vector2(268,132+i*48);buttons[i].size=Vector2(w-24,44) if p else Vector2(312,44)

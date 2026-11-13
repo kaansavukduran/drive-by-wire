@@ -1,4 +1,4 @@
-# AIONIA standardı · 0.10.1 uygulama kapsamı
+# AIONIA standardı · 0.11.0 uygulama kapsamı
 
 13 Kasım 2026 tarihinde yetkili Drive bağlantısından güncel belge ve başlangıç/referans indeksi okundu. **İçerik sürümü v1.7**. Önceki proje kaydı v1.6’ya dayanıyordu. Özel belge bağlantısı, paftalar ve belge metni public pakete kopyalanmaz.
 
@@ -18,3 +18,5 @@
 - İlgili ChatGPT sohbet bağlantısı mevcut araçlarda read_thread olmadığı için okunamadı. Kurulu Fragaria Unslop SKILL.md ve ilgili proje/animasyon/oyun yönergeleri doğrudan okundu ve uygulandı.
 
 - 0.10.1 aşamasında canlı standart tekrar okundu: içerik hâlâ v1.7. Kullanıcının yeni talebiyle Aion ana referansı, Emre ve Eren modelleme paftaları yeniden karşılaştırıldı. Ayrıntı kalitesi korunurken olgunlaştırılmış oranlar/kıyafet ekleri düzeltildi. Bu tur paftalar yerleşik görsel düzenlemesinde doğrudan tasarım girdisi olarak kullanıldı; özel kaynak dosyaları public depoya taşınmadı. Önceki üretim yönteminin notu0.10.0 tarihsel kaydıdır.
+
+- 0.11.0: canlı belge hâlâ v1.7; başlangıç indeksi rev3 okundu. Kullanıcı bütün oyunda aynı ayrıntı ve her Forge aşamasında Fragaria Unslop istedi. Bu tercih AGENTS.md’ye kaydedildi. Mevcut paftalarla tüm6 karakter karşılaştırıldı; standart/özel referanslar public kaynağa kopyalanmadı. Bağlantılı ChatGPT konuşması için read_thread yok; kurulu beceri doğrudan okundu, sohbet okunmuş sayılmadı.

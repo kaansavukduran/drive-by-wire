@@ -1,4 +1,5 @@
 extends Node2D
+const Art=preload("res://scripts/game/visual_art.gd")
 const Reader := preload("res://scripts/game/text_reader.gd")
 const Boss := preload("res://scripts/core/boss_encounter.gd")
 const BossArt := preload("res://scripts/game/robot_art.gd")
@@ -187,6 +188,7 @@ var campaign: Dictionary = {}
 
 
 func _ready() -> void:
+	material=Art.material()
 	rng.randomize()
 	visual_rng.randomize()
 	companion_rng.randomize()
@@ -285,12 +287,7 @@ func _cfg(path: String, fallback: float) -> float:
 
 func _build_ui() -> void:
 	car = Sprite2D.new()
-	car.texture = Vehicles.texture_for(save.get("vehicle"))
-	Vehicles.add_driver(car,save.get("vehicle"))
-	car.region_enabled = true
-	car.centered=false
-	car.offset=-Vector2(32,43.5)
-	car.scale=Vector2(48.0/FW,80.0/FH)
+	Vehicles.configure(car,save.get("vehicle"))
 	car.position = Vector2(car_x, car_y)
 	add_child(car)
 	var warning_view := WarningView.new()
@@ -1518,14 +1515,7 @@ func _animate(delta: float) -> void:
 			anim_t = 0.0
 			frame = 0
 			a = ANIMS["drive"]
-	var index := frame%4
-	if name=="drive":
-		var blink_phase:=fposmod(game_time,3.8)
-		index=(2 if blink_phase>3.62 else int(game_time*3)%2) if motion_enabled else 0
-	if anim=="boost": index=4+frame%2
-	elif anim=="fire": index=6
-	elif name in ["hit","damaged","critical","destroyed"]: index=7
-	car.region_rect=Rect2((index%4)*FW,(index/4)*FH,FW,FH)
+	Vehicles.configure(car,save.get("vehicle"))
 	car.visible = not (invulnerable > 0.0 and int(game_time * 20) % 2 == 0 and not over)
 	car.modulate = Color(0.7, 0.9, 1.0, 0.75) if dodge_left > 0.0 else Color.WHITE
 
@@ -1533,7 +1523,7 @@ func _animate(delta: float) -> void:
 func _scroll_scenery(delta: float) -> void:
 	if not motion_enabled:
 		return
-	road_scroll = fposmod(road_scroll + speed * delta, 256.0)
+	road_scroll = fposmod(road_scroll + speed * delta, 640.0)
 	for d in decals:
 		d["pos"] = d["pos"] + Vector2(0, speed * delta)
 	for pr in props:
@@ -1590,24 +1580,8 @@ func _enemy_warnings() -> Array[Dictionary]:
 
 func _draw() -> void:
 	position = world_origin + _camera_offset()
-	var road := sheets.texture("assets/road/road_tile.png")
-	if road == null:
-		_draw_fallback_road()
-	else:
-		var left_tex := sheets.texture("assets/road/roadside_left.png")
-		var right_tex := sheets.texture("assets/road/roadside_right.png")
-		var y := road_scroll - 256.0
-		while y < H + 8:
-			draw_texture(left_tex, Vector2(0, y))
-			draw_texture(road, Vector2(192, y),Biomes.TINTS[maxi(0,biome_index)])
-			draw_texture(right_tex, Vector2(448, y))
-			y += 256.0
+	Art.road(self,maxi(0,biome_index),road_scroll)
 	Biomes.draw(self,maxi(0,biome_index),distance*9,motion_enabled,effects_enabled and motion_enabled)
-	for d in decals:
-		sheets.draw_frame(self, "road_decals", int(d["frame"]), d["pos"])
-	for pr in props:
-		if biome_index>0: continue
-		sheets.draw_anim(self, "roadside_props", str(pr["anim"]), game_time, pr["pos"])
 	for pickup in pickups:
 		_draw_pickup(pickup)
 	if shield_left > 0.0 and not over:
@@ -1617,16 +1591,16 @@ func _draw() -> void:
 			draw_line(Vector2(car_x + side * 7, car_y + 28), Vector2(car_x + side * 7, car_y + 38 + sin(game_time * 40) * 5), Color("79d4ff"), 3)
 	for m in mines:
 		var armed := float(m["arm"]) <= 0.0
-		sheets.draw_anim(self, "mine", "armed" if armed else "arming", game_time, m["pos"])
+		Art.at(self,"gadgets",0,m["pos"],Vector2(24,24),Color.WHITE if armed else Color(.8,.8,.8))
 	for o in obstacles:
-		sheets.draw_anim(self, "obstacles", str(o["kind"]) + "_idle", game_time, o["pos"])
+		Art.at(self,"gadgets",{"crate":4,"barrel":5,"spikes":6}.get(str(o["kind"]),4),o["pos"],Vector2(32,32))
 	for e in enemies:
 		_draw_enemy_sprite(e)
-	if boss.active and Rect2(192,0,256,H).encloses(boss.rect()): BossArt.draw(self,boss.position,boss.stage,game_time,boss.flash>0)
+	if boss.active and Rect2(192,0,256,H).encloses(boss.rect()): BossArt.draw(self,boss.position,boss.stage,game_time,boss.flash>0,1,boss.warning_left>0)
 	for b in bullets:
-		sheets.draw_anim(self, "projectiles", "player_bullet", game_time, b["pos"])
+		Art.at(self,"weapons",1,b["pos"],Vector2(12,22))
 	for b in enemy_bullets:
-		sheets.draw_anim(self, "projectiles", "enemy_bullet", game_time, b["pos"])
+		Art.at(self,"weapons",2,b["pos"],Vector2(14,14))
 	for fx in effects:
 		_draw_effect_sprite(fx)
 
@@ -1635,51 +1609,21 @@ const ENEMY_SHEETS := {"rammer": "enemy_rammer", "pickup": "enemy_pickup", "truc
 
 
 func _draw_pickup(pickup: Dictionary) -> void:
-	var p: Vector2 = pickup["pos"]
-	var kind := str(pickup["kind"])
-	var color: Color = {"repair": Color("7cddb5"), "energy": Color("ffce70"), "shield": Color("79d4ff")}[kind]
-	draw_rect(Rect2(p - Vector2(11, 11), Vector2(22, 22)), Color("101622"))
-	draw_rect(Rect2(p - Vector2(11, 11), Vector2(22, 22)), color, false, 1)
-	match kind:
-		"repair":
-			draw_rect(Rect2(p - Vector2(2, 7), Vector2(4, 14)), color)
-			draw_rect(Rect2(p - Vector2(7, 2), Vector2(14, 4)), color)
-		"energy":
-			draw_colored_polygon(PackedVector2Array([p + Vector2(1, -8), p + Vector2(-5, 1), p + Vector2(0, 1), p + Vector2(-1, 8), p + Vector2(6, -2), p + Vector2(1, -2)]), color)
-		"shield":
-			draw_polyline(PackedVector2Array([p + Vector2(-6, -6), p + Vector2(6, -6), p + Vector2(5, 3), p + Vector2(0, 8), p + Vector2(-5, 3), p + Vector2(-6, -6)]), color, 2)
+	Art.at(self,"gadgets",{"repair":1,"energy":2,"shield":3}[str(pickup["kind"])],pickup["pos"],Vector2(30,30))
 
 
 func _draw_enemy_sprite(e: Dictionary) -> void:
-	var name: String = ENEMY_SHEETS[str(e["type"])]
-	if sheets.sheet(name).is_empty():
-		_draw_enemy(e)
-		return
-	var anim := "drive"
-	var t := game_time
-	if float(e["flash"]) > 0.0:
-		anim = "hit"
-		t = 0.12 - float(e["flash"])
-	elif str(e["state"]) == "attack":
-		anim = "attack"
-		t = float(e["t"])
-		if str(e["type"]) == "rammer":
-			var dx := _lane_x(int(e["lane"])) - float(e["pos"].x)
-			anim = "ram_left" if dx < -2.0 else ("ram_right" if dx > 2.0 else "attack")
-			t = game_time
-	var p: Vector2 = e["pos"]
-	if str(e["type"]) == "pickup":
-		sheets.draw_anim(self, name, "drive_noturret" if anim == "drive" or anim == "attack" else anim, t, p)
-		var mount: Array = sheets.sheet(name).get("turret_mount", [24, 52])
-		var anchor: Array = sheets.sheet(name).get("anchor", [24, 40])
-		var tp := p + Vector2(float(mount[0]) - float(anchor[0]), float(mount[1]) - float(anchor[1]))
-		var aim: Vector2 = e.get("aim",Vector2(car_x,car_y)) if str(e["state"]) in ["windup","attack"] else Vector2(car_x,car_y)
-		var dir := aim - tp
-		var idx := posmod(roundi((atan2(dir.y, dir.x) - PI / 2.0) / deg_to_rad(22.5)), 16)
-		var firing := str(e["state"]) == "attack" and float(e["t"]) < 0.15
-		sheets.draw_frame(self, "enemy_pickup_turret", idx + (16 if firing else 0), tp)
-	else:
-		sheets.draw_anim(self, name, anim, t, p)
+	var kind: String=str(e["type"]);var index: int={"rammer":0,"pickup":1,"truck":2}[kind]
+	var dimensions: Vector2={"rammer":Vector2(48,68),"pickup":Vector2(48,72),"truck":Vector2(56,108)}[kind]
+	var p: Vector2=e["pos"]
+	Art.at(self,"enemies",index+(3 if str(e["state"])=="attack" else 0),p,dimensions,Color(1.4,1.4,1.4) if float(e["flash"])>0 else Color.WHITE,true)
+	if kind=="pickup":
+		var tp:=p+Vector2(0,12)
+		var aim: Vector2=e.get("aim",Vector2(car_x,car_y)) if str(e["state"]) in ["windup","attack"] else Vector2(car_x,car_y)
+		draw_set_transform(tp,(aim-tp).angle()+PI/2)
+		var source:=Art.region("weapons",0);var scale:=Vector2(18,20)/source.size
+		Art.draw(self,"weapons",0,Rect2(-Vector2(313,384)*scale,Vector2(18,20)))
+		draw_set_transform(Vector2.ZERO)
 	var frac := float(e["hp"]) / maxf(float(e["max_hp"]), 1.0)
 	if frac < 1.0:
 		var half: Vector2 = ENEMY_HALF[e["type"]]
@@ -1704,15 +1648,13 @@ func _draw_effect_sprite(fx: Dictionary) -> void:
 			var points:=PackedVector2Array([p+direction*12,p+direction*(radius*0.45)+tangent*4,p+direction*(radius*0.7)-tangent*3,p+direction*radius])
 			draw_polyline(points,tint,2,false)
 	elif kind=="muzzle":
-		if t>0.1: return
-		draw_rect(Rect2(p-Vector2(3,7),Vector2(6,10)),Color("ffce70"))
-		draw_line(p+Vector2(-7,-3),p+Vector2(7,-3),Color("fff2df"),2,false)
+		if t>0.1:return
+		Art.at(self,"gadgets",7,p,Vector2(24,24))
 	elif kind.begins_with("wreck_"):
-		var name: String = ENEMY_SHEETS.get(kind.substr(6), "")
-		if name != "" and t < sheets.anim_length(name, "destroyed"):
-			sheets.draw_frame(self, name, sheets.frame_at(name, "destroyed", t, 0), p + Vector2(0, speed * 0.0))
-		if t < sheets.anim_length("explosion", "explode"):
-			sheets.draw_frame(self, "explosion", sheets.frame_at("explosion", "explode", t, 0), p)
+		if t<0.35:
+			var index: int={"rammer":0,"pickup":1,"truck":2}.get(kind.substr(6),0)
+			Art.at(self,"enemies",index,p,Vector2(48,74),Color(.5,.5,.5,1-t/.35),true)
+		if t<.6:Art.explosion(self,p,t,80)
 	elif kind == "near_miss":
 		if t < sheets.anim_length("near_miss", "streak"):
 			sheets.draw_frame(self, "near_miss", sheets.frame_at("near_miss", "streak", t, 0), p)
@@ -1720,13 +1662,9 @@ func _draw_effect_sprite(fx: Dictionary) -> void:
 		if t < sheets.anim_length("speed_lines", "line"):
 			sheets.draw_frame(self, "speed_lines", sheets.frame_at("speed_lines", "line", t, 0), p)
 	elif kind == "small":
-		if t < sheets.anim_length("explosion_small", "explode"):
-			sheets.draw_frame(self, "explosion_small", sheets.frame_at("explosion_small", "explode", t, 0), p)
+		if t<.6:Art.explosion(self,p,t,40)
 	elif kind.ends_with("_break"):
-		if t < sheets.anim_length("obstacles", kind):
-			sheets.draw_frame(self, "obstacles", sheets.frame_at("obstacles", kind, t, 0), p)
-		elif t < 0.6:
-			sheets.draw_frame(self, "smoke_sparks", sheets.frame_at("smoke_sparks", "sparks", t - 0.3, 0), p)
+		if t<.6:Art.at(self,"weapons",3,p,Vector2(28,28),Color(1,1,1,1-t/.6))
 	else:
 		_draw_effect(fx)
 

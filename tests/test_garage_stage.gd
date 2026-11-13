@@ -23,8 +23,7 @@ func check_stage(screen: Node,label: String) -> void:
  var actors_fit:=true
  for i in screen.cast.actors.size():
   var actor: Sprite2D=screen.cast.actors[i]
-  var rect:=actor.get_rect()
-  rect.position+=actor.global_position
+  var rect: Rect2=actor.get_global_transform()*actor.get_rect()
   if not screen.cast.slots[i].get_global_rect().encloses(rect): actors_fit=false
   if not area.encloses(rect): actors_fit=false
  h.check("full character cells fit own slots "+label,actors_fit)
@@ -93,7 +92,7 @@ func run() -> void:
    for c in title.base_rects:
     if not c.visible or c==title.cast or c==title.help_panel: continue
     for actor in title.cast.actors:
-     var rect: Rect2=actor.get_rect();rect.position+=actor.global_position
+     var rect: Rect2=actor.get_global_transform()*actor.get_rect()
      if rect.intersects(c.get_global_rect()): clear=false
   h.check("title character cells avoid menu controls %s" % dimensions,clear)
   title.queue_free();await frames()
