@@ -63,6 +63,8 @@ func _ready() -> void:
     for who in campaign.get("bonds",{}):
      if int(campaign["bonds"][who])>best: closest=who;best=int(campaign["bonds"][who])
     if closest!="": prose.append(str(Portrait.NAMES.get(closest,"Omega-3"))+": “O yolda bana verdiğin cevabı unutmadım.”")
+    var aftermath: String=Book.RoadStory.epilogue(campaign)
+    if not aftermath.is_empty():prose.append(aftermath)
     prose.append("Üç etap · Puan %d · Yol hedefi %d/3 · Yeniden deneme %d" % [campaign["score"],campaign["goals_completed"],campaign["failures"]])
    prose.append("Sonlar kitabında diğer yolları keşfedebilirsin. Yeni hikâye açarsan kazandığın sonlar korunur.")
   reader.set_text("\n\n".join(prose))

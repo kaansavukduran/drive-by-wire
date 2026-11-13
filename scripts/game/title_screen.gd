@@ -50,12 +50,12 @@ func _ready() -> void:
 	motion = bool(save["settings"]["motion"])
 	var ui := CanvasLayer.new()
 	add_child(ui)
-	var brand := _label(ui, Rect2(24, 10, 592, 18), "FRAGARIA INTERACTIVE  /  FRAGARIA GAMES", 10)
+	var brand := _label(ui, Rect2(24, 10, 592, 18), "FRAGARIA INTERACTIVE", 10)
 	brand_label=brand
 	brand.theme_type_variation="BrandLabel"
 	universe_label = _label(ui, Rect2(24, 90, 304, 20), "A I O N I A", 14)
 	universe_label.theme_type_variation="AccentLabel"
-	premise_label = _label(ui, Rect2(24, 118, 310, 38), "Omega-3 ile yolun geleceğini seç.\n3 arcade etap · 13 farklı son.", 13)
+	premise_label = _label(ui, Rect2(24, 118, 310, 38), "Omega-3 ile yolun geleceğini seç.\n2 çatışma · 1 yol hikâyesi · 13 son.", 13)
 	start_button = _button(ui, Rect2(24, 166, 304, 32), "Sürüşe başla · Space", _start)
 	_button(ui, Rect2(24, 204, 148, 28), "Önce garaja uğra", _garage)
 	_button(ui, Rect2(180, 204, 148, 28), "Sonlar · %d / 13" % campaign["unlocked"].size(), _endings)
@@ -72,7 +72,8 @@ func _ready() -> void:
 	face.scale = Vector2(2, 2)
 	face.decorative_motion = motion
 	ui.add_child(face)
-	var line := _label(ui, Rect2(410, 208, 196, 52), "Bu yolun hafızasını\nbirlikte taşıyoruz.", 13)
+	_button(ui,Rect2(410,210,196,44),"Araba seç",func():get_tree().call_deferred("change_scene_to_file","res://scenes/vehicles.tscn"))
+	var line := _label(ui, Rect2(410, 208, 196, 0), "", 13)
 	quote_label=line
 	line.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	line.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -103,7 +104,7 @@ func _ready() -> void:
 
 func _link_menu_focus() -> void:
 	# Explicit routes also work when buttons live directly under a CanvasLayer.
-	var neighbors := [[3,1,0,0],[0,3,1,2],[0,4,1,2],[1,0,3,4],[2,0,3,4]]
+	var neighbors := [[3,1,0,0],[0,3,1,2],[0,4,1,5],[1,0,3,4],[2,0,3,5],[2,0,2,0]]
 	for i in menu_buttons.size():
 		var button := menu_buttons[i]
 		button.focus_neighbor_top = button.get_path_to(menu_buttons[neighbors[i][0]])
@@ -150,7 +151,7 @@ func _make_help(parent: Node) -> void:
 	help_scroll.position=Vector2(18,48)
 	help_scroll.size=Vector2(492,184)
 	help_panel.add_child(help_scroll)
-	help_scroll.set_text("1. YOLU AÇ\nPC: oklar / WASD. Mobil/tablet: sabit joystick ile dört yöne sür; sağdaki eylemleri kullan.\n\n2. Omega-3’İ KORU\nSpace / F veya fare sol ile öne ateş et; Fare sağ arkaya sınırsız mayın bırakır (X alternatif). E turbo, Q fren. Shift / C alan darbesi, R sıyrılma. Artı: onarım; şimşek: enerji; kalkan: koruma. Kesik çizgiden uzaklaş; ! işaretli noktaya engel düşecek.\n\n3. EVE DÖN\nÜç kez karar ver, her kararın ardından 400 m sür. 13 ayrı gelecekten birine ulaş. Başarısızlıkta önceki etaplar korunur. Mola menüsünde yol günlüğünü oku. Esc mola verir. T ile isteğe bağlı sohbet edebilirsin.")
+	help_scroll.set_text("1. YOLU AÇ\nPC: oklar / WASD. Mobil/tablet: sabit joystick ile dört yöne sür; sağdaki eylemleri kullan.\n\n2. Omega-3’İ KORU\nSpace / F veya fare sol ile öne ateş et; Fare sağ arkaya sınırsız mayın bırakır (X alternatif). E turbo, Q fren. Shift / C alan darbesi, R sıyrılma. Artı: onarım; şimşek: enerji; kalkan: koruma. Kesik çizgiden uzaklaş; ! işaretli noktaya engel düşecek.\n\n3. EVE DÖN\nİlk ve son bölümde 400 m çatışmalı sürüş var. İkinci bölüm Emre ile dostça yarış ve seçimli sohbet: silah kullanmadan ilerle. Araba seçimi ana menüde. 13 ayrı gelecekten birine ulaş. Başarısızlıkta önceki etaplar korunur. Mola menüsünde yol günlüğünü oku. Esc mola verir. T ile isteğe bağlı sohbet edebilirsin.")
 	help_body=help_scroll.content
 	help_start = _button(help_panel, Rect2(18, 246, 236, 30), "Hazırım · Sürüşe başla", _start)
 	help_back = _button(help_panel, Rect2(266, 246, 244, 30), "Geri · Esc", _hide_help)
@@ -211,7 +212,7 @@ func _input(event: InputEvent) -> void:
 
 func _process(delta: float) -> void:
 	if QA.active():
-		QA.publish("title",{"view":[get_viewport_rect().size.x,get_viewport_rect().size.y],"cast":cast.snapshot() if cast.visible else {},"play":QA.rect(start_button),"garage":QA.rect(menu_buttons[1]),"endings":QA.rect(menu_buttons[2]),"help":QA.rect(menu_buttons[3]),"settings":QA.rect(menu_buttons[4]),"settings_ui":QA.settings(settings),"settings_visible":settings.visible,"help_visible":help_panel.visible,"help_scroll":QA.rect(help_scroll),"help_content":QA.rect(help_body),"help_scroll_value":help_scroll.page_index,"help_reader":help_scroll.snapshot()})
+		QA.publish("title",{"vehicles":QA.rect(menu_buttons[5]),"view":[get_viewport_rect().size.x,get_viewport_rect().size.y],"cast":cast.snapshot() if cast.visible else {},"play":QA.rect(start_button),"garage":QA.rect(menu_buttons[1]),"endings":QA.rect(menu_buttons[2]),"help":QA.rect(menu_buttons[3]),"settings":QA.rect(menu_buttons[4]),"settings_ui":QA.settings(settings),"settings_visible":settings.visible,"help_visible":help_panel.visible,"help_scroll":QA.rect(help_scroll),"help_content":QA.rect(help_body),"help_scroll_value":help_scroll.page_index,"help_reader":help_scroll.snapshot()})
 	var caption: String="Etap %d / 3 · Devam et" % (int(campaign["stage"])+1) if campaign["stage"]>0 and campaign["stage"]<3 else ("Yeni hikâye" if campaign["stage"]==3 else "Hikâyeye başla")
 	start_button.text = caption+(" · A" if Controls.last_device=="pad" else " · Space")
 	control_hint.text = "Sol çubuk / D-pad Serbest sürüş\nRB Turbo · LT Fren · Start Mola" if Controls.last_device=="pad" else "Oklar / WASD Serbest sürüş\nE Turbo · Q Fren · Space Ateş"
@@ -254,13 +255,15 @@ func _layout() -> void:
 		node.position=help_rects[node].position
 		node.size=help_rects[node].size
 	brand_label.add_theme_font_size_override("font_size",9 if portrait else 10)
+	control_hint.visible=not portrait
+	quote_label.hide()
 	cast.visible=not portrait
 	cast.position=offset+Vector2(398,260)
 	cast.size=Vector2(216,74)
 	cast._layout()
 	face.scale=Vector2(2,2)
 	if not portrait and DisplayServer.is_touchscreen_available():
-		for i in menu_buttons.size():
+		for i in 5:
 			_set_rect(menu_buttons[i],Rect2(offset+Vector2(24 if i==0 or i%2==1 else 180,164 if i==0 else (214 if i<3 else 264)),Vector2(304 if i==0 else 148,44)))
 		_set_rect(control_hint,Rect2(offset+Vector2(24,312),Vector2(304,28)))
 		control_hint.add_theme_font_size_override("font_size",10)
@@ -279,7 +282,7 @@ func _layout() -> void:
 		_set_rect(menu_buttons[2],Rect2(24+(view.x-40)/2,y+56,(view.x-40)/2,44))
 		_set_rect(menu_buttons[3],Rect2(16,y+108,(view.x-40)/2,44))
 		_set_rect(menu_buttons[4],Rect2(24+(view.x-40)/2,y+108,(view.x-40)/2,44))
-		_set_rect(control_hint,Rect2(16,y+164,view.x-32,42))
+		_set_rect(menu_buttons[5],Rect2(16,y+164,view.x-32,44))
 		_set_rect(footer,Rect2(16,view.y-30,view.x-32,22))
 		footer.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 		_set_rect(help_panel,Rect2(12,24,view.x-24,view.y-48))

@@ -29,6 +29,7 @@ const WarningView := preload("res://scripts/game/enemy_warning_view.gd")
 const TouchControl := preload("res://scripts/game/touch_control.gd")
 const Cast := preload("res://scripts/game/cast_portrait.gd")
 const FONT_SYMBOLS := preload("res://assets/fonts/ControlSymbols.ttf")
+const Vehicles := preload("res://scripts/core/vehicles.gd")
 const CAR_SHEET := preload("res://assets/sprites/aion_roadster.png")
 const FONT_FALLBACK := preload("res://assets/fonts/Lexend.ttf")
 const FONT_TERM := preload("res://assets/fonts/VT323.ttf")
@@ -198,6 +199,11 @@ func _ready() -> void:
 		if not campaign["active"]:
 			get_tree().call_deferred("change_scene_to_file","res://scenes/journey.tscn")
 			return
+		if campaign["stage"]==1:
+			set_process(false);set_physics_process(false)
+			Session.campaign_state=campaign.duplicate(true)
+			get_tree().call_deferred("change_scene_to_file",Session.play_scene())
+			return
 		journey.configure_book(campaign)
 	Controls.install(save["settings"]["bindings"], save["settings"]["pad_bindings"], save["settings"]["deadzone"])
 	var garage := Garage.new(DataLoader.load_json(DataLoader.GARAGE_PATH), base_balance)
@@ -232,12 +238,17 @@ func _ready() -> void:
 	target_speed = speed
 	max_hp = _cfg("player.max_hp", 100)
 	max_hp += float(journey.spec()["max_hp"])
+	if Session.story_mode and campaign.get("stage")==2 and campaign.get("chapter2",{}).get("vow")=="rescue":
+		max_hp+=15
+		shield_left=7.0
 	hp = max_hp
 	mines_left = int(_cfg("mine.count", 3)) + int(journey.spec()["mines"])
 	if Session.story_mode:
 		var aid: Dictionary=Book.radio_reply(campaign)
 		if aid.get("perk")=="mine": mines_left+=1
 		elif aid.get("perk")=="shield": shield_left=7.0
+	if Session.story_mode and campaign.get("stage")==2 and campaign.get("chapter2",{}).get("vow")=="avenge":
+		shield_left=10.0
 	spawn_timer = _cfg("spawn.initial_delay", 2.0)
 	slow_scale = float(DataLoader.dig(balance, "time.command_box_time_scale", 0.1))
 	lane = lane_count / 2
@@ -274,7 +285,8 @@ func _cfg(path: String, fallback: float) -> float:
 
 func _build_ui() -> void:
 	car = Sprite2D.new()
-	car.texture = CAR_SHEET
+	car.texture = Vehicles.texture_for(save.get("vehicle"))
+	Vehicles.add_driver(car,save.get("vehicle"))
 	car.region_enabled = true
 	car.centered=false
 	car.offset=-Vector2(32,43.5)
@@ -765,8 +777,8 @@ func _reflow_radio() -> void:
 
 func _show_radio_page() -> void:
 	bubble.text=radio_pages[radio_page] if not radio_pages.is_empty() else ""
-	momo_title.text=str(Cast.NAMES.get(radio_speaker,"Omega-3"))+"\n"+("Yol arkadaşın" if radio_speaker=="omega" else "Telsiz bağlantısı")
-	radio_page_caption.text="%d / %d · Tam metin günlükte" % [radio_page+1,radio_pages.size()] if radio_pages.size()>1 else ""
+	momo_title.text=str(Cast.NAMES.get(radio_speaker,"Omega-3"))+("" if touch_enabled else "\n"+("Yol arkadaşın" if radio_speaker=="omega" else "Telsiz bağlantısı"))
+	radio_page_caption.text=("%d / %d" if touch_enabled else "%d / %d · Tam metin günlükte") % [radio_page+1,radio_pages.size()] if radio_pages.size()>1 else ""
 	bubble_left=maxf(3.5,bubble.text.length()*0.055)
 
 func _advance_radio(delta: float) -> void:
@@ -958,6 +970,10 @@ func _update_hud() -> void:
 	status_label.text = "Güven %d · %s\n%s" % [int(momo.trust), Momo.mood_name_tr(momo.mood), ("KALKAN %.1f sn" % shield_left) if shield_left > 0 else (("Destek %.0f sn" % comfort_cooldown) if comfort_cooldown > 0 else "%s · Destek hazır" % Controls.binding_name("drive_comfort",Controls.last_device=="pad"))]
 	if touch_by_action.has("drive_mine"):
 		touch_by_action["drive_mine"].visual.text=("MAYIN %.1f" % mine_cooldown) if mine_cooldown>0 else "MAYIN · ∞"
+		var mine_button: Button=touch_by_action["drive_mine"].visual
+		mine_button.add_theme_font_size_override("font_size",11 if touch_enabled and not was_portrait else 12)
+		if touch_enabled and not was_portrait:mine_button.text="MAYIN\n"+(("%.1f" % mine_cooldown) if mine_cooldown>0 else "∞")
+
 	face.mood = momo.mood
 	face.queue_redraw()
 	hint.text = Controls.run_hint()
@@ -970,6 +986,8 @@ func _update_hud() -> void:
 		story_caption.text="%s · %d / %d CAN" % [Boss.NAMES[boss.stage],ceili(boss.hp),int(boss.max_hp)]+"\n"+("ARKAYA GEÇİYOR · MAYIN HAZIRLA" if boss.rear and boss.position.y<400 else ("ARKANDA · MAYIN BIRAK" if boss.position.y>car_y+30 else "ÇEKİRDEĞE ATEŞ · UYARIYA DİKKAT"))
 		route_bar.value=boss.hp/boss.max_hp*100
 
+	if touch_enabled and not was_portrait:
+		hud.text="CAN %d / %d\n%d / %d m" % [maxi(0,ceili(hp)),int(max_hp),int(distance),int(_cfg("arcade.finish_distance",1200))]
 	if was_portrait:
 		energy_caption.text="ENERJİ %d%%" % int(energy_bar.value)
 		hud.text="CAN %d / %d" % [maxi(0,ceili(hp)),int(max_hp)]
@@ -1853,6 +1871,9 @@ func _layout() -> void:
 	distance_caption.visible=portrait
 	ui_panels[2].visible=not portrait and not touch_enabled
 	face.scale=Vector2.ONE
+	radio_portrait.custom_minimum_size=Vector2.ZERO
+	radio_portrait.size=Vector2(44,44)
+	brand_label.visible=not portrait and not touch_enabled
 	bubble.add_theme_font_size_override("font_size",11 if portrait else 12)
 	score_label.add_theme_font_size_override("font_size",16 if portrait else 20)
 	hud.add_theme_font_size_override("font_size",11 if portrait else 12)
@@ -1864,30 +1885,30 @@ func _layout() -> void:
 	pause_panel.reset_size()
 	if portrait:
 		var width: float = view.x
-		_place(ui_panels[0],Rect2(8,8,width-92,72))
+		_place(ui_panels[0],Rect2(8,8,width-92,52))
 		_place(brand_label,Rect2(16,10,width-110,12))
-		_place(score_label,Rect2(16,27,94,24))
-		_place(hud,Rect2(118,28,width-214,20))
-		_place(distance_caption,Rect2(16,62,90,14))
-		_place(hp_bar,Rect2(16,55,90,5))
-		_place(energy_bar,Rect2(118,55,width-218,5))
-		_place(energy_caption,Rect2(118,62,width-214,14))
+		_place(score_label,Rect2(16,10,94,24))
+		_place(hud,Rect2(118,12,width-214,20))
+		_place(distance_caption,Rect2(16,46,90,14))
+		_place(hp_bar,Rect2(16,36,90,5))
+		_place(energy_bar,Rect2(118,36,width-218,5))
+		_place(energy_caption,Rect2(118,46,width-214,14))
 		energy_caption.add_theme_font_size_override("font_size",9)
-		_place(route_bar,Rect2(8,83,width-16,4))
-		_place(pause_button,Rect2(width-76,12,64,60))
+		_place(route_bar,Rect2(8,64,width-16,3))
+		_place(pause_button,Rect2(width-76,12,64,44))
 		pause_button.text="Mola"
-		_place(ui_panels[1],Rect2(8,94,width-16,68))
-		face.position=Vector2(16,104)
+		_place(ui_panels[1],Rect2(8,72,width-16,52))
+		face.position=Vector2(16,76)
 		radio_portrait.position=face.position
-		_place(bubble,Rect2(76,102,width-94,40))
-		_place(radio_page_caption,Rect2(76,146,width-94,12))
-		_place(story_caption,Rect2(8,166,width-16,34))
-		_place(toast,Rect2(30,206,width-60,60))
-		var play_height := maxf(220,view.y-370)
+		_place(bubble,Rect2(76,76,width-94,32))
+		_place(radio_page_caption,Rect2(76,110,width-94,12))
+		_place(story_caption,Rect2(8,128,width-16,34))
+		_place(toast,Rect2(30,168,width-60,60))
+		var play_height := maxf(220,view.y-340)
 		var zoom := minf(play_height/360.0,(width-24)/224.0)
 		scale=Vector2.ONE*zoom
-		world_origin=Vector2(width/2-320*zoom,196)
-		road_touch_rect=Rect2(12,196,width-24,play_height)
+		world_origin=Vector2(width/2-320*zoom,166)
+		road_touch_rect=Rect2(12,166,width-24,play_height)
 		_place(touch_hint,Rect2(10,view.y-29,122,20))
 		touch_hint.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
 		var gap := 8.0
@@ -1904,9 +1925,7 @@ func _layout() -> void:
 		scale=Vector2.ONE
 		world_origin=offset
 		radio_portrait.position=face.position
-		if touch_enabled:
-			_place(ui_panels[1],Rect2(offset+Vector2(456,8),Vector2(176,136)))
-			_place(pause_button,Rect2(offset+Vector2(456,152),Vector2(176,44)))
+
 		road_touch_rect=Rect2(offset+Vector2(192,12),Vector2(256,336))
 		pause_button.text="Mola · Start" if Controls.last_device=="pad" else "Mola · Esc"
 		energy_caption.add_theme_font_size_override("font_size",9)
@@ -1917,6 +1936,32 @@ func _layout() -> void:
 		for action in rects:
 			var rect: Rect2=rects[action]
 			touch_by_action[action].fit(Rect2(rect.position+offset,rect.size))
+	if touch_enabled and not portrait:
+		var right: float=view.x-146
+		var zoom:=1.15
+		scale=Vector2.ONE*zoom
+		world_origin=Vector2(view.x/2-320*zoom,view.y-360*zoom-8)
+		road_touch_rect=Rect2(world_origin+Vector2(224,60)*zoom,Vector2(192,280)*zoom)
+		_place(ui_panels[0],Rect2(8,8,138,114))
+		_place(score_label,Rect2(16,10,122,30));score_label.add_theme_font_size_override("font_size",18)
+		_place(hp_bar,Rect2(16,42,122,5))
+		_place(hud,Rect2(16,50,122,38));hud.add_theme_font_size_override("font_size",11)
+		_place(energy_caption,Rect2(16,94,122,14))
+		_place(energy_bar,Rect2(16,114,122,4))
+		_place(ui_panels[1],Rect2(right,8,138,100))
+		face.position=Vector2(right+8,14);face.scale=Vector2.ONE*0.5
+		radio_portrait.position=Vector2(right+8,14);radio_portrait.size=Vector2(24,24)
+		_place(momo_title,Rect2(right+40,14,90,22));momo_title.add_theme_font_size_override("font_size",10)
+		_place(bubble,Rect2(right+8,42,122,32));bubble.add_theme_font_size_override("font_size",11)
+		_place(radio_page_caption,Rect2(right+8,78,122,14))
+		_place(pause_button,Rect2(right,116,138,44))
+		joystick.fit(Rect2(12,view.y-140,128,128))
+		_place(touch_hint,Rect2(8,view.y-162,138,20))
+		_place(route_bar,Rect2(view.x/2-138,4,276,4))
+		_place(story_caption,Rect2(view.x/2-138,10,276,36))
+		_place(toast,Rect2(view.x/2-138,50,276,60))
+		var actions: Array=["drive_dodge","drive_comfort","drive_boost","drive_brake","drive_fire","drive_mine"]
+		for i in actions.size():touch_by_action[actions[i]].fit(Rect2(right+(i%2)*72,view.y-158+(i/2)*50,64,44))
 	position=world_origin
 	if not result_buttons.is_empty():
 		for i in result_buttons.size():

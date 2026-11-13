@@ -1,0 +1,61 @@
+{
+  "status": "OYUN / TASLAK — user-requested event, not new canon approval",
+  "authoring": "Original locally authored pixel geometry; no external image generation or private asset upload. Existing Aion driver is composed at runtime, never repainted.",
+  "vehicles": {
+    "frame": [
+      64,
+      96
+    ],
+    "grid": [
+      4,
+      2
+    ],
+    "pivot": [
+      32,
+      43.5
+    ],
+    "ids": [
+      "roadster",
+      "courier",
+      "comet"
+    ],
+    "hitbox_half": [
+      11,
+      26
+    ]
+  },
+  "trap": {
+    "frame": [
+      64,
+      96
+    ],
+    "frames": 8,
+    "fps": 4,
+    "pivot": [
+      32,
+      43.5
+    ],
+    "animation": "cracked windshield, deformed cargo bed, fire, scorch and smoke"
+  },
+  "emre": {
+    "frame": [
+      128,
+      80
+    ],
+    "frames": 6,
+    "fps": 5,
+    "pivot": [
+      64,
+      72
+    ],
+    "ground_y": 72,
+    "animation": "restrained breathing, blink and reaching hand; alive and injured",
+    "identity": "Tavşan Emre: beige fur, green eyes, blue shirt, red tie, dark trousers; not Tavşan Eren"
+  },
+  "hashes": {
+    "courier_body.png": "2806eab46db9bb53fcd8a7040ac1a2478283883c42c9388f93e28b6bad6a34e4",
+    "comet_body.png": "95341e16ac4132b2d3868047c267b95b38a84b9109fe0948592c833931576dbd",
+    "emre_aftermath.png": "88d315058611417b8152a0556337acaa14131f4127448630594724b4acff8e4c",
+    "emre_trap.png": "473e1c1a0b665319bd2f0269e9d6ce37f52e8347008661fa43bb4b3312a8e8e0"
+  }
+}

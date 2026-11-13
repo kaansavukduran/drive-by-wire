@@ -11,3 +11,6 @@ static var story_mode := false
 static var campaign_state: Dictionary = {}
 static var campaign_save_failed := false
 static var view_ending := ""
+
+static func play_scene() -> String:
+ return "res://scenes/road_story.tscn" if story_mode and int(campaign_state.get("stage",0))==1 else "res://scenes/main.tscn"

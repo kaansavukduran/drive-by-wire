@@ -13,6 +13,10 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
  const axis=async value=>page.evaluate(v=>window.__pad.axes[0]=v,value);
  await page.goto(base+'/?qa&qa_render=low');await wait(()=>window.__dbwQA?.screen==='title');
  await page.evaluate(()=>{const e=new Event('gamepadconnected');Object.defineProperty(e,'gamepad',{value:window.__pad});dispatchEvent(e);});
+ // Open car selector entirely through D-pad and A; select the next car with analog.
+ await tap(13);await tap(15);await tap(15);await tap(0);await wait(()=>window.__dbwQA?.screen==='vehicles');
+ await page.evaluate(()=>window.__pad.axes[1]=.9);await sleep(180);await page.evaluate(()=>window.__pad.axes[1]=0);await tap(0);
+ assert.equal((await state()).selected,'courier');await tap(1);await wait(()=>window.__dbwQA?.screen==='title');
  await tap(0);await wait(()=>window.__dbwQA?.screen==='briefing');await tap(0);await wait(()=>window.__dbwQA?.screen==='run');
  await button(7,true);await tap(3);let held=0,lastMine=0,lastPulse=Date.now();const started=Date.now();
  while(true){
@@ -31,5 +35,17 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
  await axis(.85);await wait(()=>window.__dbwQA.result_focus===1);await axis(0);await sleep(100);await axis(-.85);await wait(()=>window.__dbwQA.result_focus===0);await axis(0);await sleep(100);
  await tap(15);assert.equal((await state()).result_focus,1);await tap(14);assert.equal((await state()).result_focus,0);
  await page.screenshot({path:out+'/actual-pad-stage-complete.png'});await tap(0);await wait(()=>window.__dbwQA?.screen==='briefing');assert.equal((await state()).stage,1);
- await page.screenshot({path:out+'/actual-pad-next-chapter.png'});assert.deepEqual(result.errors,[]);result.status='PASS';result.flow='Gamepad-only title, route, actual 400m combat, analog left/right, D-pad left/right, A confirms next chapter; no mouse or gameplay setters';console.log(JSON.stringify(result));
+ await page.screenshot({path:out+'/actual-pad-next-chapter.png'});
+ await tap(0);await wait(()=>window.__dbwQA?.screen==='road_story');
+ const seen=new Set();const storyStart=Date.now();
+ while((await state()).screen==='road_story'){
+  const n=await state();assert(n.fits);assert.equal(n.combat,false);assert(Date.now()-storyStart<100000);
+  seen.add(n.chapter.step);
+  if(n.chapter.step==='race'||n.chapter.step==='trap'){await sleep(150);continue;}
+  if(n.chapter.step==='reveal'&&n.choices.length){await axis(.85);await sleep(180);await axis(0);await tap(0);assert.equal((await state()).chapter.vow,'rescue');}
+  else await tap(0);
+ }
+ assert(seen.has('plea')&&seen.has('rescue'));assert.equal((await state()).stage,2);
+ result.novel='PASS: analog selects rescue, A advances all dialogue and chapter handoff; no mouse';
+ await page.screenshot({path:out+'/actual-pad-novel-complete.png'});assert.deepEqual(result.errors,[]);result.status='PASS';result.flow='Gamepad-only title, route, actual 400m combat, analog left/right, D-pad left/right, A confirms next chapter; no mouse or gameplay setters';console.log(JSON.stringify(result));
  }catch(e){result.error=String(e);throw e;}finally{fs.writeFileSync(out+'/result-pad.json',JSON.stringify(result,null,2)+'\n');await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1;});

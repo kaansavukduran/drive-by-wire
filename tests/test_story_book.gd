@@ -40,7 +40,9 @@ func run() -> void:
  h.eq("checkpoint survives disk reload",store.load_data()["campaign"],state)
  h.eq("malformed state cannot unlock arbitrary endings",Book.sanitize({"stage":3,"choices":["nonsense"],"active":true,"unlocked":["fake"],"goals_completed":99})["unlocked"],[])
  store.clear()
- # Run all 39 arcade legs with unmodified HP, real spawning/collisions, weapons,
+ # Run 26 combat legs and 13 chapter-2 story scenes: the user explicitly
+ # replaced chapter 2 with a non-combat visual novel, not another robot fight.
+ # Combat retains unmodified HP, real spawning/collisions, weapons,
  # pickup steering and support. No teleport, time skips or invulnerability.
  Session.story_mode=true
  var unlocked: Array=[]
@@ -50,11 +52,22 @@ func run() -> void:
   for stage in 3:
    state=Book.choose(state,str(item["path"][stage]))
    Session.campaign_state=state.duplicate(true)
-   var game=load("res://scenes/main.tscn").instantiate()
+   var game=load(Session.play_scene()).instantiate()
    root.add_child(game)
    await process_frame
    game.set_physics_process(false)
    game.store=store
+   if stage==1:
+    Pilot.story(game,results.size()%2)
+    h.eq("chapter two reaches actual aftermath and handoff",game.chapter["step"],"complete")
+    h.check("novel has no combat scene",game.get("boss")==null and not game.snapshot()["combat"])
+    h.check("real novel completion commits once",game._commit_completion())
+    h.check("duplicate completion is inert",not game._commit_completion())
+    state=Session.campaign_state.duplicate(true)
+    h.eq("novel checkpoint persists actual story choices",store.load_data()["campaign"],state)
+    path_results.append({"stage":2,"mode":"visual_novel","pace":game.chapter["pace"],"vow":game.chapter["vow"]})
+    game.queue_free();await process_frame
+    continue
    game.rng.seed=42+stage
    game._direct_action("drive_comfort")
    for tick in 60*70:
@@ -74,7 +87,7 @@ func run() -> void:
   h.eq("%s reachable after three played legs" % item["id"],actual.get("id"),item["id"])
   unlocked=state["unlocked"].duplicate()
   results.append({"ending":item["id"],"path":item["path"],"legs":path_results})
- h.eq("all thirteen unlocked by completed arcade paths",unlocked.size(),13)
+ h.eq("all thirteen unlocked by combat and novel paths",unlocked.size(),13)
  var evidence:=FileAccess.open("user://story-runs.json",FileAccess.WRITE)
  evidence.store_string(JSON.stringify(results,"  "))
  evidence.close()

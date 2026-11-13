@@ -31,3 +31,12 @@ static func drive(game: Node) -> void:
 			game._direct_action("drive_dodge")
 	if game.boss.active and game.boss.rear: game._execute({"intent":"drop_mine"})
 	game._change_lane(best)
+
+## Scene integration driver: speech buttons and 60Hz cinematic ticks, no state injection.
+static func story(game: Node,choice := 0) -> void:
+	game.set_process(false)
+	for tick in 2000:
+		if game.chapter["step"]=="complete":return
+		if game._cinematic():game._process(1.0/60.0)
+		elif game.next_button.visible:game.next_button.pressed.emit()
+		elif game.choices[choice].visible:game.choices[choice].pressed.emit()

@@ -1,20 +1,24 @@
-# Drive-By Wire · 0.8.0
+# Drive-By Wire · 0.9.0
 
 **Fragaria Interactive · Fragaria Games · AIONIA**
 
 Garajda Aion ve Ömer sabit ayak hizalarında durur; konuşma/yükseltme metinleri karakter alanına taşmaz. Uzun konuşmalar İleri düğmesiyle okunur.
 
-Omega-3 ile Üçüncü Nabız’ı yaşa: üç 400 metrelik arcade etap, üç dallanan karar ve **13 ayrı son**. Direksiyon oklar/WASD, fare, gamepad veya mobilde sabit joystick ile sende. Kararlar kaynakları, trafik baskısını ve geleceğinizi değiştirir.
+Omega-3 ile Üçüncü Nabız’ı yaşa: iki 400 metrelik çatışma etabı ve bir seçimli yol hikâyesi, üç dallanan karar ve **13 ayrı son**. Direksiyon oklar/WASD, fare, gamepad veya mobilde sabit joystick ile sende. Kararlar kaynakları, trafik baskısını ve geleceğinizi değiştirir.
 
 Sürüşte uzun telsiz konuşmaları ölçülen alana göre otomatik sayfalanır; tam metin mola günlüğünde kalır. Başlık konuşan karakteri gösterir. Konuşma, güven/kalkan durumu, kontrol ipuçları ve enerji bilgileri ayrı alanlarda görünür.
 
-0.8.0: **Mühür-01, Yankı-02 ve Tasnif-13** her hikâye etabının yolunu keser. Önce uyarı çizgilerini gör, sonra güvenli aralığa geç. Robot öndeyken çekirdeğine ateş et; arkaya geçtiğinde mayın bırak. Yarı canda ikinci faz başlar. Robot durdurulmadan etap bitmez. Üç etapta altı biyom: Paslı Eşik → Fırtına Hattı → Cam Ormanı → Buzlu Arşiv → Kızıl Santral → Sessiz Çekirdek.
+0.9.0: Ana menüden **Yol Arkadaşı, Postacı veya Kuyruklu Yıldız** seç; gövde değişir, sürüş dengesi ve çarpışma alanı aynı kalır. Mobil sürüş panelleri daha az yer kaplar.
+
+**İkinci bölüm: Yan yana.** Emre ile sohbet et, dostça yarışın temposunu seç. Kurulmuş tuzak arabasını patlatınca yol kenarında yanında kal. Verdiğin söz üçüncü bölümün desteğini, bağlarını ve epilogunu değiştirir. Bu bölümde ateş/mayın veya çatışma yoktur. Diyalog kendi hızında, 1/2, Enter/A veya dokunmatik düğmelerle ilerler; aradaki kısa yarış ve patlama animasyonları mola verilebilir. Her replikte kayıt noktası vardır.
+
+İlk ve son etapta **Mühür-01 ve Tasnif-13** yolu keser. Uyarıları izle; robot öndeyken ateş, arkadayken mayın kullan. Yarı canda ikinci faz başlar. Robot durdurulmadan çatışma etabı bitmez. Orta yol Emre’nin dostça yarışı için Cam Ormanı’ndadır.
 
 Son metinleri, sonlar galerisi, oyun yardımı, mola günlüğü ve ayarlar sabit sayfalardadır; tekerlek gerekmez. Metinlerde Önceki/Sonraki veya ←/→; menüde yönler ve A/Enter kullanılabilir. Galeri13 kaydı dört sayfada gösterir. Ayarlarda Önceki/Sonraki veya PageUp/PageDown kullanılır.
 
 ## Oyna
 
-Ana menüde **Hikâyeye başla**. Emre, Kuzu, Kurt ve Baykuş Ömer ile telsiz konuşmalarını ilerlet; yanıtını ver, ardından rota seç. Konuşma, yanıt, rota ve günlük ayrı sabit sayfalardadır; bu ekranda kaydırma veya fare tekerleği gerekmez. Yanıtlar ilişkiyi ve etap başındaki kalkan/mayın soğutma desteğini etkiler. Tamamlanan her 400 m etap bir sonraki kararı açar; üç karar **13 ayrı sona** ulaşır. Kaza, yeni bir son açmaz. Önceki etaplar ve kazanılan sonlar korunur.
+Ana menüde **Hikâyeye başla**. Emre, Kuzu, Kurt ve Baykuş Ömer ile telsiz konuşmalarını ilerlet; yanıtını ver, ardından rota seç. Konuşma, yanıt, rota ve günlük ayrı sabit sayfalardadır; bu ekranda kaydırma veya fare tekerleği gerekmez. Yanıtlar ilişkiyi ve etap başındaki kalkan/mayın soğutma desteğini etkiler. Tamamlanan bölüm bir sonraki kararı açar; üç karar **13 ayrı sona** ulaşır. Kaza, yeni bir son açmaz. Önceki etaplar ve kazanılan sonlar korunur.
 
 Telefon/tablette **sabit sol joystick** ile ileri/geri/sağa/sola serbestçe sür. Sağdaki Ateş öne, Mayın arkaya gider. Mayın sınırsızdır; basılı tutunca her 0,7 saniyede bırakılır. Eski yükseltmeler ve ikmal rotaları bu süreyi kısaltır. Mayın patlaması arka mermileri de temizler. Diğer eylemler turbo, fren, sıyrılma ve Omega-3 desteğidir. Dikey/yatay düzen, bağımsız parmaklar ve yön değişiminde güvenli mola vardır.
 

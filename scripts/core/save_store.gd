@@ -10,6 +10,8 @@ extends RefCounted
 const Book := preload("res://scripts/core/story_book.gd")
 const Garage := preload("res://scripts/core/garage.gd")
 
+const Vehicles := preload("res://scripts/core/vehicles.gd")
+
 const VERSION := 1
 const DEFAULT_PATH := "user://save.json"
 const MAX_BYTES := 512 * 1024
@@ -26,7 +28,7 @@ func _init(save_path: String = DEFAULT_PATH, trust_default: float = 50.0) -> voi
 
 
 func defaults() -> Dictionary:
-	return {"version": VERSION, "campaign": Book.defaults(), "trust": default_trust, "memory": Garage.default_memory(), "upgrades": {}, "best_score": 0, "settings": {"effects": true, "sound": true, "motion": true, "volume": 0.7, "auto_fire": false, "low_power": false, "bindings": {}, "pad_bindings": {}, "deadzone": 0.35, "vibration": false, "theme": "dark", "font": "system"}}
+	return {"version": VERSION, "campaign": Book.defaults(), "vehicle": "roadster", "trust": default_trust, "memory": Garage.default_memory(), "upgrades": {}, "best_score": 0, "settings": {"effects": true, "sound": true, "motion": true, "volume": 0.7, "auto_fire": false, "low_power": false, "bindings": {}, "pad_bindings": {}, "deadzone": 0.35, "vibration": false, "theme": "dark", "font": "system"}}
 
 
 func exists() -> bool:
@@ -69,6 +71,7 @@ func _read(candidate: String) -> Dictionary:
 func sanitize(raw: Dictionary) -> Dictionary:
 	var out := defaults()
 	out["campaign"]=Book.sanitize(raw.get("campaign",{}))
+	out["vehicle"]=Vehicles.sanitize(raw.get("vehicle"))
 	var t: Variant = raw.get("trust", null)
 	if (t is float or t is int) and is_finite(float(t)):
 		out["trust"] = clampf(float(t), 0.0, 100.0)

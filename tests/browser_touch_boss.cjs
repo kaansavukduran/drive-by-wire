@@ -27,5 +27,17 @@ const base=process.env.DBW_URL||'http://127.0.0.1:8877',out=process.env.DBW_EVID
   if(auxiliary){await release();await tap(q.actions[auxiliary]);if(auxiliary==='drive_comfort')lastPulse=Date.now();}
   await page.waitForTimeout(100);
  }
- await release();assert(rotated);await page.screenshot({path:out+'/touch-boss-victory.png'});assert.deepEqual(result.errors,[]);result.status='PASS';result.flow='Fixed joystick/action fingers, actual400m robot combat, portrait→landscape safe pause/resume and victory';console.log(JSON.stringify(result));
+ await release();assert(rotated);await page.screenshot({path:out+'/touch-boss-victory.png'});
+ await tap((await state()).result[0]);await wait(()=>window.__dbwQA?.screen==='briefing');await tap((await state()).choices[0]);await wait(()=>window.__dbwQA?.screen==='road_story');
+ await page.setViewportSize({width:390,height:844});await page.waitForTimeout(400);if((await state()).paused)await tap((await state()).resume);
+ const seen=new Set(),storyStart=Date.now();
+ while((await state()).screen==='road_story'){
+  const n=await state();assert(n.fits);assert.equal(n.combat,false);assert(Date.now()-storyStart<100000);
+  if(!seen.has(n.chapter.step)){seen.add(n.chapter.step);await page.screenshot({path:out+'/touch-novel-'+n.chapter.step+'.png'});}
+  if(n.chapter.step==='race'||n.chapter.step==='trap'){await page.waitForTimeout(150);continue;}
+  if(n.choices.length)await tap(n.choices[0]);else if(n.next_visible)await tap(n.next);
+  await page.waitForTimeout(180);
+ }
+ assert(seen.has('plea')&&seen.has('promise'));assert.equal((await state()).stage,2);
+ result.novel='PASS: portrait touch dialogue, friendly race, trap, revenge promise and next chapter';assert.deepEqual(result.errors,[]);result.status='PASS';result.flow='Fixed joystick/action fingers, actual400m robot combat, portrait→landscape safe pause/resume and victory';console.log(JSON.stringify(result));
  }catch(e){result.error=String(e);throw e;}finally{fs.writeFileSync(out+'/touch-boss-results.json',JSON.stringify(result,null,2));await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1});
