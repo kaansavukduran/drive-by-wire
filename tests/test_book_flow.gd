@@ -39,6 +39,17 @@ func run() -> void:
   h.eq("decision screen shows current chapter",current_scene.campaign["stage"],stage)
   await tap()
   var game:=current_scene
+  if stage==1:
+   h.check("native A enters chapter two novel",game.get("chapter")!=null)
+   game.set_process(false)
+   for beat in 2000:
+    if game.chapter["step"]=="complete":break
+    if game._cinematic():game._process(1.0/60.0)
+    else:await tap()
+   h.eq("gamepad plays novel through the rescue",game.chapter["step"],"complete")
+   await tap()
+   h.eq("novel completion enters third decision",current_scene.campaign["stage"],2)
+   continue
   if not h.check("native A choice enters arcade",game.get("lane")!=null):
    quit(h.finish());return
   h.eq("story arcade leg is 400m",game._cfg("arcade.finish_distance",0),400.0)

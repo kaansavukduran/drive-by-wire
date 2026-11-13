@@ -1,0 +1,82 @@
+{
+  "title": "Yan yana",
+  "nodes": {
+    "arrival": {
+      "speaker": "emre",
+      "text": "Çocukken bu yolu ilk bitirenin ötekine çilekli süt alacağına söz vermiştik. Hiç bitiremedik. Her seferinde bir yere yetişmemiz gerekiyordu.",
+      "next": "memory"
+    },
+    "memory": {
+      "speaker": "aion",
+      "text": "O gün arabanda iki bardak vardı. Ben gelmeyince ikisini de içtiğini söylemiştin. Sonra boş bardağımı koltuğun altında buldum.",
+      "next": "invite"
+    },
+    "invite": {
+      "speaker": "emre",
+      "text": "Onu atamadım. Belki bir gün dönersin diye. Şimdi buradayız. Son viraja kadar yarışalım mı? Bu kez kaybeden bekleyecek.",
+      "choices": [
+        {
+          "id": "race",
+          "label": "Yarışalım. Virajda seni beklerim."
+        },
+        {
+          "id": "together",
+          "label": "Yan yana. Bu kez kimse geride kalmasın."
+        }
+      ]
+    },
+    "race": {
+      "duration": 8.0,
+      "caption": "Kazanınca iki bardak da benden!",
+      "speaker": "emre"
+    },
+    "trap": {
+      "duration": 2.4,
+      "caption": "Emre, fren! Şasi altında ikinci bir sinyal var!",
+      "speaker": "omega"
+    },
+    "aftermath": {
+      "speaker": "omega",
+      "text": "Bu bir mayın değildi. Patlayıcı yolun altında değil, Emre’nin arabasındaydı. Sinyal bizi garajdan beri izliyormuş. Kuzu’ya konum gönderdim. Emre nefes alıyor.",
+      "next": "plea"
+    },
+    "plea": {
+      "speaker": "emre",
+      "text": "Bardağı... hâlâ saklıyorum. Lütfen, intikamımı al. Ama beni burada bırakma, olur mu? Çok soğuk.",
+      "next": "reveal"
+    },
+    "reveal": {
+      "speaker": "omega",
+      "text": "Tetiği ateşleyen imza benim eski kurtarma protokolüm. Ben basmadım. Ama bunu kanıtlamak için hafızamı açarsak saldırgan bizi yeniden bulabilir. Aion, önce Emre’ye cevap ver.",
+      "choices": [
+        {
+          "id": "avenge",
+          "label": "Söz. Bunu yapanı bulacağım."
+        },
+        {
+          "id": "rescue",
+          "label": "Önce seni buradan çıkaracağım."
+        }
+      ]
+    },
+    "promise": {
+      "speaker": "aion",
+      "text": "Söz verdim. Ama Emre, sen bir hesabın bedeli değilsin. Kuzu gelene kadar buradayım. Sonra Kurt’la o sinyalin peşine düşeceğim. Kurt son yol için on saniyelik kalkan hazırlıyor.",
+      "next": "handoff"
+    },
+    "rescue": {
+      "speaker": "aion",
+      "text": "Elimi bırakma. İntikam bekleyebilir. Kuzu’nun ışıklarını görene kadar yanındayım. Bundan sonra kimseyi geride bırakmadan gideceğiz. Kuzu son yol için on beş can ve yedi saniyelik kalkan hazırlıyor.",
+      "next": "handoff"
+    },
+    "handoff": {
+      "speaker": "kuzu",
+      "text": "Geldim. Emre benimle. Onu sıcak tutacağım. Aion, radyoyu kapatma; üçüncü kapıda neye karar verirsen ver, sesimizi yanında taşı.",
+      "next": "complete"
+    },
+    "complete": {
+      "speaker": "omega",
+      "text": "Emre tahliye edildi. Bardağı koltuğuna koydum. Son yol ayrımını seçmeden önce verdiğin sözü hatırla."
+    }
+  }
+}

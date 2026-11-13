@@ -11,6 +11,14 @@ const choices=(process.env.DBW_BOOK_PATH||'0,0,0').split(',').map(Number),expect
  const state=()=>page.evaluate(()=>window.__dbwQA);const wait=fn=>page.waitForFunction(fn,null,{timeout:30000});
  const tap=async rect=>{const q=await state();const b=await page.locator('#canvas').boundingBox();await page.mouse.click(b.x+(rect[0]+rect[2]/2)*b.width/q.view[0],b.y+(rect[1]+rect[3]/2)*b.height/q.view[1]);};
  await page.goto(base+'/?qa&qa_render=low');await wait(()=>window.__dbwQA?.screen==='title');
+ // A real car selection must persist before entering the story.
+ await tap((await state()).vehicles);await wait(()=>window.__dbwQA?.screen==='vehicles');
+ await tap((await state()).buttons[1]);await wait(()=>window.__dbwQA?.selected==='courier');
+ await page.screenshot({path:`${out}/vehicle-courier.png`});
+ await tap((await state()).back);await wait(()=>window.__dbwQA?.screen==='title');
+ await page.reload();await wait(()=>window.__dbwQA?.screen==='title');
+ await tap((await state()).vehicles);await wait(()=>window.__dbwQA?.screen==='vehicles');assert.equal((await state()).selected,'courier');
+ await tap((await state()).back);await wait(()=>window.__dbwQA?.screen==='title');result.vehicle='PASS: real selection and reload';
  await tap((await state()).play);await wait(()=>window.__dbwQA?.screen==='briefing');
  for(let stage=0;stage<3;stage++){
   let brief=await state();assert.equal(brief.stage,stage);
@@ -26,7 +34,40 @@ const choices=(process.env.DBW_BOOK_PATH||'0,0,0').split(',').map(Number),expect
    await wait(()=>window.__dbwQA?.screen==='briefing'&&window.__dbwQA.radio_selected==='together');
    await tap((await state()).tabs[2]);await page.waitForTimeout(200);brief=await state();
   }
-  await tap(brief.choices[choices[stage]]);await wait(()=>window.__dbwQA?.screen==='run');
+  await tap(brief.choices[choices[stage]]);
+  if(stage===1){
+   await wait(()=>window.__dbwQA?.screen==='road_story');
+   const seen=new Set(),frames=new Set();let restored=false,rotated=false;const started=Date.now();
+   while((await state()).screen==='road_story'){
+    const n=await state();assert(n.fits,'novel speech must fit');assert.equal(n.combat,false);assert.equal(n.vehicle,'courier');
+    assert(Date.now()-started<100000,'novel timeout');
+    if(n.paused){await page.keyboard.press('Escape');continue;}
+    if(!seen.has(n.chapter.step)){seen.add(n.chapter.step);await page.screenshot({path:`${out}/novel-${n.chapter.step}.png`});}
+    if(n.chapter.step==='race'||n.chapter.step==='trap'){await page.waitForTimeout(120);continue;}
+    if(n.chapter.step==='plea'){
+     assert.deepEqual(n.actors,[[256,248],[352,248]],'aftermath actors stay in fixed ground slots');frames.add(n.frame);
+     if(!rotated){
+      await page.setViewportSize({width:390,height:844});await page.waitForTimeout(450);let m=await state();assert(m.paused,'rotation pauses scene');
+      await page.keyboard.press('Escape');await page.waitForTimeout(200);m=await state();assert(m.fits);assert.deepEqual(m.actors,n.actors);
+      await page.screenshot({path:`${out}/novel-plea-phone.png`});
+      await page.waitForTimeout(1300);await page.setViewportSize({width:1280,height:720});await page.waitForTimeout(400);await page.keyboard.press('Escape');rotated=true;continue;
+     }
+     if(!restored){
+      await tap(n.pause);await page.waitForTimeout(200);await tap((await state()).leave);await wait(()=>window.__dbwQA?.screen==='title');
+      await page.reload();await wait(()=>window.__dbwQA?.screen==='title');await tap((await state()).play);await wait(()=>window.__dbwQA?.screen==='briefing');
+      await tap((await state()).choices[choices[stage]]);await wait(()=>window.__dbwQA?.screen==='road_story');
+      assert.equal((await state()).chapter.step,'plea');assert.equal((await state()).chapter.pace,'race');restored=true;continue;
+     }
+    }
+    if(n.choices.length)await tap(n.choices[n.chapter.step==='reveal'?1:0]);
+    else if(n.next_visible)await tap(n.next);
+    await page.waitForTimeout(180);
+   }
+   assert(seen.has('race')&&seen.has('trap')&&seen.has('plea')&&seen.has('rescue')&&seen.has('complete'));assert(restored&&rotated);
+   result.legs.push({stage:2,mode:'visual_novel',scenes:[...seen],checkpointReload:'PASS',rotation:'PASS'});
+   await wait(()=>window.__dbwQA?.screen==='briefing');continue;
+  }
+  await wait(()=>window.__dbwQA?.screen==='run');
   assert.equal((await state()).finish,400);await page.keyboard.press('KeyC');await page.keyboard.down('Space');
   const started=Date.now();let held='',lastMine=0,lastSupport=Date.now();
   while(true){

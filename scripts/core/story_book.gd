@@ -1,12 +1,13 @@
 extends RefCounted
 ## Local choice book. A combat failure is a retry, never one of the 13 endings.
+const RoadStory := preload("res://scripts/core/road_story.gd")
 const PATH := "res://data/story_book.json"
 static var _data: Dictionary = {}
 static func data() -> Dictionary:
  if _data.is_empty(): _data=JSON.parse_string(FileAccess.get_file_as_string(PATH))
  return _data
 static func defaults(unlocked: Array = []) -> Dictionary:
- return {"stage":0,"choices":[],"active":false,"unlocked":unlocked.duplicate(),"failures":0,"score":0,"goals_completed":0,"radio":{},"bonds":{}}
+ return {"stage":0,"choices":[],"active":false,"unlocked":unlocked.duplicate(),"failures":0,"score":0,"goals_completed":0,"radio":{},"bonds":{},"chapter2":RoadStory.defaults()}
 static func node_key(state: Dictionary) -> String:
  var prefix: Array=state["choices"].slice(0,int(state["stage"]))
  return "root" if prefix.is_empty() else "/".join(prefix)
@@ -15,6 +16,7 @@ static func node(state: Dictionary) -> Dictionary:
 static func sanitize(raw: Variant) -> Dictionary:
  var out:=defaults()
  if not raw is Dictionary: return out
+ out["chapter2"]=RoadStory.sanitize(raw.get("chapter2",{}))
  if raw.get("radio") is Dictionary:
   for key in data()["nodes"]:
    for reply in data()["nodes"][key].get("responses",[]):

@@ -1,6 +1,6 @@
 # Drive-By Wire · AIONIA sanat kılavuzu
 
-Sürüm 0.3.0 · 12 Kasım 2026 · Normatif kaynak: [AIONIA v1.0](AIONIA_STANDARD.md).
+Güncel uygulama 0.9.0 · 13 Kasım 2026 · [Güncel AIONIA referansı](AIONIA_CURRENT_REFERENCE.md). Eski bölümler önceki üretim kaydını da içerir.
 
 ## Kimlik ve sınır
 
@@ -75,3 +75,13 @@ Mevcut characters_standing.png değiştirilmez. Ana menü ve garajda Aion ilk sa
 Üç özgün robot aynı koyu mürekkep/çelik gölge/açık metal paletini kullanır. Mühür-01 sıcak amber zırh/çift namlu, Yankı-02 mavi kanatlı verici, Tasnif-13 pembe ağır gövde siluetindedir. robot_art.gd blokları aynı merkezde çizer; egzost hareketi çekirdeği/hitbox’ı oynatmaz. NPC atlası değişmez. Robot portresinde atlasın alfa kesme shader’ı kullanılmaz; mevcut karakterler aynı shader ve atlasla kalır.
 
 Altı biyomda mevcut yol dokusu korunur; çevrede şehir direkleri, yağmurlu hat, cam ağaçlar, buz kristalleri, santral boruları ve arşiv kabinleri ayrı şekillerle çizilir. Yeni robot/çevre uyarlamaları OYUN/TASLAK; ana evren kanonu ilan edilmez.
+
+## 0.9.0 · Yeni oyun paftaları
+
+`tools/art/author_road_story.py` mevcut yerel Pillow ile özgün piksel geometrisini tekrar üretir; runtime bağımlılığı eklemez. Özel referanslar dışarı gönderilmez. `ROAD_STORY_ART.json` boyut/pivot/fps/hash ve TASLAK statüsünü kaydeder.
+
+- Postacı ve Kuyruklu Yıldız: 64×96 kare, 4×2 atlas; farklı gövde silüetleri, teker/ışık/turbo/atış/hasar kareleri. Aion’un mevcut sürücü resmi runtime’da aynı noktada katmanlanır; karakter yeniden uydurulmaz. Mevcut Yol Arkadaşı aynen korunur.
+- Emre tuzak atlası: 8 ayrı 64×96 kare; çatlak, gövde deformasyonu, alev ve duman. Araç pivotu (32,43.5) sabittir.
+- Yaralı Emre: 6 ayrı 128×80 kare, 5 fps; nefes, göz kırpma ve uzanan el. Zemin pivotu (64,72) sabittir. Bej kürk, yeşil göz, açık mavi gömlek, kırmızı kravat ve koyu pantolon korunur. Mevcut portre ve paftanın yerine final kanon diye geçirilmez.
+
+Aion’un yer sahnesi mevcut sabit 72×64 ayakta karesini kullanır; yeni yürüme veya diz çökme animasyonu yapılmış sayılmaz. Patlama efekti mevcut sprite sheet’tir. Azaltılmış hareket yaralı karakteri sabit pozda tutar ve dekoratif yarış akışını durdurur; sahne geçişleri çalışır.

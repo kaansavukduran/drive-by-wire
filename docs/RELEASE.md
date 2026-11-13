@@ -1,3 +1,11 @@
+# 0.9.0 · Yan yana
+
+Mobil sürüş HUD’ı daha az yer kaplar. Ana menüde üç farklı araba seçilir; seçim yerel kayda yazılır, fizik ve silah dengesi değişmez.
+
+İkinci bölüm seçimli sohbet, yan yana dostça yarış, şasideki tuzağın patlaması ve yaralı Emre’nin yol kenarında verdiğin sözü beklediği bir sahnedir. Bu bölümde çatışma yoktur. Altı yaralı Emre ve sekiz tuzak/araç hasarı karesi eklendi. Kayıt güncel replikten devam eder; verilen söz üçüncü bölümde desteğe, bağlara ve epiloga yansır. 13 mevcut son korunur. Yeni hikâye ve art oyun/TASLAK statüsündedir.
+
+Güncel belge içerik sürümü AIONIA v1.7 olarak okundu. Gerçek test ve canlı yayın ayrı raporlanır: [QA](QA.md).
+
 # 0.8.0 · Robotlar ve Yolun Tanıkları
 
 Üç gerçek robot boss, yarı canda ikinci faz, saldırı öncesi sabit hedef uyarıları ve ön ateş/arka mayın çarpışmaları. Boss yenilmeden400m etap tamamlanmaz. Yolda altı biyomun renk, çevre şekli ve hava koşulları değişir; azaltılmış hareket ve efekt tercihleri korunur.

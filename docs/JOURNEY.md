@@ -26,10 +26,18 @@ Ana menüde Sonlar kitabı 13 yuvayı gösterir; yalnız kazanılan kapanışlar
 
 Metinler `data/story_book.json`, sınırlı saf durum geçişleri `scripts/core/story_book.gd` içindedir. İki seçenekli eski bölüm yalnız eski kuralların regresyonlarında korunur; oyuncunun normal akışı yeni kitaptır. Dış diyalog/LLM servisi, yeni motor veya genel anlatı framework'ü eklenmedi.
 
-## İLİN · OYUN / TASLAK
+## Omega-3 · OYUN / TASLAK
 
-Kullanıcının yeni yapay zekâ karakter talebiyle yaratıldı. Adı **İLİN**. Yol izlerini okuyabilen, kendi belleği üzerinde söz hakkı isteyen bir yol arkadaşıdır. Sakin ve açık konuşur; riski söyler, oyuncuyu aşağılamaz. Hikâye bakım, rıza, tanıklık, topluluk ve özgürlük arasında seçimler kurar. Tek bir ahlaki puan tüm sonları iyi/kötü diye sıralamaz.
+Kullanıcının yeni yapay zekâ karakter talebiyle yaratıldı. Adı **Omega-3**. Yol izlerini okuyabilen, kendi belleği üzerinde söz hakkı isteyen bir yol arkadaşıdır. Sakin ve açık konuşur; riski söyler, oyuncuyu aşağılamaz. Hikâye bakım, rıza, tanıklık, topluluk ve özgürlük arasında seçimler kurar. Tek bir ahlaki puan tüm sonları iyi/kötü diye sıralamaz.
 
 Görseli 48×44 pixel ızgarada kesik köşeli bir hafıza pusulasıdır: iki üst anten, yan yön kanatları, ortada bellek tohumu ve iki optik. Gri gövde, mint/amber/gül vurgu paleti, kısa konuşma ışığı. CRT/MOMO paftası ve üzerinde MOMO yazan çerçeve kullanılmaz. Azaltılmış harekette dekoratif animasyon durur; hasar bildirimi süresi yine biter. Yüz `scripts/game/companion_face.gd` içinde özgün Godot çizimidir.
 
-İLİN'in varlığı, kökeni ve bu yolculuk **ana AIONIA kanon onayı değildir**. Kullanıcı oyun için yeni karakteri yetkilendirdi; ANA kanon kararı ayrı kalır. Aion, Kurt, Kuzu, Baykuş Ömer ve Tavşan Emre tasarımları yeniden çizilmedi. Eski kayıt/çekirdek dosyalarındaki `momo` kimlikleri uyumluluk için tutulur; oyuncuya gösterilen isim İLİN'dir.
+Omega-3'in varlığı, kökeni ve bu yolculuk **ana AIONIA kanon onayı değildir**. Kullanıcı oyun için yeni karakteri yetkilendirdi; ANA kanon kararı ayrı kalır. Aion, Kurt, Kuzu, Baykuş Ömer ve Tavşan Emre tasarımları yeniden çizilmedi. Eski kayıt/çekirdek dosyalarındaki `momo` kimlikleri uyumluluk için tutulur; oyuncuya gösterilen isim Omega-3'dir.
+
+## 0.9.0 · Yan yana
+
+Üç bölümün ortası artık arcade çatışması değildir. `data/road_story.json` ve küçük `scripts/core/road_story.gd` durum makinesi sohbet → dostça yarış → uzaktan tetiklenen tuzak → yol kenarı → verilen söz → tahliye akışını yönetir. Mevcut 13 bitiş kimliği ve üç dallanan rota seçimi korunur; yeni diyalog seçimleri bunların üzerinde bağ/destek/epilog katmanıdır.
+
+Emre geçmişte Aion için sakladığı bardaktan söz eder. Yarış sırasında şasindeki patlayıcı tetiklenir. Emre yaralı ve hayattadır; Kuzu onu tahliye eder. İntikam sözü Kurt bağı ve son etapta 10 sn kalkan; önce kurtarma sözü Emre bağı, +15 can ve 7 sn kalkan sağlar. Omega-3’ün eski kurtarma imzasının saldırıda kullanılması, son kararların güven gerilimini sürdürür. Bu oyun hikâyesi/TASLAK’tır; kanonik ölüm ilanı değildir.
+
+Çatışmalarda kayıt etap başına döner. Novel bölümünde geçerli replik/animasyon adımı, yarış tercihi ve verilen söz kaydedilir. Yarım kalan replik başından, yarım kalan kısa animasyon başından sürer; bitmiş bölüm iki kez ödül vermez. Sayfa numarası ayrıca kaydedilmez. Her iki ekran yönünde ve azaltılmış harekette aynı mantıksal karakter pivotları korunur. Yarışta Emre’nin kontrollü öne çıkışı bir sahne hareketidir; yaralanma sahnesindeki iki karakterin konumları sabittir.

@@ -1,31 +1,39 @@
-# Drive-By Wire 0.8.0 · doğrulama
+# Drive-By Wire 0.9.0 · doğrulama
 
-PASS çalıştırılmış kapsam; FAIL karşılanmayan hedef; NOT TESTED denenmeyen kapsam. Yerel test canlı yayın anlamına gelmez. Önceki sonuçlar [QA-v074](history/QA-v074.md) içinde.
+13 Kasım 2026. Godot 4.6.3; izole fixture kayıtları, localhost ve taze Chromium bağlamları. Gerçek donanım veya insan eğlence testi yapılmış sayılmaz.
 
-| Kontrol | Sonuç | Gerçek kapsam / sınır |
-| --- | --- | --- |
-| Native regresyon | PASS | 1988 kontrol, 0 başarısız; 24 takım. 13×3 oynanan hikâye yolunda boss yenildi. Yeni boss44 kontrol ve sayfalı UI466 kontrol (gerçek analog sağ/sol sayfa girdileri dahil); kayıt/joystick/arka mayın/karakter konumu/gamepad sonuç regresyonları tekrar geçti. |
-| Sonlar kitabı ve menü geometrisi | PASS | Bütün 13 son, iki font ve dört viewportta her sayfanın gerçek Label yüksekliği ölçüldü. Kelimeler korunur; portre, metin, sayfa gezinmesi ve alt eylemler ayrı alanlarda. Galeri dört sabit sayfada13 girdiyi erişilebilir tutar. Yardım/günlük/ayarlar tekerlek gerektirmeyen sayfalar kullanır. Godot’un yerleşik açılır seçimlerinin iç ScrollContainer düğümleri oyun içeriği sayılmaz; ana ayar kategorilerinin tamamı PagedSettings’tir. |
-| Gerçek üç etaplı web hikâyesi | PASS | Son yapıda klavye/fare ile üç robotun iki fazı ve altı biyom gözlendi. Can89/107/130; düşman7/7/8; ikmal9/5/7. e07 epilogu sekiz sabit sayfada okundu; Ömer metni, galeri/portre dönüşü ve reload geçti. Robotun önü HUD altında, arka fazı gerçek mayının arming mesafesinde; renkli portre ve arka yön işareti doğrulandı. Runtime hata yok. |
-| Altı web düzeni | PASS | Chromium PC, telefon/tablet dikey-yatay, düşük güç telefon. Lexend gerçek ayarlardan seçildi; fare eylemleri, joystick/bağımsız parmaklar, mola/günlük, sabit karakter pikselleri, Gamepad API akışı geçti. |
-| Son web paketi / gamepad boss | PASS | Import/parse/export geçti. Gamepad API ile gerçek400m ve Mühür-01: can115,düşman7,ikmal6; analog/D-pad/A sonuç akışı geçti. Gerçek dokunma girdileriyle joystick/eylem parmakları, ilk boss ve dikey→yatay güvenli mola/devam: can38,düşman6. Runtime hata yok. |
-| Normal mod60FPS / Canvas OS fontu | FAIL | Önceki yazılım renderer sınırı ve gerçek OS fontuna erişim kısıtı kapanmadı; bu sürümde performans yeniden ölçülmedi. |
-| Fiziksel Xbox/telefon/tablet, Safari/iOS, Firefox Android, titreşim | NOT TESTED | Emülasyon gerçek donanım değildir. |
-| İnsan okunabilirlik/denge/anlatı, tam ekran okuyucu/WCAG, bellek/enerji | NOT TESTED | Otomatik test insan değerlendirmesi veya sertifika sayılmaz. |
-| Canlı0.8.0 yayını | NOT TESTED | Sürüm/commit/PCK ve gerçek yeni oturumlarla ayrıca doğrulanır. Önceki Vercel günlük yayın kotası kaynak hatası sayılmaz; eski sürüm yeni özelliklerin kanıtı değildir. |
+| Kapsam | Sonuç | Kanıt / sınır |
+|---|---|---|
+| Native regresyon | PASS | 25 takım, 2188 kontrol. 13 yol için 26 gerçek çatışma ve 13 novel bölümü tamamlandı. İkinci bölümde boss bekleyen eski test, açık kullanıcı talebine uygun değişti; ilk/son boss çarpışma testleri korunur. |
+| Yeni sahne, kayıt, sprite ve araçlar | PASS | 184 kontrol: iki font/beş boyutta tüm diyalog kelimeleri, 44 px eylemler, portre/metin ayrımı, sabit zemin, altı ayrı oynayan yaralı karesi, mola, checkpoint, tek seferlik tamamlama, üç araçta gerçek sprite/fizik/namlu hizası. |
+| Son web paketi: tam hikâye | PASS | Gerçek girdilerle araç seçimi/reload, ilk boss, yarış/tuzak/yaralı Emre, yön değişiminde mola, replik checkpoint’inden reload, kurtarma seçimi, son boss ve e01 epilogu/galeri tamamlandı. İlk/son etap can126/155, düşman10/9, ikmal5/6. İki robotun iki fazı, dört çatışma biyomu; epilog10 sabit sayfada okundu ve reload geçti. Runtime hatası yok. |
+| Altı web düzeni | PASS | PC, telefon/tablet iki yön, düşük güç telefon; native font/Lexend gerçek ayar seçimi, HUD ölçümü, sabit garaj pikselleri, joystick/bağımsız parmaklar, mola/günlük ve Gamepad API regresyonu. |
+| Web gamepad | PASS | Gerçek ilk boss ve araç seçimi, analog ile novel kurtarma tercihi, A ile üçüncü bölüme geçiş; fare kullanılmadı. Son pakette can126, 400m, 9 düşman; kurtarma sözü ve üçüncü karar ekranı. Emüle Gamepad API’dir. |
+| Son web paketi / dokunmatik novel | PASS | Gerçek dokunma olaylarıyla bağımsız joystick/eylem parmakları, Mühür-01 ve iki faz, dikey→yatay güvenli mola/devam; can55, 400m, 8 düşman. Sonra mobil novelde yarış, tuzak, yaralı Emre, intikam sözü ve üçüncü karar ekranı tamamlandı. Runtime hatası yok. |
+| Mobil alan karşılaştırması | PASS | Aynı 390×844 Chromium/düşük render koşulunda 360×640 oyun alanı: yol dokunma bölgesi y196/h270 → y166/h300. Yükseklik +%11,1. Yazı fontları korunur; sadeleştirilen yatay HUD’da gereksiz hız tekrarları kaldırıldı. |
+| Normal mod 60 FPS / Canvas OS fontu | FAIL | Önceden gözlenen yazılım renderer performansı ve OS font erişimi sınırı kapanmadı; bu sürüm yeni bir 60 FPS ölçümü iddia etmez. |
+| Fiziksel Xbox/telefon/tablet, Safari/iOS, Firefox Android, titreşim | NOT TESTED | Tarayıcı emülasyonu gerçek cihaz yerine geçmez. |
+| İnsan anlatı/denge/görsel kalite, ekran okuyucu/WCAG, enerji/bellek | NOT TESTED | Otomatik kabul insan değerlendirmesi veya sertifika değildir. |
+| Canlı 0.9.0 yayını (bu kaynak raporu hazırlanırken) | NOT TESTED | GitHub main ve Vercel sürüm/commit/PCK yayın makbuzunda ve PR açıklamasında ayrıca doğrulanır. Önceki 0.8.0 yayını Vercel günlük kotasıyla engellenmişti; yeni kaynak eski canlı sürümün güncellendiği anlamına gelmez. |
 
-İki ilk dokunma botu koşusu araç kaybıyla bitti. Sürücünün parmak bırakma/yeniden basma akışı, tam joystick sapması, mayına kısa dokunup ateşe dönüş ve uyarıdan kaçış davranışı düzeltildi; son koşu PASS. Oyun canına, ölümsüzlüğe veya kayda değer yazılmadı. Bu sonuç insan oyuncu denge testi yerine geçmez.
-
-## Yeniden üretim
+İlk adayda yeni sahnenin portre minimum boyu yazıyla çakıştı, yatay HUD’ın Web fallback fontu kutuya sığmadı ve yön değişiminde mola eksikti. Bunlar düzeltildi; aynı koşullar ve gerçek ekran görüntüleriyle tekrar PASS. Son mobil sadeleştirme karakterlerin mantıksal alanını değiştirmez.
 
 ```sh
 GODOT=godot bash tests/run_all.sh
 python3 packaging/build_web.py
-python3 -m http.server 8877 --directory build/web
-DBW_URL=http://127.0.0.1:8877 node tests/browser_forge.cjs
-DBW_URL=http://127.0.0.1:8877 DBW_BOOK_PATH=1,1,0 DBW_ENDING=e07 DBW_TOUCH=0 node tests/browser_book.cjs
-DBW_URL=http://127.0.0.1:8877 node tests/browser_result_pad.cjs
-DBW_URL=http://127.0.0.1:8877 node tests/browser_touch_boss.cjs
+python3 -m http.server 8892 --bind 127.0.0.1 --directory build/web
+DBW_URL=http://127.0.0.1:8892 node tests/browser_forge.cjs
+DBW_URL=http://127.0.0.1:8892 DBW_TOUCH=0 node tests/browser_book.cjs
+DBW_URL=http://127.0.0.1:8892 node tests/browser_result_pad.cjs
+DBW_URL=http://127.0.0.1:8892 node tests/browser_touch_boss.cjs
 ```
 
-QA yalnız okur. Native boss fixture’ları çarpışmayı yalıtarak dener;13×3 oynanan hikâye yolları ve browser testleri fizik, can, cephane ve hasarı değiştirmez. Kumanda menü testi bitmiş çatışma fixture’ını kullanır; bu bir oynanmış boss savaşı diye raporlanmaz. Tüm boss karşılaşmaları ayrıca gerçek atış/mayın/uyarılarla tamamlanır. Kanıtlar work/v080 içinde; kesin yayın makbuzu ayrı tutulur.
+`?qa` yalnız okur. Browser testleri oyun durumuna veya kayda değer yazmaz. Native fixture’lar durum/çarpışma kurallarını ayrıca yalıtarak dener; oynanan yol testleri can, fizik veya hasarı değiştirmez. Kanıtlar yerel `work/v090` içinde; son kaynak/paket/canlı durumları yayın makbuzunda ayrılır.
+
+Son paket üzerinde iki eşzamanlı otomatik oynanış denemesi araç kaybıyla bitti ve FAIL olarak saklandı. Tek başına dokunmatik tekrar aynı oyun değerleriyle PASS oldu. Bir ilk dokunma sürücüsü denemesi zaten bırakılmış parmağa tekrar TouchEnd gönderdi; sürücü idempotent bırakmayla düzeltildi. Bunlar oyun canını/hasarını değiştiren test hileleriyle aşılmadı. Aynı paketin tek başına tam hikâye tekrarı da can126/155 ile PASS oldu.
+
+İlk iki GitHub temiz Linux koşusu yatay mobil mayın etiketinin farklı sistem fontunda görseli büyüttüğünü yakaladı (her koşuda free_drive 4 FAIL). Yalnız etiketi kısaltmak yeterli değildi; aşağıdaki geçici büyüme kök nedeni ayrıca yerelde yeniden üretildi. İki satırlı cooldown yerine sabit tek satırlı “MAYIN” etiketi kullanılır; dokunma alanı küçültülmez ve metin kırpılmaz. Sınırsız/basılı mayın davranışı değişmez. İlgili test başarısız olursa artık düğmenin minimum/gerçek/hedef ölçülerini de yazar. Düzeltmenin temiz CI sonucu PR/yayın makbuzunda ayrıca kaydedilir.
+
+Font hatası yerelde DejaVu Sans ile yeniden üretildi: etiket kısaldığında minimum boy45×24’e inerken görsel65/66×44 kalıyordu; hedef64×44 idi. Kaynak neden, aynı güncellemede önce uzun sonra kısa etiket atamasıydı. Son etiket tek kez atanır ve görsel gerçek dokunma alanına yeniden oturur. Kalıcı regresyon DejaVu Sans ve Noto Sans ile iki cooldown durumuna 4 yeni kontrol ekler; eski sınır assertion’ları korunur.
+
+Yatay dokunmatik büyütmede ön robotun ekran sınırlarıyla geçici bildirimin çakıştığı native transform testiyle doğrulandı. Geçici bildirim daha küçük sol yan alana taşındı; aynı yerdeki sürüş ipucu bildirim süresince saklanır. Yeni görünüm testi robot/başlık/bildirim sınırlarını gerçek ölçek ve konumla karşılaştırır. Fizik konumları değişmez.

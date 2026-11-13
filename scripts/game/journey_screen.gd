@@ -66,18 +66,20 @@ func _ready() -> void:
  _build_radio()
  reply_text=_label(pages[1],"Yanıtın bu etapta destek sağlar. Rota seçerek yola çıkabilirsin.")
  for reply in Book.node(campaign).get("responses",[]) if Session.story_mode else []:
-  var button:=_button(pages[1],str(reply["text"])+"\n"+("Daha hızlı mayın" if reply["perk"]=="mine" else "7 sn kalkan"))
+  var perk: String="Yanıtın hatırlanır" if Session.story_mode and campaign["stage"]==1 else ("Daha hızlı mayın" if reply["perk"]=="mine" else "7 sn kalkan")
+  var button:=_button(pages[1],str(reply["text"])+"\n"+perk)
   button.pressed.connect(_answer.bind(str(reply["id"])))
   button.disabled=campaign.get("radio",{}).has(Book.node_key(campaign))
   radio_answers.append(button)
  var options: Array=Book.node(campaign)["choices"] if Session.story_mode else Journey.new().data["routes"].values()
  for i in options.size():
   var spec: Dictionary=options[i]
-  var button:=_button(pages[2],str(spec["name"])+"\n"+str(spec["effect"]))
+  var effect: String="Emre ile seçimli yol hikâyesi · Çatışma yok" if Session.story_mode and campaign["stage"]==1 else str(spec["effect"])
+  var button:=_button(pages[2],str(spec["name"])+"\n"+effect)
   button.pressed.connect(_choose.bind(str(spec["id"]) if Session.story_mode else ["steady","supplies"][i]))
   choices.append(button)
  var synopsis: String=Book.node(campaign)["text"] if Session.story_mode else Journey.new().data["premise"]
- journal_parts=_paginate(synopsis+"\n\nHer etap 400 m. Kaza yaparsan bu karardan yeniden denersin.\nOklar/WASD veya sabit joystick: dört yön. Ateş öne, sınırsız mayın arkaya. E turbo, Q fren.",190)
+ journal_parts=_paginate(synopsis+"\n\nİlk ve son etap 400 m. İkinci bölüm silahsız dostça yarış ve seçimli sohbet. Kaza yaparsan bu karardan yeniden denersin.\nOklar/WASD veya sabit joystick: dört yön. Ateş öne, sınırsız mayın arkaya. E turbo, Q fren.",190)
  journal_text=_label(pages[3],journal_parts[0])
  journal_next=_button(pages[3],"")
  journal_next.pressed.connect(func(): journal_index=(journal_index+1)%journal_parts.size();_show_journal())
@@ -228,6 +230,6 @@ func _choose(route: String) -> void:
   save_error=not store.save_data(save)
   Session.campaign_save_failed=save_error
  else: Session.next_route=route
- get_tree().call_deferred("change_scene_to_file","res://scenes/main.tscn")
+ get_tree().call_deferred("change_scene_to_file",Session.play_scene())
 func _back() -> void:
  get_tree().call_deferred("change_scene_to_file","res://scenes/title.tscn")
