@@ -25,7 +25,9 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
   if(Date.now()-lastPulse>8200){await tap(3);lastPulse=Date.now();}
   await sleep(110);
  }
- await button(7,false);await axis(0);await sleep(250);assert.equal((await state()).result_focus,0);
+ await button(7,false);await axis(0);await sleep(250);result.initial_focus=(await state()).result_focus;
+ // A stick held as the stage ends may already select Garage; choose explicitly.
+ await axis(-.85);await wait(()=>window.__dbwQA.result_focus===0);await axis(0);await sleep(100);
  await axis(.85);await wait(()=>window.__dbwQA.result_focus===1);await axis(0);await sleep(100);await axis(-.85);await wait(()=>window.__dbwQA.result_focus===0);await axis(0);await sleep(100);
  await tap(15);assert.equal((await state()).result_focus,1);await tap(14);assert.equal((await state()).result_focus,0);
  await page.screenshot({path:out+'/actual-pad-stage-complete.png'});await tap(0);await wait(()=>window.__dbwQA?.screen==='briefing');assert.equal((await state()).stage,1);
