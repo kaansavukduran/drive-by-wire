@@ -10,7 +10,7 @@ const base=process.env.DBW_URL||'http://127.0.0.1:8877',out=process.env.DBW_EVID
  const tap=async r=>{const p=await center(r,0);await page.touchscreen.tap(p.x,p.y);};
  await page.goto(base+'/?qa&qa_render=normal');await wait(()=>window.__dbwQA?.screen==='title');await tap((await state()).play);await wait(()=>window.__dbwQA?.screen==='briefing');await tap((await state()).choices[0]);await wait(()=>window.__dbwQA?.screen==='run');
  let stick,action='',active=false,rotated=false,lastPulse=0;const started=Date.now();
- const release=async()=>{await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});active=false;action='';};
+ const release=async()=>{if(active)await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});active=false;action='';};
  while(true){let q=await state();assert.equal(q.screen,'run');if(q.over){result.terminal={hp:q.hp,distance:q.distance,boss:q.boss,ending:q.ending_text};assert(q.boss.defeated&&q.ending_text.includes('ETAP TAMAMLANDI'));result.boss=q.boss.name;result.hp=q.hp;result.distance=q.distance;break;}assert(Date.now()-started<150000,'touch boss stage timed out');
   for(const w of q.radio_ui.widgets)assert(w.fits,'touch HUD text fit: '+w.text);
   if(q.boss.active&&q.boss.phase===2&&!rotated){await release();await page.screenshot({path:out+'/portrait-boss-phase2.png'});await page.setViewportSize({width:844,height:390});await wait(()=>window.__dbwQA.paused&&window.__dbwQA.view[0]>window.__dbwQA.view[1]);q=await state();const pausedPos=q.player.slice();await page.waitForTimeout(200);assert.deepEqual((await state()).player,pausedPos);await page.screenshot({path:out+'/landscape-boss-paused.png'});await tap(q.pause_menu[0]);await wait(()=>!window.__dbwQA.paused);rotated=true;q=await state();}
