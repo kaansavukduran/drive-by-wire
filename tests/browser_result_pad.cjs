@@ -37,15 +37,16 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
  await page.screenshot({path:out+'/actual-pad-stage-complete.png'});await tap(0);await wait(()=>window.__dbwQA?.screen==='briefing');assert.equal((await state()).stage,1);
  await page.screenshot({path:out+'/actual-pad-next-chapter.png'});
  await tap(0);await wait(()=>window.__dbwQA?.screen==='road_story');
- const seen=new Set();const storyStart=Date.now();
+ const seen=new Set();let record="";const storyStart=Date.now();
  while((await state()).screen==='road_story'){
   const n=await state();assert(n.fits);assert.equal(n.combat,false);assert(Date.now()-storyStart<100000);
-  seen.add(n.chapter.step);
+  seen.add(n.chapter.step);if(n.chapter.record)record=n.chapter.record;
   if(n.chapter.step==='race'||n.chapter.step==='trap'){await sleep(150);continue;}
-  if(n.chapter.step==='reveal'&&n.choices.length){await axis(.85);await sleep(180);await axis(0);await tap(0);assert.equal((await state()).chapter.vow,'rescue');}
+  if(n.chapter.step==='witness'&&n.choices.length){await axis(.85);await sleep(180);await axis(0);await tap(0);assert.equal((await state()).chapter.record,'shared');}
+  else if(n.chapter.step==='reveal'&&n.choices.length){await axis(.85);await sleep(180);await axis(0);await tap(0);assert.equal((await state()).chapter.vow,'rescue');}
   else await tap(0);
  }
- assert(seen.has('plea')&&seen.has('rescue'));assert.equal((await state()).stage,2);
- result.novel='PASS: analog selects rescue, A advances all dialogue and chapter handoff; no mouse';
+ assert(seen.has('plea')&&seen.has('rescue')&&seen.has('eren')&&seen.has('witness'));assert.equal(record,'shared');assert.equal((await state()).stage,2);
+ result.novel='PASS: analog selects rescue and Eren signal sharing, A advances all dialogue and chapter handoff; no mouse';result.erenRecord=record;
  await page.screenshot({path:out+'/actual-pad-novel-complete.png'});assert.deepEqual(result.errors,[]);result.status='PASS';result.flow='Gamepad-only title, route, actual 400m combat, analog left/right, D-pad left/right, A confirms next chapter; no mouse or gameplay setters';console.log(JSON.stringify(result));
  }catch(e){result.error=String(e);throw e;}finally{fs.writeFileSync(out+'/result-pad.json',JSON.stringify(result,null,2)+'\n');await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1;});

@@ -144,3 +144,16 @@ Mühür-01, Yankı-02 ve Tasnif-13 üç etabın280m noktasında girer; boss durm
 Kullanıcının önerdiği [Aion Endless Run frontier](https://github.com/kaansavukduran/aion_endless_run/blob/main/scripts/frontier.gd) ve test_encounters.gd okundu. Saldırı öncesi uyarı, yarı canda faz ve ayrı takip karşılaşması yaklaşımı incelendi; o oyunun görselleri, kodu ve hareket modeli taşınmadı. Üç yeni robot bu araç mekaniğine göre yazıldı.
 
 Öykü düğümleri ve13 epilog, tahliye sistemindeki ortak sorumluluk ve mahremiyet/yardım/kalma kararları üzerine yeniden yazıldı. Diyalog, yoldaki yeni olaylar ve boss açıklamaları aynı neden-sonuç zincirini izler. Önceki seçim/son kimlikleri, yerel kayıt, kontrol onayı ve Godot4.6.3 korunur. Fiziksel cihaz ve insan anlatı/denge değerlendirmesi sonraki doğrulama hedefleridir. Sonuçlar QA.md; canlı sürüm ayrıca manifest/PCK ile kanıtlanır.
+
+
+## 0.10.0 · Fragaria Unslop / sahne oyunculuğu
+
+Kapsam: ikinci bölümün yol kenarı sahnesi, Aion/Emre/Eren paftaları ve Eren’in tanıklık kararı. Önce 0.9.0’ın gerçek sahne görüntüsü incelendi: yaralı Emre’nin düz blok gövdesi ve az yüz ayrıntısı istenen görsel hedefi karşılamıyordu; Aion’un aynı sahnede yalnız ayakta pozu vardı. Önceki karakter kayması şikâyeti korunması gereken regresyondur; bu tur mevcut garajda yeni bir kayma gözlenmiş sayılmaz.
+
+İnceleme: kurulu Fragaria Unslop SKILL.md, proje profili, sprite/oyun yönergeleri; güncel AIONIA v1.7 ve referans indeksi, Eren özgün çizimi/TASLAK paftası. Bağlantılı ChatGPT konuşması read_thread aracı olmadığı için okunamadı. Kullanıcının kedi görseli ayrıntı ve ışık hedefi olarak yorumlandı; kedi kimliği veya kostümü Aionverse karakterlerine aktarılmadı.
+
+Onarım: üç karakter için toplam14 ayrı poz; orman/enkaz arka planı; kaynak temas noktaları ile sabit Sprite2D kökleri; sakin poz süreleri ve azaltılmış hareket. Eren hikâyeye yardım eden tanık olarak girer; mühürlü kayıt/sinyal izi seçimi kayıt ve epiloga taşınır. Kontroller, 13 son kimliği ve ana motor korunur. Yeni paftalar ana kanon tasarım onayı değildir.
+
+İlk web paketinde kaynak metadata dosyası .gdignore altından dışa aktarılmadı: karakterler görünmedi, gerçek test FAIL verdi. Runtime dosyası data/story_cast_art.json konumuna taşındı; normal data ihracıyla aynı tarayıcı akışı PASS oldu. Bir sonraki denemede 230ms seyrek örnekleme kısa göz kırpma karesini kaçırdı; altı kare kabul koşulu korunarak örnekleme75ms ve birkaç gerçek döngüye çıkarıldı. Son tam hikâyede altı kare de görüldü, gerçek kök/temas konumları her örnekte aynı kaldı, runtime hatası0.
+
+Yerel native sonuçlar ve gerçek web/cihaz kapsamı QA.md içindedir. Kanıt görüntüleri ve loglar work/v010 altında yerel tutulur; özel paftalar ve standart metni public kaynağa eklenmez. Canlı kaynak/commit/dağıtım ayrıca kontrol edilir.

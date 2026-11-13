@@ -12,11 +12,10 @@ const TextFit=preload("res://scripts/game/text_fit.gd")
 const Sounds=preload("res://scripts/game/sounds.gd")
 const Sheets=preload("res://scripts/game/sheets.gd")
 const QA=preload("res://scripts/game/qa_snapshot.gd")
-const INJURED=preload("res://assets/sprites/emre_aftermath.png")
+const Art=preload("res://scripts/game/story_cast_art.gd")
 const CRASH=preload("res://assets/sprites/emre_trap.png")
 const DRIVER=preload("res://assets/sprites/aion_roadster.png")
 const EMRE_BODY=preload("res://assets/sprites/courier_body.png")
-const AION_STANDING=preload("res://assets/characters/characters_standing.png")
 const ROAD=preload("res://assets/road/road_tile.png")
 var store:=Store.new()
 var save: Dictionary
@@ -51,6 +50,10 @@ var sheets:=Sheets.new()
 var car_texture: Texture2D
 var layout_ready:=false
 var last_portrait:=false
+var cast_stage: Node2D
+var cast_sprites: Dictionary={}
+var ground_time:=0.0
+var step_time:=0.0
 func _ready() -> void:
  Engine.time_scale=1
  save=store.load_data();car_texture=Vehicles.texture_for(save.get("vehicle"))
@@ -61,6 +64,7 @@ func _ready() -> void:
  motion=save["settings"]["motion"];effects=save["settings"]["effects"]
  Controls.install(save["settings"]["bindings"],save["settings"]["pad_bindings"],save["settings"]["deadzone"])
  sounds=Sounds.new();sounds.enabled=save["settings"]["sound"];sounds.volume=save["settings"]["volume"];add_child(sounds)
+ _build_cast()
  panel=Panel.new();panel.theme=UiSkin.theme();panel.add_theme_stylebox_override("panel",UiSkin.panel());add_child(panel)
  heading=_label(self,"Yan yana · İkinci bölüm",13)
  speaker=_label(panel,"",12);speaker.theme_type_variation="AccentLabel"
@@ -84,7 +88,7 @@ func _label(parent: Node,text: String,font_size: int) -> Label:
 func _button(parent: Node,text: String,action: Callable) -> Button:
  var b:=Button.new();b.theme=UiSkin.theme();b.text=text;b.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;b.clip_text=true;UiSkin.style_button(b);b.pressed.connect(action);parent.add_child(b);return b
 func _cinematic() -> bool:return chapter.get("step") in ["race","trap"]
-func _ground_scene() -> bool:return Story.STEPS.find(chapter.get("step","arrival"))>=5
+func _ground_scene() -> bool:return chapter.get("step") in ["aftermath","eren","plea","reveal","promise","rescue","witness","handoff","complete"]
 func _present() -> void:
  var node: Dictionary=Story.data()["nodes"][chapter["step"]]
  var cinema:=_cinematic()
@@ -139,10 +143,12 @@ func _choose(index: int) -> void:
  if options.size()!=2:return
  chapter=Story.choose(chapter,str(options[index]["id"]));_enter()
 func _enter() -> void:
- elapsed=0;page=0
+ elapsed=0;page=0;step_time=0
+ if chapter["step"]=="aftermath":ground_time=0
  _checkpoint();_present()
  if chapter["step"]=="trap":sounds.cue("kill")
 func _checkpoint() -> bool:
+ chapter=Story.sanitize(chapter)
  campaign["chapter2"]=chapter.duplicate(true)
  save["campaign"]=campaign
  Session.campaign_state=campaign.duplicate(true)
@@ -156,6 +162,7 @@ func _commit_completion() -> bool:
  completed=true
  var ally: String="kurt" if chapter["vow"]=="avenge" else "emre"
  campaign["bonds"][ally]=mini(3,int(campaign["bonds"].get(ally,0))+1)
+ if not chapter.get("record","").is_empty():campaign["bonds"]["eren"]=mini(3,int(campaign["bonds"].get("eren",0))+1)
  campaign=Book.complete(campaign,true,500,true)
  _checkpoint()
  return true
@@ -175,11 +182,13 @@ func _unhandled_input(event: InputEvent) -> void:
   _choose(event.keycode-KEY_1);get_viewport().set_input_as_handled()
 func _process(delta: float) -> void:
  if not paused:
-  pose_time+=delta
+  pose_time+=delta;step_time+=delta
+  if _ground_scene():ground_time+=delta
   if _cinematic():
    elapsed+=delta
    if motion:road_time+=delta*(100 if chapter["step"]=="race" else 22)
    if elapsed>=float(Story.data()["nodes"][chapter["step"]]["duration"]):chapter=Story.advance(chapter);_enter()
+ _sync_cast()
  queue_redraw()
  if QA.active():QA.publish("road_story",snapshot())
 func _layout() -> void:
@@ -207,13 +216,13 @@ func _layout() -> void:
  warning.position=Vector2(12,10);warning.size=Vector2(pause_panel.size.x-24,54)
  resume_button.position=Vector2(12,70);resume_button.size=Vector2(pause_panel.size.x-24,44)
  leave_button.position=Vector2(12,122);leave_button.size=Vector2(pause_panel.size.x-24,44)
- _reflow();queue_redraw()
+ _reflow();_sync_cast();queue_redraw()
 func actor_positions() -> Array[Vector2]:
- if _ground_scene():return [Vector2(256,248),Vector2(352,248)]
+ if _ground_scene():return Art.positions()
  var lead:=0.0
  if chapter.get("pace")=="race" and chapter["step"]=="race" and motion:lead=sin(clampf(elapsed/8.0,0,1)*PI)*20
  return [Vector2(270,190),Vector2(370,190-lead)]
-func injury_frame() -> int:return int(pose_time*5)%6 if motion else 0
+func injury_frame() -> int:return Art.frame("emre",ground_time,step_time,chapter.get("step","aftermath"),motion)
 func _draw_car(at: Vector2,companion: bool) -> void:
  var frame:=int(pose_time*10)%4 if motion else 0
  var texture: Texture2D=EMRE_BODY if companion else car_texture
@@ -228,27 +237,51 @@ func _draw_car(at: Vector2,companion: bool) -> void:
   draw_rect(Rect2(at+Vector2(-8,9),Vector2(16,3)),Color("9dbee0"))
  elif Vehicles.sanitize(save.get("vehicle"))!="roadster":
   draw_texture_rect_region(DRIVER,Rect2(at+Vector2(-12,-11.25),Vector2(24,25)),Rect2(16,30,32,30))
+func _build_cast() -> void:
+ cast_stage=Node2D.new();cast_stage.name="GroundedStoryCast";add_child(cast_stage)
+ var positions:=Art.positions()
+ for i in Art.IDS.size():
+  var who: String=Art.IDS[i];var sprite:=Sprite2D.new();sprite.name=who
+  sprite.position=positions[i];Art.configure(sprite,who,0);cast_stage.add_child(sprite);cast_sprites[who]=sprite
+func _cast_projection() -> Transform2D:
+ var v:=get_viewport_rect().size
+ var zoom:=minf(v.x/480.0,maxf(40,stage_rect.size.y-8)/164.0)
+ var floor_y:=v.y-(232.0 if v.y>v.x else 154.0)-24.0
+ return Transform2D(0,Vector2.ONE*zoom,0,Vector2(v.x/2-320*zoom,floor_y-248*zoom))
+func _sync_cast() -> void:
+ if not is_instance_valid(cast_stage) or chapter.is_empty():return
+ cast_stage.visible=_ground_scene()
+ cast_stage.transform=_cast_projection()
+ for who in Art.IDS:Art.configure(cast_sprites[who],who,Art.frame(who,ground_time,step_time,chapter["step"],motion))
+func _cast_snapshot() -> Array:
+ var out: Array=[]
+ if not is_instance_valid(cast_stage) or not cast_stage.visible:return out
+ for who in Art.IDS:
+  var sprite: Sprite2D=cast_sprites[who];var at:=sprite.global_position
+  var index:=Art.frame(who,ground_time,step_time,chapter["step"],motion)
+  out.append({"id":who,"frame":index,"world":[sprite.position.x,sprite.position.y],"contact":[at.x,at.y],"anchor":[-sprite.offset.x,-sprite.offset.y]})
+ return out
 func _draw() -> void:
  if chapter.is_empty():return
  var v:=get_viewport_rect().size
  draw_rect(Rect2(Vector2.ZERO,v),UiSkin.color("background"))
- var zoom:=minf(stage_rect.size.x/480.0,stage_rect.size.y/210.0)
- var origin:=stage_rect.get_center()-Vector2(320,176)*zoom
- draw_set_transform(origin,0,Vector2.ONE*zoom)
- var positions:=actor_positions()
  if _ground_scene():
-  draw_rect(Rect2(90,88,460,190),Color("1b2d32"))
-  draw_rect(Rect2(90,242,460,44),Color("30454b"))
-  draw_line(Vector2(90,248),Vector2(550,248),Color("53716c"),2)
-  # Wreck rests on the road, separate from the fixed character slots.
-  draw_rect(Rect2(448,201,46,47),Color("243640"));draw_rect(Rect2(455,207,32,27),Color("785443"))
-  draw_line(Vector2(451,204),Vector2(490,239),Color("ab7d5a"),3)
-  for i in 4:draw_rect(Rect2(458+i*9,191-i%2*11,7,17),Color("455052"))
-  # Aion's established standing sprite, fixed sole pivot (36,61).
-  _draw_aion(positions[0])
-  draw_texture_rect_region(INJURED,Rect2(positions[1]-Vector2(64,72),Vector2(128,80)),Rect2(injury_frame()*128,0,128,80))
-  draw_rect(Rect2(positions[0]+Vector2(-26,-3),Vector2(49,4)),Color(0,0,0,0.16))
+  var projection:=_cast_projection()
+  var floor_y:=projection*Vector2(0,248)
+  # Road support is authored at source y777. The background may crop in
+  # portrait, but supports and every planted actor use the same visible plane.
+  var bg_scale:=maxf(v.x/1536.0,floor_y.y/777.0)
+  var bg_x:=v.x-1536*bg_scale if v.y>v.x else (v.x-1536*bg_scale)/2
+  draw_texture_rect(Art.BACKGROUND,Rect2(Vector2(bg_x,floor_y.y-777*bg_scale),Vector2(1536,1024)*bg_scale),false)
+  draw_set_transform_matrix(projection)
+  draw_ellipse_shadow(Vector2(240,249),Vector2(48,5))
+  draw_ellipse_shadow(Vector2(347,252),Vector2(100,6))
+  draw_ellipse_shadow(Vector2(495,249),Vector2(31,4))
  else:
+  var zoom:=minf(stage_rect.size.x/480.0,stage_rect.size.y/210.0)
+  var origin:=stage_rect.get_center()-Vector2(320,176)*zoom
+  draw_set_transform(origin,0,Vector2.ONE*zoom)
+  var positions:=actor_positions()
   draw_rect(Rect2(90,-300,460,1100),Color("1c3835"))
   for i in range(-2,4):draw_texture(ROAD,Vector2(192,i*256+fmod(road_time,256)))
   for i in 10:
@@ -262,8 +295,9 @@ func _draw() -> void:
 
 
  draw_set_transform(Vector2.ZERO)
-func _draw_aion(at: Vector2) -> void:
- var texture: Texture2D=AION_STANDING
- draw_texture_rect_region(texture,Rect2(at-Vector2(36,61),Vector2(72,64)),Rect2(0,0,72,64))
+func draw_ellipse_shadow(at: Vector2,extent: Vector2) -> void:
+ var polygon:=PackedVector2Array()
+ for i in 20:polygon.append(at+Vector2(cos(i*TAU/20)*extent.x,sin(i*TAU/20)*extent.y))
+ draw_colored_polygon(polygon,Color(0.02,0.025,0.04,0.26))
 func snapshot() -> Dictionary:
- return {"view":[get_viewport_rect().size.x,get_viewport_rect().size.y],"chapter":chapter.duplicate(true),"elapsed":elapsed,"paused":paused,"page":page,"pages":pages.size(),"text":body.text,"speaker":speaker.text,"body":QA.rect(body),"portrait":QA.rect(portrait),"speaker_rect":QA.rect(speaker),"panel":QA.rect(panel),"next":QA.rect(next_button),"next_visible":next_button.visible,"choices":choices.filter(func(b):return b.visible).map(func(b):return QA.rect(b)),"pause":QA.rect(pause_button),"resume":QA.rect(resume_button),"leave":QA.rect(leave_button),"fits":TextFit.fits(heading) and TextFit.fits(body) and TextFit.fits(speaker) and TextFit.fits(page_caption),"actors":actor_positions().map(func(pos):return [pos.x,pos.y]),"frame":injury_frame(),"combat":false,"vehicle":save["vehicle"],"save_failed":save_failed}
+ return {"view":[get_viewport_rect().size.x,get_viewport_rect().size.y],"chapter":chapter.duplicate(true),"elapsed":elapsed,"paused":paused,"page":page,"pages":pages.size(),"text":body.text,"speaker":speaker.text,"body":QA.rect(body),"portrait":QA.rect(portrait),"speaker_rect":QA.rect(speaker),"panel":QA.rect(panel),"next":QA.rect(next_button),"next_visible":next_button.visible,"choices":choices.filter(func(b):return b.visible).map(func(b):return QA.rect(b)),"pause":QA.rect(pause_button),"resume":QA.rect(resume_button),"leave":QA.rect(leave_button),"fits":TextFit.fits(heading) and TextFit.fits(body) and TextFit.fits(speaker) and TextFit.fits(page_caption),"cast":_cast_snapshot(),"actors":actor_positions().map(func(pos):return [pos.x,pos.y]),"frame":injury_frame(),"combat":false,"vehicle":save["vehicle"],"save_failed":save_failed}

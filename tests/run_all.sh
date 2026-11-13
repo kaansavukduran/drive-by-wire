@@ -16,6 +16,7 @@ for t in test_parser test_momo test_garage_save test_run_scene test_arcade_scene
   export XDG_CACHE_HOME="$TEST_RUNTIME/$t/cache"
   mkdir -p "$XDG_DATA_HOME" "$XDG_CONFIG_HOME" "$XDG_CACHE_HOME"
   frame_budget=600
+  if [ "$t" = test_road_story ]; then frame_budget=1200; fi
   if [ "$t" = test_paged_ui ]; then frame_budget=3000; fi
   out="$("$GODOT" --headless --quit-after "$frame_budget" --path "$ROOT" --script "res://tests/$t.gd" 2>&1)"
   code=$?

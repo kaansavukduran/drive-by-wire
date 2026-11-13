@@ -1,0 +1,216 @@
+{
+  "version": "0.10.0",
+  "status": "OYUN / TASLAK · game adaptations, not final canon design approval",
+  "authoring": "Built-in image generation for the requested art revision; atlas boundaries, foot landmarks and in-game placement reviewed locally. Private Drive images were inspected locally and not uploaded to the generator. Generated Emre artwork was used as the style guide for Aion, Eren and scenery.",
+  "character_identity": {
+    "emre": "beige rabbit, green eyes, light blue shirt, plain red tie, dark trousers; injured but alive",
+    "eren": "separate AIO-CHAR-EREN identity; orange fur, prominent eyelashes, freckles, sharp cheek tufts, dark teal blazer and orange/burgundy striped tie",
+    "aion": "pink axolotl, blue-tipped external gills, blue eyes, white science coat/badges and DNA tail"
+  },
+  "actors": {
+    "emre": {
+      "path": "res://assets/sprites/emre_aftermath_detail.png",
+      "cell": [
+        512,
+        512
+      ],
+      "columns": 3,
+      "frames": 6,
+      "anchors": [
+        [
+          475,
+          373
+        ],
+        [
+          475,
+          374
+        ],
+        [
+          475,
+          375
+        ],
+        [
+          475,
+          376
+        ],
+        [
+          475,
+          376
+        ],
+        [
+          475,
+          376
+        ]
+      ],
+      "scale": 0.4375,
+      "world": [
+        445,
+        248
+      ],
+      "landmark": "planted far hind paw at authored column 475",
+      "clips": {
+        "hurt": {
+          "frames": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "seconds": [
+            0.9,
+            0.32,
+            0.35,
+            0.18,
+            0.3,
+            0.65
+          ],
+          "loop": true
+        }
+      }
+    },
+    "aion": {
+      "path": "res://assets/sprites/aion_story.png",
+      "cell": [
+        627,
+        627
+      ],
+      "columns": 2,
+      "frames": 4,
+      "anchors": [
+        [
+          219,
+          578
+        ],
+        [
+          219,
+          578
+        ],
+        [
+          219,
+          578
+        ],
+        [
+          219,
+          578
+        ]
+      ],
+      "scale": 0.24,
+      "world": [
+        210,
+        248
+      ],
+      "landmark": "planted pink toe; knee/tail base stay grounded",
+      "clips": {
+        "idle": {
+          "frames": [
+            0,
+            1,
+            0,
+            1
+          ],
+          "seconds": [
+            2.8,
+            0.12,
+            2.0,
+            0.14
+          ],
+          "loop": true
+        },
+        "interact": {
+          "frames": [
+            0,
+            2,
+            3,
+            0
+          ],
+          "seconds": [
+            0.3,
+            0.6,
+            1.0,
+            0.6
+          ],
+          "loop": false
+        }
+      }
+    },
+    "eren": {
+      "path": "res://assets/sprites/eren_story.png",
+      "cell": [
+        627,
+        627
+      ],
+      "columns": 2,
+      "frames": 4,
+      "anchors": [
+        [
+          360,
+          601
+        ],
+        [
+          360,
+          601
+        ],
+        [
+          478,
+          597
+        ],
+        [
+          478,
+          597
+        ]
+      ],
+      "scale": 0.26,
+      "world": [
+        520,
+        248
+      ],
+      "landmark": "planted right leather shoe; kneel is intentional body motion around the held heel",
+      "clips": {
+        "idle": {
+          "frames": [
+            0,
+            1,
+            0,
+            1
+          ],
+          "seconds": [
+            3.0,
+            0.12,
+            2.3,
+            0.14
+          ],
+          "loop": true
+        },
+        "assist": {
+          "frames": [
+            2,
+            3
+          ],
+          "seconds": [
+            0.7,
+            1.4
+          ],
+          "loop": false
+        }
+      }
+    }
+  },
+  "background": {
+    "path": "res://assets/ui/road_aftermath.png",
+    "size": [
+      1536,
+      1024
+    ],
+    "support_y": 777,
+    "layer": "distant forest / roadside wreck and near asphalt",
+    "interactive": false
+  },
+  "hashes": {
+    "emre_aftermath_detail.png": "d8b73ae86b88b3d8f757312d2aa6d687830c99c763d5e28d7fd931771f6484a1",
+    "aion_story.png": "56d712a40f517d0cab8676c953540d5343ff3293257c9097d7fcc43c30016a1e",
+    "eren_story.png": "25a390827fce17153d1d0bb96c5e44a36084cd6ba22a4db8b822e3ec47967b99",
+    "road_aftermath.png": "9cda261ff9c77e4d3dbbf5022aa57eb43fb2a451d4524feec3c1c48f47df9eb6"
+  }
+}

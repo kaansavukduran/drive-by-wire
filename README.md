@@ -1,4 +1,4 @@
-# Drive-By Wire · 0.9.0
+# Drive-By Wire · 0.10.0
 
 **Fragaria Interactive · Fragaria Games · AIONIA**
 
@@ -10,6 +10,8 @@ Sürüşte uzun telsiz konuşmaları ölçülen alana göre otomatik sayfalanır
 
 0.9.0: Ana menüden **Yol Arkadaşı, Postacı veya Kuyruklu Yıldız** seç; gövde değişir, sürüş dengesi ve çarpışma alanı aynı kalır. Mobil sürüş panelleri daha az yer kaplar.
 
+0.10.0: Yol kenarı sahnesinde ayrıntılı kürk/kumaş, ortak gece ışığı ve sabit zemin temaslarıyla yeni Aion, Emre ve Eren paftaları kullanılır. Emre’nin altı yaralı pozu, Aion’un diz çöküp el uzatması ve Eren’in battaniyeyle yardımı vardır. **Tavşan Eren**, Emre’den ayrı bir karakterdir; saldırı kaydını mühürleme veya yalnız sinyal izini Kurt’la paylaşma seçimin epilogda hatırlanır. Yeni oyun uyarlamaları final kanon tasarımı sayılmaz.
+
 **İkinci bölüm: Yan yana.** Emre ile sohbet et, dostça yarışın temposunu seç. Kurulmuş tuzak arabasını patlatınca yol kenarında yanında kal. Verdiğin söz üçüncü bölümün desteğini, bağlarını ve epilogunu değiştirir. Bu bölümde ateş/mayın veya çatışma yoktur. Diyalog kendi hızında, 1/2, Enter/A veya dokunmatik düğmelerle ilerler; aradaki kısa yarış ve patlama animasyonları mola verilebilir. Her replikte kayıt noktası vardır.
 
 İlk ve son etapta **Mühür-01 ve Tasnif-13** yolu keser. Uyarıları izle; robot öndeyken ateş, arkadayken mayın kullan. Yarı canda ikinci faz başlar. Robot durdurulmadan çatışma etabı bitmez. Orta yol Emre’nin dostça yarışı için Cam Ormanı’ndadır.
@@ -18,7 +20,7 @@ Son metinleri, sonlar galerisi, oyun yardımı, mola günlüğü ve ayarlar sabi
 
 ## Oyna
 
-Ana menüde **Hikâyeye başla**. Emre, Kuzu, Kurt ve Baykuş Ömer ile telsiz konuşmalarını ilerlet; yanıtını ver, ardından rota seç. Konuşma, yanıt, rota ve günlük ayrı sabit sayfalardadır; bu ekranda kaydırma veya fare tekerleği gerekmez. Yanıtlar ilişkiyi ve etap başındaki kalkan/mayın soğutma desteğini etkiler. Tamamlanan bölüm bir sonraki kararı açar; üç karar **13 ayrı sona** ulaşır. Kaza, yeni bir son açmaz. Önceki etaplar ve kazanılan sonlar korunur.
+Ana menüde **Hikâyeye başla**. Emre, Eren, Kuzu, Kurt ve Baykuş Ömer ile telsiz konuşmalarını ilerlet; yanıtını ver, ardından rota seç. Konuşma, yanıt, rota ve günlük ayrı sabit sayfalardadır; bu ekranda kaydırma veya fare tekerleği gerekmez. Yanıtlar ilişkiyi ve etap başındaki kalkan/mayın soğutma desteğini etkiler. Tamamlanan bölüm bir sonraki kararı açar; üç karar **13 ayrı sona** ulaşır. Kaza, yeni bir son açmaz. Önceki etaplar ve kazanılan sonlar korunur.
 
 Telefon/tablette **sabit sol joystick** ile ileri/geri/sağa/sola serbestçe sür. Sağdaki Ateş öne, Mayın arkaya gider. Mayın sınırsızdır; basılı tutunca her 0,7 saniyede bırakılır. Eski yükseltmeler ve ikmal rotaları bu süreyi kısaltır. Mayın patlaması arka mermileri de temizler. Diğer eylemler turbo, fren, sıyrılma ve Omega-3 desteğidir. Dikey/yatay düzen, bağımsız parmaklar ve yön değişiminde güvenli mola vardır.
 

@@ -41,3 +41,10 @@ Omega-3'in varlığı, kökeni ve bu yolculuk **ana AIONIA kanon onayı değildi
 Emre geçmişte Aion için sakladığı bardaktan söz eder. Yarış sırasında şasindeki patlayıcı tetiklenir. Emre yaralı ve hayattadır; Kuzu onu tahliye eder. İntikam sözü Kurt bağı ve son etapta 10 sn kalkan; önce kurtarma sözü Emre bağı, +15 can ve 7 sn kalkan sağlar. Omega-3’ün eski kurtarma imzasının saldırıda kullanılması, son kararların güven gerilimini sürdürür. Bu oyun hikâyesi/TASLAK’tır; kanonik ölüm ilanı değildir.
 
 Çatışmalarda kayıt etap başına döner. Novel bölümünde geçerli replik/animasyon adımı, yarış tercihi ve verilen söz kaydedilir. Yarım kalan replik başından, yarım kalan kısa animasyon başından sürer; bitmiş bölüm iki kez ödül vermez. Sayfa numarası ayrıca kaydedilmez. Her iki ekran yönünde ve azaltılmış harekette aynı mantıksal karakter pivotları korunur. Yarışta Emre’nin kontrollü öne çıkışı bir sahne hareketidir; yaralanma sahnesindeki iki karakterin konumları sabittir.
+
+
+## 0.10.0 · Eren’in tanıklığı
+
+Eren ilk bölüm telsizinde orman bakım cebindeki varlığını haber verir; ikinci bölüm kazasında battaniyeyle Emre’ye yardım eder. Aion’un Emre’nin elini tutmasını ister, saldırı kaydına ancak yaralı güvende olduktan sonra döner. Oyuncu kaydı Eren’de mühürlü tutar veya yalnız sinyal izini Kurt’la paylaşır. Emre’nin konuşması iki seçenekte de korunur; kapanış metni seçimi ayrı hatırlar ve Eren bağı bir kez artar. Yeni bir 14. son veya asılsız kanonik ölüm eklenmez.
+
+`chapter2.record` yalnız `sealed`/`shared` kabul eder. Eski kayıtlar boş değerle açılır, eski oyuncuya yapmadığı seçim atanmaz. Yeni kayıt replikler arasında ve üçüncü bölümden epiloga taşınır. Olay yeri Emre’nin altı pozu, Aion’un el uzatması ve Eren’in sabit topuk çevresinde diz çökmesiyle oynanır. Konuşma/sayfa değişimi dünya köklerini değiştirmez.

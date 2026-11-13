@@ -7,6 +7,7 @@ const Session=preload("res://scripts/game/session.gd")
 const Pilot=preload("res://tests/autopilot.gd")
 const UiSkin=preload("res://scripts/game/ui_skin.gd")
 const TextFit=preload("res://scripts/game/text_fit.gd")
+const Art=preload("res://scripts/game/story_cast_art.gd")
 const Vehicles=preload("res://scripts/core/vehicles.gd")
 var h=H.new("road_story")
 func _initialize() -> void:call_deferred("run")
@@ -55,6 +56,12 @@ func run() -> void:
     game._process(.04)
     if not game.injury_frame() in distinct:distinct.append(game.injury_frame())
     if game.actor_positions()!=anchors:stable=false
+    for j in Art.IDS.size():
+     var who: String=Art.IDS[j];var sprite: Sprite2D=game.cast_sprites[who]
+     var expected: Vector2=game.cast_stage.to_global(anchors[j])
+     if sprite.position!=anchors[j] or sprite.global_position.distance_to(expected)>.01:stable=false
+     var index:=Art.frame(who,game.ground_time,game.step_time,game.chapter["step"],game.motion)
+     if sprite.offset!=-Art.anchor(who,index) or sprite.region_rect!=Art.region(who,index):stable=false
    h.check("injured actors never slide across all poses",stable)
    h.eq("all six authored injury frames actually play",distinct.size(),6)
    game.motion=false;h.eq("reduced motion uses a stable pose",game.injury_frame(),0)
@@ -70,6 +77,8 @@ func run() -> void:
    h.eq("next decision is chapter three",store.load_data()["campaign"]["stage"],2)
    h.check("revenge vow has epilogue consequence",Story.epilogue(store.load_data()["campaign"]).contains("Kurt"))
    game.queue_free();await frames()
+ h.eq("Eren record survives actual scene completion and disk reload",store.load_data()["campaign"]["chapter2"]["record"],"sealed")
+ h.eq("Eren bond is awarded exactly once by the actual scene",store.load_data()["campaign"]["bonds"]["eren"],1)
  # Vehicles persist and retain exactly the established physics and driver pivot.
  Session.story_mode=false;Session.campaign_state={}
  for id in Vehicles.IDS:
@@ -90,13 +99,22 @@ func run() -> void:
   h.check("all cars fire forward and mine behind",game.bullets[-1]["pos"].y<game.car_y and game.mines[-1]["pos"].y>game.car_y)
   game.queue_free();await frames()
  Store.new().clear()
- var image=load("res://assets/sprites/emre_aftermath.png").get_image()
- var hashes: Array=[]
- for i in 6:
-  var cell=image.get_region(Rect2i(i*128,0,128,80))
-  hashes.append(cell.get_data().hex_encode().sha256_text())
-  h.check("all poses remain on shared floor",cell.get_used_rect().end.y<=73 and cell.get_used_rect().end.y>=71)
- var unique: Dictionary={}
- for value in hashes:unique[value]=true
- h.eq("six actual distinct injury poses",unique.size(),6)
+ # Test actual authored contact pixels, not alpha-centroid alignment. All
+ # frame origins stay fixed while padding/trim differences use source anchors.
+ for who in Art.IDS:
+  var image: Image=Art.TEXTURES[who].get_image()
+  var s: Dictionary=Art.spec(who);var hashes: Dictionary={}
+  for i in int(s["frames"]):
+   var region: Rect2=Art.region(who,i);var at: Vector2=Art.anchor(who,i)
+   var cell=image.get_region(Rect2i(region))
+   hashes[cell.get_data().hex_encode().sha256_text()]=true
+   h.check("%s frame%d authored contact is real opaque material" % [who,i],cell.get_pixelv(Vector2i(at)).a>=.94)
+   h.check("%s frame%d has cell padding" % [who,i],at.x>4 and at.y>4 and at.x<cell.get_width()-4 and at.y<cell.get_height()-4)
+  h.eq("%s has distinct authored poses" % who,hashes.size(),int(s["frames"]))
+ var checkpoint: Dictionary={"step":"handoff","pace":"race","vow":"avenge"}
+ h.eq("old 0.9 checkpoint is not forced to invent Eren record choice",Story.sanitize(checkpoint)["record"],"")
+ var witness: Dictionary={"step":"witness","pace":"race","vow":"rescue"}
+ h.eq("unknown Eren record is rejected",Story.sanitize({"record":"forged"})["record"],"")
+ h.eq("Eren record choice saves actual branch",Story.choose(witness,"shared")["record"],"shared")
+ h.check("Eren record choice changes the epilogue",Story.epilogue({"chapter2":Story.choose(witness,"sealed")})!=Story.epilogue({"chapter2":Story.choose(witness,"shared")}))
  store.clear();UiSkin.configure("dark","system");quit(h.finish())

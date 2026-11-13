@@ -1,4 +1,4 @@
-# AIONIA standardı · 0.9.0 uygulama kapsamı
+# AIONIA standardı · 0.10.0 uygulama kapsamı
 
 13 Kasım 2026 tarihinde yetkili Drive bağlantısından güncel belge ve başlangıç/referans indeksi okundu. **İçerik sürümü v1.7**. Önceki proje kaydı v1.6’ya dayanıyordu. Özel belge bağlantısı, paftalar ve belge metni public pakete kopyalanmaz.
 
@@ -13,4 +13,6 @@
 
 - İkinci bölüm kullanıcının açık talebiyle çatışmasız seçimli yol hikâyesidir. Sürüş bölümlerindeki onaylı sabit joystick değişmedi. Yeni araçlar kozmetiktir; aynı fizik/hitbox/silah pivotunu kullanır.
 - Tavşan Emre paftası TASLAK 01 statüsünde incelendi; Tavşan Eren ile karıştırılmaz. Yeni yaralı Emre ve tuzak animasyonları oyun uyarlaması/TASLAK’tır; karakterin kanonik ölümü veya final tasarım onayı ilan edilmez.
-- Bu turda çizimler mevcut yerel araçlarla üretildi. Özel karakter referansları dış görsel servisine gönderilmedi. Yayınlanan sprite sheet’ler yeni oyun kareleridir.
+- 0.10.0 için standart v1.7 ve güncel başlangıç indeksi yeniden okundu. Eren’in özgün çizimi ve TASLAK modelleme paftası ayrıca incelendi: turuncu kürk, uzun kirpik, benek, sivri yanak, koyu ceket ve çizgili kravat; Emre’nin sade kırmızı kravatıyla karıştırılmaz.
+- Kullanıcının istediği sanat revizyonunda yerleşik görsel üretimiyle yeni oyun paftaları üretildi. Özel Drive görselleri üreticiye gönderilmedi; yalnız üretilen Emre paftası sonraki üretimlerde stil referansı oldu. Yayımlananlar yeni oyun kareleri/TASLAK’tır.
+- İlgili ChatGPT sohbet bağlantısı mevcut araçlarda read_thread olmadığı için okunamadı. Kurulu Fragaria Unslop SKILL.md ve ilgili proje/animasyon/oyun yönergeleri doğrudan okundu ve uygulandı.
