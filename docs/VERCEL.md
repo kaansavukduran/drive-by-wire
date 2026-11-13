@@ -24,6 +24,6 @@ GitHub listesi boşsa Vercel'deki **Adjust GitHub App Permissions** bağlantıs�
 - Kök adres `/play/` girişine 307 yönlenir. Bu giriş, Godot HTML/JS/WASM/PCK dosyalarını `/play/<sürüm>-<commit>/` klasöründen birlikte açar. Sürümler aynı dosya adreslerini paylaşmaz.
 - Girişler ve `/version.json` `no-store`; commit içeren oyun dosyaları `immutable` ile önbelleklenir. Service worker/PWA yoktur. Önceden açık eski bir sayfaya sunucudan yeni kod enjekte edilemez; eski sekmeden geçiş için `/play/` kullanılır. 0.6.2 ve sonrası odak/sekme dönüşünde ve dakikada bir güncel sürümü kontrol eder; yeni sürüm oyuncunun seçimiyle açılır, etap zorla yenilenmez.
 - Tek iş parçacıklı (no-threads) Godot şablonu kullanıldığı için COOP/COEP başlıkları gerekmez.
-- Kayıt (İLİN’in güveni ve açılan sonlar) tarayıcının bu alan adına ait yerel deposunda tutulur. Güncelleme veriyi temizlemez; farklı oyun klasörleri aynı origin ve Godot `user://` alanını korur. Başka tarayıcı veya alan adı ayrı kayıt demektir.
+- Kayıt (Omega-3’ün güveni ve açılan sonlar) tarayıcının bu alan adına ait yerel deposunda tutulur. Güncelleme veriyi temizlemez; farklı oyun klasörleri aynı origin ve Godot `user://` alanını korur. Başka tarayıcı veya alan adı ayrı kayıt demektir.
 
-Depoda `vercel.json` bulunması, yayımlanmış bir adres olduğu anlamına gelmez. İlk dağıtımdan sonra canlı adreste oyunun açıldığı, PC’de oklar/WASD ve fare, telefon/tablette kaydırma + eylemlerle oynanabildiği ayrıca kontrol edilmeli.
+Depoda `vercel.json` bulunması, yayımlanmış bir adres olduğu anlamına gelmez. İlk dağıtımdan sonra canlı adreste oyunun açıldığı, PC’de oklar/WASD ve fare, telefon/tablette sabit joystick + eylemlerle oynanabildiği ayrıca kontrol edilmeli.

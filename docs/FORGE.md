@@ -124,3 +124,12 @@ Kaynak /workspace/drive-by-wire-public, dal codex/gamepad-results-mouse-actions;
 Kullanıcı PC için sol tık ateş, sağ tık arka mayın, Shift alan etkisi istedi. Sağ fare basılı tekrarlanır, bırakma/mola/odak kaybı iki mouse tutulmasını temizler. R sıyrılma, X/C alternatifleri. Canvas üzerinde tarayıcı sağ tık menüsü engellenir. Mobil ve gamepad sürüş şemaları korunur. Kontrol ipuçları ve yardım güncellendi. Yeni result_input regresyonu gerçek InputEvent yollarıyla başarısız/başarılı sonuç, iki düğme, A onayı ve özel kayıtlı atamaları denetler.
 
 Browser_result_pad gerçek 400m etabı yalnız gamepad girdileriyle tamamladı: can105, düşman9, ikmal5. Analog ve D-pad ile iki eylem seçildi, A ile etap2 kararına geçildi; fare/oynanış setter yok. Sıradaki iş fiziksel Xbox ve insan kullanım testi. Yayın doğrulaması version.json/PCK ve yeni oturumlarla ayrıca yapılır.
+
+
+## 0.7.4 · Telsiz ve genel metin yerleşimi
+
+Kaynak /workspace/drive-by-wire-public, dal codex/hud-text-layout; başlangıç main 3b16ea3bef2485d58f6781b5bb1586e967ba1054. Kullanıcının ekranındaki uzun Ömer repliği Label minimum boyunu büyütürken sabit konumdaki güven/kalkan üzerine taşıyordu. TextParagraph ile mevcut gerçek font/fallback, genişlik ve satır aralığı ölçülür; konuşma bütün kelimeleri koruyarak sayfalanır. Her sayfa süreli, tam replik mola günlüğünde; konuşan kişi adı portreyle eşleşir. Sabit kutular büyümez. Font/ekran değişimi sayfayı yeniden ölçer, bitmiş repliği canlandırmaz.
+
+Sol can/enerji ve görev alanları, kontrol ipuçları/Mola, hedef/bildirim ve sonuç düğmeleri de denetlendi. Uzun statü/hint satırlarının gerçek web fontuyla daha çok yer tuttuğu browser testinde görüldü; alanlar genişletildi, yinelenen kısayollar kısaltıldı. Garajdaki eski font yüksekliği ölçümü ortak satır aralığı ölçümüne taşındı. Karakter zemin alanları ve sürüş kontrolleri aynı kalır. Yeni motor/framework/bağımlılık yok.
+
+Sonraki iş fiziksel cihaz ve insan okunabilirlik değerlendirmesi. Kesin yerel testler QA.md içinde; Vercel kotası kaynak hatası değildir ve yayına geçmiş sayılmaz. Bu oturumda standart belgesi yeniden okunmadı; mevcut v1.6 referans kapsamı korunur.
