@@ -4,7 +4,7 @@
 
 | Kapsam | Sonuç | Kanıt / sınır |
 |---|---|---|
-| Native regresyon | PASS | 25 takım, 2183 kontrol. 13 yol için 26 gerçek çatışma ve 13 novel bölümü tamamlandı. İkinci bölümde boss bekleyen eski test, açık kullanıcı talebine uygun değişti; ilk/son boss çarpışma testleri korunur. |
+| Native regresyon | PASS | 25 takım, 2187 kontrol. 13 yol için 26 gerçek çatışma ve 13 novel bölümü tamamlandı. İkinci bölümde boss bekleyen eski test, açık kullanıcı talebine uygun değişti; ilk/son boss çarpışma testleri korunur. |
 | Yeni sahne, kayıt, sprite ve araçlar | PASS | 184 kontrol: iki font/beş boyutta tüm diyalog kelimeleri, 44 px eylemler, portre/metin ayrımı, sabit zemin, altı ayrı oynayan yaralı karesi, mola, checkpoint, tek seferlik tamamlama, üç araçta gerçek sprite/fizik/namlu hizası. |
 | Son web paketi: tam hikâye | PASS | Gerçek girdilerle araç seçimi/reload, ilk boss, yarış/tuzak/yaralı Emre, yön değişiminde mola, replik checkpoint’inden reload, kurtarma seçimi, son boss ve e01 epilogu/galeri tamamlandı. İlk/son etap can126/155, düşman10/9, ikmal5/6. İki robotun iki fazı, dört çatışma biyomu; epilog10 sabit sayfada okundu ve reload geçti. Runtime hatası yok. |
 | Altı web düzeni | PASS | PC, telefon/tablet iki yön, düşük güç telefon; native font/Lexend gerçek ayar seçimi, HUD ölçümü, sabit garaj pikselleri, joystick/bağımsız parmaklar, mola/günlük ve Gamepad API regresyonu. |
@@ -32,4 +32,6 @@ DBW_URL=http://127.0.0.1:8892 node tests/browser_touch_boss.cjs
 
 Son paket üzerinde iki eşzamanlı otomatik oynanış denemesi araç kaybıyla bitti ve FAIL olarak saklandı. Tek başına dokunmatik tekrar aynı oyun değerleriyle PASS oldu. Bir ilk dokunma sürücüsü denemesi zaten bırakılmış parmağa tekrar TouchEnd gönderdi; sürücü idempotent bırakmayla düzeltildi. Bunlar oyun canını/hasarını değiştiren test hileleriyle aşılmadı. Aynı paketin tek başına tam hikâye tekrarı da can126/155 ile PASS oldu.
 
-İlk GitHub temiz Linux koşusu yatay mobil mayın etiketinin farklı sistem fontunda minimum boyunu büyüttüğünü yakaladı (free_drive 4 FAIL). İki satırlı cooldown yerine sabit tek satırlı “MAYIN” etiketi kullanılır; dokunma alanı küçültülmez ve metin kırpılmaz. Sınırsız/basılı mayın davranışı değişmez. İlgili test başarısız olursa artık düğmenin minimum/gerçek/hedef ölçülerini de yazar. Düzeltmenin temiz CI sonucu PR/yayın makbuzunda ayrıca kaydedilir.
+İlk iki GitHub temiz Linux koşusu yatay mobil mayın etiketinin farklı sistem fontunda görseli büyüttüğünü yakaladı (her koşuda free_drive 4 FAIL). Yalnız etiketi kısaltmak yeterli değildi; aşağıdaki geçici büyüme kök nedeni ayrıca yerelde yeniden üretildi. İki satırlı cooldown yerine sabit tek satırlı “MAYIN” etiketi kullanılır; dokunma alanı küçültülmez ve metin kırpılmaz. Sınırsız/basılı mayın davranışı değişmez. İlgili test başarısız olursa artık düğmenin minimum/gerçek/hedef ölçülerini de yazar. Düzeltmenin temiz CI sonucu PR/yayın makbuzunda ayrıca kaydedilir.
+
+Font hatası yerelde DejaVu Sans ile yeniden üretildi: etiket kısaldığında minimum boy45×24’e inerken görsel65/66×44 kalıyordu; hedef64×44 idi. Kaynak neden, aynı güncellemede önce uzun sonra kısa etiket atamasıydı. Son etiket tek kez atanır ve görsel gerçek dokunma alanına yeniden oturur. Kalıcı regresyon DejaVu Sans ve Noto Sans ile iki cooldown durumuna 4 yeni kontrol ekler; eski sınır assertion’ları korunur.

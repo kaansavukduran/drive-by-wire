@@ -92,8 +92,23 @@ func run() -> void:
 			for action in game.touch_controls:
 				if not action.get_global_rect().grow(0.5).encloses(action.visual.get_global_rect()):
 					button_clear=false
-					print("BUTTON_OVERFLOW ",action.visual.text," target=",action.size," visual=",action.visual.size," minimum=",action.visual.get_combined_minimum_size())
+					print("FAIL  BUTTON_OVERFLOW ",action.visual.text," target=",action.size," visual=",action.visual.size," minimum=",action.visual.get_combined_minimum_size())
 			h.check("visible action buttons match hitboxes at cooldown %s view %s" % [cooldown,dimensions],button_clear)
+
+	# Reproduce the clean Linux system-font regression, including stale large
+	# minimums left by an earlier label/font. No assertion is weakened.
+	var original_font: Font=game.ui_theme.default_font
+	for family in ["DejaVu Sans","Noto Sans"]:
+		var system_font:=SystemFont.new()
+		system_font.font_names=PackedStringArray([family])
+		game.ui_theme.default_font=system_font
+		game._layout()
+		for cooldown in [0.0,0.6]:
+			game.mine_cooldown=cooldown;game._update_hud();await process_frame
+			var target: Control=game.touch_by_action["drive_mine"]
+			h.check("compact mine rect reflows with %s cooldown%s" % [family,cooldown],target.get_global_rect().grow(.5).encloses(target.visual.get_global_rect()),"actual font %s; visual %s target %s" % [system_font.get_font_name(),target.visual.size,target.size])
+	game.ui_theme.default_font=original_font
+	game._layout()
 
 	game.car_x=320;game.car_y=200;game.car.position=Vector2(320,200)
 	var pivot: Vector2=game.car.offset

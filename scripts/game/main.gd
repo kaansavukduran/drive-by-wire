@@ -969,10 +969,13 @@ func _update_hud() -> void:
 	mission.text = "GÖREV %02d\n%s\n%d / %d\nSeri %d · En iyi %d" % [arcade.contract + 1, arcade.contract_title(), mini(int(progress.x), int(progress.y)), int(progress.y), arcade.chain, arcade.best_chain]
 	status_label.text = "Güven %d · %s\n%s" % [int(momo.trust), Momo.mood_name_tr(momo.mood), ("KALKAN %.1f sn" % shield_left) if shield_left > 0 else (("Destek %.0f sn" % comfort_cooldown) if comfort_cooldown > 0 else "%s · Destek hazır" % Controls.binding_name("drive_comfort",Controls.last_device=="pad"))]
 	if touch_by_action.has("drive_mine"):
-		touch_by_action["drive_mine"].visual.text=("MAYIN %.1f" % mine_cooldown) if mine_cooldown>0 else "MAYIN · ∞"
 		var mine_button: Button=touch_by_action["drive_mine"].visual
-		mine_button.add_theme_font_size_override("font_size",11 if touch_enabled and not was_portrait else 12)
-		if touch_enabled and not was_portrait:mine_button.text="MAYIN"
+		var compact: bool=touch_enabled and not was_portrait
+		mine_button.add_theme_font_size_override("font_size",11 if compact else 12)
+		# Assign only the final label: an intermediate long label grows Button's
+		# minimum size immediately, and shortening it does not shrink the rect.
+		mine_button.text="MAYIN" if compact else (("MAYIN %.1f" % mine_cooldown) if mine_cooldown>0 else "MAYIN · ∞")
+		mine_button.size=touch_by_action["drive_mine"].size
 		mine_button.tooltip_text="Sınırsız arka mayın · basılı tut"
 
 	face.mood = momo.mood
