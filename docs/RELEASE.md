@@ -1,3 +1,11 @@
+# 0.8.0 · Robotlar ve Yolun Tanıkları
+
+Üç gerçek robot boss, yarı canda ikinci faz, saldırı öncesi sabit hedef uyarıları ve ön ateş/arka mayın çarpışmaları. Boss yenilmeden400m etap tamamlanmaz. Yolda altı biyomun renk, çevre şekli ve hava koşulları değişir; azaltılmış hareket ve efekt tercihleri korunur.
+
+Sonlar kitabı, galeri, yardım, günlük ve ayarlar sabit sayfalar kullanır. Kısayoldaki uzun satır ayrıldı; Mola alanına taşmaz. Aion’un eski tahliye emri, Omega-3’ün sorumluluğu ve dört dostun somut ihtiyaçları üzerinden öykü yeniden yazıldı.13 farklı epilogun kayıt kimlikleri ve seçim yolları değişmez. Yeni robotlar ve öykü OYUN/TASLAK statüsündedir; ana kanon onayı iddia edilmez.
+
+Gerçek test ve canlı yayın ayrı raporlanır: [QA](QA.md).
+
 # 0.7.4 · Taşmayan telsiz ve HUD
 
 Sağ telsizde uzun konuşmalar gerçek font ve satır aralığıyla sayfalanır; sayfa sayacı ve mola günlüğünde tam metin bulunur. Başlık portredeki konuşan kişiyi gösterir. Hikâye repliği bitmeden rastgele tepkiyle değiştirilmez; molada okuma süresi durur. Güven/kalkan, kontrol ipuçları, sol can/enerji, görev, hedef/bildirim ve sonuç alanları ayrıldı. Garaj aynı ölçüm yordamını kullanır. [Gerçek testler](QA.md); canlı yayın yerel testten ayrı doğrulanır.

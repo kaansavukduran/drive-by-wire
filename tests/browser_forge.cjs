@@ -132,7 +132,7 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
     assert(inside(q.settings_rect,q.view)&&inside(q.settings_back,q.view),'settings must fit');
     await page.screenshot({path:`${out}/${device.name}-settings.png`});
     if(device.name==='desktop'){
-     await tap(page,q.settings_ui.tabs[q.settings_ui.tab_names.indexOf('Görünüm')],false);await sleep(200);q=await page.evaluate(()=>window.__dbwQA);await tap(page,q.settings_ui.font_option,false);await sleep(400);await page.keyboard.press('ArrowDown');await sleep(100);await page.keyboard.press('ArrowDown');await sleep(100);await page.keyboard.press('Enter');
+     await tap(page,q.settings_ui.tabs[q.settings_ui.tab_names.indexOf('Görünüm')],false);await sleep(200);q=await page.evaluate(()=>window.__dbwQA);while(!q.settings_ui.font_visible){await tap(page,q.settings_ui.paging.next,false);await sleep(250);q=await page.evaluate(()=>window.__dbwQA);}await tap(page,q.settings_ui.font_option,false);await sleep(400);await page.keyboard.press('ArrowDown');await sleep(100);await page.keyboard.press('ArrowDown');await sleep(100);await page.keyboard.press('Enter');
      q=await wait(page,()=>window.__dbwQA.settings_ui.font.choice==='lexend');entry.fontChange='PASS: actual settings selected Lexend without leaving the game';
     }
 

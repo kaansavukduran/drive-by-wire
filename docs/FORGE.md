@@ -133,3 +133,14 @@ Kaynak /workspace/drive-by-wire-public, dal codex/hud-text-layout; başlangıç 
 Sol can/enerji ve görev alanları, kontrol ipuçları/Mola, hedef/bildirim ve sonuç düğmeleri de denetlendi. Uzun statü/hint satırlarının gerçek web fontuyla daha çok yer tuttuğu browser testinde görüldü; alanlar genişletildi, yinelenen kısayollar kısaltıldı. Garajdaki eski font yüksekliği ölçümü ortak satır aralığı ölçümüne taşındı. Karakter zemin alanları ve sürüş kontrolleri aynı kalır. Yeni motor/framework/bağımlılık yok.
 
 Sonraki iş fiziksel cihaz ve insan okunabilirlik değerlendirmesi. Kesin yerel testler QA.md içinde; Vercel kotası kaynak hatası değildir ve yayına geçmiş sayılmaz. Bu oturumda standart belgesi yeniden okunmadı; mevcut v1.6 referans kapsamı korunur.
+
+
+## 0.8.0 · Sabit sayfalar / robot karşılaşmaları / altı biyom
+
+Taban main9de9bd1048743c71b2f4ddcb4c8d718a61a99ff7, dal codex/robot-bosses-paged-ui. Kullanıcı son ekranında kalan ScrollContainer’ı ve sağ alttaki ipucu/Mola çakışmasını bildirdi; ayrıca robot boss, biyom ilerleyişi ve daha ciddi öykü istedi. Son/galeri, yardım, mola günlüğü ve ayarlar mevcut Godot kontrolleriyle sayfalara ayrıldı. Her kelime erişilebilir; içerik yalnız kırpılarak gizlenmez. Kısa kontrol satırında isteğe bağlı sohbet kısayolu tekrar edilmez; yardımda korunur.
+
+Mühür-01, Yankı-02 ve Tasnif-13 üç etabın280m noktasında girer; boss durmadan400m bitişi açılmaz. Öngösterim1,05sn, hedefler saldırı sırasında oyuncuyu izlemez; yarı canda ikinci faz. Son iki robot yolun dışından arkaya geçer. Aynı gövde pivotu çizim, hitbox, ön atış ve arka mayınla paylaşılır. Biyom180m’de değişir; şekiller/hava çizimi trafik RNG’sini tüketmez. Yeni sanat robot_art.gd ve road_biomes.gd içinde özgün piksel geometrisidir; rastgele hazır grafik veya özel referans görseli eklenmez.
+
+Kullanıcının önerdiği [Aion Endless Run frontier](https://github.com/kaansavukduran/aion_endless_run/blob/main/scripts/frontier.gd) ve test_encounters.gd okundu. Saldırı öncesi uyarı, yarı canda faz ve ayrı takip karşılaşması yaklaşımı incelendi; o oyunun görselleri, kodu ve hareket modeli taşınmadı. Üç yeni robot bu araç mekaniğine göre yazıldı.
+
+Öykü düğümleri ve13 epilog, tahliye sistemindeki ortak sorumluluk ve mahremiyet/yardım/kalma kararları üzerine yeniden yazıldı. Diyalog, yoldaki yeni olaylar ve boss açıklamaları aynı neden-sonuç zincirini izler. Önceki seçim/son kimlikleri, yerel kayıt, kontrol onayı ve Godot4.6.3 korunur. Fiziksel cihaz ve insan anlatı/denge değerlendirmesi sonraki doğrulama hedefleridir. Sonuçlar QA.md; canlı sürüm ayrıca manifest/PCK ile kanıtlanır.

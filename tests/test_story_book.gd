@@ -63,6 +63,7 @@ func run() -> void:
     if tick%600==0: game._direct_action("drive_comfort")
     game._simulate(1.0/60.0)
    h.check("%s leg %d survives real arcade" % [item["id"],stage+1],game.over and game.end_result.get("outcome")=="survived","hp %.0f, distance %.0f" % [game.hp,game.distance])
+   h.check("%s leg %d defeats its story robot" % [item["id"],stage+1],game.boss.defeated)
    h.check("%s leg %d encounters actual traffic and supplies" % [item["id"],stage+1],game.kills>0 and game.arcade.collected>0)
    state=Session.campaign_state.duplicate(true)
    h.eq("actual completion persists checkpoint",store.load_data()["campaign"],state)

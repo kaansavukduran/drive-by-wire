@@ -1,4 +1,4 @@
-# Drive-By Wire · 0.7.4
+# Drive-By Wire · 0.8.0
 
 **Fragaria Interactive · Fragaria Games · AIONIA**
 
@@ -7,6 +7,10 @@ Garajda Aion ve Ömer sabit ayak hizalarında durur; konuşma/yükseltme metinle
 Omega-3 ile Üçüncü Nabız’ı yaşa: üç 400 metrelik arcade etap, üç dallanan karar ve **13 ayrı son**. Direksiyon oklar/WASD, fare, gamepad veya mobilde sabit joystick ile sende. Kararlar kaynakları, trafik baskısını ve geleceğinizi değiştirir.
 
 Sürüşte uzun telsiz konuşmaları ölçülen alana göre otomatik sayfalanır; tam metin mola günlüğünde kalır. Başlık konuşan karakteri gösterir. Konuşma, güven/kalkan durumu, kontrol ipuçları ve enerji bilgileri ayrı alanlarda görünür.
+
+0.8.0: **Mühür-01, Yankı-02 ve Tasnif-13** her hikâye etabının yolunu keser. Önce uyarı çizgilerini gör, sonra güvenli aralığa geç. Robot öndeyken çekirdeğine ateş et; arkaya geçtiğinde mayın bırak. Yarı canda ikinci faz başlar. Robot durdurulmadan etap bitmez. Üç etapta altı biyom: Paslı Eşik → Fırtına Hattı → Cam Ormanı → Buzlu Arşiv → Kızıl Santral → Sessiz Çekirdek.
+
+Son metinleri, sonlar galerisi, oyun yardımı, mola günlüğü ve ayarlar sabit sayfalardadır; tekerlek gerekmez. Metinlerde Önceki/Sonraki veya ←/→; menüde yönler ve A/Enter kullanılabilir. Galeri13 kaydı dört sayfada gösterir. Ayarlarda Önceki/Sonraki veya PageUp/PageDown kullanılır.
 
 ## Oyna
 
