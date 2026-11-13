@@ -5,7 +5,7 @@ const out=process.env.DBW_EVIDENCE_DIR||'work/evidence-v060';fs.mkdirSync(out,{r
 const base=process.env.DBW_URL||'http://127.0.0.1:8765';
 const touch=process.env.DBW_TOUCH!=='0';
 const choices=(process.env.DBW_BOOK_PATH||'0,0,0').split(',').map(Number),expectedEnding=process.env.DBW_ENDING||'e01';
-(async()=>{const browser=await chromium.launch({executablePath:'/usr/bin/chromium',headless:true,args:['--no-sandbox','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});const result={status:'FAIL',legs:[],errors:[]};try{
+(async()=>{const browser=await chromium.launch({executablePath:'/usr/bin/chromium',headless:true,args:['--no-sandbox','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});const result={status:'FAIL',legs:[],errors:[],biomes:[],bosses:[]};try{
  const context=await browser.newContext({viewport:{width:1280,height:720},hasTouch:touch});const page=await context.newPage();
  page.on('pageerror',e=>result.errors.push(e.message));page.on('console',m=>{if(m.type()==='error')result.errors.push(m.text());});
  const state=()=>page.evaluate(()=>window.__dbwQA);const wait=fn=>page.waitForFunction(fn,null,{timeout:30000});
@@ -36,7 +36,8 @@ const choices=(process.env.DBW_BOOK_PATH||'0,0,0').split(',').map(Number),expect
     const a=q.radio_ui.bubble,b=q.radio_ui.status;if(q.touch===false&&q.view[0]>=q.view[1])assert(a[1]+a[3]<=b[1],'radio body must clear status');
     if(q.radio_ui.speaker==='omer'&&q.radio_ui.widgets.some(w=>w.text.includes('İki kapı'))){result.reportedOmerLine='PASS';await page.screenshot({path:`${out}/reported-omer-radio-fixed.png`});}
    }
-   if(q.over){assert(q.ending_text.includes('ETAP TAMAMLANDI'),'actual combat must survive');result.legs.push({stage:stage+1,distance:q.distance,hp:q.hp,kills:q.kills,collected:q.collected,wall_ms:Date.now()-started});break;}
+   if(!result.biomes.includes(q.biome))result.biomes.push(q.biome);if(q.boss?.active&&!result.bosses.some(b=>b.name===q.boss.name&&b.phase===q.boss.phase)){result.bosses.push({name:q.boss.name,phase:q.boss.phase});await page.screenshot({path:`${out}/robot-${stage+1}-phase${q.boss.phase}.png`});}
+   if(q.over){assert(q.boss.defeated,'story robot must actually be defeated');assert(q.ending_text.includes('ETAP TAMAMLANDI'),'actual combat must survive');result.legs.push({stage:stage+1,distance:q.distance,hp:q.hp,kills:q.kills,collected:q.collected,wall_ms:Date.now()-started});break;}
    assert(Date.now()-started<120000,'chapter timeout');
    if(q.paused)await page.keyboard.press('Escape');
    const [px,py]=q.player;let best=q.lane,bestCost=Infinity;
@@ -45,12 +46,13 @@ const choices=(process.env.DBW_BOOK_PATH||'0,0,0').split(',').map(Number),expect
     for(const e of q.traffic){const gap=Math.abs(e.y-py);if(e.lane===lane&&gap<165)cost+=(165-gap)*2;}
     for(const o of q.hazards){if(Math.abs(o.x-(256+lane*64))<25&&Math.abs(o.y-py)<150)cost+=250;}
     if(q.pickup_targets.some(p=>p.lane===lane&&p.y>130&&p.y<py))cost-=30;
+    if(q.boss?.active){for(const target of q.boss.targets)if(Math.abs(target[0]-(256+lane*64))<34)cost+=180;if(q.boss.rear)cost+=Math.abs(q.boss.position[0]-(256+lane*64))*.5;}
     if(cost<bestCost){bestCost=cost;best=lane;}
    }
    const desired=256+best*64;
    const direction=Math.abs(desired-px)<8?'':(desired<px?'ArrowLeft':'ArrowRight');
    if(direction!==held){if(held)await page.keyboard.up(held);if(direction)await page.keyboard.down(direction);held=direction;}
-   if(q.traffic.some(e=>Math.abs(e.x-px)<25&&e.y>py+25&&e.y<py+140)&&q.mines===-1&&Date.now()-lastMine>1500){await page.keyboard.press('KeyX');lastMine=Date.now();}
+   if((q.boss?.rear||q.traffic.some(e=>Math.abs(e.x-px)<25&&e.y>py+25&&e.y<py+140))&&q.mines===-1&&Date.now()-lastMine>800){await page.keyboard.press('KeyX');lastMine=Date.now();}
    if(q.traffic.some(e=>Math.abs(e.x-px)<28&&Math.abs(e.y-py)<60)&&q.dodge<=0)await page.keyboard.press('KeyR');
    if(Date.now()-lastSupport>8500){await page.keyboard.press('KeyC');lastSupport=Date.now();}
    await page.waitForTimeout(150);
@@ -62,16 +64,19 @@ const choices=(process.env.DBW_BOOK_PATH||'0,0,0').split(',').map(Number),expect
  }
  let q=await state();assert(q.unlocked.includes(expectedEnding));
  await page.screenshot({path:`${out}/book-ending-desktop.png`});
- // Scroll prose and open gallery with native focus navigation.
+ // Read every bounded page using actual arrows; no wheel or scrollbars.
+ const prose=[];while(true){q=await state();assert.equal(q.scrollbars,0);assert(q.reader.fits);prose.push(q.reader.text);if(q.reader.page+1===q.reader.pages)break;await page.keyboard.press('ArrowRight');await page.waitForTimeout(180);}
+ result.endingPages=q.reader.pages;assert(prose.join(' ').length>350);
+ // Open gallery with native focus navigation.
  await page.keyboard.press('ArrowDown');await page.keyboard.press('Enter');await wait(()=>window.__dbwQA?.screen==='endings');
- q=await state();assert.equal(q.entries.length,13);assert.equal(q.entries.filter(e=>!e.disabled).length,1);
+ q=await state();assert.equal(q.scrollbars,0);assert.equal(q.entries.length,13);assert.equal(q.entries.filter(e=>!e.disabled).length,1);
  await page.screenshot({path:`${out}/book-gallery-desktop.png`});
  await page.setViewportSize({width:390,height:844});await page.waitForTimeout(500);q=await state();
  assert(q.panel[0]>=0&&q.panel[1]>=0&&q.panel[0]+q.panel[2]<=q.view[0]&&q.panel[1]+q.panel[3]<=q.view[1]);
  await page.screenshot({path:`${out}/book-gallery-portrait.png`});
  const b=await page.locator('#canvas').boundingBox();const r=q.entries.find(e=>!e.disabled).rect;
  if(touch)await page.touchscreen.tap(b.x+(r[0]+r[2]/2)*b.width/q.view[0],b.y+(r[1]+r[3]/2)*b.height/q.view[1]);else await tap(r);await wait(()=>window.__dbwQA?.screen==='ending');
- await page.screenshot({path:`${out}/book-ending-portrait.png`});
+ q=await state();assert(q.reader.fits);assert.equal(q.scrollbars,0);await page.screenshot({path:`${out}/book-ending-portrait.png`});
  // Persisted completion survives a full page/engine reload.
  await page.reload();await wait(()=>window.__dbwQA?.screen==='title');await tap((await state()).endings);await wait(()=>window.__dbwQA?.screen==='endings');
  assert((await state()).unlocked.includes(expectedEnding));

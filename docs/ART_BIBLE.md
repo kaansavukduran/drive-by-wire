@@ -68,3 +68,10 @@ Aion, kuzeye bakan aracın sürüş yönüne döner. Başın arkası, mavi uçlu
 ## 0.7.2 · Garaj sahne alanları
 
 Mevcut characters_standing.png değiştirilmez. Ana menü ve garajda Aion ilk satırın ilk karesi, Ömer ikinci satırın ilk karesinde sabit durur. Bu sahne boşta farklı gövde pozları arasında çevrim yapmaz. Sprite2D 72×64 bölge, merkezli X ve (36,61) ayak pivotu kullanır; Ömer kendi merkezinde sola döner. Her karakter ayrı Control alanında, tamamı sığacak şekilde çizilir. Zaman, diyalog veya seçim kareyi/konumu değiştirmez. Dikey/yatay düzen tek yerleşim fonksiyonundan türetilir; UI bu alanları kullanmaz.
+
+
+## 0.8.0 · Yol robotları ve biyomlar
+
+Üç özgün robot aynı koyu mürekkep/çelik gölge/açık metal paletini kullanır. Mühür-01 sıcak amber zırh/çift namlu, Yankı-02 mavi kanatlı verici, Tasnif-13 pembe ağır gövde siluetindedir. robot_art.gd blokları aynı merkezde çizer; egzost hareketi çekirdeği/hitbox’ı oynatmaz. NPC atlası değişmez. Robot portresinde atlasın alfa kesme shader’ı kullanılmaz; mevcut karakterler aynı shader ve atlasla kalır.
+
+Altı biyomda mevcut yol dokusu korunur; çevrede şehir direkleri, yağmurlu hat, cam ağaçlar, buz kristalleri, santral boruları ve arşiv kabinleri ayrı şekillerle çizilir. Yeni robot/çevre uyarlamaları OYUN/TASLAK; ana evren kanonu ilan edilmez.

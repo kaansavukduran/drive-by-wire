@@ -1,4 +1,5 @@
 extends Node2D
+const Reader=preload("res://scripts/game/text_reader.gd")
 const QA := preload("res://scripts/game/qa_snapshot.gd")
 ## A short, keyboard/mouse/touch-friendly front door to the existing Godot game.
 
@@ -32,7 +33,7 @@ var premise_label: Label
 var quote_label: Label
 var help_title: Label
 var help_body: Label
-var help_scroll: ScrollContainer
+var help_scroll: Control
 var help_start: Button
 var help_back: Button
 var base_rects: Dictionary = {}
@@ -143,17 +144,14 @@ func _make_help(parent: Node) -> void:
 	help_panel.add_theme_stylebox_override("panel", UiSkin.panel(Color("f4a8c5")))
 	parent.add_child(help_panel)
 	help_title = _label(help_panel, Rect2(18, 12, 492, 26), "BİR YOL, İKİ ARKADAŞ", 19)
-	help_scroll=ScrollContainer.new()
+	help_scroll=Reader.new()
+	help_scroll.font_size=12
+	help_scroll.clip_contents=true
 	help_scroll.position=Vector2(18,48)
 	help_scroll.size=Vector2(492,184)
-	help_scroll.horizontal_scroll_mode=ScrollContainer.SCROLL_MODE_DISABLED
-	help_scroll.follow_focus=true
 	help_panel.add_child(help_scroll)
-	var body := _label(help_scroll, Rect2(0, 0, 492, 184), "1. YOLU AÇ\nPC: oklar / WASD. Mobil/tablet: sabit joystick ile dört yöne sür; sağdaki eylemleri kullan.\n\n2. Omega-3’İ KORU\nSpace / F veya fare sol ile öne ateş et; Fare sağ arkaya sınırsız mayın bırakır (X alternatif). E turbo, Q fren. Shift / C alan darbesi, R sıyrılma. Artı: onarım; şimşek: enerji; kalkan: koruma. Kesik çizgiden uzaklaş; ! işaretli noktaya engel düşecek.\n\n3. EVE DÖN\nÜç kez karar ver, her kararın ardından 400 m sür. 13 ayrı gelecekten birine ulaş. Başarısızlıkta önceki etaplar korunur. Mola menüsünde yol günlüğünü oku. Esc mola verir. T ile isteğe bağlı sohbet edebilirsin.", 12)
-	help_body=body
-	body.size_flags_horizontal=Control.SIZE_EXPAND_FILL
-	body.custom_minimum_size=Vector2(220,0)
-	body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	help_scroll.set_text("1. YOLU AÇ\nPC: oklar / WASD. Mobil/tablet: sabit joystick ile dört yöne sür; sağdaki eylemleri kullan.\n\n2. Omega-3’İ KORU\nSpace / F veya fare sol ile öne ateş et; Fare sağ arkaya sınırsız mayın bırakır (X alternatif). E turbo, Q fren. Shift / C alan darbesi, R sıyrılma. Artı: onarım; şimşek: enerji; kalkan: koruma. Kesik çizgiden uzaklaş; ! işaretli noktaya engel düşecek.\n\n3. EVE DÖN\nÜç kez karar ver, her kararın ardından 400 m sür. 13 ayrı gelecekten birine ulaş. Başarısızlıkta önceki etaplar korunur. Mola menüsünde yol günlüğünü oku. Esc mola verir. T ile isteğe bağlı sohbet edebilirsin.")
+	help_body=help_scroll.content
 	help_start = _button(help_panel, Rect2(18, 246, 236, 30), "Hazırım · Sürüşe başla", _start)
 	help_back = _button(help_panel, Rect2(266, 246, 244, 30), "Geri · Esc", _hide_help)
 	help_panel.hide()
@@ -207,13 +205,13 @@ func _unhandled_input(event: InputEvent) -> void:
 func _input(event: InputEvent) -> void:
 	Controls.observe(event)
 	if help_panel.visible and (event.is_action_pressed("ui_down") or event.is_action_pressed("ui_up")):
-		help_scroll.scroll_vertical+=36 if event.is_action_pressed("ui_down") else -36
+		help_scroll.turn(1 if event.is_action_pressed("ui_down") else -1)
 		get_viewport().set_input_as_handled()
 
 
 func _process(delta: float) -> void:
 	if QA.active():
-		QA.publish("title",{"view":[get_viewport_rect().size.x,get_viewport_rect().size.y],"cast":cast.snapshot() if cast.visible else {},"play":QA.rect(start_button),"garage":QA.rect(menu_buttons[1]),"endings":QA.rect(menu_buttons[2]),"help":QA.rect(menu_buttons[3]),"settings":QA.rect(menu_buttons[4]),"settings_ui":QA.settings(settings),"settings_visible":settings.visible,"help_visible":help_panel.visible,"help_scroll":QA.rect(help_scroll),"help_content":QA.rect(help_body),"help_scroll_value":help_scroll.scroll_vertical})
+		QA.publish("title",{"view":[get_viewport_rect().size.x,get_viewport_rect().size.y],"cast":cast.snapshot() if cast.visible else {},"play":QA.rect(start_button),"garage":QA.rect(menu_buttons[1]),"endings":QA.rect(menu_buttons[2]),"help":QA.rect(menu_buttons[3]),"settings":QA.rect(menu_buttons[4]),"settings_ui":QA.settings(settings),"settings_visible":settings.visible,"help_visible":help_panel.visible,"help_scroll":QA.rect(help_scroll),"help_content":QA.rect(help_body),"help_scroll_value":help_scroll.page_index,"help_reader":help_scroll.snapshot()})
 	var caption: String="Etap %d / 3 · Devam et" % (int(campaign["stage"])+1) if campaign["stage"]>0 and campaign["stage"]<3 else ("Yeni hikâye" if campaign["stage"]==3 else "Hikâyeye başla")
 	start_button.text = caption+(" · A" if Controls.last_device=="pad" else " · Space")
 	control_hint.text = "Sol çubuk / D-pad Serbest sürüş\nRB Turbo · LT Fren · Start Mola" if Controls.last_device=="pad" else "Oklar / WASD Serbest sürüş\nE Turbo · Q Fren · Space Ateş"

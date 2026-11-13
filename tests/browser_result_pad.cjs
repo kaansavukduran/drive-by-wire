@@ -16,7 +16,7 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
  await tap(0);await wait(()=>window.__dbwQA?.screen==='briefing');await tap(0);await wait(()=>window.__dbwQA?.screen==='run');
  await button(7,true);await tap(3);let held=0,lastMine=0,lastPulse=Date.now();const started=Date.now();
  while(true){
-  const q=await state();assert.equal(q.screen,'run');if(q.over){result.leg={distance:q.distance,hp:q.hp,kills:q.kills,collected:q.collected};assert(q.ending_text.includes('ETAP TAMAMLANDI'),'must complete a real 400m stage');break;}
+  const q=await state();assert.equal(q.screen,'run');if(q.over){assert(q.boss.defeated);result.boss=q.boss.name;result.leg={distance:q.distance,hp:q.hp,kills:q.kills,collected:q.collected};assert(q.ending_text.includes('ETAP TAMAMLANDI'),'must complete a real 400m stage');break;}
   assert(Date.now()-started<100000,'actual stage timed out');const px=q.player[0],py=q.player[1];let best=q.lane,costBest=Infinity;
   for(let lane=0;lane<3;lane++){let cost=Math.abs(256+lane*64-px)*.04;for(const e of q.traffic){const gap=Math.abs(e.y-py);if(e.lane===lane&&gap<165)cost+=(165-gap)*2;}for(const o of q.hazards)if(Math.abs(o.x-(256+lane*64))<25&&Math.abs(o.y-py)<150)cost+=250;if(q.pickup_targets.some(p=>p.lane===lane&&p.y>130&&p.y<py))cost-=30;if(cost<costBest){costBest=cost;best=lane;}}
   const desired=256+best*64,next=Math.abs(desired-px)<8?0:desired<px?-.9:.9;if(next!==held){held=next;await axis(next);}

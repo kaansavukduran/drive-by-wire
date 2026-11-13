@@ -15,6 +15,11 @@ static func drive(game: Node) -> void:
 			if game._lane_of(obstacle["pos"].x)==candidate and absf(obstacle["pos"].y-game.car_y)<150: cost+=250.0
 		for pickup in game.pickups:
 			if game._lane_of(pickup["pos"].x)==candidate and pickup["pos"].y>130 and pickup["pos"].y<game.car_y: cost-=30.0
+		for shot in game.enemy_bullets:
+			if absf(shot["pos"].x-game._lane_x(candidate))<30 and absf(shot["pos"].y-game.car_y)<120: cost+=120
+		if game.boss.active:
+			for target in game.boss.targets:
+				if absf(target.x-game._lane_x(candidate))<34: cost+=180
 		if cost<best_cost:
 			best_cost=cost
 			best=candidate
@@ -24,4 +29,5 @@ static func drive(game: Node) -> void:
 			if game.mines.is_empty(): game._execute({"intent":"drop_mine"})
 		if absf(enemy["pos"].x-game.car_x)<28 and absf(gap)<65 and game.dodge_cooldown<=0:
 			game._direct_action("drive_dodge")
+	if game.boss.active and game.boss.rear: game._execute({"intent":"drop_mine"})
 	game._change_lane(best)

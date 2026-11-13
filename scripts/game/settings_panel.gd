@@ -1,4 +1,5 @@
 extends PanelContainer
+const PagedSettings=preload("res://scripts/game/paged_settings.gd")
 ## Shared settings; native Godot controls, bounded input maps, coalesced saves.
 const SaveStore := preload("res://scripts/core/save_store.gd")
 const UiSkin := preload("res://scripts/game/ui_skin.gd")
@@ -61,6 +62,7 @@ func _ready() -> void:
    toggle.text = caption + (" · Açık" if value else " · Kapalı")
    _persist())
   toggle.visible = key != "low_power" or OS.has_feature("web")
+  if not toggle.visible: toggle.set_meta("skip_paging",true)
   options[key] = toggle
   play.add_child(toggle)
  var row := HBoxContainer.new()
@@ -111,16 +113,10 @@ func _ready() -> void:
  hide()
 
 func _page(title: String) -> VBoxContainer:
- var scroll := ScrollContainer.new()
- scroll.name = title
- scroll.follow_focus = true
- scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
- tabs.add_child(scroll)
- var column := VBoxContainer.new()
- column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
- column.add_theme_constant_override("separation",4)
- scroll.add_child(column)
- return column
+ var page:=PagedSettings.new()
+ page.name=title
+ tabs.add_child(page)
+ return page.column
 
 func _note(parent: Node, text: String) -> void:
  var label := Label.new()
@@ -169,7 +165,7 @@ func _make_controls(parent: Node) -> void:
   settings["pad_bindings"] = {}
   _persist()
   _refresh_bindings())
- _note(parent,"Sol çubuk şerit; yukarı/aşağı turbo/fren. RT ateş, LT fren. Menülerde yönler seçer, A onaylar, B geri döner. Ayarlar: LB / RB sekme. Start mola verir.")
+ _note(parent,"Sol çubuk/D-pad dört yön sürüş. RT ateş; X arka mayın. RB turbo, LT fren. Menülerde yönler seçer, A onaylar, B geri döner. Ayarlar: LB / RB sekme. Start mola verir.")
  Controls.install(settings["bindings"],settings["pad_bindings"],settings["deadzone"])
  _refresh_bindings()
 
@@ -226,6 +222,7 @@ func _persist() -> void:
  get_node("/root/Appearance").apply(settings)
  status.text = "Uygulandı · kaydediliyor…"
  save_timer.start()
+ for page in tabs.get_children(): page.call_deferred("reflow")
  changed.emit(settings.duplicate(true))
 
 func flush() -> void:

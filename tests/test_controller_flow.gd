@@ -109,6 +109,8 @@ func run() -> void:
  pad.button_index=JOY_BUTTON_LEFT_STICK
  h.check("custom pad button enters native InputMap",InputMap.event_is_action(pad,"drive_fire"))
  game.store=Store.new("user://controller-test.json")
+ game.boss.started=true
+ game.boss.defeated=true # Completed-combat fixture; actual boss fights run in test_story_book.
  game.distance=1200
  game._simulate(1.0/60.0) # remains paused
  await tap(JOY_BUTTON_START)

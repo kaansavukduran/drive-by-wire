@@ -108,4 +108,4 @@ static func binding_name(action: String, is_pad := false) -> String:
 static func run_hint() -> String:
  if last_device == "pad":
   return "Sol çubuk / D-pad · Sür\nRT/A Ateş · X Mayın\nY Darbe · B/LB Sıyrıl\nRB Turbo · LT Fren\nStart Mola"
- return "%s/%s · %s/%s Sürüş\n%s Turbo · %s Fren · T Sohbet\nFare sol / %s Ateş\nFare sağ / %s Mayın\n%s Darbe · %s Sıyrıl" % [binding_name("drive_left"),binding_name("drive_right"),binding_name("drive_up"),binding_name("drive_down"),binding_name("drive_boost"),binding_name("drive_brake"),binding_name("drive_fire"),binding_name("drive_mine"),binding_name("drive_comfort"),binding_name("drive_dodge")]
+ return "%s/%s · %s/%s Sürüş\n%s Turbo · %s Fren\nFare sol / %s Ateş\nFare sağ / %s Mayın\n%s Darbe · %s Sıyrıl" % [binding_name("drive_left"),binding_name("drive_right"),binding_name("drive_up"),binding_name("drive_down"),binding_name("drive_boost"),binding_name("drive_brake"),binding_name("drive_fire"),binding_name("drive_mine"),binding_name("drive_comfort"),binding_name("drive_dodge")]

@@ -16,3 +16,6 @@ Garaj sahnesi: Aion ve Ömer ayrı sabit zemin alanlarında, ortak ayak pivotuyl
 
 
 0.7.4 metin yerleşimi: sabit HUD kutuları minimum içerik boyuyla komşu alanlara büyüyemez. Uzun konuşmaları TextFit ile gerçek font/fallback, genişlik, StyleBox iç boşlukları ve satır aralığına göre sayfala; metni kırparak kaybetme. Tam metin mola günlüğünde kalmalı. Konuşan kişinin adı/portresi eşleşmeli, bitmiş replik font/ekran değişiminde yeniden görünmemeli. test_hud_text.gd ve browser_book.cjs içindeki bildirilen Ömer repliği regresyonunu koru.
+
+
+0.8.0: Son/galeri, yardım, günlük ve ayar içeriği tekerlek gerektirmeyen sabit sayfalar kullanır. Her sayfanın gerçek metin yüksekliğini ve komşu alanlarını test_paged_ui ile denetle; yalnız kutuyu kırpmak yeterli değildir. Oyun içeriği için yeni ScrollContainer ekleme. Godot’un yerleşik PopupMenu/ConfirmationDialog iç düğümleri bununla karıştırılmaz. Robot hedefleri uyarıdan sonra kilitli kalır; kozmetik çizim, efekt tercihi ve viewport fizik konumunu veya saldırı RNG’sini değiştiremez. test_boss_encounters ve13×3 gerçek hikâye yollarındaki boss-defeated kontrolünü koru.
