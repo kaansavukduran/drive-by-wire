@@ -67,4 +67,4 @@ Aion, kuzeye bakan aracın sürüş yönüne döner. Başın arkası, mavi uçlu
 
 ## 0.7.2 · Garaj sahne alanları
 
-Mevcut characters_standing.png değiştirilmez. Garajda Aion ilk satırın ilk karesi, Ömer ikinci satırın ilk karesinde sabit durur. Bu sahne boşta farklı gövde pozları arasında çevrim yapmaz. Sprite2D 72×64 bölge, merkezli X ve (36,61) ayak pivotu kullanır; Ömer kendi merkezinde sola döner. Her karakter ayrı Control alanında, tamamı sığacak şekilde çizilir. Zaman, diyalog veya seçim kareyi/konumu değiştirmez. Dikey/yatay düzen tek yerleşim fonksiyonundan türetilir; UI bu alanları kullanmaz.
+Mevcut characters_standing.png değiştirilmez. Ana menü ve garajda Aion ilk satırın ilk karesi, Ömer ikinci satırın ilk karesinde sabit durur. Bu sahne boşta farklı gövde pozları arasında çevrim yapmaz. Sprite2D 72×64 bölge, merkezli X ve (36,61) ayak pivotu kullanır; Ömer kendi merkezinde sola döner. Her karakter ayrı Control alanında, tamamı sığacak şekilde çizilir. Zaman, diyalog veya seçim kareyi/konumu değiştirmez. Dikey/yatay düzen tek yerleşim fonksiyonundan türetilir; UI bu alanları kullanmaz.

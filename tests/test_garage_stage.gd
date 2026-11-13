@@ -81,5 +81,21 @@ func run() -> void:
   await frames();screen._layout();await frames()
   h.eq("rotation roundtrip restores exact floor marks %s" % dimensions,screen.cast.snapshot(),original)
   screen.queue_free();await frames()
+ for dimensions in [Vector2i(640,360),Vector2i(360,640),Vector2i(360,780),Vector2i(640,480)]:
+  root.content_scale_size=dimensions;root.size=dimensions
+  var title: Node=load("res://scenes/title.tscn").instantiate()
+  root.add_child(title);await frames();title.set_process(false);title._layout();await frames()
+  var before: Dictionary=title.cast.snapshot()
+  for i in 240: title._process(1.0/60.0)
+  h.eq("title actors do not drift with time %s" % dimensions,title.cast.snapshot(),before)
+  var clear:=true
+  if title.cast.visible:
+   for c in title.base_rects:
+    if not c.visible or c==title.cast or c==title.help_panel: continue
+    for actor in title.cast.actors:
+     var rect: Rect2=actor.get_rect();rect.position+=actor.global_position
+     if rect.intersects(c.get_global_rect()): clear=false
+  h.check("title character cells avoid menu controls %s" % dimensions,clear)
+  title.queue_free();await frames()
  Store.new().clear()
  quit(h.finish())
