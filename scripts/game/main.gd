@@ -750,7 +750,10 @@ func _say(line: String,story: bool=false) -> void:
 	if face: face.talking=1.2
 
 func _reflow_radio() -> void:
-	radio_pages=TextFit.pages(radio_text,bubble)
+	var display_text:=radio_text
+	if not momo_title.visible:
+		display_text=str(Cast.NAMES.get(radio_speaker,"Omega-3"))+": "+display_text
+	radio_pages=TextFit.pages(display_text,bubble)
 	radio_page=mini(radio_page,radio_pages.size()-1)
 	_show_radio_page()
 
