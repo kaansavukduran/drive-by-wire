@@ -9,3 +9,5 @@ Mobil/tablet kontrol şemasını değiştirmeden önce tür, kamera/hareket mode
 Dikey/yatay yönler, çoklu dokunma, odak kaybı ve yeniden boyutlandırmayı test et. Gerçek oyuncu kaydına yazmamak için bash tests/run_all.sh kullan. Web uçtan uca testi tests/browser_forge.cjs; geliştirme araçları yalnız test bağımlılığıdır. ?qa yalnız salt okunur yerel tarayıcı durumudur, oynanışa değer yazdırma.
 
 Sonuçları PASS / FAIL / NOT TESTED raporla. Fiziksel cihaz, yardımcı teknoloji veya insan eğlence testi yapılmadıysa yapılmış gösterme. Eski prototip Android anahtarı Git geçmişinde açıktır; yeni dağıtımda kullanılmaz. Tam geçmişi başka yere aktarmak ayrıca açık kullanıcı izni gerektirir; güncel kaynak teslimiyle karıştırma.
+
+Garaj sahnesi: Aion ve Ömer ayrı sabit zemin alanlarında, ortak ayak pivotuyla durur. Kaydı yapılmamış farklı gövde pozları boşta döngüye eklenmez; diyalog/yükseltme/hazırlık metni veya animasyon saati karakterin alanını değiştiremez. Ekran yönünden dönüşte aynı zemin işaretleri geri gelmelidir. tests/test_garage_stage.gd ve tarayıcıdaki gerçek karakter piksel karşılaştırmasını koru.
