@@ -36,9 +36,22 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
     await tap(page,q.garage,device.touch);
     q=await state(page,'garage');await sleep(300);q=await page.evaluate(()=>window.__dbwQA);
     for(const rect of [q.quick,q.speech,q.footer,...q.buttons])assert(inside(rect,q.view),'garage controls must fit');
-    for(let i=1;i<q.buttons.length;i++)assert(q.buttons[i][1]>=q.buttons[i-1][1]+q.buttons[i-1][3]-1,'garage choices must not overlap');
+    for(let i=0;i<q.buttons.length;i++)for(let j=i+1;j<q.buttons.length;j++){const a=q.buttons[i],b=q.buttons[j];assert(!(a[0]<b[0]+b[2]&&a[0]+a[2]>b[0]&&a[1]<b[1]+b[3]&&a[1]+a[3]>b[1]),'garage choices must not overlap');}
     if(q.brief_visible&&q.buttons.length)assert(q.brief[1]>=q.buttons.at(-1)[1]+q.buttons.at(-1)[3]-1,'garage brief must clear choices');
     if(device.touch){assert(q.quick[3]>=44);for(const rect of q.buttons)assert(rect[3]>=44);}
+    const castBefore=JSON.stringify(q.cast);
+    for(const actor of q.cast.actors){const a=actor.rect,b=actor.slot;assert(a[0]>=b[0]&&a[1]>=b[1]&&a[0]+a[2]<=b[0]+b[2]&&a[1]+a[3]<=b[1]+b[3],'actor stays inside its own fixed floor slot');for(const c of [q.speech,q.footer,...q.buttons])assert(!(a[0]<c[0]+c[2]&&a[0]+a[2]>c[0]&&a[1]<c[1]+c[3]&&a[1]+a[3]>c[1]),'actors must not overlap UI');}
+    const b=await page.locator('#canvas').boundingBox(),r=q.cast.area;
+    const clip={x:b.x+r[0]*b.width/q.view[0],y:b.y+r[1]*b.height/q.view[1],width:r[2]*b.width/q.view[0],height:r[3]*b.height/q.view[1]};
+    const beforePixels=await page.screenshot({clip});await sleep(2000);q=await page.evaluate(()=>window.__dbwQA);assert.equal(JSON.stringify(q.cast),castBefore);assert(beforePixels.equals(await page.screenshot({clip})),'garage actor pixels cannot slide between idle frames');
+    entry.garageActors='PASS: fixed feet, own slots, no UI overlap and identical rendered pixels over time';
+    await tap(page,q.buttons[0],device.touch);q=await wait(page,()=>window.__dbwQA.stage==='upgrade');await sleep(150);q=await page.evaluate(()=>window.__dbwQA);assert.equal(JSON.stringify(q.cast),castBefore,'upgrade must preserve actor slots');
+    await page.screenshot({path:`${out}/${device.name}-garage-upgrade.png`});await tap(page,q.buttons[0],device.touch);q=await wait(page,()=>window.__dbwQA.stage==='ready');await sleep(150);q=await page.evaluate(()=>window.__dbwQA);assert.equal(JSON.stringify(q.cast),castBefore,'ready must preserve actor slots');
+    if(device.name==='phone-portrait'){
+     await page.setViewportSize({width:844,height:390});await wait(page,()=>window.__dbwQA.view[0]>window.__dbwQA.view[1]);await sleep(200);await page.screenshot({path:`${out}/garage-rotated.png`});
+     await page.setViewportSize({width:390,height:844});await wait(page,()=>window.__dbwQA.view[1]>window.__dbwQA.view[0]);await sleep(200);q=await page.evaluate(()=>window.__dbwQA);assert.equal(JSON.stringify(q.cast),castBefore,'rotation roundtrip restores floor marks');
+    }
+
     await page.screenshot({path:`${out}/${device.name}-garage.png`});
     await page.keyboard.press('Escape');q=await state(page,'title');
     await tap(page,q.play,device.touch);

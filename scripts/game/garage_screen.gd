@@ -12,6 +12,7 @@ const Session := preload("res://scripts/game/session.gd")
 const MomoFace := preload("res://scripts/game/companion_face.gd")
 const FONT_FALLBACK := preload("res://assets/fonts/Lexend.ttf")
 const FONT_TERM := preload("res://assets/fonts/VT323.ttf")
+const GarageCast := preload("res://scripts/game/garage_cast.gd")
 const Sheets := preload("res://scripts/game/sheets.gd")
 const UiSkin := preload("res://scripts/game/ui_skin.gd")
 const Controls := preload("res://scripts/game/controls.gd")
@@ -40,7 +41,12 @@ var brand_label: Label
 var brief_label: Label
 var face_base_position := Vector2.ZERO
 var quick_button: Button
-var buttons: VBoxContainer
+var buttons: GridContainer
+var cast: Control
+var speech_next: Button
+var speech_pages: Array[String]=[]
+var speech_page := 0
+var speech_full := ""
 var _t := 0.0
 var sheets := Sheets.new()
 var has_art := false
@@ -70,6 +76,7 @@ func _ready() -> void:
 	add_child(face)
 	speech = _label(ui, Vector2(16, 62), Vector2(500, 70), 13)
 	speech.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	speech.clip_text=true
 	var bubble := StyleBoxFlat.new()
 	bubble.bg_color = Color(0.93, 0.95, 1.0)
 	bubble.set_corner_radius_all(0)
@@ -81,7 +88,10 @@ func _ready() -> void:
 	info = _label(ui, Vector2(16, 336), Vector2(608, 18), 10)
 	info.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 	info.modulate = Color(1, 1, 1, 0.8)
-	buttons = VBoxContainer.new()
+	buttons = GridContainer.new()
+	buttons.columns=2
+	buttons.add_theme_constant_override("h_separation",6)
+	buttons.add_theme_constant_override("v_separation",6)
 	buttons.position = Vector2(16, 140)
 	buttons.size = Vector2(500, 150)
 	buttons.add_theme_constant_override("separation", 6)
@@ -104,6 +114,15 @@ func _ready() -> void:
 	UiSkin.style_button(quick)
 	ui.add_child(quick)
 	quick.grab_focus()
+	cast=GarageCast.new()
+	ui.add_child(cast)
+	speech_next=Button.new()
+	speech_next.theme=theme
+	speech_next.add_theme_font_size_override("font_size",11)
+	speech_next.pressed.connect(func(): speech_page=(speech_page+1)%speech_pages.size();_show_speech_page())
+	speech_next.tooltip_text="Konuşmanın sonraki sayfasını oku"
+	UiSkin.style_button(speech_next)
+	ui.add_child(speech_next)
 
 	var greet: Dictionary = garage.greeting(momo, save.get("memory", {}), rng)
 	var opening := str(greet.get("text", "Hoş geldin."))
@@ -139,7 +158,8 @@ func _button(text: String, action: Callable) -> Button:
 	b.text = text
 	b.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	b.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
-	b.custom_minimum_size = Vector2(0, 36)
+	b.custom_minimum_size = Vector2(0, 56)
+	b.size_flags_horizontal=Control.SIZE_EXPAND_FILL
 	b.pressed.connect(action)
 	UiSkin.style_button(b)
 	buttons.add_child(b)
@@ -153,8 +173,33 @@ func _clear_buttons() -> void:
 
 
 func _say(text: String) -> void:
-	speech.text = text
+	speech_full=text
+	speech_page=0
+	_paginate_speech()
 	face.talking = 1.5
+
+func _paginate_speech() -> void:
+	var limit:=110 if get_viewport_rect().size.y>get_viewport_rect().size.x else 120
+	speech_pages.clear()
+	var part: String=""
+	var font:=speech.get_theme_font("font")
+	for word in speech_full.split(" "):
+		var candidate: String=part+(" " if not part.is_empty() else "")+word
+		var measured: Vector2=font.get_multiline_string_size(candidate,HORIZONTAL_ALIGNMENT_LEFT,maxf(1,speech.size.x-20),speech.get_theme_font_size("font_size"))
+		if (candidate.length()>limit or measured.y>speech.size.y-20) and not part.is_empty():
+			speech_pages.append(part)
+			part=""
+		part+=(" " if not part.is_empty() else "")+word
+	if not part.is_empty(): speech_pages.append(part)
+	if speech_pages.is_empty(): speech_pages.append("")
+	speech_page=mini(speech_page,speech_pages.size()-1)
+	_show_speech_page()
+
+func _show_speech_page() -> void:
+	speech.text=speech_pages[speech_page]
+	speech_next.visible=speech_pages.size()>1
+	speech_next.text="İleri\n%d/%d" % [speech_page+1,speech_pages.size()]
+	_link_focus()
 
 
 func _choose(option_id: String) -> void:
@@ -176,10 +221,6 @@ func _show_upgrades() -> void:
 	stage = "upgrade"
 	_clear_buttons()
 	offers = garage.offer_upgrades({}, rng)
-	var head := Label.new()
-	head.theme = theme
-	head.text = "Bu sefer için bir yükseltme seç:"
-	buttons.add_child(head)
 	for i in range(offers.size()):
 		var u: Dictionary = offers[i]
 		_button("%d) %s · %s" % [i + 1, str(u.get("name", u.get("id", ""))), str(u.get("description", ""))], _pick_upgrade.bind(str(u.get("id", ""))))
@@ -195,6 +236,7 @@ func _link_focus() -> void:
 	for child in buttons.get_children():
 		if child is Button and child.visible and not child.is_queued_for_deletion():
 			order.append(child)
+	if is_instance_valid(speech_next) and speech_next.visible: order.append(speech_next)
 	for i in order.size():
 		var previous := order[posmod(i - 1,order.size())]
 		var next := order[(i + 1) % order.size()]
@@ -294,7 +336,7 @@ func _update_info() -> void:
 
 func _process(delta: float) -> void:
 	if QA.active():
-		QA.publish("garage",{"view":[get_viewport_rect().size.x,get_viewport_rect().size.y],"speech":QA.rect(speech),"brief":QA.rect(brief_label),"brief_visible":brief_label.visible,"footer":QA.rect(info),"stage":stage,"quick":QA.rect(quick_button),"buttons":buttons.get_children().filter(func(child): return child is Button and not child.is_queued_for_deletion()).map(func(button): return QA.rect(button))})
+		QA.publish("garage",{"view":[get_viewport_rect().size.x,get_viewport_rect().size.y],"speech":QA.rect(speech),"speech_next":QA.rect(speech_next),"speech_pages":speech_pages.size(),"speech_page":speech_page,"cast":cast.snapshot(),"brief":QA.rect(brief_label),"brief_visible":brief_label.visible,"footer":QA.rect(info),"stage":stage,"quick":QA.rect(quick_button),"buttons":buttons.get_children().filter(func(child): return child is Button and not child.is_queued_for_deletion()).map(func(button): return QA.rect(button))})
 	if bool(save.get("settings", {}).get("motion", true)):
 		_t += delta
 	if Controls.last_device == "pad":
@@ -308,8 +350,6 @@ func _draw() -> void:
 	var view: Vector2=get_viewport_rect().size
 	if view.y>view.x:
 		draw_rect(Rect2(Vector2.ZERO,view),UiSkin.color("background"))
-		sheets.draw_anim(self,"characters","aion_idle",_t,Vector2(64,view.y-20))
-		sheets.draw_anim(self,"characters","omer_idle",_t,Vector2(view.x-64,view.y-20),Color.WHITE,true)
 		return
 	draw_set_transform((view-Vector2(640,360))/2)
 	if has_art:
@@ -321,9 +361,6 @@ func _draw() -> void:
 		var logo := sheets.texture("assets/ui/logo.png")
 		if logo:
 			draw_texture(logo, Vector2(12, 8))
-		var feet := float(sheets.image("garage_bg").get("character_feet_y", 330))
-		sheets.draw_anim(self, "characters", "omer_idle", _t, Vector2(560, feet), Color.WHITE, true)
-		sheets.draw_anim(self, "characters", "aion_idle", _t + 0.4, Vector2(450, feet))
 		return
 	# Placeholder pixel garage until the garage background sheet lands in assets/.
 	draw_rect(Rect2(0, 0, W, H), Color("1b1d2b"))
@@ -366,18 +403,25 @@ func _layout() -> void:
 	brand_label.position=Vector2(16,64) if portrait else offset+Vector2(326,10)
 	brand_label.size=Vector2(view.x-32,18) if portrait else Vector2(298,17)
 	speech.position=Vector2(16,90) if portrait else offset+Vector2(16,62)
-	speech.size=Vector2(view.x-32,100) if portrait else Vector2(500,70)
+	speech.size=Vector2(view.x-100,100) if portrait else Vector2(548,70)
+	speech_next.position=Vector2(view.x-76,90) if portrait else offset+Vector2(572,62)
+	speech_next.size=Vector2(60,100 if portrait else 70)
+	buttons.columns=1 if portrait else 2
 	buttons.position=Vector2(16,204) if portrait else offset+Vector2(16,140)
-	buttons.size=Vector2(view.x-32,280) if portrait else Vector2(500,150)
+	buttons.size=Vector2(view.x-32,242) if portrait else Vector2(608,118)
 	for button in buttons.get_children():
-		if button is Button: button.custom_minimum_size.y=56 if portrait else (44 if touch_landscape else 36)
+		if button is Button: button.custom_minimum_size.y=56
 	brief_label.visible=not touch_landscape
-	brief_label.position=Vector2(16,view.y-136) if portrait else offset+Vector2(16,308)
-	brief_label.size=Vector2(view.x-32,44) if portrait else Vector2(410,20)
-	brief_label.text="Yolda sağa / sola kaydır.\nEylem düğmeleriyle Omega-3 ile yolu aç." if portrait else "3 etap · 13 son. Önce kararını seç, sonra yolu aç."
+	brief_label.position=Vector2(16,view.y-190) if portrait else offset+Vector2(16,308)
+	brief_label.size=Vector2(view.x-32,28) if portrait else Vector2(380,20)
+	brief_label.text="Bu etap için bir yükseltme seç." if stage=="upgrade" else "3 etap · 13 son. Sabit joystick / oklar ile sür."
 	info.position=Vector2(16,view.y-80) if portrait else offset+Vector2(16,336)
 	info.size=Vector2(view.x-32,40) if portrait else Vector2(608,18)
 	info.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
+	cast.position=Vector2(16,view.y-156) if portrait else offset+Vector2(408,260)
+	cast.size=Vector2(view.x-32,74) if portrait else Vector2(216,74)
+	cast._layout()
+	_paginate_speech()
 	face.position=face_base_position+offset
 	face.visible=not portrait
 	queue_redraw()

@@ -1,3 +1,7 @@
+# 0.7.2 · Sabit garaj yerleşimi
+
+Ana menü ve garajda Aion ve Ömer için ayrı zemin alanları; boşta yana kaydıran poz döngüsü kaldırıldı. Diyalog/yükseltme/hazırlık ve ekran yönünden dönüşte konum sabit kalır. Uzun garaj konuşması İleri ile sayfalanır; düğmeler karakter alanına taşmaz. Önceki sürüş, sınırsız mayın ve kayıt davranışı korunur. GitHub main → Vercel yayını aynı akıştadır.
+
 # 0.7.1 · Kullanıcı geri bildirimi düzeltmeleri
 
 Aion ve direksiyon yol yönüne döndü. Hikâye karar ekranında dört sabit sayfa; kaydırma gerekmez. Mayın sınırsız, bekleme süreli ve basılı tutmayla tekrar eder; arka mermilere karşı alan savunması sağlar. Aynı GitHub main → Vercel otomatik web dağıtımı kullanılır. Eski kayıtlar korunur. Ayrıntılı kapsam QA.md.

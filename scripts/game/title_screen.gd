@@ -3,6 +3,7 @@ const QA := preload("res://scripts/game/qa_snapshot.gd")
 ## A short, keyboard/mouse/touch-friendly front door to the existing Godot game.
 
 const UiSkin := preload("res://scripts/game/ui_skin.gd")
+const GarageCast := preload("res://scripts/game/garage_cast.gd")
 const Sheets := preload("res://scripts/game/sheets.gd")
 const MomoFace := preload("res://scripts/game/companion_face.gd")
 const SettingsPanel := preload("res://scripts/game/settings_panel.gd")
@@ -19,6 +20,7 @@ var settings: Control
 var help_panel: Panel
 var start_button: Button
 var face: Control
+var cast: Control
 var motion := true
 var _t := 0.0
 var menu_buttons: Array[Button] = []
@@ -69,10 +71,12 @@ func _ready() -> void:
 	face.scale = Vector2(2, 2)
 	face.decorative_motion = motion
 	ui.add_child(face)
-	var line := _label(ui, Rect2(410, 208, 196, 64), "Bu yolun hafızasını\nbirlikte taşıyoruz.", 13)
+	var line := _label(ui, Rect2(410, 208, 196, 52), "Bu yolun hafızasını\nbirlikte taşıyoruz.", 13)
 	quote_label=line
 	line.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	line.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	cast=GarageCast.new()
+	ui.add_child(cast)
 	_make_help(ui)
 	settings = SettingsPanel.new()
 	settings.z_index = 20
@@ -209,7 +213,7 @@ func _input(event: InputEvent) -> void:
 
 func _process(delta: float) -> void:
 	if QA.active():
-		QA.publish("title",{"view":[get_viewport_rect().size.x,get_viewport_rect().size.y],"play":QA.rect(start_button),"garage":QA.rect(menu_buttons[1]),"endings":QA.rect(menu_buttons[2]),"help":QA.rect(menu_buttons[3]),"settings":QA.rect(menu_buttons[4]),"settings_ui":QA.settings(settings),"settings_visible":settings.visible,"help_visible":help_panel.visible,"help_scroll":QA.rect(help_scroll),"help_content":QA.rect(help_body),"help_scroll_value":help_scroll.scroll_vertical})
+		QA.publish("title",{"view":[get_viewport_rect().size.x,get_viewport_rect().size.y],"cast":cast.snapshot() if cast.visible else {},"play":QA.rect(start_button),"garage":QA.rect(menu_buttons[1]),"endings":QA.rect(menu_buttons[2]),"help":QA.rect(menu_buttons[3]),"settings":QA.rect(menu_buttons[4]),"settings_ui":QA.settings(settings),"settings_visible":settings.visible,"help_visible":help_panel.visible,"help_scroll":QA.rect(help_scroll),"help_content":QA.rect(help_body),"help_scroll_value":help_scroll.scroll_vertical})
 	var caption: String="Etap %d / 3 · Devam et" % (int(campaign["stage"])+1) if campaign["stage"]>0 and campaign["stage"]<3 else ("Yeni hikâye" if campaign["stage"]==3 else "Hikâyeye başla")
 	start_button.text = caption+(" · A" if Controls.last_device=="pad" else " · Space")
 	control_hint.text = "Sol çubuk / D-pad Serbest sürüş\nRB Turbo · LT Fren · Start Mola" if Controls.last_device=="pad" else "Oklar / WASD Serbest sürüş\nE Turbo · Q Fren · Space Ateş"
@@ -239,8 +243,6 @@ func _draw() -> void:
 	var logo := sheets.texture("assets/ui/logo.png")
 	if logo:
 		draw_texture(logo, Vector2(24, 34))
-	sheets.draw_anim(self, "characters", "aion_idle", _t, Vector2(428, 329))
-	sheets.draw_anim(self, "characters", "omer_idle", _t, Vector2(574, 329), Color.WHITE, true)
 
 
 func _layout() -> void:
@@ -254,6 +256,10 @@ func _layout() -> void:
 		node.position=help_rects[node].position
 		node.size=help_rects[node].size
 	brand_label.add_theme_font_size_override("font_size",9 if portrait else 10)
+	cast.visible=not portrait
+	cast.position=offset+Vector2(398,260)
+	cast.size=Vector2(216,74)
+	cast._layout()
 	face.scale=Vector2(2,2)
 	if not portrait and DisplayServer.is_touchscreen_available():
 		for i in menu_buttons.size():

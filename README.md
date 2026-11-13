@@ -1,6 +1,8 @@
-# Drive-By Wire · 0.7.1
+# Drive-By Wire · 0.7.2
 
 **Fragaria Interactive · Fragaria Games · AIONIA**
+
+Garajda Aion ve Ömer sabit ayak hizalarında durur; konuşma/yükseltme metinleri karakter alanına taşmaz. Uzun konuşmalar İleri düğmesiyle okunur.
 
 Omega-3 ile Üçüncü Nabız’ı yaşa: üç 400 metrelik arcade etap, üç dallanan karar ve **13 ayrı son**. Direksiyon oklar/WASD, fare, gamepad veya mobilde sabit joystick ile sende. Kararlar kaynakları, trafik baskısını ve geleceğinizi değiştirir.
 
@@ -35,7 +37,7 @@ Web çıktısını `http://localhost:8765` ile aç.
 
 `Releases/latest` önceki 0.1.0 paketlerini gösterebilir; bu dalın paketleriyle aynı değildir.
 
-0.7.1: Omega-3 adı, dört yönlü serbest sürüş, kullanıcı onaylı sabit joystick, yeni Aion sürücü/portre atlasları ve Üçüncü Nabız senaryosu. Önceki kayıt kimlikleri ve 13 sonun kimlikleri korunur.
+0.7.2: sabit garaj karakterleri, ayrı sahne alanları, karakterlerle çakışmayan düğmeler ve ölçüye göre sayfalanan konuşmalar. Omega-3, serbest sürüş, sınırsız mayın ve Üçüncü Nabız korunur. Önceki kayıt kimlikleri ve 13 sonun kimlikleri korunur.
 
 ## Kaynaklar
 

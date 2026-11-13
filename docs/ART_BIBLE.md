@@ -64,3 +64,7 @@ Sabit joystick sekizgen piksel kontur ve ortak UiSkin paleti kullanır. Aynı ey
 ## 0.7.1 · Sürücü yönü
 
 Aion, kuzeye bakan aracın sürüş yönüne döner. Başın arkası, mavi uçlu solungaçlar ve beyaz önlük görünür; direksiyon ve eller başın kuzeyindedir. Sekiz karelik atlas aynı fizik pivotunu `(32,43.5)` kullanır; yeni çizimin gövde merkezine göre doğrulandı. Silah/mayın çıkış noktaları ve hitbox değişmedi. Üretim orijinali yerelde korunur; oyuna 64×96 hücreler nearest örneklenir. Yeni karelerde sürücü yüzü arkaya çizilmez.
+
+## 0.7.2 · Garaj sahne alanları
+
+Mevcut characters_standing.png değiştirilmez. Ana menü ve garajda Aion ilk satırın ilk karesi, Ömer ikinci satırın ilk karesinde sabit durur. Bu sahne boşta farklı gövde pozları arasında çevrim yapmaz. Sprite2D 72×64 bölge, merkezli X ve (36,61) ayak pivotu kullanır; Ömer kendi merkezinde sola döner. Her karakter ayrı Control alanında, tamamı sığacak şekilde çizilir. Zaman, diyalog veya seçim kareyi/konumu değiştirmez. Dikey/yatay düzen tek yerleşim fonksiyonundan türetilir; UI bu alanları kullanmaz.
