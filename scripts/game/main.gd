@@ -324,7 +324,7 @@ func _build_ui() -> void:
 	toast.add_theme_font_size_override("font_size", 12)
 	toast.theme_type_variation="WarningLabel"
 	toast.add_theme_stylebox_override("normal",UiSkin.caption())
-	pause_button = _control_button(ui, Rect2(466, 270, 156, 42), "Mola · Esc", func(): _set_paused(true))
+	pause_button = _control_button(ui, Rect2(466, 292, 156, 42), "Mola · Esc", func(): _set_paused(true))
 	pause_button.focus_mode = Control.FOCUS_NONE
 	_build_pause(ui)
 	_build_touch(ui)
@@ -896,6 +896,7 @@ func _process(delta: float) -> void:
 
 
 func _update_hud() -> void:
+	pause_button.visible=not over
 	score_label.text = "%06d" % arcade.score
 	hud.text = "CAN %d / %d\n%d m / %d m\nHız %d · Mayın sınırsız" % [maxi(0, ceili(hp)), int(max_hp), int(distance), int(_cfg("arcade.finish_distance", 1200)), int(speed)]
 	hp_bar.value = hp / max_hp * 100.0

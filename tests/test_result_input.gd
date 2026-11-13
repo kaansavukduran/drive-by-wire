@@ -31,6 +31,8 @@ func fixture() -> Node:
 func run() -> void:
  var game:=await fixture()
  var origin: Vector2=game.road_touch_rect.get_center()
+ game._update_hud();await frames()
+ h.check("PC shortcut panel and pause button never overlap",not game.hint.get_global_rect().intersects(game.pause_button.get_global_rect()))
  mouse(origin,MOUSE_BUTTON_LEFT,true)
  h.check("left mouse immediately fires",game.mouse_fire and game.bullets.size()>0)
  mouse(origin,MOUSE_BUTTON_RIGHT,true)
