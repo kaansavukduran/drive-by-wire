@@ -90,7 +90,9 @@ func run() -> void:
 			await process_frame
 			var button_clear:=true
 			for action in game.touch_controls:
-				if not action.get_global_rect().grow(0.5).encloses(action.visual.get_global_rect()): button_clear=false
+				if not action.get_global_rect().grow(0.5).encloses(action.visual.get_global_rect()):
+					button_clear=false
+					print("BUTTON_OVERFLOW ",action.visual.text," target=",action.size," visual=",action.visual.size," minimum=",action.visual.get_combined_minimum_size())
 			h.check("visible action buttons match hitboxes at cooldown %s view %s" % [cooldown,dimensions],button_clear)
 
 	game.car_x=320;game.car_y=200;game.car.position=Vector2(320,200)

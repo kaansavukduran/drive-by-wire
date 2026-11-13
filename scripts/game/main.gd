@@ -972,7 +972,8 @@ func _update_hud() -> void:
 		touch_by_action["drive_mine"].visual.text=("MAYIN %.1f" % mine_cooldown) if mine_cooldown>0 else "MAYIN · ∞"
 		var mine_button: Button=touch_by_action["drive_mine"].visual
 		mine_button.add_theme_font_size_override("font_size",11 if touch_enabled and not was_portrait else 12)
-		if touch_enabled and not was_portrait:mine_button.text="MAYIN\n"+(("%.1f" % mine_cooldown) if mine_cooldown>0 else "∞")
+		if touch_enabled and not was_portrait:mine_button.text="MAYIN"
+		mine_button.tooltip_text="Sınırsız arka mayın · basılı tut"
 
 	face.mood = momo.mood
 	face.queue_redraw()
