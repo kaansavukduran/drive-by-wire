@@ -119,10 +119,12 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
      q=await page.evaluate(()=>window.__dbwQA);const road=await center(page,q.road);
      await page.mouse.move(road.x,road.y);await page.mouse.down();await wait(page,()=>window.__dbwQA.fire);
      await page.mouse.move(1,1);await page.mouse.up();await wait(page,()=>!window.__dbwQA.fire);
-     await page.mouse.click(road.x,road.y,{button:'right'});await wait(page,()=>window.__dbwQA.dodge>0);
-     entry.desktopInput='PASS: continuous XY arrows/WASD, E/Q, mouse fire/release and dodge';
+     const mines=q.mine_drops;await page.mouse.move(road.x,road.y);await page.mouse.down({button:'right'});await page.waitForFunction(m=>window.__dbwQA.mine_drops>=m+2,mines);await page.mouse.move(1,1);await page.mouse.up({button:'right'});await wait(page,()=>!window.__dbwQA.mine_held);
+     await page.keyboard.press('Shift');await wait(page,()=>window.__dbwQA.support>0);await page.keyboard.press('KeyR');await wait(page,()=>window.__dbwQA.dodge>0);
+     assert(await page.evaluate(()=>{const e=new MouseEvent('contextmenu',{bubbles:true,cancelable:true});document.getElementById('canvas').dispatchEvent(e);return e.defaultPrevented;}),'canvas context menu is suppressed for rear mines');
+     entry.desktopInput='PASS: continuous XY arrows/WASD, E/Q, mouse fire/right held mines, Shift pulse and R dodge';
     }
-    q=await page.evaluate(()=>window.__dbwQA);const mines=q.mine_drops;if(device.touch)await tap(page,q.actions.drive_mine,true);else await page.keyboard.press('KeyX');await page.waitForFunction(n=>window.__dbwQA.mine_drops===n+1,mines);q=await page.evaluate(()=>window.__dbwQA);await tap(page,q.pause,device.touch);q=await wait(page,()=>window.__dbwQA.paused);
+    await wait(page,()=>window.__dbwQA.mine_cooldown<=0);q=await page.evaluate(()=>window.__dbwQA);const mines=q.mine_drops;if(device.touch)await tap(page,q.actions.drive_mine,true);else await page.keyboard.press('KeyX');await page.waitForFunction(n=>window.__dbwQA.mine_drops===n+1,mines);q=await page.evaluate(()=>window.__dbwQA);await tap(page,q.pause,device.touch);q=await wait(page,()=>window.__dbwQA.paused);
     const distance=q.distance;await sleep(400);assert.equal((await page.evaluate(()=>window.__dbwQA)).distance,distance,'pause must stop simulation');
     await tap(page,q.pause_menu[1],device.touch);q=await wait(page,()=>{const q=window.__dbwQA;return q.settings&&q.settings_back[1]+q.settings_back[3]<=q.view[1];});
     assert(inside(q.settings_rect,q.view)&&inside(q.settings_back,q.view),'settings must fit');

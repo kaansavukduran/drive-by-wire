@@ -149,7 +149,7 @@ func _make_help(parent: Node) -> void:
 	help_scroll.horizontal_scroll_mode=ScrollContainer.SCROLL_MODE_DISABLED
 	help_scroll.follow_focus=true
 	help_panel.add_child(help_scroll)
-	var body := _label(help_scroll, Rect2(0, 0, 492, 184), "1. YOLU AÇ\nPC: oklar / WASD. Mobil/tablet: sabit joystick ile dört yöne sür; sağdaki eylemleri kullan.\n\n2. Omega-3’İ KORU\nSpace / F veya fare sol ile öne ateş et; X arkaya mayın bırakır. Fare sağ sıyrılır. E turbo, Q fren. X mayın, Shift sıyrılma, C destek. Artı: onarım; şimşek: enerji; kalkan: koruma. Kesik çizgiden uzaklaş; ! işaretli noktaya engel düşecek.\n\n3. EVE DÖN\nÜç kez karar ver, her kararın ardından 400 m sür. 13 ayrı gelecekten birine ulaş. Başarısızlıkta önceki etaplar korunur. Mola menüsünde yol günlüğünü oku. Esc mola verir. T ile isteğe bağlı sohbet edebilirsin.", 12)
+	var body := _label(help_scroll, Rect2(0, 0, 492, 184), "1. YOLU AÇ\nPC: oklar / WASD. Mobil/tablet: sabit joystick ile dört yöne sür; sağdaki eylemleri kullan.\n\n2. Omega-3’İ KORU\nSpace / F veya fare sol ile öne ateş et; Fare sağ arkaya sınırsız mayın bırakır (X alternatif). E turbo, Q fren. Shift / C alan darbesi, R sıyrılma. Artı: onarım; şimşek: enerji; kalkan: koruma. Kesik çizgiden uzaklaş; ! işaretli noktaya engel düşecek.\n\n3. EVE DÖN\nÜç kez karar ver, her kararın ardından 400 m sür. 13 ayrı gelecekten birine ulaş. Başarısızlıkta önceki etaplar korunur. Mola menüsünde yol günlüğünü oku. Esc mola verir. T ile isteğe bağlı sohbet edebilirsin.", 12)
 	help_body=body
 	body.size_flags_horizontal=Control.SIZE_EXPAND_FILL
 	body.custom_minimum_size=Vector2(220,0)

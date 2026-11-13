@@ -151,6 +151,7 @@ var comfort_count := 0
 var joystick: Control
 var road_touch_rect := Rect2()
 var mouse_fire := false
+var mouse_mine := false
 var world_origin := Vector2.ZERO
 var ui_layer: CanvasLayer
 var ui_panels: Array[Panel] = []
@@ -323,7 +324,7 @@ func _build_ui() -> void:
 	toast.add_theme_font_size_override("font_size", 12)
 	toast.theme_type_variation="WarningLabel"
 	toast.add_theme_stylebox_override("normal",UiSkin.caption())
-	pause_button = _control_button(ui, Rect2(466, 270, 156, 42), "Mola · Esc", func(): _set_paused(true))
+	pause_button = _control_button(ui, Rect2(466, 292, 156, 42), "Mola · Esc", func(): _set_paused(true))
 	pause_button.focus_mode = Control.FOCUS_NONE
 	_build_pause(ui)
 	_build_touch(ui)
@@ -575,17 +576,25 @@ func _input(event: InputEvent) -> void:
 		_set_paused(false)
 		get_viewport().set_input_as_handled()
 		return
-	if over or paused:
+	if over:
+		# Recover focus after pointer/focus loss; native GUI handles A/Enter exactly once.
+		if event is InputEventJoypadButton or event is InputEventJoypadMotion or event is InputEventKey:
+			if not result_buttons.is_empty() and not get_viewport().gui_get_focus_owner() in result_buttons:
+				result_buttons[0].grab_focus()
+		return
+	if paused:
 		return
 	if event is InputEventMouseButton and event.device != -1:
-		if event.button_index==MOUSE_BUTTON_LEFT and not event.pressed:
-			mouse_fire=false
+		if not event.pressed:
+			if event.button_index==MOUSE_BUTTON_LEFT: mouse_fire=false
+			elif event.button_index==MOUSE_BUTTON_RIGHT: mouse_mine=false
 		elif event.pressed and road_touch_rect.has_point(event.position):
 			if event.button_index==MOUSE_BUTTON_LEFT:
 				mouse_fire=true
 				_fire({})
 			elif event.button_index==MOUSE_BUTTON_RIGHT:
-				_direct_action("drive_dodge")
+				mouse_mine=true
+				_direct_action("drive_mine")
 			get_viewport().set_input_as_handled()
 		return
 	for action in Controls.KEYS:
@@ -622,7 +631,7 @@ func _direct_action(action: String) -> void:
 				comfort_cooldown = _cfg("arcade.comfort_cooldown", 8)
 				_event("comfort")
 				energy = minf(_cfg("arcade.boost_capacity", 100), energy + _cfg("arcade.energy_amount", 30))
-				_notice("İyi bir ekibiz! +enerji")
+				_notice("OMEGA-3 · ALAN DARBESİ\nYakın mermiler temizlendi · +enerji")
 				effects.append({"pos":Vector2(car_x,car_y),"t":0.0,"kind":"pulse","still":true})
 				sounds.cue("pulse")
 				for projectile in enemy_bullets:
@@ -631,7 +640,7 @@ func _direct_action(action: String) -> void:
 
 
 func _held(action: String) -> bool:
-	return Input.is_action_pressed(action) or bool(touch_held.get(action, false)) or (action=="drive_fire" and mouse_fire)
+	return Input.is_action_pressed(action) or bool(touch_held.get(action, false)) or (action=="drive_fire" and mouse_fire) or (action=="drive_mine" and mouse_mine)
 
 
 func _set_paused(value: bool) -> void:
@@ -866,7 +875,7 @@ func _process(delta: float) -> void:
 		qa_clock=0
 		var targets := {}
 		for action in touch_by_action: targets[action]=QA.rect(touch_by_action[action])
-		QA.publish("run",{"view":[get_viewport_rect().size.x,get_viewport_rect().size.y],"chapter":campaign.get("stage",-1),"hp":hp,"kills":kills,"collected":arcade.collected,"finish":_cfg("arcade.finish_distance",1200),"warnings":_enemy_warnings().map(func(w): return {"kind":w["kind"],"lane":w["lane"],"progress":w["progress"],"origin":[w["origin"].x,w["origin"].y],"target":[w["target"].x,w["target"].y]}),"traffic":enemies.map(func(e): return {"type":e["type"],"x":e["pos"].x,"y":e["pos"].y,"lane":e["lane"]}),"hazards":obstacles.map(func(o): return {"x":o["pos"].x,"y":o["pos"].y}),"shield":shield_left,"bonds":campaign.get("bonds",{}),"pickup_targets":pickups.map(func(p): return {"lane":_lane_of(p["pos"].x),"y":p["pos"].y}),"result":result_buttons.map(func(b): return QA.rect(b)),"ending_text":end_panel.text if over else "","lane":lane,"player":[car_x,car_y],"sprite":[car.position.x,car.position.y],"hitbox":[_player_rect().position.x,_player_rect().position.y,_player_rect().size.x,_player_rect().size.y],"joystick":QA.rect(joystick),"stick":[joystick.value.x,joystick.value.y],"paused":paused,"over":over,"fire":_held("drive_fire"),"boost":boosting,"distance":distance,"speed":speed,"energy":energy,"road":[road_touch_rect.position.x,road_touch_rect.position.y,road_touch_rect.size.x,road_touch_rect.size.y],"actions":targets,"pause":QA.rect(pause_button),"journal":journal_panel.visible,"touch":touch_enabled,"portrait_hud":({"health":QA.rect(hud),"meters":QA.rect(distance_caption),"hp_bar":QA.rect(hp_bar),"energy_bar":QA.rect(energy_bar),"energy":QA.rect(energy_caption)} if was_portrait else {}),"route":journey.route,"mines":-1,"mine_cooldown":mine_cooldown,"mine_reload":_mine_reload(),"mine_drops":mine_drops,"active_mines":mines.map(func(m): return [m["pos"].x,m["pos"].y]),"dodge":dodge_cooldown,"settings":settings_panel.visible,"settings_ui":QA.settings(settings_panel),"settings_rect":QA.rect(settings_panel),"settings_back":QA.rect(settings_panel.back),"pause_menu":pause_panel.get_child(0).get_children().filter(func(child): return child is Button).map(func(child): return QA.rect(child)),"journal_rect":QA.rect(journal_panel),"journal_back":QA.rect(journal_panel.get_child(0).get_child(2))})
+		QA.publish("run",{"view":[get_viewport_rect().size.x,get_viewport_rect().size.y],"chapter":campaign.get("stage",-1),"hp":hp,"kills":kills,"collected":arcade.collected,"finish":_cfg("arcade.finish_distance",1200),"warnings":_enemy_warnings().map(func(w): return {"kind":w["kind"],"lane":w["lane"],"progress":w["progress"],"origin":[w["origin"].x,w["origin"].y],"target":[w["target"].x,w["target"].y]}),"traffic":enemies.map(func(e): return {"type":e["type"],"x":e["pos"].x,"y":e["pos"].y,"lane":e["lane"]}),"hazards":obstacles.map(func(o): return {"x":o["pos"].x,"y":o["pos"].y}),"shield":shield_left,"bonds":campaign.get("bonds",{}),"pickup_targets":pickups.map(func(p): return {"lane":_lane_of(p["pos"].x),"y":p["pos"].y}),"result_focus":result_buttons.find(get_viewport().gui_get_focus_owner()),"support":comfort_cooldown,"pulse_count":comfort_count,"mine_held":_held("drive_mine"),"result":result_buttons.map(func(b): return QA.rect(b)),"ending_text":end_panel.text if over else "","lane":lane,"player":[car_x,car_y],"sprite":[car.position.x,car.position.y],"hitbox":[_player_rect().position.x,_player_rect().position.y,_player_rect().size.x,_player_rect().size.y],"joystick":QA.rect(joystick),"stick":[joystick.value.x,joystick.value.y],"paused":paused,"over":over,"fire":_held("drive_fire"),"boost":boosting,"distance":distance,"speed":speed,"energy":energy,"road":[road_touch_rect.position.x,road_touch_rect.position.y,road_touch_rect.size.x,road_touch_rect.size.y],"actions":targets,"pause":QA.rect(pause_button),"journal":journal_panel.visible,"touch":touch_enabled,"portrait_hud":({"health":QA.rect(hud),"meters":QA.rect(distance_caption),"hp_bar":QA.rect(hp_bar),"energy_bar":QA.rect(energy_bar),"energy":QA.rect(energy_caption)} if was_portrait else {}),"route":journey.route,"mines":-1,"mine_cooldown":mine_cooldown,"mine_reload":_mine_reload(),"mine_drops":mine_drops,"active_mines":mines.map(func(m): return [m["pos"].x,m["pos"].y]),"dodge":dodge_cooldown,"settings":settings_panel.visible,"settings_ui":QA.settings(settings_panel),"settings_rect":QA.rect(settings_panel),"settings_back":QA.rect(settings_panel.back),"pause_menu":pause_panel.get_child(0).get_children().filter(func(child): return child is Button).map(func(child): return QA.rect(child)),"journal_rect":QA.rect(journal_panel),"journal_back":QA.rect(journal_panel.get_child(0).get_child(2))})
 	metrics_clock += delta
 	if OS.has_feature("web") and metrics_clock > 5.0:
 		metrics_clock = 0.0
@@ -887,6 +896,7 @@ func _process(delta: float) -> void:
 
 
 func _update_hud() -> void:
+	pause_button.visible=not over
 	score_label.text = "%06d" % arcade.score
 	hud.text = "CAN %d / %d\n%d m / %d m\nHız %d · Mayın sınırsız" % [maxi(0, ceili(hp)), int(max_hp), int(distance), int(_cfg("arcade.finish_distance", 1200)), int(speed)]
 	hp_bar.value = hp / max_hp * 100.0
@@ -1385,6 +1395,15 @@ func _end_run(outcome := "destroyed") -> void:
 	result_buttons.append(retry)
 	result_buttons.append(_control_button(layer, Rect2(326, 300, 148, 44), "Garaj", _to_garage))
 	result_buttons[-1].z_index=40
+	for i in result_buttons.size():
+		var button: Button=result_buttons[i]
+		button.focus_mode=Control.FOCUS_ALL
+		button.focus_neighbor_left=button.get_path_to(result_buttons[maxi(0,i-1)])
+		button.focus_neighbor_right=button.get_path_to(result_buttons[mini(result_buttons.size()-1,i+1)])
+		button.focus_neighbor_top=button.focus_neighbor_left
+		button.focus_neighbor_bottom=button.focus_neighbor_right
+		button.focus_previous=button.get_path_to(result_buttons[(i+result_buttons.size()-1)%result_buttons.size()])
+		button.focus_next=button.get_path_to(result_buttons[(i+1)%result_buttons.size()])
 	_layout()
 
 	end_panel.visible = true
@@ -1726,6 +1745,7 @@ func _clear_pointers() -> void:
 	touch_held.clear()
 	if is_instance_valid(joystick): joystick.reset()
 	mouse_fire=false
+	mouse_mine=false
 	for button in touch_controls:
 		button.release_visual()
 

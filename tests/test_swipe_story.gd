@@ -126,7 +126,7 @@ func run() -> void:
 	mouse(Vector2.ZERO,MOUSE_BUTTON_LEFT)
 	h.check("HUD click cannot fire",not game.mouse_fire)
 	mouse(origin,MOUSE_BUTTON_RIGHT)
-	h.check("mouse right dodges",game.dodge_cooldown>0)
+	h.check("mouse right drops a rear mine",game.mouse_mine and game.mine_drops>0)
 	mouse(origin,MOUSE_BUTTON_RIGHT,false)
 	game._set_paused(true)
 	game._open_journal()

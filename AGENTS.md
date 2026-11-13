@@ -11,3 +11,5 @@ Dikey/yatay yönler, çoklu dokunma, odak kaybı ve yeniden boyutlandırmayı te
 Sonuçları PASS / FAIL / NOT TESTED raporla. Fiziksel cihaz, yardımcı teknoloji veya insan eğlence testi yapılmadıysa yapılmış gösterme. Eski prototip Android anahtarı Git geçmişinde açıktır; yeni dağıtımda kullanılmaz. Tam geçmişi başka yere aktarmak ayrıca açık kullanıcı izni gerektirir; güncel kaynak teslimiyle karıştırma.
 
 Garaj sahnesi: Aion ve Ömer ayrı sabit zemin alanlarında, ortak ayak pivotuyla durur. Kaydı yapılmamış farklı gövde pozları boşta döngüye eklenmez; diyalog/yükseltme/hazırlık metni veya animasyon saati karakterin alanını değiştiremez. Ekran yönünden dönüşte aynı zemin işaretleri geri gelmelidir. tests/test_garage_stage.gd ve tarayıcıdaki gerçek karakter piksel karşılaştırmasını koru.
+
+0.7.3 PC açık kullanıcı isteği: yol alanında fare sol öne ateş, fare sağ basılı sınırsız arka mayın; Shift alan darbesi, R sıyrılma. X/C alternatifleri ve özel atamalar korunur. Etap sonu düğmelerinde açık dört yön/Tab odak komşuları ve analog/D-pad/A ile fare gerektirmeyen geçiş zorunlu; test_result_input.gd ve gerçek 400m browser_result_pad.cjs regresyonlarını koru.

@@ -5,7 +5,7 @@ const KEYS := {
  "drive_left": [KEY_LEFT, KEY_A], "drive_right": [KEY_RIGHT, KEY_D],
  "drive_up": [KEY_UP, KEY_W], "drive_down": [KEY_DOWN, KEY_S],
  "drive_fire": [KEY_SPACE, KEY_F], "drive_mine": [KEY_X],
- "drive_dodge": [KEY_SHIFT], "drive_comfort": [KEY_C],
+ "drive_dodge": [KEY_R], "drive_comfort": [KEY_SHIFT, KEY_C],
  "drive_boost": [KEY_E], "drive_brake": [KEY_Q],
  "drive_chat": [KEY_T], "drive_pause": [KEY_ESCAPE, KEY_P],
 }
@@ -17,7 +17,7 @@ const PAD := {
  "drive_boost": [JOY_BUTTON_RIGHT_SHOULDER], "drive_brake": [],
  "drive_pause": [JOY_BUTTON_START],
 }
-const LABELS := {"drive_left":"Sola sür", "drive_right":"Sağa sür", "drive_up":"İleri sür", "drive_down":"Geri sür", "drive_boost":"Turbo", "drive_brake":"Fren", "drive_fire":"Ateş", "drive_mine":"Mayın", "drive_dodge":"Sıyrılma", "drive_comfort":"Omega-3 desteği"}
+const LABELS := {"drive_left":"Sola sür", "drive_right":"Sağa sür", "drive_up":"İleri sür", "drive_down":"Geri sür", "drive_boost":"Turbo", "drive_brake":"Fren", "drive_fire":"Ateş", "drive_mine":"Mayın", "drive_dodge":"Sıyrılma", "drive_comfort":"Alan darbesi"}
 const PAD_NAMES := {JOY_BUTTON_A:"A", JOY_BUTTON_B:"B", JOY_BUTTON_X:"X", JOY_BUTTON_Y:"Y", JOY_BUTTON_LEFT_SHOULDER:"LB", JOY_BUTTON_RIGHT_SHOULDER:"RB", JOY_BUTTON_DPAD_LEFT:"D-pad sol", JOY_BUTTON_DPAD_RIGHT:"D-pad sağ", JOY_BUTTON_DPAD_UP:"D-pad yukarı", JOY_BUTTON_DPAD_DOWN:"D-pad aşağı"}
 static var last_device := "keyboard"
 static var bindings: Dictionary = {}
@@ -108,4 +108,4 @@ static func binding_name(action: String, is_pad := false) -> String:
 static func run_hint() -> String:
  if last_device == "pad":
   return "Sol çubuk / D-pad Serbest sürüş\nRB Turbo · LT Fren\nRT / A Öne ateş\nX Arkaya mayın · B Sıyrıl\nY Omega-3 desteği"
- return "%s / %s · %s / %s Sürüş\n%s Turbo · %s Fren\n%s / Fare sol Öne ateş\n%s Arkaya mayın · %s Sıyrıl\n%s Omega-3 · T Sohbet" % [binding_name("drive_left"),binding_name("drive_right"),binding_name("drive_up"),binding_name("drive_down"),binding_name("drive_boost"),binding_name("drive_brake"),binding_name("drive_fire"),binding_name("drive_mine"),binding_name("drive_dodge"),binding_name("drive_comfort")]
+ return "%s/%s · %s/%s Sürüş\n%s Turbo · %s Fren\nFare sol / %s Ateş\nFare sağ / %s Mayın\n%s Darbe · %s Sıyrıl\nT Sohbet" % [binding_name("drive_left"),binding_name("drive_right"),binding_name("drive_up"),binding_name("drive_down"),binding_name("drive_boost"),binding_name("drive_brake"),binding_name("drive_fire"),binding_name("drive_mine"),binding_name("drive_comfort"),binding_name("drive_dodge")]
