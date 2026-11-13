@@ -22,7 +22,7 @@ static func sanitize(raw: Variant) -> Dictionary:
    for reply in data()["nodes"][key].get("responses",[]):
     if raw["radio"].get(key)==reply["id"]: out["radio"][key]=reply["id"]
  if raw.get("bonds") is Dictionary:
-  for ally in ["aion","omega","kurt","kuzu","omer","emre"]:
+  for ally in ["aion","omega","kurt","kuzu","omer","emre","eren"]:
    var amount: Variant=raw["bonds"].get(ally,0)
    if (amount is int or amount is float) and is_finite(float(amount)) and amount>0:
     out["bonds"][ally]=clampi(int(amount),0,3)

@@ -63,6 +63,10 @@
         {
           "speaker": "omer",
           "line": "Önce kime yetişeceğimize karar verelim. Sonra bu kararı neden verdiğimizi birbirimizden saklamayalım."
+        },
+        {
+          "speaker": "eren",
+          "line": "Ben Eren. Ormandaki bakım cebindeyim; virajda buluşuruz. Emre’nin koltuğunda bir bardak kalmış. Geri vermek için onu bekleyeceğim."
         }
       ],
       "responses": [
@@ -876,6 +880,7 @@
     "kurt": "Kurt",
     "kuzu": "Kuzu",
     "omer": "Baykuş Ömer",
-    "emre": "Tavşan Emre"
+    "emre": "Tavşan Emre",
+    "eren": "Tavşan Eren"
   }
 }

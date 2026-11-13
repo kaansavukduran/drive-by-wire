@@ -50,7 +50,9 @@
     ],
     "ground_y": 72,
     "animation": "restrained breathing, blink and reaching hand; alive and injured",
-    "identity": "Tavşan Emre: beige fur, green eyes, blue shirt, red tie, dark trousers; not Tavşan Eren"
+    "identity": "Tavşan Emre: beige fur, green eyes, blue shirt, red tie, dark trousers; not Tavşan Eren",
+    "runtime": false,
+    "replaced_by": "res://data/story_cast_art.json"
   },
   "hashes": {
     "courier_body.png": "2806eab46db9bb53fcd8a7040ac1a2478283883c42c9388f93e28b6bad6a34e4",

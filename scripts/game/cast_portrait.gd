@@ -2,9 +2,10 @@ extends Control
 const RobotArt=preload("res://scripts/game/robot_art.gd")
 ## Fixed, equal atlas cells; never size/position portraits from their alpha bounds.
 const SHEET := preload("res://assets/sprites/aionverse_portraits.png")
+const EREN := preload("res://assets/sprites/eren_story.png")
 const OMEGA := preload("res://assets/brand/ilin-icon.png")
-const IDS := ["aion","kurt","kuzu","omer","emre"]
-const NAMES := {"aion":"Aion","kurt":"Kurt","kuzu":"Kuzu","omer":"Baykuş Ömer","emre":"Tavşan Emre","omega":"Omega-3","muhur":"Mühür-01","yanki":"Yankı-02","tasnif":"Tasnif-13"}
+const IDS := ["aion","kurt","kuzu","omer","emre","eren"]
+const NAMES := {"aion":"Aion","kurt":"Kurt","kuzu":"Kuzu","omer":"Baykuş Ömer","emre":"Tavşan Emre","eren":"Tavşan Eren","omega":"Omega-3","muhur":"Mühür-01","yanki":"Yankı-02","tasnif":"Tasnif-13"}
 var _cutout: ShaderMaterial
 var speaker := "aion":
 	set(value):
@@ -31,6 +32,9 @@ func _draw() -> void:
 	var box:=Rect2((size-Vector2.ONE*side)/2,Vector2.ONE*side)
 	if speaker=="omega":
 		draw_texture_rect(OMEGA,box,false)
+		return
+	if speaker=="eren":
+		draw_texture_rect_region(EREN,box,Rect2(160,0,310,310))
 		return
 	var index := IDS.find(speaker)
 	if index<0: return

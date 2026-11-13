@@ -27,7 +27,7 @@ const choices=(process.env.DBW_BOOK_PATH||'0,0,0').split(',').map(Number),expect
    if(stage===0){
     const cast=new Set([brief.speaker]);
     for(let i=1;i<brief.line_count;i++){await tap((await state()).radio_next);await page.waitForTimeout(150);cast.add((await state()).speaker);}
-    assert.deepEqual([...cast].sort(),['emre','kurt','kuzu','omega','omer']);result.cast=[...cast];
+    assert.deepEqual([...cast].sort(),['emre','eren','kurt','kuzu','omega','omer']);result.cast=[...cast];
     await page.screenshot({path:`${out}/cast-conversation.png`});
    }
    await tap((await state()).tabs[1]);await page.waitForTimeout(200);await tap((await state()).radio_answers[1]);
@@ -37,16 +37,27 @@ const choices=(process.env.DBW_BOOK_PATH||'0,0,0').split(',').map(Number),expect
   await tap(brief.choices[choices[stage]]);
   if(stage===1){
    await wait(()=>window.__dbwQA?.screen==='road_story');
-   const seen=new Set(),frames=new Set();let restored=false,rotated=false;const started=Date.now();
+   const seen=new Set(),frames=new Set();let restored=false,rotated=false,erenRecord="";const started=Date.now();
    while((await state()).screen==='road_story'){
     const n=await state();assert(n.fits,'novel speech must fit');assert.equal(n.combat,false);assert.equal(n.vehicle,'courier');
     assert(Date.now()-started<100000,'novel timeout');
+    if(n.chapter.record)erenRecord=n.chapter.record;
     if(n.paused){await page.keyboard.press('Escape');continue;}
     if(!seen.has(n.chapter.step)){seen.add(n.chapter.step);await page.screenshot({path:`${out}/novel-${n.chapter.step}.png`});}
     if(n.chapter.step==='race'||n.chapter.step==='trap'){await page.waitForTimeout(120);continue;}
     if(n.chapter.step==='plea'){
-     assert.deepEqual(n.actors,[[256,248],[352,248]],'aftermath actors stay in fixed ground slots');frames.add(n.frame);
+     assert.deepEqual(n.actors,[[210,248],[445,248],[520,248]],'aftermath actors stay in fixed ground slots');frames.add(n.frame);
      if(!rotated){
+      const fixed=JSON.stringify(n.cast.map(a=>[a.id,a.world,a.contact]));
+      const actingStart=Date.now();for(let i=0;i<35||frames.size<6;i++){
+       assert(Date.now()-actingStart<12000,"all acting frames must be observable within multiple real-time loops");
+       const pose=await state();assert.equal(JSON.stringify(pose.cast.map(a=>[a.id,a.world,a.contact])),fixed,'rendered foot origins cannot drift across the full acting loop');
+       assert.deepEqual(pose.cast.map(a=>a.id),['aion','emre','eren']);
+       assert(Math.max(...pose.cast.map(a=>a.contact[1]))-Math.min(...pose.cast.map(a=>a.contact[1]))<.1,'all actors share the actual road support plane');
+       frames.add(pose.frame);if([0,12,24,34].includes(i))await page.screenshot({path:`${out}/grounded-acting-${i}.png`});
+       await page.waitForTimeout(75);
+      }
+      assert.equal(frames.size,6,'all six distinct injury frames play in the browser');
       await page.setViewportSize({width:390,height:844});await page.waitForTimeout(450);let m=await state();assert(m.paused,'rotation pauses scene');
       await page.keyboard.press('Escape');await page.waitForTimeout(200);m=await state();assert(m.fits);assert.deepEqual(m.actors,n.actors);
       await page.screenshot({path:`${out}/novel-plea-phone.png`});
@@ -63,8 +74,8 @@ const choices=(process.env.DBW_BOOK_PATH||'0,0,0').split(',').map(Number),expect
     else if(n.next_visible)await tap(n.next);
     await page.waitForTimeout(180);
    }
-   assert(seen.has('race')&&seen.has('trap')&&seen.has('plea')&&seen.has('rescue')&&seen.has('complete'));assert(restored&&rotated);
-   result.legs.push({stage:2,mode:'visual_novel',scenes:[...seen],checkpointReload:'PASS',rotation:'PASS'});
+   assert(seen.has('race')&&seen.has('trap')&&seen.has('plea')&&seen.has('eren')&&seen.has('witness')&&seen.has('rescue')&&seen.has('complete'));assert(restored&&rotated);
+   result.legs.push({stage:2,erenRecord,actingFrames:[...frames],mode:'visual_novel',scenes:[...seen],checkpointReload:'PASS',rotation:'PASS'});
    await wait(()=>window.__dbwQA?.screen==='briefing');continue;
   }
   await wait(()=>window.__dbwQA?.screen==='run');
@@ -107,7 +118,7 @@ const choices=(process.env.DBW_BOOK_PATH||'0,0,0').split(',').map(Number),expect
  await page.screenshot({path:`${out}/book-ending-desktop.png`});
  // Read every bounded page using actual arrows; no wheel or scrollbars.
  const prose=[];while(true){q=await state();assert.equal(q.scrollbars,0);assert(q.reader.fits);prose.push(q.reader.text);if(q.reader.page+1===q.reader.pages)break;await page.keyboard.press('ArrowRight');await page.waitForTimeout(180);}
- result.endingPages=q.reader.pages;assert(prose.join(' ').length>350);
+ result.endingPages=q.reader.pages;assert(prose.join(' ').length>350);assert(prose.join(' ').includes('Eren mühürlü kaydı sakladı'),'Eren decision survives the third chapter and appears in actual epilogue');
  // Open gallery with native focus navigation.
  await page.keyboard.press('ArrowDown');await page.keyboard.press('Enter');await wait(()=>window.__dbwQA?.screen==='endings');
  q=await state();assert.equal(q.scrollbars,0);assert.equal(q.entries.length,13);assert.equal(q.entries.filter(e=>!e.disabled).length,1);

@@ -1,3 +1,9 @@
+# 0.10.0 · Yol kenarında üç kişi
+
+Aion, Emre ve yeni hikâye karakteri Tavşan Eren için ayrıntılı pixel-art sahne paftaları, ortak gece ışığı ve sabit kaynak temasları. Yeni orman/enkaz arka planı. Emre yaralı ve hayattadır; Aion elini uzatır, Eren battaniyeyle yardım eder. Eren’in kaydı mühürleme/sinyal izini paylaşma seçimi kayda ve epiloga taşınır. Mevcut motor, kontroller, 13 son ve eski kayıtlar korunur.
+
+AIONIA içerik standardı v1.7 ve Fragaria Unslop doğrudan okundu. Sanat uyarlamaları OYUN/TASLAK. Gerçek sonuçlar [QA](QA.md); yerel çıktı ve canlı dağıtım ayrı doğrulanır. `main` aynı Vercel projesine otomatik yayınlanır.
+
 # 0.9.0 · Yan yana
 
 Mobil sürüş HUD’ı daha az yer kaplar. Ana menüde üç farklı araba seçilir; seçim yerel kayda yazılır, fizik ve silah dengesi değişmez.

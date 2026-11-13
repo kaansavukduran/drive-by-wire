@@ -1,6 +1,6 @@
 # Drive-By Wire · AIONIA sanat kılavuzu
 
-Güncel uygulama 0.9.0 · 13 Kasım 2026 · [Güncel AIONIA referansı](AIONIA_CURRENT_REFERENCE.md). Eski bölümler önceki üretim kaydını da içerir.
+Güncel uygulama 0.10.0 · 13 Kasım 2026 · [Güncel AIONIA referansı](AIONIA_CURRENT_REFERENCE.md). Eski bölümler önceki üretim kaydını da içerir.
 
 ## Kimlik ve sınır
 
@@ -85,3 +85,19 @@ Altı biyomda mevcut yol dokusu korunur; çevrede şehir direkleri, yağmurlu ha
 - Yaralı Emre: 6 ayrı 128×80 kare, 5 fps; nefes, göz kırpma ve uzanan el. Zemin pivotu (64,72) sabittir. Bej kürk, yeşil göz, açık mavi gömlek, kırmızı kravat ve koyu pantolon korunur. Mevcut portre ve paftanın yerine final kanon diye geçirilmez.
 
 Aion’un yer sahnesi mevcut sabit 72×64 ayakta karesini kullanır; yeni yürüme veya diz çökme animasyonu yapılmış sayılmaz. Patlama efekti mevcut sprite sheet’tir. Azaltılmış hareket yaralı karakteri sabit pozda tutar ve dekoratif yarış akışını durdurur; sahne geçişleri çalışır.
+
+
+## 0.10.0 · Yol kenarı oyunculuğu
+
+0.9.0’ın küçük, düz geometrili yaralı Emre çizimi bu sahnenin duygu ve kimlik gereksinimini karşılamıyordu. Yeni paftalar kürk, dikiş, kumaş kıvrımı, yüz ifadesi ve aynı serin gece/sıcak yol ışığıyla üretildi. Aion’un pembe/mavi solungaçları, beyaz önlüğü ve DNA kuyruğu; Emre’nin bej kürkü, yeşil gözü ve düz kırmızı kravatı korunur. Eren turuncu kürk, uzun kirpik, benek, sivri yanak, koyu ceket ve çizgili kravatla ayrı okunur. Kullanıcının kedi referansı ayrıntı/ışık hedefidir; karakterlere kedi kimliği veya maceracı kıyafeti taşınmaz.
+
+`data/story_cast_art.json` runtime pafta ölçüleri, kaynak temas noktaları, sabit dünya kökleri, klip süreleri ve PNG SHA-256 özetlerini tutar. Meta veri `assets/sources/.gdignore` altında tutulmaz; ilk web denemesinde dışa aktarımın onu atlaması gerçek tarayıcı testinde yakalandı. Normal `data/*.json` ihracıyla düzeltildi.
+
+- Emre: 1536×1024, 3×2, 512×512 hücre, **6 ayrı** nefes/uzanma/göz kırpma pozu. Her kaynak karenin basılı arka ayak noktası ayrı ölçülür; dünya kökü (445,248) değişmez.
+- Aion: 1254×1254, 2×2, 627×627 hücre, **4 ayrı** diz çökme/göz kırpma/el uzatma pozu. İki boşta poz ve iki etkileşim pozu vardır; dört karelik yeni yürüyüş iddiası yoktur. Basılı ayak dünya kökü (210,248).
+- Eren: aynı 2×2 hücre düzeni, **4 ayrı** ayakta/göz kırpma/diz çökme/battaniyeyle yardım pozu. Sağ ayakkabı kökü (520,248); çömelme gövdenin bu topuk çevresinde bilinçli yer değiştirmesidir. Yardımdan sonra yeniden ayağa zıplatılmaz.
+- Arka plan: 1536×1024 orman/yol/enkaz, kaynak destek çizgisi y777. Aktörlerin ayak düzlemi bu yola oturur. Dikey ekranda arka plan kırpılır; UI veya konuşma sayfası dünya köklerini kaydırmaz.
+
+`story_cast_art.gd` Sprite2D bölge/offset/ölçeğini kaynak temasına göre ayarlar; fizik veya dünya kökü alfa kutusundan hesaplanmaz. Gölgeler sabittir. Düşük alfa üretim halesi ortak cutout malzemesiyle temizlenir; gövde hareketi sahte kamera sallantısıyla üretilmez. Azaltılmış hareket nefes/kırpma döngüsünü durdurur, yardım pozunu ve seçimleri korur. Klipler kısa poz tutuşlarıdır; ara kare üretimi veya yürüme animasyonu yapılmış sayılmaz.
+
+Bu paftalar OYUN/TASLAK; özel modelleme paftalarının yerine kesin kanon ilan edilmez. Orijinal referanslar, önceki runtime çizimleri ve kaynak kayıtları korunur. Eski `author_road_story.py` yalnız 0.9.0 geometrik kaynaklarını tekrar üretir; yeni paftaların üreticisi değildir.
