@@ -48,6 +48,7 @@ var cast: Control
 var speech_next: Button
 var speech_pages: Array[String]=[]
 var speech_page := 0
+var speech_offset := 0
 var speech_full := ""
 var _t := 0.0
 var sheets := Sheets.new()
@@ -100,7 +101,7 @@ func _ready() -> void:
 	ui.add_child(buttons)
 	var brand := _label(ui, Vector2(326, 10), Vector2(298, 17), 10)
 	brand_label=brand
-	brand.text = "FRAGARIA GAMES · AIONIA"
+	brand.text = "FRAGARIA INTERACTIVE · AIONIA"
 	brand.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 
 	var brief := _label(ui, Vector2(16, 290), Vector2(410, 40), 11)
@@ -176,16 +177,17 @@ func _clear_buttons() -> void:
 
 func _say(text: String) -> void:
 	speech_full=text
-	speech_page=0
+	speech_page=0;speech_offset=0
 	_paginate_speech()
 	face.talking = 1.5
 
 func _paginate_speech() -> void:
 	speech_pages=TextFit.pages(speech_full,speech)
-	speech_page=mini(speech_page,speech_pages.size()-1)
-	_show_speech_page()
+	speech_page=TextFit.page_at(speech_pages,speech_offset)
+	_show_speech_page(false)
 
-func _show_speech_page() -> void:
+func _show_speech_page(remember: bool=true) -> void:
+	if remember:speech_offset=TextFit.offset_at(speech_pages,speech_page)
 	speech.text=speech_pages[speech_page]
 	speech_next.visible=speech_pages.size()>1
 	speech_next.text="İleri\n%d/%d" % [speech_page+1,speech_pages.size()]

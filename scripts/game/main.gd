@@ -120,6 +120,7 @@ var radio_is_story := false
 var radio_speaker := "omega"
 var radio_pages: Array[String]=[]
 var radio_page := 0
+var radio_offset := 0
 var radio_page_caption: Label
 var face: Control
 var radio_portrait: Control
@@ -733,17 +734,18 @@ func _say(line: String,story: bool=false) -> void:
 		radio_portrait.speaker=radio_speaker
 		radio_portrait.visible=radio_speaker in Cast.IDS or radio_speaker in Boss.IDS
 		face.visible=not radio_portrait.visible
-	radio_page=0
+	radio_page=0;radio_offset=0
 	_reflow_radio()
 	if face: face.talking=1.2
 
 func _reflow_radio() -> void:
 	var display_text:=radio_text
 	radio_pages=TextFit.pages(display_text,bubble)
-	radio_page=mini(radio_page,radio_pages.size()-1)
-	_show_radio_page()
+	radio_page=TextFit.page_at(radio_pages,radio_offset)
+	_show_radio_page(false)
 
-func _show_radio_page() -> void:
+func _show_radio_page(remember: bool=true) -> void:
+	if remember:radio_offset=TextFit.offset_at(radio_pages,radio_page)
 	bubble.text=radio_pages[radio_page] if not radio_pages.is_empty() else ""
 	momo_title.text=str(Cast.NAMES.get(radio_speaker,"Omega-3"))
 	radio_page_caption.text=("%d / %d" if touch_enabled else "%d / %d · Tam metin günlükte") % [radio_page+1,radio_pages.size()] if radio_pages.size()>1 else ""
@@ -761,7 +763,7 @@ func _advance_radio(delta: float) -> void:
 		radio_is_story=false
 		radio_text=""
 		radio_pages.clear()
-		radio_page=0
+		radio_page=0;radio_offset=0
 
 
 func _event(ev: Variant) -> void:
@@ -1777,29 +1779,31 @@ func _layout() -> void:
 	for node in [ui_panels[0],ui_panels[2],brand_label,mission,status_label,energy_bar,energy_caption]:node.hide()
 	face.scale=Vector2.ONE
 	radio_portrait.custom_minimum_size=Vector2.ZERO
-	for label in [hud,score_label,distance_caption,hint,toast,story_caption]:
+	for label in [hud,score_label,distance_caption,hint,toast,story_caption,touch_hint]:
 		label.add_theme_stylebox_override("normal",StyleBoxEmpty.new())
+		label.add_theme_color_override("font_color",Color("f5f1e8"))
 		label.add_theme_color_override("font_outline_color",Color.BLACK)
 		label.add_theme_constant_override("outline_size",3)
+	story_caption.add_theme_color_override("font_color",Color("9de1c3"));toast.add_theme_color_override("font_color",Color("ffd18a"))
 	hud.add_theme_font_size_override("font_size",11);score_label.add_theme_font_size_override("font_size",11)
 	distance_caption.add_theme_font_size_override("font_size",11);distance_caption.show()
 	bubble.add_theme_font_size_override("font_size",11);momo_title.add_theme_font_size_override("font_size",10)
 	toast.add_theme_font_size_override("font_size",12);story_caption.add_theme_font_size_override("font_size",9)
-	_place(hud,Rect2(12,4,210,18))
+	_place(hud,Rect2(12,4,176,18))
 	_place(hp_bar,Rect2(12,25,minf(180,view.x-100),10))
-	_place(score_label,Rect2(12,42,110,22));_place(distance_caption,Rect2(12,62,160,20))
+	_place(score_label,Rect2(12,44,176,16));_place(distance_caption,Rect2(12,66,176,16))
 	_place(pause_button,Rect2(view.x-76,8,64,44));pause_button.text="Mola"
 	_place(route_bar,Rect2(view.x/2-92,4,184,4));route_bar.visible=boss.active
 	_place(story_caption,Rect2(view.x/2-112,6,224,46))
-	_place(toast,Rect2(12,view.y*.32,172,70))
+	_place(toast,Rect2(12,94 if touch_enabled else 182,172,100))
 	var radio_box:=Rect2(view.x-184,66,176,112)
 	if portrait:
 		_place(score_label,Rect2(12,42,72,18))
 		_place(distance_caption,Rect2(94,42,view.x-106,18))
 		_place(route_bar,Rect2(12,68,view.x-24,5))
 		_place(story_caption,Rect2(12,76,view.x-24,32))
-		_place(toast,Rect2(12,190,view.x-24,50))
-		radio_box=Rect2(8,110,view.x-16,74)
+		_place(toast,Rect2(12,200,view.x-24,80))
+		radio_box=Rect2(8,116,view.x-16,74)
 		var play_height:=maxf(220,view.y-230)
 		var zoom:=minf(play_height/360.0,(view.x-24)/224.0)
 		scale=Vector2.ONE*zoom;world_origin=Vector2(view.x/2-320*zoom,80)
@@ -1831,8 +1835,8 @@ func _layout() -> void:
 		_place(momo_title,Rect2(radio_box.position+Vector2(46,6),Vector2(120,30)))
 		_place(bubble,Rect2(radio_box.position+Vector2(8,42),Vector2(160,44)))
 		_place(radio_page_caption,Rect2(radio_box.position+Vector2(8,92),Vector2(160,12)))
-	_place(hint,Rect2(12,86,172,76));hint.visible=not touch_enabled and not portrait
-	_place(touch_hint,Rect2(10,view.y-167,128,20));touch_hint.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
+	_place(hint,Rect2(12,94,172,76));hint.visible=not touch_enabled and not portrait
+	_place(touch_hint,Rect2(10,view.y-172,128,20));touch_hint.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
 	var column:=pause_panel.get_child(0)
 	for child in column.get_children():
 		if child is BaseButton:child.custom_minimum_size.y=44 if portrait else 36
@@ -1844,11 +1848,12 @@ func _layout() -> void:
 	if not radio_text.is_empty():_reflow_radio()
 
 func _radio_snapshot() -> Dictionary:
-	var labels: Array=[bubble,radio_page_caption,status_label,hint,story_caption,toast,mission,momo_title,hud,score_label,energy_caption,distance_caption,brand_label]
+	var labels: Dictionary={"speech":bubble,"page":radio_page_caption,"status":status_label,"controls":hint,"stage":story_caption,"notice":toast,"mission":mission,"speaker":momo_title,"health":hud,"score":score_label,"energy":energy_caption,"distance":distance_caption,"brand":brand_label,"touch_hint":touch_hint}
 	var widgets: Array=[]
-	for label in labels:
-		if label.visible and not label.text.is_empty(): widgets.append({"rect":QA.rect(label),"fits":TextFit.fits(label),"text":label.text})
-	return {"speaker":radio_speaker,"page":radio_page,"pages":radio_pages.size(),"bubble":QA.rect(bubble),"status":QA.rect(status_label),"caption":QA.rect(radio_page_caption),"hint":QA.rect(hint),"widgets":widgets}
+	for id in labels:
+		var label: Label=labels[id]
+		if label.is_visible_in_tree() and not label.text.is_empty():widgets.append({"id":id,"rect":QA.rect(label),"outline":label.get_theme_constant("outline_size"),"fits":TextFit.fits(label),"text":label.text})
+	return {"speaker":radio_speaker,"anchor":radio_offset,"page":radio_page,"pages":radio_pages.size(),"bubble":QA.rect(bubble),"status":QA.rect(status_label),"caption":QA.rect(radio_page_caption),"hint":QA.rect(hint),"widgets":widgets}
 
 func _build_journal(parent: Node) -> void:
 	journal_panel=PanelContainer.new()

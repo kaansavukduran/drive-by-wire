@@ -29,7 +29,7 @@ desktop_entry() {
 [Desktop Entry]
 Type=Application
 Name=Drive-By Wire
-Comment=İLİN ile seçimli arcade araba çatışması
+Comment=Omega-3 ile hikâyeli arcade araba çatışması
 Comment[en]=Choice-driven arcade car combat
 Exec=$1
 Icon=drivebywire
@@ -83,9 +83,9 @@ Installed-Size: $installed_kb
 Depends: libc6 (>= 2.31), libx11-6, libxcursor1, libxinerama1, libxi6, libxrandr2, libgl1, libfontconfig1
 Recommends: libasound2t64 | libasound2, libpulse0
 Homepage: https://github.com/kaansavukduran/drive-by-wire
-Description: Choice-driven arcade car combat
- Drive-By Wire: İLİN ile üç arcade etap ve seçime göre 13 son.
- Klavye, fare, gamepad ve mobil kaydırma kontrolleri.
+Description: Story-driven arcade car combat
+ Drive-By Wire: Omega-3 ile iki çatışma etabı ve iki ara sahne.
+ Klavye, fare, gamepad ve sabit sanal joystick kontrolleri.
 EOF
 dpkg-deb --root-owner-group --build "$deb" "build/DriveByWire-${version}-linux-x64.deb"
 ls -l build/DriveByWire-"${version}"-linux-x64*

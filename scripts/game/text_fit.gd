@@ -58,3 +58,17 @@ static func pages(text: String,label: Label) -> Array[String]:
  if output.is_empty(): output.append("")
  probe.free()
  return output
+
+# Reading anchors count visible characters, so paragraph spacing never skips words.
+static func reading_length(text: String) -> int:
+ return text.replace(" ","").replace("\n","").replace("\r","").replace("\t","").length()
+static func offset_at(parts: Array[String],index: int) -> int:
+ var offset:=0
+ for i in mini(maxi(0,index),parts.size()):offset+=reading_length(parts[i])
+ return offset
+static func page_at(parts: Array[String],offset: int) -> int:
+ var end:=0
+ for i in parts.size():
+  end+=reading_length(parts[i])
+  if offset<end:return i
+ return maxi(0,parts.size()-1)
