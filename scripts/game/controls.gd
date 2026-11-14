@@ -105,5 +105,8 @@ static func binding_name(action: String, is_pad := false) -> String:
  return str({KEY_LEFT:"←",KEY_RIGHT:"→",KEY_UP:"↑",KEY_DOWN:"↓"}.get(code,OS.get_keycode_string(code)))
 
 static func run_hint() -> String:
- if last_device=="pad":return "Sol çubuk / D-pad · Sür\nRT / A Ateş · X Mayın\nStart Mola"
+ if last_device=="pad":return "Sol çubuk / D-pad · Sür\n"+pad_combat_hint()+"\nStart Mola"
  return "%s/%s · %s/%s Sürüş\nFare sol / %s Ateş\nFare sağ / %s Mayın\nEsc Mola" % [binding_name("drive_left"),binding_name("drive_right"),binding_name("drive_up"),binding_name("drive_down"),binding_name("drive_fire"),binding_name("drive_mine")]
+
+static func pad_combat_hint() -> String:
+ return "RT / %s Ateş · %s Mayın" % [binding_name("drive_fire",true),binding_name("drive_mine",true)]

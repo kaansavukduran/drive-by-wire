@@ -51,6 +51,7 @@ var leave_button: Button
 var warning: Label
 var pages: Array[String]=[]
 var page:=0
+var reading_offset:=0
 var stage_rect:=Rect2()
 var sounds: Node
 var sheets:=Sheets.new()
@@ -112,12 +113,13 @@ func _present() -> void:
  next_button.visible=not cinema and not node.has("choices")
  next_button.text=("Devam edecek · A" if cliff_scene else "2. etaba geç · A") if chapter["step"]=="complete" else "Devam · A / Enter"
  _layout();_focus();queue_redraw()
-func _reflow() -> void:
+func _reflow(remember: bool=true) -> void:
+ if remember:reading_offset=TextFit.offset_at(pages,page)
  var node: Dictionary=story_model.data()["nodes"][chapter["step"]]
  var prose: String=str(node.get("text",node.get("caption","")))
  if cliff_scene and chapter["step"]=="thanks" and chapter.get("reply")=="joke":prose="Teşekkür ederim, Kurt. Şakayı sonra yaparım… Bir saniye daha geç kalsaydın…"
  pages=TextFit.pages(prose,body)
- page=clampi(page,0,pages.size()-1)
+ page=TextFit.page_at(pages,reading_offset)
  body.text=pages[page]
  page_caption.text=""
  page_caption.hide()
@@ -156,7 +158,7 @@ func _choose(index: int) -> void:
  if options.size()!=2:return
  chapter=story_model.choose(chapter,str(options[index]["id"]));_enter()
 func _enter() -> void:
- elapsed=0;page=0;step_time=0
+ elapsed=0;page=0;reading_offset=0;step_time=0
  if chapter["step"]=="aftermath":ground_time=0
  _checkpoint();_present()
  if chapter["step"]=="trap":sounds.cue("kill")
@@ -237,7 +239,7 @@ func _layout() -> void:
  warning.position=Vector2(12,10);warning.size=Vector2(pause_panel.size.x-24,54)
  resume_button.position=Vector2(12,70);resume_button.size=Vector2(pause_panel.size.x-24,44)
  leave_button.position=Vector2(12,122);leave_button.size=Vector2(pause_panel.size.x-24,44)
- _reflow();_sync_cast();_sync_cliff_cast();queue_redraw()
+ _reflow(false);_sync_cast();_sync_cliff_cast();queue_redraw()
 func actor_positions() -> Array[Vector2]:
  if _ground_scene():return Art.positions()
  var lead:=0.0
@@ -307,7 +309,7 @@ func draw_ellipse_shadow(at: Vector2,extent: Vector2) -> void:
  for i in 20:polygon.append(at+Vector2(cos(i*TAU/20)*extent.x,sin(i*TAU/20)*extent.y))
  draw_colored_polygon(polygon,Color(0.02,0.025,0.04,0.26))
 func snapshot() -> Dictionary:
- return {"view":[get_viewport_rect().size.x,get_viewport_rect().size.y],"chapter":chapter.duplicate(true),"elapsed":elapsed,"paused":paused,"page":page,"pages":pages.size(),"text":body.text,"speaker":speaker.text,"body":QA.rect(body),"portrait":QA.rect(portrait),"speaker_rect":QA.rect(speaker),"panel":QA.rect(panel),"next":QA.rect(next_button),"next_visible":next_button.visible,"choices":choices.filter(func(b):return b.visible).map(func(b):return QA.rect(b)),"pause":QA.rect(pause_button),"resume":QA.rect(resume_button),"leave":QA.rect(leave_button),"fits":TextFit.fits(heading) and TextFit.fits(body) and TextFit.fits(speaker) and TextFit.fits(page_caption),"cast":_cast_snapshot(),"actors":actor_positions().map(func(pos):return [pos.x,pos.y]),"frame":injury_frame(),"interlude":2 if cliff_scene else 1,"cliff":_cliff_snapshot() if cliff_scene else {},"combat":false,"vehicle":save["vehicle"],"save_failed":save_failed}
+ return {"view":[get_viewport_rect().size.x,get_viewport_rect().size.y],"chapter":chapter.duplicate(true),"elapsed":elapsed,"paused":paused,"page":page,"anchor":reading_offset,"pages":pages.size(),"text":body.text,"speaker":speaker.text,"body":QA.rect(body),"portrait":QA.rect(portrait),"speaker_rect":QA.rect(speaker),"panel":QA.rect(panel),"next":QA.rect(next_button),"next_visible":next_button.visible,"choices":choices.filter(func(b):return b.visible).map(func(b):return QA.rect(b)),"pause":QA.rect(pause_button),"resume":QA.rect(resume_button),"leave":QA.rect(leave_button),"fits":TextFit.fits(heading) and TextFit.fits(body) and TextFit.fits(speaker) and TextFit.fits(page_caption),"cast":_cast_snapshot(),"actors":actor_positions().map(func(pos):return [pos.x,pos.y]),"frame":injury_frame(),"interlude":2 if cliff_scene else 1,"cliff":_cliff_snapshot() if cliff_scene else {},"combat":false,"vehicle":save["vehicle"],"save_failed":save_failed}
 
 func _cliff_projection() -> Transform2D:
  var zoom:=minf(stage_rect.size.x/(360.0 if last_portrait else 640.0),stage_rect.size.y/164.0)

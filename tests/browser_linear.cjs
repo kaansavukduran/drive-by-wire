@@ -1,5 +1,6 @@
 // Real input only. QA is an observer: no game/save setters, no teleport or HP edits.
 const {chromium}=require('playwright'),fs=require('node:fs'),assert=require('node:assert/strict');
+const assertHud=require('./hud_contract.cjs');
 const base=process.env.DBW_URL||'http://127.0.0.1:8915',mode=process.env.DBW_INPUT||'keyboard',out=process.env.DBW_EVIDENCE_DIR||'work/v012/browser-'+mode;
 fs.mkdirSync(out,{recursive:true});const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 (async()=>{const browser=await chromium.launch({executablePath:'/usr/bin/chromium',headless:true,args:['--no-sandbox','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});const result={status:'FAIL',input:mode,errors:[],combat:[],interludes:[],bosses:[]};let page;
@@ -27,7 +28,7 @@ try{
   const biomes=new Set(),seenTraffic=new Set();let rearSpawns=0;
   const start=Date.now();
   if(mode==='pad')await button(7,true);else if(mode==='keyboard'){const p=await point((await state()).road);await page.mouse.move(p.x,p.y);await page.mouse.down({button:'left'});}
-  while(true){q=await state();assert.equal(q.screen,'run');for(const w of q.radio_ui.widgets)assert(w.fits,'HUD text fits: '+w.text);
+  while(true){q=await state();assert.equal(q.screen,'run');assertHud(q);
    biomes.add(q.biome);assert.equal(biomes.size,1,'a stage cannot change biome mid-drive');
    for(const e of q.traffic){if(!seenTraffic.has(e.id)){seenTraffic.add(e.id);if(e.spawn_y>0){rearSpawns++;assert(e.y-54>q.camera_bottom,'new rear traffic is wholly beyond camera');}}}
    if(q.over){await release();result.combat.push({stage:stage+1,biome:[...biomes][0],rearSpawns,hp:q.hp,distance:q.distance,boss:q.boss,ending:q.ending_text});assert(q.boss.defeated&&q.ending_text.includes('ETAP TAMAMLANDI'),'actual boss victory, not timeout/death');break;}

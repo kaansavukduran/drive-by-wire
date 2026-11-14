@@ -217,7 +217,7 @@ func _process(delta: float) -> void:
 		QA.publish("title",{"vehicles":QA.rect(menu_buttons[5]),"view":[get_viewport_rect().size.x,get_viewport_rect().size.y],"cast":cast.snapshot() if cast.visible else {},"play":QA.rect(start_button),"garage":QA.rect(menu_buttons[1]),"endings":QA.rect(menu_buttons[2]),"help":QA.rect(menu_buttons[3]),"settings":QA.rect(menu_buttons[4]),"settings_ui":QA.settings(settings),"settings_visible":settings.visible,"help_visible":help_panel.visible,"help_scroll":QA.rect(help_scroll),"help_content":QA.rect(help_body),"help_scroll_value":help_scroll.page_index,"help_reader":help_scroll.snapshot()})
 	var caption: String="Devam edecek" if campaign["phase"]=="continued" else ("Ara sahneye devam et" if campaign["phase"]=="interlude" else ("Etap %d / 13 · Devam et" % (int(campaign["stage"])+1) if campaign["stage"]>0 else "Hikâyeye başla"))
 	start_button.text = caption+(" · A" if Controls.last_device=="pad" else " · Space")
-	control_hint.text = "Sol çubuk / D-pad Serbest sürüş\nRT/A Ateş · X Mayın · Start Mola" if Controls.last_device=="pad" else "Oklar / WASD Serbest sürüş\nFare sol Ateş · sağ Mayın"
+	control_hint.text = "Sol çubuk / D-pad Serbest sürüş\n"+Controls.pad_combat_hint()+" · Start Mola" if Controls.last_device=="pad" else "Oklar / WASD Serbest sürüş\nFare sol Ateş · sağ Mayın"
 	if DisplayServer.is_touchscreen_available():
 		start_button.text=caption
 		control_hint.text="Sabit joystick · Dört yön · Öne ateş / arkaya mayın\nİki etap, iki ara sahne. Yol birlikte sürüyor."

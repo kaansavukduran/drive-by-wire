@@ -26,3 +26,5 @@
 0.13.0 aşamasında canlı standart revizyonu yeniden kontrol edildi, v1.7 ile aynı. Son kullanıcı kararı kontrol ailesini yalnız Ateş/Mayın olarak sadeleştirir; bu açık seçim önceki turbo/fren/sıyrılma kararını değiştirir. Sağlanan özgün çilek dosyasının yükleyicide kullanımı açıkça istendi, ayrıca izin döngüsü açılmaz.
 
 0.13.1:14 Kasım2026 canlı belgenin içeriği yeniden okundu; v1.7 ve aynı revizyon. Kapsam DBW-TRUCK-001 kapı menteşesi/gövde sürekliliği, görünür uyarı ve gerçek export regresyonudur. Yeni karakter/marka/kanon veya kontrol şeması seçimi yoktur.
+
+0.13.2:14 Kasım 2026 canlı belge içeriği yeniden okundu; v1.7/aynı revizyon. Kapsam yazı/dış çizgi çakışması, açık/koyu tema, okuma ve ayar odağı koruması, doğru giriş ipucu, gerçek metadata ve export regresyonlarıdır. Kurulu iki Unslop becerisi uygulandı; bağlı sohbetler araç yokluğu nedeniyle okunmuş sayılmaz. Yeni kontrol şeması/kanon/altyapı veya k44 yükümlülüğü kendiliğinden açılmaz.

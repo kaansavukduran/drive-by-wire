@@ -8,6 +8,7 @@ var next: Button
 var counter: Label
 var groups: Array=[]
 var page_index:=0
+var row_anchor: Control
 var _last_size:=Vector2.ZERO
 var _last_count:=-1
 func _init() -> void:
@@ -22,6 +23,10 @@ func _process(_delta: float) -> void:
  if is_visible_in_tree() and (size!=_last_size or column.get_child_count()!=_last_count): reflow()
 func reflow() -> void:
  if not is_instance_valid(previous): return
+ var focused: Control=get_viewport().gui_get_focus_owner()
+ var edited: Control=focused if is_instance_valid(focused) and focused.is_visible_in_tree() else null
+ while edited!=null and edited.get_parent()!=column:edited=edited.get_parent() as Control
+ if edited!=null:row_anchor=edited
  _last_size=size;_last_count=column.get_child_count();column.position=Vector2.ZERO;column.size.x=size.x
  var nav:=44.0 if DisplayServer.is_touchscreen_available() else 28.0
  var height:=maxf(44,size.y-nav-6)
@@ -40,12 +45,17 @@ func reflow() -> void:
  if not group.is_empty(): groups.append(group)
  if groups.is_empty():groups.append([])
  page_index=clampi(page_index,0,groups.size()-1)
- _show_page()
+ if is_instance_valid(row_anchor):
+  for i in groups.size():
+   if row_anchor in groups[i]:page_index=i;break
+ elif not groups[page_index].is_empty():row_anchor=groups[page_index][0]
+ _show_page(false)
  var w: float=floorf((size.x-68)/2)
  previous.position=Vector2(0,size.y-nav);previous.size=Vector2(w,nav)
  next.position=Vector2(size.x-w,size.y-nav);next.size=Vector2(w,nav)
  counter.position=Vector2(w+2,size.y-nav);counter.size=Vector2(64,nav)
-func _show_page() -> void:
+func _show_page(remember: bool=true) -> void:
+ if remember and not groups[page_index].is_empty():row_anchor=groups[page_index][0]
  for child in column.get_children(): child.visible=not child.has_meta("skip_paging") and child in groups[page_index]
  previous.disabled=page_index==0;next.disabled=page_index==groups.size()-1
  counter.text="%d / %d" % [page_index+1,groups.size()]

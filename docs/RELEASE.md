@@ -1,3 +1,7 @@
+# 0.13.2 · Okunan yerde kal
+
+Üst üste binen HUD metinleri ayrıldı; dış çizgiler dahil ortak çakışma denetimi eklendi. Ekran/font değişimi okunan yeri, ayarların yeniden sayfalanması düzenlenen satırı korur. Açık temada çıplak dünya metni okunur; gamepad ipuçları gerçek özel atamayı gösterir. Eski 13 son/İLİN açıklamaları gerçek içerikle uyumlu hale geldi. Gerçek test/yayın durumu QA ve PR kaydındadır.
+
 # 0.13.1 · Yerine bağlı kapılar
 
 Kamyon kapıları artık çatıdan açılmaz: sabit arka menteşelerden açılır, nesne aynı arka ağızdan bırakılır ve kapılar kapanır. Gövde görseli, hareket kökü, kontroller ve kayıtlar korunur. Gerçek test/paket/yayın durumu QA ve PR makbuzundadır.

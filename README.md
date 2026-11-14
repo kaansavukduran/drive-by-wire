@@ -1,4 +1,4 @@
-# Drive-By Wire · 0.13.1
+# Drive-By Wire · 0.13.2
 
 **Fragaria Interactive · AIONIA**
 
@@ -46,3 +46,5 @@ Canlı /version.json sürüm/build commit/giriş adresini bildirir. Build başar
 0.13.0: Her etap tek biyomdur: ilk etap Cam Ormanı, ikinci etap Buzlu Arşiv.180m’deki otomatik geçiş kaldırıldı; yarış da aynı ormanda kalır. Arkadan gelen araçlar gerçek kamera sınırının150 dünya birimi gerisinden başlar; mevcut araçlar yön değişiminde taşınmaz. Sürüşte yalnız Ateş ve Mayın, çıplak can barı ve kutusuz bildirimler vardır; karakter replikleri panelde kalır. Üç sohbet yanıtı farklı cevap verir, aynı hikâye ve sürüş kurallarına bağlanır. Mevcut Fragaria çileği web/native yükleyicisinde gerçek asset olarak paketlenir.
 
 0.13.1: Kamyon kasasının ortasını açan saldırı resmi yerine sabit arka menteşeli kapılar; kademeli açılış, gerçek arka ağızdan yük bırakma ve kapanış. Gövde/kayıt/kontroller korunur.
+
+0.13.2: Bildirimler ve kontrol ipuçları ayrı alanlarda; çıplak HUD yazısı iki temada okunur. Yön/font değişiminde okunan yer ve ayarlarda düzenlenen satır korunur. Gamepad ipucu gerçek özel atamayı gösterir; proje/web/Linux açıklaması gerçek lineer içerikle uyumludur.
