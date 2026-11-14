@@ -146,3 +146,9 @@ Her çatışma etabı tek atlas bölgesi kullanır: Cam Ormanı2, Buzlu Arşiv3.
 Arka trafik kaynağı kamera tabanının150 dünya birimi gerisi; ön kamyon kamera tepesinin150 birim ilerisi. Kaynak sprite yarı yüksekliği54 ve kamera ölçeğiyle tamamının görünmez başladığı test edilir. Başlangıç Y’si saklanır; temizlik alt sınırı yeni uzak araçları doğdukları karede yok etmez. Yerleşim değişimi mevcut dünya konumunu değiştirmez.
 
 Fragaria çilek dosyası kaynakla bit düzeyinde aynı:1058×1487 JPEG, SHA256 e72d624a012cb86e5b21011452fd1a8fb1954b2f19c68b51d8910bebef093828.0.13.0 açık isteğiyle bu sembol public yükleyici assetine dahil edilir; yeni çizim veya final logo varyantı üretilmedi. Paketleme dosya eksikse durur; sessizce wordmark’a düşmez. Web/native gerçek ilerleme, hata ve yeniden dene akışları korunur.
+
+## 0.13.1 · Kamyonun arka kapıları
+
+Kamyon artık saldırıda atlasın yanlış orta/tavan açıklığı olan5.hücresine geçmez; bütün döngüde aynı2.hücre gövdesi kullanılır. Yeni resim üretilmedi. İki kapının metal dokusu aynı kamyon atlasından alınır; kapı yüzeyi dikey, menteşe eksenleri arka dikmelerde sabittir. Ortak araç köküne göre menteşeler(-15,48)/(8,48), rijit yaprak11.5, izdüşüm yüksekliği6 ve dışa105derece açılış; yük çıkışı(-3.5,52). Bu kaynak hizası oyunun mevcut flipped gövdesi içindir, evren geneline ölçü dayatılmaz.
+
+0.4sn açılış uyarı sırasında gerçekleşir;0.65sn gerçek bırakma anında tam açıktır,0.12sn geçiş beklemesi ve0.28sn kapanış izler. Saldırı iptalinde aynı köklerden kapanır. Mekanik hareket zamanlamayı anlatır; süs/rasgele titreşim değildir. Kapı animasyonu fizik kökünü/hitbox'ı, saldırı RNG'sini veya hızını değiştirmez. Uyarı ve çıkan gerçek nesne aynı arka ağız merkezini kullanır.

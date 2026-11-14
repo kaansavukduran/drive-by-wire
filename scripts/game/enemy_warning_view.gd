@@ -22,7 +22,7 @@ func _draw_warning(warning: Dictionary) -> void:
 			draw_arc(target,9,0,TAU,16,ink,3)
 			draw_arc(target,9,0,TAU,16,amber,1)
 		"drop":
-			draw_rect(Rect2(target-Vector2(10,10),Vector2(20,20)),ink)
+			draw_rect(Rect2(target-Vector2(10,10),Vector2(20,20)),ink,false,3)
 			draw_rect(Rect2(target-Vector2(10,10),Vector2(20,20)),amber,false,1)
 			draw_rect(Rect2(target+Vector2(-1,-6),Vector2(2,7)),amber)
 			draw_rect(Rect2(target+Vector2(-1,3),Vector2(2,2)),amber)

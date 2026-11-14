@@ -69,7 +69,7 @@ func run() -> void:
  h.eq("no obstacle at the warning start",game.obstacles.size(),0)
  warnings=game._enemy_warnings()
  h.check("reduced motion keeps the essential drop cue",warnings.size()==1 and warnings[0]["kind"]=="drop")
- h.eq("drop cue identifies actual release point",warnings[0]["target"],truck["pos"]+Vector2(0,52))
+ h.eq("drop cue identifies actual release point",warnings[0]["target"],truck["pos"]+game.TruckHatch.RELEASE)
  advance(0.5)
  h.eq("truck cannot drop before warning duration",game.obstacles.size(),0)
  advance(0.2)

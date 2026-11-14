@@ -196,3 +196,11 @@ Ortak HUD sağlık/enerji/görev kutuları yerine10px can barı, çıplak metrik
 Logo kaynakta ignore edildiği için eski public pakette yoktu. Mevcut kullanıcı-sahipli çilek dosyası yeni açık taleple değiştirilmeden assets/brand/fragaria-strawberry.jpg içine dahil edildi; kaynak hash ve ölçü provenance içinde. Web build asset eksikse sessizce markasız geçmez. Yeni görsel/kanon/logo tasarımı veya tüm özel geçmişin aktarımı yapılmaz.
 
 Dokunmatik ilk gerçek koşuda boss uyarısının ikinci satırı kırpıldı; yazı kısaltıldı, alan32px oldu, üç boss konumu/beş viewport gerçek fitting regresyonu eklendi. Mobil puan/metre satırı boss barından ayrıldı. İlk FAIL kanıtı korunur. Native28takım/1848kontrol ve son yerleşim152kontrol PASS; son tarayıcı/CI/canlı sonuçlar QA ve bu sürümün PR/yayın makbuzundadır. Fiziksel cihaz ve insan oynanış testi ayrıca açık kalır.
+
+## 0.13.1 · DBW-TRUCK-001
+
+Kaynak /workspace/drive-by-wire-public; kaansavukduran/drive-by-wire; başlangıç main d69735dfdc7d/0.13.0; dal codex/truck-rear-hinges. Kullanıcı kapak açılışının fiziksel olarak saçma olduğunu bildirdi. Fragaria Unslop, ilgili oyun/sprite/proje yönergeleri ve güncel canlı AIONIA v1.7/aynı revizyon yeniden okundu. Konu mevcut düşman kapağıdır; yeni karakter/marka/oyun motoru/kontrol kararı yoktur.
+
+Normal0.13.0 web sürüşü ve gerçek atlas incelendi: saldırı karesi kasanın ortasında/çatıda kapı gösteriyordu. Yeni truck_hatch aynı gövdeyi korur; iki rijit yaprak arka dikmelere bağlıdır, açılma gerçek uyarı/bırakma/kapanma durumuna bağlıdır. Arka çıkış ile uyarı aynı ölçülen merkeze hizalandı. Uyarıdaki dolu alan açılışı örtüyordu; işaret ve çerçeve kaldı, örtü kaldırıldı. Sprite dosyaları değiştirilmedi, kod/yerleşim onarımıdır. Mevcut veri/tercihler ve kontrol onayı korunur.
+
+Yeni173kontrol ile native29takım/2024PASS. İlk uç-değer kayan nokta FAIL'i ve tarayıcıdaki karşılaşma/örnekleme eksikleri QA.md içinde, kanıtları work/v0131 altında ayrı tutulur. Tarayıcı testleri normal başlatma ve gerçek girişlerle aynı beş pozu ister, test setter/HP/RNG/teleport kullanmaz. Son CI/canlı sürüm ve kaynak ağacı eşitliği PR/yayın makbuzunda ayrıca kaydedilir; rollback tabanı d69735dfdc7d. Fiziksel donanım, insan kalite değerlendirmesi ve yeni performans ölçümü yapılmış sayılmaz.

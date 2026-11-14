@@ -50,6 +50,7 @@ const ANIMS := {
 	"hit": [7, 3, 14.0, false], "damaged": [8, 4, 10.0, true], "critical": [9, 4, 10.0, true],
 	"destroyed": [10, 10, 12.0, false],
 }
+const TruckHatch=preload("res://scripts/game/truck_hatch.gd")
 const ENEMY_HALF := {"rammer": Vector2(11, 22), "pickup": Vector2(12, 24), "truck": Vector2(14, 40)}
 const TYPE_NAMES := {"rammer": "çarpan araba", "pickup": "kamyonet", "truck": "kamyon"}
 
@@ -907,7 +908,7 @@ func _process(delta: float) -> void:
 		qa_clock=0
 		var targets := {}
 		for action in touch_by_action: targets[action]=QA.rect(touch_by_action[action])
-		QA.publish("run",{"view":[get_viewport_rect().size.x,get_viewport_rect().size.y],"chapter":campaign.get("stage",-1),"hp":hp,"kills":kills,"collected":arcade.collected,"finish":_cfg("arcade.finish_distance",1200),"warnings":_enemy_warnings().map(func(w): return {"kind":w["kind"],"lane":w["lane"],"progress":w["progress"],"origin":[w["origin"].x,w["origin"].y],"target":[w["target"].x,w["target"].y]}),"traffic":enemies.map(func(e): return {"id":e["id"],"spawn_y":e["spawn_y"],"type":e["type"],"x":e["pos"].x,"y":e["pos"].y,"lane":e["lane"]}),"hazards":obstacles.map(func(o): return {"x":o["pos"].x,"y":o["pos"].y}),"shield":shield_left,"bonds":campaign.get("bonds",{}),"pickup_targets":pickups.map(func(p): return {"lane":_lane_of(p["pos"].x),"y":p["pos"].y}),"radio_ui":_radio_snapshot(),"result_focus":result_buttons.find(get_viewport().gui_get_focus_owner()),"support":comfort_cooldown,"pulse_count":comfort_count,"mine_held":_held("drive_mine"),"result":result_buttons.map(func(b): return QA.rect(b)),"ending_text":end_panel.text if over else "","lane":lane,"player":[car_x,car_y],"sprite":[car.position.x,car.position.y],"hitbox":[_player_rect().position.x,_player_rect().position.y,_player_rect().size.x,_player_rect().size.y],"joystick":QA.rect(joystick),"stick":[joystick.value.x,joystick.value.y],"paused":paused,"over":over,"fire":_held("drive_fire"),"boost":boosting,"distance":distance,"speed":speed,"energy":energy,"road":[road_touch_rect.position.x,road_touch_rect.position.y,road_touch_rect.size.x,road_touch_rect.size.y],"actions":targets,"pause":QA.rect(pause_button),"journal":journal_panel.visible,"touch":touch_enabled,"portrait_hud":({"health":QA.rect(hud),"meters":QA.rect(distance_caption),"hp_bar":QA.rect(hp_bar),"score":QA.rect(score_label)} if was_portrait else {}),"route":journey.route,"mines":-1,"mine_cooldown":mine_cooldown,"mine_reload":_mine_reload(),"mine_drops":mine_drops,"active_mines":mines.map(func(m): return [m["pos"].x,m["pos"].y]),"dodge":dodge_cooldown,"settings":settings_panel.visible,"settings_ui":QA.settings(settings_panel),"settings_rect":QA.rect(settings_panel),"settings_back":QA.rect(settings_panel.back),"pause_menu":pause_panel.get_child(0).get_children().filter(func(child): return child is Button).map(func(child): return QA.rect(child)),"journal_rect":QA.rect(journal_panel),"journal_reader":journal_reader.snapshot(),"biome":Biomes.NAMES[maxi(0,biome_index)],"hp_rect":QA.rect(hp_bar),"health_panel_visible":ui_panels[0].visible,"toast_box":toast.get_theme_stylebox("normal") is not StyleBoxEmpty,"camera_bottom":(get_viewport_rect().size.y-world_origin.y)/scale.y,"boss":boss.snapshot(),"journal_back":QA.rect(journal_panel.get_child(0).get_child(2))})
+		QA.publish("run",{"view":[get_viewport_rect().size.x,get_viewport_rect().size.y],"chapter":campaign.get("stage",-1),"hp":hp,"kills":kills,"collected":arcade.collected,"finish":_cfg("arcade.finish_distance",1200),"warnings":_enemy_warnings().map(func(w): return {"kind":w["kind"],"lane":w["lane"],"progress":w["progress"],"origin":[w["origin"].x,w["origin"].y],"target":[w["target"].x,w["target"].y]}),"traffic":enemies.map(func(e): return {"id":e["id"],"spawn_y":e["spawn_y"],"type":e["type"],"state":e["state"],"t":e["t"],"hatch":e.get("hatch_open",0),"x":e["pos"].x,"y":e["pos"].y,"lane":e["lane"]}),"hazards":obstacles.map(func(o): return {"x":o["pos"].x,"y":o["pos"].y,"kind":o["kind"],"source_id":o.get("source_id",-1)}),"shield":shield_left,"bonds":campaign.get("bonds",{}),"pickup_targets":pickups.map(func(p): return {"lane":_lane_of(p["pos"].x),"y":p["pos"].y}),"radio_ui":_radio_snapshot(),"result_focus":result_buttons.find(get_viewport().gui_get_focus_owner()),"support":comfort_cooldown,"pulse_count":comfort_count,"mine_held":_held("drive_mine"),"result":result_buttons.map(func(b): return QA.rect(b)),"ending_text":end_panel.text if over else "","lane":lane,"player":[car_x,car_y],"sprite":[car.position.x,car.position.y],"hitbox":[_player_rect().position.x,_player_rect().position.y,_player_rect().size.x,_player_rect().size.y],"joystick":QA.rect(joystick),"stick":[joystick.value.x,joystick.value.y],"paused":paused,"over":over,"fire":_held("drive_fire"),"boost":boosting,"distance":distance,"speed":speed,"energy":energy,"road":[road_touch_rect.position.x,road_touch_rect.position.y,road_touch_rect.size.x,road_touch_rect.size.y],"actions":targets,"pause":QA.rect(pause_button),"journal":journal_panel.visible,"touch":touch_enabled,"portrait_hud":({"health":QA.rect(hud),"meters":QA.rect(distance_caption),"hp_bar":QA.rect(hp_bar),"score":QA.rect(score_label)} if was_portrait else {}),"route":journey.route,"mines":-1,"mine_cooldown":mine_cooldown,"mine_reload":_mine_reload(),"mine_drops":mine_drops,"active_mines":mines.map(func(m): return [m["pos"].x,m["pos"].y]),"dodge":dodge_cooldown,"settings":settings_panel.visible,"settings_ui":QA.settings(settings_panel),"settings_rect":QA.rect(settings_panel),"settings_back":QA.rect(settings_panel.back),"pause_menu":pause_panel.get_child(0).get_children().filter(func(child): return child is Button).map(func(child): return QA.rect(child)),"journal_rect":QA.rect(journal_panel),"journal_reader":journal_reader.snapshot(),"biome":Biomes.NAMES[maxi(0,biome_index)],"hp_rect":QA.rect(hp_bar),"health_panel_visible":ui_panels[0].visible,"toast_box":toast.get_theme_stylebox("normal") is not StyleBoxEmpty,"camera_bottom":(get_viewport_rect().size.y-world_origin.y)/scale.y,"boss":boss.snapshot(),"journal_back":QA.rect(journal_panel.get_child(0).get_child(2))})
 	metrics_clock += delta
 	if OS.has_feature("web") and metrics_clock > 5.0:
 		metrics_clock = 0.0
@@ -1146,7 +1147,7 @@ func _add_enemy(kind: String, e_lane: int, y: float) -> void:
 		"hp": float(cfg.get("hp", 40)), "max_hp": float(cfg.get("hp", 40)),
 		"cd": float(cfg.get("fire_cooldown", cfg.get("obstacle_cooldown", 2.0))) * 0.6,
 		"state": "drive", "t": 0.0, "near": false, "passed": false, "flash": 0.0,
-		"slot": rng.randf_range(70.0, 130.0), "lane_cd": 0.0, "spawn_y": y,
+		"slot": rng.randf_range(70.0, 130.0), "lane_cd": 0.0, "spawn_y": y, "hatch_open": 0.0,
 	}
 	enemies.append(e)
 
@@ -1279,7 +1280,7 @@ func _update_enemies(delta: float) -> void:
 						# A passed truck cannot drop an untelegraphed obstacle onto the car.
 						e["state"] = "drive"
 					elif float(e["t"]) >= _warning_seconds(kind):
-						obstacles.append({"pos":e["pos"]+Vector2(0,52),"kind":e["drop_kind"],"hp":20.0,"dmg":float(cfg.get("obstacle_damage",20)),"near":false,"passed":false})
+						obstacles.append({"pos":e["pos"]+TruckHatch.RELEASE,"source_id":e["id"],"kind":e["drop_kind"],"hp":20.0,"dmg":float(cfg.get("obstacle_damage",20)),"near":false,"passed":false})
 						e["state"] = "attack"
 						e["t"] = 0.0
 				elif float(e["cd"]) <= 0.0 and e["pos"].y > 0.0 and e["pos"].y < car_y - 80:
@@ -1287,6 +1288,7 @@ func _update_enemies(delta: float) -> void:
 					e["state"] = "windup"
 					e["t"] = 0.0
 					e["drop_kind"] = ["crate","barrel","spikes"][rng.randi()%3]
+		if kind=="truck":e["hatch_open"]=TruckHatch.step(float(e.get("hatch_open",0)),str(e["state"]),float(e["t"]),delta)
 		if str(e["state"]) == "attack" and float(e["t"]) > 0.5 and kind != "rammer":
 			e["state"] = "drive"
 		e["pos"] = Vector2(move_toward(e["pos"].x, _lane_x(int(e["lane"])), lane_width / maxf(float(cfg.get("lane_change_seconds", 0.6)), 0.05) * delta), e["pos"].y + vy * delta)
@@ -1531,7 +1533,7 @@ func _enemy_warnings() -> Array[Dictionary]:
 				warnings.append({"kind":"rear","lane":enemy_lane,"progress":0.0,"origin":p,"target":Vector2(_lane_x(enemy_lane),H-13)})
 		elif str(enemy["state"]) == "windup":
 			var shot: bool = str(enemy["type"]) == "pickup"
-			var target: Vector2 = enemy["aim"] if shot else p+Vector2(0,52)
+			var target: Vector2 = enemy["aim"] if shot else p+TruckHatch.RELEASE
 			warnings.append({"kind":"shot" if shot else "drop","lane":_lane_of(target.x),"progress":clampf(float(enemy["t"])/_warning_seconds(str(enemy["type"])),0,1),"origin":p+Vector2(0,20),"target":target})
 		elif str(enemy["type"]) == "rammer" and absf(p.x-_lane_x(enemy_lane)) > 2:
 			warnings.append({"kind":"ram","lane":enemy_lane,"progress":clampf(1.0-absf(p.x-_lane_x(enemy_lane))/lane_width,0,1),"origin":p,"target":Vector2(_lane_x(enemy_lane),p.y)})
@@ -1580,7 +1582,9 @@ func _draw_enemy_sprite(e: Dictionary) -> void:
 	var kind: String=str(e["type"]);var index: int={"rammer":0,"pickup":1,"truck":2}[kind]
 	var dimensions: Vector2={"rammer":Vector2(48,68),"pickup":Vector2(48,72),"truck":Vector2(56,108)}[kind]
 	var p: Vector2=e["pos"]
-	Art.at(self,"enemies",index+(3 if str(e["state"])=="attack" else 0),p,dimensions,Color(1.4,1.4,1.4) if float(e["flash"])>0 else Color.WHITE,true)
+	var tint:=Color(1.4,1.4,1.4) if float(e["flash"])>0 else Color.WHITE
+	if kind=="truck":TruckHatch.draw(self,p,float(e.get("hatch_open",0)),str(e.get("drop_kind","crate")),str(e["state"])=="windup",tint)
+	else:Art.at(self,"enemies",index+(3 if str(e["state"])=="attack" else 0),p,dimensions,tint,true)
 	if kind=="pickup":
 		var tp:=p+Vector2(0,12)
 		var aim: Vector2=e.get("aim",Vector2(car_x,car_y)) if str(e["state"]) in ["windup","attack"] else Vector2(car_x,car_y)
