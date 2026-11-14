@@ -42,12 +42,12 @@
           406
         ]
       ],
-      "scale": 0.375,
+      "scale": 0.28,
       "world": [
         445,
         248
       ],
-      "landmark": "planted far hind paw at authored column450; shorter canonical body at scene scale .375",
+      "landmark": "planted far hind paw at authored column450; uniform scene-only scale .28 per user request, original artwork unchanged",
       "clips": {
         "hurt": {
           "frames": [
