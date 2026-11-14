@@ -1,3 +1,7 @@
+# 0.13.3 · Aynı çizim, dengeli boyut
+
+İlk ara sahnede yaralı Tavşan Emre’nin yalnız sahne ölçeği 0.375’ten 0.28’e indirildi (yaklaşık %25 daha küçük). Çizim dosyaları, oranlar, kaynak temasları, dünya kökleri ve diğer karakterlerin boyutları aynıdır. Test/yayın durumu QA ve PR makbuzunda ayrı kaydedilir.
+
 # 0.13.2 · Okunan yerde kal
 
 Üst üste binen HUD metinleri ayrıldı; dış çizgiler dahil ortak çakışma denetimi eklendi. Ekran/font değişimi okunan yeri, ayarların yeniden sayfalanması düzenlenen satırı korur. Açık temada çıplak dünya metni okunur; gamepad ipuçları gerçek özel atamayı gösterir. Eski 13 son/İLİN açıklamaları gerçek içerikle uyumlu hale geldi. Gerçek test/yayın durumu QA ve PR kaydındadır.

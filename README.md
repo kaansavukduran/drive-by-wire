@@ -1,4 +1,4 @@
-# Drive-By Wire · 0.13.2
+# Drive-By Wire · 0.13.3
 
 **Fragaria Interactive · AIONIA**
 
@@ -48,3 +48,5 @@ Canlı /version.json sürüm/build commit/giriş adresini bildirir. Build başar
 0.13.1: Kamyon kasasının ortasını açan saldırı resmi yerine sabit arka menteşeli kapılar; kademeli açılış, gerçek arka ağızdan yük bırakma ve kapanış. Gövde/kayıt/kontroller korunur.
 
 0.13.2: Bildirimler ve kontrol ipuçları ayrı alanlarda; çıplak HUD yazısı iki temada okunur. Yön/font değişiminde okunan yer ve ayarlarda düzenlenen satır korunur. Gamepad ipucu gerçek özel atamayı gösterir; proje/web/Linux açıklaması gerçek lineer içerikle uyumludur.
+
+0.13.3: İlk yol kenarı ara sahnesinde yaralı Emre yaklaşık %25 küçültüldü. Orijinal çizim, en-boy oranı, sabit ayak teması ve diğer karakterler değişmedi.

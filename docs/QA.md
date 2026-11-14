@@ -1,38 +1,19 @@
-# Drive-By Wire 0.13.2 · okunurluk ve durum koruması
+# Drive-By Wire 0.13.3 · Emre sahne ölçeği
 
-14 Kasım 2026. Taban main b7516c7e5085/0.13.1; yetkili public repo kaansavukduran/drive-by-wire. Canlı AIONIA belgesinin içeriği yeniden okundu: v1.7, aynı revizyon. Kurulu Fragaria Unslop ve Unslop; UI, behavior, game, sprite ve extended kontrolleri uygulandı. Bağlantılı ChatGPT konuşmaları read_thread aracı bulunmadığından okunmuş sayılmaz. Önceki sonuçlar [0.13.1](history/QA-v0131.md), PR18 ve önceki QA arşivlerindedir.
+14 Kasım 2026. Taban public main f40e3a97e66d/0.13.2. Fragaria Unslop uygulandı; güncel canlı AIONIA belgesi v1.7, aynı revizyon. Bu sürüm yalnız ilk yol kenarı ara sahnesinde yaralı Emre’nin uniform ölçeğini 0.375 → 0.28 indirir: yaklaşık %25.33 küçülme. Yeni çizim yoktur. Önceki okunurluk bulguları, ilk FAIL kanıtları ve sonuçlar [0.13.2 arşivinde](history/QA-v0132.md) korunur.
 
-## Bulgular ve kalıcı regresyonlar
-
-| Kimlik | Doğrulanan belirti / neden | Onarım ve kabul |
+| Kontrol | Sonuç | Kanıt / sınır |
 |---|---|---|
-| DBW-HUD-001 | Mevcut test_hud_text tek kutuya sığmayı ölçüyordu; bildirim ve kontrol ipuçlarının ortak alanını kapsamıyordu.0.13.1 gerçek oyun görüntüsünde KALKAN bildirimi kontrol yazılarının üstüne basıyor. Bazı stat metinlerinin rect/gölge alanları da kesişiyor. | Sol HUD satırları ve bildirim ayrı sabit alanlarda. Harf dış çizgisi dahil komşu metinler ayrılır; font küçültülmez, büyük kart eklenmez. Bare dünya metni açık temada da okunur krem/mint/altın ve koyu dış çizgi kullanır; konuşma paneli seçilen temayı kullanır. test_hud_text, yeni test_ui_readability ve ortak browser hud_contract. |
-| DBW-READ-001 | Yeniden sayfalama eski sayfa numarasını koruyordu; pencere/font değişince o numara başka kelimelere denk gelip okunmamış metni atlayabiliyordu. Kontrollü native reader testi eski kaynakta FAIL. | Aynı görünür-karakter konumu korunur. Yardım/günlük/son, telsiz, garaj ve ara sahne aynı TextFit yardımcılarını kullanır. Tekrarlanan reflow konumu geri sarmamalı; kelimeler kesilmez, bütün metin erişilir. Tema değişimleri reader'da tek ertelenmiş reflow'da birleşir. |
-| DBW-SET-001 | Gerçek web'de Lexend seçimi satır ölçülerini değiştirdi; font seçeneği başka sayfaya taşınıp görünmez oldu. Sayfa index'i düzenlenen kontrolü temsil etmiyordu. | Ayar sayfası odaktaki satırı/öğe kimliğini korur. Native test odak/görünürlük ve açık Sonraki eylemini doğrular. Web testi font seçildikten sonra kontrolün görünür kalmasını, temaya normal gezinmeyi ve kaydedilmiş iki tercihi reload sonrası doğrular. |
-| DBW-INPUT-001 | Gamepad ipucu RT/A ve X'i sabit yazıyordu; gerçek özel atama farklıysa yanlış tuş gösteriyordu. | Menü ve HUD ipucu aynı mevcut InputMap atamalarından isim alır. Y/RB native ataması ve gerçek aksiyon eşleşmesi sınanır. Varsayılanlar veya kullanıcının kayıtlı atamaları değiştirilmez. |
-| DBW-COPY-001 | Proje/web/Linux açıklamalarında artık var olmayan13son ve eski İLİN adı; garajda eski zorunlu alt marka metni kalmıştı. | Gerçek iki etap/iki ara sahne, Omega-3 ve Fragaria Interactive adıyla uyumlu açıklamalar.13etap planı ve3–13'ün henüz oynanmadığı bilgisi korunur. Paket kimlikleri/kayıt yolları değiştirilmez. |
+| Sanatın korunması | PASS | Emre, Aion ve Eren’in PNG dosyaları tabanla bit düzeyinde aynı. Aion/Eren’in bütün sahne verileri, Emre’nin hücreleri/temasları/world/klipleri aynı. Yalnız Emre scale ve açıklaması değişti. work/v0133/art-preservation.json. |
+| Native Godot 4.6.3 | PASS | Mevcut 30 takım / 2232 kontrol / 0 hata; road_story, görsel temaslar, sabit kökler, altı yaralı kare, ekran yönleri ve önceki metin/giriş regresyonları. work/v0133/native.log. |
+| Web export | PASS | Gerçek Godot export tamamlandı, 0.13.3 immutable giriş üretildi. work/v0133/build.log. |
+| Masaüstü normal oyun | PASS | Gerçek klavye/fare girdileriyle iki 400m/boss, bütün ara sahne adımları, kayıtla devam, Devam edecek/reload. Runtime hatası 0. work/v0133/full-keyboard/linear-results.json. |
+| Küçültülmüş sahnenin görünümü | PASS | Masaüstü1280×720, telefon390×844 ve844×390 görüntüleri incelendi. Aynı resmin eşit XY ölçeği; zemin teması korunur. İlk ara sahnede dikey→yatay→dikey güvenli mola/devam, metin fittingi ve normal dokunma doğrulandı. work/v0133/full-touch/emre-landscape.png ve emre-portrait-restored.png. |
+| Tam dokunmatik akış | PASS | Sabit joystick/ateş/mayın ile iki400m/boss ve iki ara sahne, ilk ve ikinci ara sahnede yön değişimi, Devam edecek/reload. Runtime hatası0. work/v0133/full-touch/linear-results.json. |
+| CI / production | NOT TESTED | Hazırlama sırasında yayın bekleniyor. Exact head/base, CI, merge ağaç eşitliği, Vercel deployment/alias, canlı version/asset ve gerçek oynama sonucu PR/yayın makbuzunda ayrıca kaydedilir. |
+| Fiziksel cihaz / insan değerlendirmesi | NOT TESTED | Fiziksel telefon/tablet/Xbox, diğer tarayıcılar ve insan estetik/oynanış değerlendirmesi yapılmadı. Chromium dokunmatik/Gamepad API emülasyonu fiziksel test değildir. |
+| Önceki performans / OS-font sınırları | FAIL | Önceden açık FPS ve Canvas sistem-font dosyası sınırları bu ölçek değişikliğiyle kapanmış sayılmaz. Yeni performans ölçümü yoktur. |
 
-## Gerçek test matrisi
+Tarayıcı akışları normal menü/girdi kullanır; HP/RNG/konum/kayıt setter’ı yoktur. Küçük ölçek değişikliğini aynalayan yeni test eklenmedi; mevcut anlamlı sahne ve tam oyun regresyonları çalıştırıldı. Telefonun ilk ara sahnede iki yönde kontrolü mevcut akışın ignored work/v0133/touch-review.cjs kopyasıyla yapıldı. Kaynak sanat, ayarlar, kontrol şeması ve hikâye değişmedi.
 
-| Kapsam | Durum | Kanıt / sınır |
-|---|---|---|
-| Eski kaynakta odaklı regresyon | FAIL | İlk işlevsel okunurluk koşusu132 kontrolde 33 FAIL:32metin alanı kesişmesi ve1okuma konumu. İlk test dosyasının yerel Skin sınıf adı hatası düzeltilmiş, ürün hatası diye sayılmamıştır.0.13.1 gerçek oyun görüntüsü work/v0131/production-hatch/keyboard-open.png aynı sorunu gösterir. |
-| Son native Godot4.6.3 | PASS |30 takım / 2.232 kontrol / 0 hata. Yeni ui_readability 208 kontrol; iki tema/font, dört viewport, iki giriş ailesi ve klavye/pad durumları, metin/dış çizgi sınırları, tam fitting, okunan kelime/konum, ayar satırı/odak ve doğru özel gamepad ipucu. |
-| Altı gerçek web düzeni | PASS |1280×720,390×844,844×390,768×1024,1024×768 ve düşük güç telefon. Çilek yükleyici, garajın sabit gerçek pikselleri, görünür düğmeler, ipuçları, joystick/çoklu parmak, ayarlar ve günlüğe gerçek giriş; runtime hatası 0. |
-| Görünüm ve kalıcılık | PASS | Masaüstünde gerçek ayarlardan Lexend + açık tema seçildi; düzenlenen font satırı görünür kaldı, normal reload sonrası iki tercih korundu. Açık temalı gerçek HUD görüntüsü incelendi. |
-| Okurken yön değişimi | PASS | Telefonda günlüğün sonraki sayfasına gerçek dokunma, dikey→yatay→dikey, aynı kelime/karakter konumu ve tam fitting. Dokunmatik girişler dönüşte temizlenir; native telsiz/garaj konumu da sınanır. |
-| Tam klavye/fare akışı | PASS | İki 400m/boss fazları, iki ara sahne, Kurt dört pozu, teşekkür adımında reload, Devam edecek ve tekrar açılış.135/135 can, runtime hatası 0. Normal oyun boyunca HUD fitting/komşu alanlar örneklenir. |
-| Tam son dokunmatik | PASS | Yalnız sabit joystick/ateş/mayın ile iki 400m/boss fazları, iki ara sahne, dört Kurt pozu, dikey→yatay güvenli mola/devam, Devam edecek/reload.133/105 can, runtime hatası 0. Güçlendirilmiş metin fitting/komşu alan kontrolleri oynama boyunca çalışır. |
-| Canlı gamepad akışı | NOT TESTED | Production yayımlandıktan sonra ayrı doğrulanır; PR/yayın makbuzu gerçek sonucu içerir. Önceki sürüm sonucu taşınmaz. |
-| Eski mekanik/konum regresyonları | PASS | Sabit biyom/uzak arka spawn, araç/garaj pivotları, dört yön/ateş/mayın, sınırsız mayın, iki etap/lineer kayıt ve gerçek kamyon kapısı173kontrol dahil eski native takımlar geçti. |
-| Yeni CI / production | NOT TESTED | Kaynak hazırlama sırasında henüz yayımlanmadı. Test kaynağı/ağaç, gerçek version/JS/WASM/PCK, public alias ve canlı oynama PR/yayın makbuzunda ayrı kaydedilir. Rollback0.13.1/b7516c7e5085. |
-| Fiziksel cihaz / tarayıcı / erişilebilirlik | NOT TESTED | Fiziksel telefon/tablet/Xbox, Firefox/Edge/Safari/iOS, ekran okuyucu/WCAG, bağımsız yüzde200uygulama/yazı ölçeği, İngilizce tam akış, insan okunurluk/eğlence/estetik ve yeni bellek/enerji ölçümü yapılmadı. Chromium/SwiftShader emülasyonu fiziksel test değildir. |
-| Önceki performans/font sınırları | FAIL | Önceden açık FPS ve Canvas OS-font dosyası sınırı bu okunurluk onarımıyla kapanmış sayılmaz. Yeni performans karşılaştırması yoktur. |
-
-İlk altı-düzen koşusunda beş cihaz ve controller PASS, desktop tema adımında FAIL oldu. Testin eski/stale konumdan görünmez tema kontrolüne tıklaması kabul edilmedi; font seçimiyle düzenlenen satırın gerçekten kaybolduğu ortak PagedSettings nedeni düzeltildi. Yeniden test, düzenlenen kontrolün görünürlüğünü zorunlu tutar ve temaya yalnız görünür normal gezinmeyle ulaşır. Kabul koşulları atlanmadı.
-
-Geometri denetimi görünür yazıların rect'ine font dış çizgisini de ekler; yalnız aynı label'ın yüksekliğini ölçmek yeterli sayılmaz. Bilinçli opak modal arkasındaki metin çiftleri çakışma sayılmaz; fitting/bounds kontrolleri korunur. Hiçbir ana bilgi kırpılarak veya font küçültülerek gizlenmedi. Kontrol şeması, varlıklar, hikâye ve gerçek oyuncu verisi korunur; yeni motor/bağımlılık eklenmez.
-
-Kanıtlar ignored work/v0132: readability-baseline.log, readability-first/second/row.log, native-final.log, build-row.log; forge ilk FAIL ve forge-final/forge-results.json, desktop-light-hud.png; full-keyboard ve full-touch/linear-results.json. QA salt okunur. Browser testleri yalnız normal menü/girdi kullanır, oyun/kayıt/HP/RNG/konum setter'ı kullanmaz.
-
-Tekrar: GODOT=godot bash tests/run_all.sh; GODOT_BIN=godot python3 packaging/build_web.py. DBW_URL/DBW_EVIDENCE_DIR ile tests/browser_forge.cjs; DBW_INPUT=keyboard|touch|pad ile tests/browser_linear.cjs. Ortak tests/hud_contract.cjs tam oynama boyunca aynı yazı kabulünü uygular.
+Tekrar: GODOT=godot bash tests/run_all.sh; GODOT_BIN=godot python3 packaging/build_web.py; DBW_INPUT=keyboard|touch|pad ile tests/browser_linear.cjs. Rollback kaynak f40e3a97e66d/0.13.2.

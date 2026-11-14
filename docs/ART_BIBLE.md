@@ -152,3 +152,8 @@ Fragaria çilek dosyası kaynakla bit düzeyinde aynı:1058×1487 JPEG, SHA256 e
 Kamyon artık saldırıda atlasın yanlış orta/tavan açıklığı olan5.hücresine geçmez; bütün döngüde aynı2.hücre gövdesi kullanılır. Yeni resim üretilmedi. İki kapının metal dokusu aynı kamyon atlasından alınır; kapı yüzeyi dikey, menteşe eksenleri arka dikmelerde sabittir. Ortak araç köküne göre menteşeler(-15,48)/(8,48), rijit yaprak11.5, izdüşüm yüksekliği6 ve dışa105derece açılış; yük çıkışı(-3.5,52). Bu kaynak hizası oyunun mevcut flipped gövdesi içindir, evren geneline ölçü dayatılmaz.
 
 0.4sn açılış uyarı sırasında gerçekleşir;0.65sn gerçek bırakma anında tam açıktır,0.12sn geçiş beklemesi ve0.28sn kapanış izler. Saldırı iptalinde aynı köklerden kapanır. Mekanik hareket zamanlamayı anlatır; süs/rasgele titreşim değildir. Kapı animasyonu fizik kökünü/hitbox'ı, saldırı RNG'sini veya hızını değiştirmez. Uyarı ve çıkan gerçek nesne aynı arka ağız merkezini kullanır.
+
+
+## 0.13.3 · Emre sahne ölçeği
+
+Kullanıcının yalnız küçültme talebi: story_cast_art.json içinde emre.scale 0.375 → 0.28 (74.67%). Altı mevcut kare tek, eşit XY ölçeği kullanır. PNG, kaynak ayak temasları, world[445,248], animasyon ve Aion/Eren verileri değişmez; yeni resim/yeniden çizim yoktur. Yaralı yatay gövde, aynı ayrıntıyla diğer karakterlere yakın boyutta görünür.
