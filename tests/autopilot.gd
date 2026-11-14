@@ -3,7 +3,7 @@ extends RefCounted
 ## No teleport, health override, time skip or scene setters from browser QA.
 static func drive(game: Node) -> void:
 	game._fire({})
-	if game.comfort_cooldown<=0: game._direct_action("drive_comfort")
+
 	var best: int=game.lane
 	var best_cost:=INF
 	for candidate in 3:
@@ -27,8 +27,7 @@ static func drive(game: Node) -> void:
 		var gap: float=enemy["pos"].y-game.car_y
 		if absf(enemy["pos"].x-game.car_x)<24 and gap>25 and gap<140 and game.mines_left>0:
 			if game.mines.is_empty(): game._execute({"intent":"drop_mine"})
-		if absf(enemy["pos"].x-game.car_x)<28 and absf(gap)<65 and game.dodge_cooldown<=0:
-			game._direct_action("drive_dodge")
+
 	if game.boss.active and game.boss.rear: game._execute({"intent":"drop_mine"})
 	game._change_lane(best)
 

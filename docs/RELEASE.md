@@ -1,3 +1,7 @@
+# 0.13.0 · Sade sürüş
+
+Etap başına tek biyom; kamera dışından gelen arka trafik; mevcut Fragaria çileği yükleyiciye dahil. Ateş ve Mayın dışında sürüş eylemleri kaldırıldı. Can kutusu yerine ince çıplak bar; bildirimler kutusuz metin, karakter replikleri panelde. Hazırlık üç gerçek sohbet yanıtıyla açılır, yanıtlar aynı lineer hikâyeye bağlanır. İki etap/iki ara sahne ve Devam edecek sınırı korunur. Gerçek test/yayın durumu QA ve PR makbuzundadır.
+
 # 0.12.0 · Uçurumun kıyısı
 
 13 farklı son yerine 13 etaplık lineer plan; şu an ilk iki savaş ve iki ara sahne oynanabilir. İkinci ara sahnede Kurt yandan çarparak Aion’u uçurumdan kurtarır, yanına gelir, pert arabanın yerine yeni araba sözü verir. Ardından Devam edecek; hazır olmayan 3–13 açılmaz. Sohbet yanıtları sürüş bonusu/rota/son değiştirmez. Eski kayıtlar arşivlenerek uyarlanır; araç/ayar/puan korunur.

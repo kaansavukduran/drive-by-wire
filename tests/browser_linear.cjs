@@ -19,11 +19,18 @@ try{
  let touchActive=false,held='',mine=false;
  const release=async()=>{if(mode==='pad'){await button(7,false);await button(2,false);await axis(0);}else if(mode==='touch'){if(touchActive)await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});touchActive=false;}else{if(held)await page.keyboard.up(held);held='';await page.mouse.up({button:'left'});if(mine)await page.mouse.up({button:'right'});mine=false;}};
  for(let stage=0;stage<2;stage++){
-  let q=await state();assert.equal(q.stage,stage);assert.equal(q.choices.length,1,'one fixed departure, no pretend branching route');await tap(q.choices[0]);await wait(()=>window.__dbwQA?.screen==='run');
-  let lastPulse=0,lastDodge=0;const start=Date.now();
+  let q=await state();assert.equal(q.stage,stage);assert.equal(q.radio_answers.length,3,'three meaningful dialogue replies');
+  const choice=mode==='touch'?2:mode==='pad'?1:0;const prompt=q.reply_text;
+  if(!q.reply_ready){if(mode==='pad')for(let i=0;i<choice;i++)await tapPad(13);await tap(q.radio_answers[choice]);await wait(()=>window.__dbwQA.reply_ready);q=await state();assert(q.radio_selected);assert.notEqual(q.reply_text,prompt);}
+  await tap(q.reply_continue);await wait(()=>window.__dbwQA?.screen==='run');
+  assert.equal((await state()).health_panel_visible,false);assert.deepEqual(Object.keys((await state()).actions).sort(),['drive_fire','drive_mine']);
+  const biomes=new Set(),seenTraffic=new Set();let rearSpawns=0;
+  const start=Date.now();
   if(mode==='pad')await button(7,true);else if(mode==='keyboard'){const p=await point((await state()).road);await page.mouse.move(p.x,p.y);await page.mouse.down({button:'left'});}
   while(true){q=await state();assert.equal(q.screen,'run');for(const w of q.radio_ui.widgets)assert(w.fits,'HUD text fits: '+w.text);
-   if(q.over){await release();result.combat.push({stage:stage+1,hp:q.hp,distance:q.distance,boss:q.boss,ending:q.ending_text});assert(q.boss.defeated&&q.ending_text.includes('ETAP TAMAMLANDI'),'actual boss victory, not timeout/death');break;}
+   biomes.add(q.biome);assert.equal(biomes.size,1,'a stage cannot change biome mid-drive');
+   for(const e of q.traffic){if(!seenTraffic.has(e.id)){seenTraffic.add(e.id);if(e.spawn_y>0){rearSpawns++;assert(e.y-54>q.camera_bottom,'new rear traffic is wholly beyond camera');}}}
+   if(q.over){await release();result.combat.push({stage:stage+1,biome:[...biomes][0],rearSpawns,hp:q.hp,distance:q.distance,boss:q.boss,ending:q.ending_text});assert(q.boss.defeated&&q.ending_text.includes('ETAP TAMAMLANDI'),'actual boss victory, not timeout/death');break;}
    assert(Date.now()-start<140000,'combat timeout');
    if(q.boss.active&&!result.bosses.some(b=>b.name===q.boss.name&&b.phase===q.boss.phase)){result.bosses.push({name:q.boss.name,phase:q.boss.phase});await page.screenshot({path:out+`/stage${stage+1}-boss${q.boss.phase}.png`});}
    const [px,py]=q.player;let best=q.lane,bestCost=Infinity;
@@ -34,8 +41,6 @@ try{
     const j=q.joystick,b=await page.locator('#canvas').boundingBox(),origin=await point(j,0);origin.x+=v*j[2]*.43*b.width/q.view[0];const fire=await point(q.actions.drive_fire,1),points=[origin,fire];if(rear)points.push(await point(q.actions.drive_mine,2));
     if(touchActive)await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:points});touchActive=true;
    }else{const next=v<0?'ArrowLeft':v>0?'ArrowRight':'';if(next!==held){if(held)await page.keyboard.up(held);if(next)await page.keyboard.down(next);held=next;}if(rear!==mine){if(rear)await page.mouse.down({button:'right'});else await page.mouse.up({button:'right'});mine=rear;}}
-   if(Date.now()-lastPulse>8500){if(mode==='pad')await tapPad(3);else if(mode==='touch'){await release();await tap(q.actions.drive_comfort);}else await page.keyboard.press('Shift');lastPulse=Date.now();}
-   if(mode!=='touch'&&Date.now()-lastDodge>3000&&q.traffic.some(e=>Math.abs(e.x-px)<28&&Math.abs(e.y-py)<60)){if(mode==='pad')await tapPad(4);else await page.keyboard.press('KeyR');lastDodge=Date.now();}
    await sleep(100);
   }
   q=await state();if(mode==='pad'){await axis(-.9);await wait(()=>window.__dbwQA.result_focus===0);await axis(0);}await tap(q.result[0]);await wait(()=>window.__dbwQA?.screen==='road_story');

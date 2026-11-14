@@ -98,6 +98,7 @@ var mine_cooldown := 0.0
 var mine_drops := 0
 var fire_cooldown := 0.0
 var spawn_timer := 2.0
+var next_enemy_id:=0
 var kills := 0
 var shake := 0.0
 var shake_power := 0.0
@@ -329,13 +330,13 @@ func _build_ui() -> void:
 	hint = _label(ui, theme, Vector2(456, 184), Vector2(176, 104))
 	hint.text = Controls.run_hint()
 	hint.add_theme_font_size_override("font_size", 9)
-	hint.add_theme_stylebox_override("normal", UiSkin.caption())
+	hint.add_theme_stylebox_override("normal", StyleBoxEmpty.new())
 	toast = _label(ui, theme, Vector2(202, 58), Vector2(236, 60))
 	toast.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	toast.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	toast.add_theme_font_size_override("font_size", 12)
 	toast.theme_type_variation="WarningLabel"
-	toast.add_theme_stylebox_override("normal",UiSkin.caption())
+	toast.add_theme_stylebox_override("normal",StyleBoxEmpty.new())
 	pause_button = _control_button(ui, Rect2(466, 292, 156, 42), "Mola · Esc", func(): _set_paused(true))
 	pause_button.focus_mode = Control.FOCUS_NONE
 	_build_pause(ui)
@@ -346,7 +347,7 @@ func _build_ui() -> void:
 	story_caption.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
 	story_caption.add_theme_font_size_override("font_size",9)
 	story_caption.theme_type_variation="AccentLabel"
-	story_caption.add_theme_stylebox_override("normal",UiSkin.caption())
+	story_caption.add_theme_stylebox_override("normal",StyleBoxEmpty.new())
 	toast.position.y=58
 	end_panel = _label(ui, theme, Vector2(W / 2 - 190, 44), Vector2(380, 250))
 	end_panel.z_index=40
@@ -516,8 +517,6 @@ func _to_title() -> void:
 func _build_touch(parent: Node) -> void:
 	touch_enabled = DisplayServer.is_touchscreen_available() or OS.has_feature("mobile")
 	var specs := [
-		[Rect2(8, 316, 80, 42), "TURBO", "drive_boost"], [Rect2(96, 316, 80, 42), "FREN", "drive_brake"],
-		[Rect2(456, 220, 80, 42), "SIYRIL", "drive_dodge"], [Rect2(544, 220, 80, 42), "DESTEK", "drive_comfort"],
 		[Rect2(456, 316, 80, 42), "ATEŞ", "drive_fire"], [Rect2(544, 316, 80, 42), "MAYIN", "drive_mine"],
 	]
 	for spec in specs:
@@ -636,25 +635,10 @@ func _direct_action(action: String) -> void:
 		"drive_left", "drive_right", "drive_up", "drive_down": pass
 		"drive_fire": _fire({})
 		"drive_mine": _execute({"intent": "drop_mine"})
-		"drive_dodge": _execute({"intent": "dodge"})
 		"drive_chat": _open_box("")
-		"drive_comfort":
-			if comfort_cooldown <= 0.0:
-				if boss.active and boss.position.distance_to(Vector2(car_x,car_y))<125: _hurt_boss(24)
-				comfort_count += 1
-				comfort_cooldown = _cfg("arcade.comfort_cooldown", 8)
-				_event("comfort")
-				energy = minf(_cfg("arcade.boost_capacity", 100), energy + _cfg("arcade.energy_amount", 30))
-				_notice("OMEGA-3 · ALAN DARBESİ\nYakın mermiler temizlendi · +enerji")
-				effects.append({"pos":Vector2(car_x,car_y),"t":0.0,"kind":"pulse","still":true})
-				sounds.cue("pulse")
-				for projectile in enemy_bullets:
-					if projectile["pos"].distance_to(Vector2(car_x,car_y))<90: projectile["dead"]=true
-				enemy_bullets=enemy_bullets.filter(func(b): return not b.get("dead",false))
-
 
 func _held(action: String) -> bool:
-	return Input.is_action_pressed(action) or bool(touch_held.get(action, false)) or (action=="drive_fire" and mouse_fire) or (action=="drive_mine" and mouse_mine)
+	return not action in Controls.RETIRED and (Input.is_action_pressed(action) or bool(touch_held.get(action, false)) or (action=="drive_fire" and mouse_fire) or (action=="drive_mine" and mouse_mine))
 
 
 func _set_paused(value: bool) -> void:
@@ -717,6 +701,8 @@ func _on_submit(text: String) -> void:
 	if over:
 		return
 	for command in parser.parse(text):
+		if str(command.get("intent","")) in ["speed_up","slow_down","dodge","ram"]:
+			_say("Hızımız sabit. Direksiyon, öne ateş ve arka mayın sende.");continue
 		var res: Dictionary = momo.interpret(command, companion_rng, game_time)
 		if str(res.get("line", "")) != "":
 			_say(str(res["line"]))
@@ -752,15 +738,13 @@ func _say(line: String,story: bool=false) -> void:
 
 func _reflow_radio() -> void:
 	var display_text:=radio_text
-	if not momo_title.visible:
-		display_text=str(Cast.NAMES.get(radio_speaker,"Omega-3"))+": "+display_text
 	radio_pages=TextFit.pages(display_text,bubble)
 	radio_page=mini(radio_page,radio_pages.size()-1)
 	_show_radio_page()
 
 func _show_radio_page() -> void:
 	bubble.text=radio_pages[radio_page] if not radio_pages.is_empty() else ""
-	momo_title.text=str(Cast.NAMES.get(radio_speaker,"Omega-3"))+("" if touch_enabled else "\n"+("Yol arkadaşın" if radio_speaker=="omega" else "Telsiz bağlantısı"))
+	momo_title.text=str(Cast.NAMES.get(radio_speaker,"Omega-3"))
 	radio_page_caption.text=("%d / %d" if touch_enabled else "%d / %d · Tam metin günlükte") % [radio_page+1,radio_pages.size()] if radio_pages.size()>1 else ""
 	bubble_left=maxf(3.5,bubble.text.length()*0.055)
 
@@ -812,6 +796,7 @@ func _change_lane(to: int) -> void:
 
 
 func _execute(command: Dictionary) -> void:
+	if str(command.get("intent","")) in ["speed_up","slow_down","dodge","ram"]:return
 	var step := _cfg("player.speed_step", 40)
 	match str(command.get("intent", "")):
 		"lane_left":
@@ -922,7 +907,7 @@ func _process(delta: float) -> void:
 		qa_clock=0
 		var targets := {}
 		for action in touch_by_action: targets[action]=QA.rect(touch_by_action[action])
-		QA.publish("run",{"view":[get_viewport_rect().size.x,get_viewport_rect().size.y],"chapter":campaign.get("stage",-1),"hp":hp,"kills":kills,"collected":arcade.collected,"finish":_cfg("arcade.finish_distance",1200),"warnings":_enemy_warnings().map(func(w): return {"kind":w["kind"],"lane":w["lane"],"progress":w["progress"],"origin":[w["origin"].x,w["origin"].y],"target":[w["target"].x,w["target"].y]}),"traffic":enemies.map(func(e): return {"type":e["type"],"x":e["pos"].x,"y":e["pos"].y,"lane":e["lane"]}),"hazards":obstacles.map(func(o): return {"x":o["pos"].x,"y":o["pos"].y}),"shield":shield_left,"bonds":campaign.get("bonds",{}),"pickup_targets":pickups.map(func(p): return {"lane":_lane_of(p["pos"].x),"y":p["pos"].y}),"radio_ui":_radio_snapshot(),"result_focus":result_buttons.find(get_viewport().gui_get_focus_owner()),"support":comfort_cooldown,"pulse_count":comfort_count,"mine_held":_held("drive_mine"),"result":result_buttons.map(func(b): return QA.rect(b)),"ending_text":end_panel.text if over else "","lane":lane,"player":[car_x,car_y],"sprite":[car.position.x,car.position.y],"hitbox":[_player_rect().position.x,_player_rect().position.y,_player_rect().size.x,_player_rect().size.y],"joystick":QA.rect(joystick),"stick":[joystick.value.x,joystick.value.y],"paused":paused,"over":over,"fire":_held("drive_fire"),"boost":boosting,"distance":distance,"speed":speed,"energy":energy,"road":[road_touch_rect.position.x,road_touch_rect.position.y,road_touch_rect.size.x,road_touch_rect.size.y],"actions":targets,"pause":QA.rect(pause_button),"journal":journal_panel.visible,"touch":touch_enabled,"portrait_hud":({"health":QA.rect(hud),"meters":QA.rect(distance_caption),"hp_bar":QA.rect(hp_bar),"energy_bar":QA.rect(energy_bar),"energy":QA.rect(energy_caption)} if was_portrait else {}),"route":journey.route,"mines":-1,"mine_cooldown":mine_cooldown,"mine_reload":_mine_reload(),"mine_drops":mine_drops,"active_mines":mines.map(func(m): return [m["pos"].x,m["pos"].y]),"dodge":dodge_cooldown,"settings":settings_panel.visible,"settings_ui":QA.settings(settings_panel),"settings_rect":QA.rect(settings_panel),"settings_back":QA.rect(settings_panel.back),"pause_menu":pause_panel.get_child(0).get_children().filter(func(child): return child is Button).map(func(child): return QA.rect(child)),"journal_rect":QA.rect(journal_panel),"journal_reader":journal_reader.snapshot(),"biome":Biomes.NAMES[maxi(0,biome_index)],"boss":boss.snapshot(),"journal_back":QA.rect(journal_panel.get_child(0).get_child(2))})
+		QA.publish("run",{"view":[get_viewport_rect().size.x,get_viewport_rect().size.y],"chapter":campaign.get("stage",-1),"hp":hp,"kills":kills,"collected":arcade.collected,"finish":_cfg("arcade.finish_distance",1200),"warnings":_enemy_warnings().map(func(w): return {"kind":w["kind"],"lane":w["lane"],"progress":w["progress"],"origin":[w["origin"].x,w["origin"].y],"target":[w["target"].x,w["target"].y]}),"traffic":enemies.map(func(e): return {"id":e["id"],"spawn_y":e["spawn_y"],"type":e["type"],"x":e["pos"].x,"y":e["pos"].y,"lane":e["lane"]}),"hazards":obstacles.map(func(o): return {"x":o["pos"].x,"y":o["pos"].y}),"shield":shield_left,"bonds":campaign.get("bonds",{}),"pickup_targets":pickups.map(func(p): return {"lane":_lane_of(p["pos"].x),"y":p["pos"].y}),"radio_ui":_radio_snapshot(),"result_focus":result_buttons.find(get_viewport().gui_get_focus_owner()),"support":comfort_cooldown,"pulse_count":comfort_count,"mine_held":_held("drive_mine"),"result":result_buttons.map(func(b): return QA.rect(b)),"ending_text":end_panel.text if over else "","lane":lane,"player":[car_x,car_y],"sprite":[car.position.x,car.position.y],"hitbox":[_player_rect().position.x,_player_rect().position.y,_player_rect().size.x,_player_rect().size.y],"joystick":QA.rect(joystick),"stick":[joystick.value.x,joystick.value.y],"paused":paused,"over":over,"fire":_held("drive_fire"),"boost":boosting,"distance":distance,"speed":speed,"energy":energy,"road":[road_touch_rect.position.x,road_touch_rect.position.y,road_touch_rect.size.x,road_touch_rect.size.y],"actions":targets,"pause":QA.rect(pause_button),"journal":journal_panel.visible,"touch":touch_enabled,"portrait_hud":({"health":QA.rect(hud),"meters":QA.rect(distance_caption),"hp_bar":QA.rect(hp_bar),"score":QA.rect(score_label)} if was_portrait else {}),"route":journey.route,"mines":-1,"mine_cooldown":mine_cooldown,"mine_reload":_mine_reload(),"mine_drops":mine_drops,"active_mines":mines.map(func(m): return [m["pos"].x,m["pos"].y]),"dodge":dodge_cooldown,"settings":settings_panel.visible,"settings_ui":QA.settings(settings_panel),"settings_rect":QA.rect(settings_panel),"settings_back":QA.rect(settings_panel.back),"pause_menu":pause_panel.get_child(0).get_children().filter(func(child): return child is Button).map(func(child): return QA.rect(child)),"journal_rect":QA.rect(journal_panel),"journal_reader":journal_reader.snapshot(),"biome":Biomes.NAMES[maxi(0,biome_index)],"hp_rect":QA.rect(hp_bar),"health_panel_visible":ui_panels[0].visible,"toast_box":toast.get_theme_stylebox("normal") is not StyleBoxEmpty,"camera_bottom":(get_viewport_rect().size.y-world_origin.y)/scale.y,"boss":boss.snapshot(),"journal_back":QA.rect(journal_panel.get_child(0).get_child(2))})
 	metrics_clock += delta
 	if OS.has_feature("web") and metrics_clock > 5.0:
 		metrics_clock = 0.0
@@ -945,14 +930,12 @@ func _process(delta: float) -> void:
 func _update_hud() -> void:
 	pause_button.visible=not over
 	score_label.text = "%06d" % arcade.score
-	hud.text = "CAN %d / %d\n%d m / %d m\nHız %d · Mayın sınırsız" % [maxi(0, ceili(hp)), int(max_hp), int(distance), int(_cfg("arcade.finish_distance", 1200)), int(speed)]
+	hud.text = "CAN %d / %d" % [maxi(0,ceili(hp)),int(max_hp)]
 	hp_bar.value = hp / max_hp * 100.0
-	energy_bar.value = energy / _cfg("arcade.boost_capacity", 100) * 100.0
-	energy_caption.text = "TURBO · ENERJİ %d%%" % int(energy_bar.value)
 	route_bar.value = distance / _cfg("arcade.finish_distance", 1200) * 100.0
 	var progress: Vector2 = arcade.contract_progress(distance, kills)
 	mission.text = "GÖREV %02d\n%s\n%d / %d\nSeri %d · En iyi %d" % [arcade.contract + 1, arcade.contract_title(), mini(int(progress.x), int(progress.y)), int(progress.y), arcade.chain, arcade.best_chain]
-	status_label.text = "Güven %d · %s\n%s" % [int(momo.trust), Momo.mood_name_tr(momo.mood), ("KALKAN %.1f sn" % shield_left) if shield_left > 0 else (("Destek %.0f sn" % comfort_cooldown) if comfort_cooldown > 0 else "%s · Destek hazır" % Controls.binding_name("drive_comfort",Controls.last_device=="pad"))]
+	status_label.text="KALKAN %.1f sn" % shield_left if shield_left>0 else ""
 	if touch_by_action.has("drive_mine"):
 		var mine_button: Button=touch_by_action["drive_mine"].visual
 		var compact: bool=touch_enabled and not was_portrait
@@ -970,18 +953,18 @@ func _update_hud() -> void:
 	story_caption.visible=not paused and not over
 	var chapter: int=int(campaign.get("stage",0))
 	var biome_name: String=Biomes.NAMES[Biomes.index(chapter,distance)]
-	story_caption.text=biome_name+" · "+("ETAP %d / 13" % (chapter+1) if Session.story_mode else "YOL")+"\n"+journey.goal_text(comfort_count,arcade.collected)
+	story_caption.text=biome_name+" · "+("ETAP %d / 13" % (chapter+1) if Session.story_mode else "YOL")
 	if boss.active:
-		story_caption.text="%s · %d / %d CAN" % [Boss.NAMES[boss.stage],ceili(boss.hp),int(boss.max_hp)]+"\n"+("ARKAYA GEÇİYOR · MAYIN HAZIRLA" if boss.rear and boss.position.y<400 else ("ARKANDA · MAYIN BIRAK" if boss.position.y>car_y+30 else "ÇEKİRDEĞE ATEŞ · UYARIYA DİKKAT"))
+		story_caption.text="%s · %d / %d CAN" % [Boss.NAMES[boss.stage],ceili(boss.hp),int(boss.max_hp)]+"\n"+("ARKAYA GEÇİYOR · MAYIN" if boss.rear and boss.position.y<400 else ("ARKANDA · MAYIN BIRAK" if boss.position.y>car_y+30 else "UYARIYI İZLE · ATEŞ ET"))
 		route_bar.value=boss.hp/boss.max_hp*100
+	route_bar.visible=boss.active and not paused and not over
 
-	if touch_enabled and not was_portrait:
-		hud.text="CAN %d / %d\n%d / %d m" % [maxi(0,ceili(hp)),int(max_hp),int(distance),int(_cfg("arcade.finish_distance",1200))]
-	if was_portrait:
-		energy_caption.text="ENERJİ %d%%" % int(energy_bar.value)
-		hud.text="CAN %d / %d" % [maxi(0,ceili(hp)),int(max_hp)]
-		distance_caption.text="%d / %d m" % [int(distance),int(_cfg("arcade.finish_distance",1200))]
-
+	distance_caption.text="%d / %d m" % [int(distance),int(_cfg("arcade.finish_distance",1200))]
+	var speaking:=not radio_text.is_empty() and bubble_left>0 and not paused and not over
+	ui_panels[1].visible=speaking
+	bubble.visible=speaking;radio_page_caption.visible=speaking;momo_title.visible=speaking
+	face.visible=speaking and radio_speaker=="omega"
+	radio_portrait.visible=speaking and radio_speaker!="omega"
 
 
 func _physics_process(delta: float) -> void:
@@ -1026,18 +1009,8 @@ func _simulate(delta: float) -> void:
 	shield_left = maxf(0.0, shield_left - delta)
 	comfort_cooldown = maxf(0.0, comfort_cooldown - delta)
 	var normal_speed := _cfg("player.base_speed", 220)
-	boosting = not box.visible and _held("drive_boost") and energy > 0.0 and not _held("drive_brake")
-	if not box.visible and _held("drive_brake"):
-		target_speed = _cfg("player.min_speed", 140)
-	elif boosting:
-		target_speed = _cfg("player.max_speed", 340) + _cfg("arcade.boost_speed", 95)
-		energy = maxf(0.0, energy - _cfg("arcade.boost_drain", 24) * delta)
-		if anim == "drive":
-			_play("boost")
-	else:
-		target_speed = normal_speed
-		if not _held("drive_boost"):
-			energy = minf(_cfg("arcade.boost_capacity", 100), energy + _cfg("arcade.boost_regen", 12) * delta)
+	boosting=false
+	target_speed=normal_speed
 	game_time += delta
 	fire_cooldown -= delta
 	mine_cooldown = maxf(0.0,mine_cooldown-delta)
@@ -1114,10 +1087,14 @@ func _spawn(delta: float) -> void:
 		if roll <= 0.0:
 			kind = k
 			break
-	var y := H + 50.0
-	if kind == "truck":
-		y = -50.0
+	var y := _traffic_spawn_y(kind)
 	_add_enemy(kind, rng.randi_range(0, lane_count - 1), y)
+
+
+func _traffic_spawn_y(kind: String) -> float:
+	var top: float=(0-world_origin.y)/maxf(.01,scale.y)
+	var bottom: float=(get_viewport_rect().size.y-world_origin.y)/maxf(.01,scale.y)
+	return minf(-120,top-150) if kind=="truck" else maxf(H+120,bottom+150)
 
 
 func _update_pickups(delta: float) -> void:
@@ -1129,8 +1106,8 @@ func _update_pickups(delta: float) -> void:
 		for index in range(lane_count):
 			if _lane_threat(index) < _lane_threat(chosen):
 				chosen = index
-		var kinds := ["repair", "energy", "shield"]
-		pickups.append({"pos": Vector2(_lane_x(chosen), -18), "kind": kinds[rng.randi_range(0, 2)]})
+		var kinds := ["repair", "shield"]
+		pickups.append({"pos": Vector2(_lane_x(chosen), -18), "kind": kinds[rng.randi_range(0, kinds.size()-1)]})
 	for pickup in pickups:
 		pickup["pos"] += Vector2(0, speed * delta * 0.65)
 		if _rect(pickup["pos"], Vector2(12, 12)).intersects(_player_rect()):
@@ -1150,7 +1127,7 @@ func _collect_pickup(kind: String) -> void:
 		"energy":
 			energy = minf(_cfg("arcade.boost_capacity", 100), energy + _cfg("arcade.energy_amount", 30))
 			mine_cooldown = 0.0
-			_notice("İKMAL · +enerji · mayın hazır")
+			_notice("İKMAL · Mayın hazır")
 		"shield":
 			shield_left = _cfg("arcade.shield_seconds", 7)
 			_notice("KALKAN · Bir darbeye koruma")
@@ -1162,13 +1139,14 @@ func _spawn_enemy_for_test(kind: String, e_lane: int, y: float) -> void:
 
 
 func _add_enemy(kind: String, e_lane: int, y: float) -> void:
+	next_enemy_id+=1
 	var cfg: Dictionary = DataLoader.dig(run_cfg, "enemies." + kind, {})
 	var e := {
-		"type": kind, "pos": Vector2(_lane_x(e_lane), y), "lane": e_lane,
+		"id": next_enemy_id, "type": kind, "pos": Vector2(_lane_x(e_lane), y), "lane": e_lane,
 		"hp": float(cfg.get("hp", 40)), "max_hp": float(cfg.get("hp", 40)),
 		"cd": float(cfg.get("fire_cooldown", cfg.get("obstacle_cooldown", 2.0))) * 0.6,
 		"state": "drive", "t": 0.0, "near": false, "passed": false, "flash": 0.0,
-		"slot": rng.randf_range(70.0, 130.0), "lane_cd": 0.0,
+		"slot": rng.randf_range(70.0, 130.0), "lane_cd": 0.0, "spawn_y": y,
 	}
 	enemies.append(e)
 
@@ -1317,7 +1295,7 @@ func _update_enemies(delta: float) -> void:
 			_collide(e, cfg)
 		else:
 			_check_near(e, r, int(e["lane"]))
-	enemies = enemies.filter(func(e: Dictionary) -> bool: return not e.has("dead") and e["pos"].y > -120 and e["pos"].y < H + 120)
+	enemies = enemies.filter(func(e: Dictionary) -> bool: return not e.has("dead") and e["pos"].y > minf(-120,float(e.get("spawn_y",-40))-80) and e["pos"].y < maxf(H+120,float(e.get("spawn_y",H))+80))
 
 
 func _collide(e: Dictionary, cfg: Dictionary) -> void:
@@ -1784,123 +1762,82 @@ func _place(control: Control, rect: Rect2) -> void:
 
 
 func _layout() -> void:
-	if not is_instance_valid(end_panel): return
-	var view: Vector2 = get_viewport().get_visible_rect().size
-	var portrait: bool = view.y>view.x
+	if not is_instance_valid(end_panel):return
+	var view:=get_viewport_rect().size;var portrait:=view.y>view.x
 	_clear_pointers()
-	if layout_initialized and portrait!=was_portrait and not over:
-		_set_paused(true)
-	was_portrait=portrait
-	layout_initialized=true
-	var offset: Vector2 = (view-Vector2(640,360))/2 if not portrait else Vector2.ZERO
+	if layout_initialized and portrait!=was_portrait and not over:_set_paused(true)
+	was_portrait=portrait;layout_initialized=true
+	var offset: Vector2=(view-Vector2(640,360))/2 if not portrait else Vector2.ZERO
 	for node in base_rects:
-		if is_instance_valid(node): _place(node,Rect2(base_rects[node].position+offset,base_rects[node].size))
-	momo_title.visible=not portrait
-	status_label.visible=not portrait and not touch_enabled
-	mission.visible=not portrait and not touch_enabled
-	distance_caption.visible=portrait
-	ui_panels[2].visible=not portrait and not touch_enabled
+		if is_instance_valid(node):_place(node,Rect2(base_rects[node].position+offset,base_rects[node].size))
+	for node in [ui_panels[0],ui_panels[2],brand_label,mission,status_label,energy_bar,energy_caption]:node.hide()
 	face.scale=Vector2.ONE
-	toast.add_theme_font_size_override("font_size",12)
 	radio_portrait.custom_minimum_size=Vector2.ZERO
-	radio_portrait.size=Vector2(44,44)
-	brand_label.visible=not portrait and not touch_enabled
-	bubble.add_theme_font_size_override("font_size",11 if portrait else 12)
-	score_label.add_theme_font_size_override("font_size",16 if portrait else 20)
-	hud.add_theme_font_size_override("font_size",11 if portrait else 12)
-	brand_label.text="FRAGARIA · AIONIA" if portrait else "FRAGARIA INTERACTIVE"
-	brand_label.add_theme_font_size_override("font_size",8 if portrait else 9)
-	var column := pause_panel.get_child(0)
-	for child in column.get_children():
-		if child is BaseButton: child.custom_minimum_size.y=44 if portrait else 36
-	pause_panel.reset_size()
+	for label in [hud,score_label,distance_caption,hint,toast,story_caption]:
+		label.add_theme_stylebox_override("normal",StyleBoxEmpty.new())
+		label.add_theme_color_override("font_outline_color",Color.BLACK)
+		label.add_theme_constant_override("outline_size",3)
+	hud.add_theme_font_size_override("font_size",11);score_label.add_theme_font_size_override("font_size",11)
+	distance_caption.add_theme_font_size_override("font_size",11);distance_caption.show()
+	bubble.add_theme_font_size_override("font_size",11);momo_title.add_theme_font_size_override("font_size",10)
+	toast.add_theme_font_size_override("font_size",12);story_caption.add_theme_font_size_override("font_size",9)
+	_place(hud,Rect2(12,4,210,18))
+	_place(hp_bar,Rect2(12,25,minf(180,view.x-100),10))
+	_place(score_label,Rect2(12,42,110,22));_place(distance_caption,Rect2(12,62,160,20))
+	_place(pause_button,Rect2(view.x-76,8,64,44));pause_button.text="Mola"
+	_place(route_bar,Rect2(view.x/2-92,4,184,4));route_bar.visible=boss.active
+	_place(story_caption,Rect2(view.x/2-112,6,224,46))
+	_place(toast,Rect2(12,view.y*.32,172,70))
+	var radio_box:=Rect2(view.x-184,66,176,112)
 	if portrait:
-		var width: float = view.x
-		_place(ui_panels[0],Rect2(8,8,width-92,52))
-		_place(brand_label,Rect2(16,10,width-110,12))
-		_place(score_label,Rect2(16,10,94,24))
-		_place(hud,Rect2(118,12,width-214,20))
-		_place(distance_caption,Rect2(16,46,90,14))
-		_place(hp_bar,Rect2(16,36,90,5))
-		_place(energy_bar,Rect2(118,36,width-218,5))
-		_place(energy_caption,Rect2(118,46,width-214,14))
-		energy_caption.add_theme_font_size_override("font_size",9)
-		_place(route_bar,Rect2(8,64,width-16,3))
-		_place(pause_button,Rect2(width-76,12,64,44))
-		pause_button.text="Mola"
-		_place(ui_panels[1],Rect2(8,72,width-16,52))
-		face.position=Vector2(16,76)
-		radio_portrait.position=face.position
-		_place(bubble,Rect2(76,76,width-94,32))
-		_place(radio_page_caption,Rect2(76,110,width-94,12))
-		_place(story_caption,Rect2(8,128,width-16,34))
-		_place(toast,Rect2(30,168,width-60,60))
-		var play_height := maxf(220,view.y-340)
-		var zoom := minf(play_height/360.0,(width-24)/224.0)
-		scale=Vector2.ONE*zoom
-		world_origin=Vector2(width/2-320*zoom,166)
-		road_touch_rect=Rect2(12,166,width-24,play_height)
-		_place(touch_hint,Rect2(10,view.y-29,122,20))
-		touch_hint.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
-		var gap := 8.0
-		var button_width: float = floorf((width-148-gap)/2)
-		var buttons_left: float=140
-		joystick.fit(Rect2(10,view.y-150,120,120))
-		var actions := ["drive_boost","drive_brake","drive_comfort","drive_dodge","drive_fire","drive_mine"]
-		for i in actions.size():
-			touch_by_action[actions[i]].fit(Rect2(buttons_left+(i%2)*(button_width+gap),view.y-162+(i/2)*50,button_width,44))
-		_place(pause_panel,Rect2(20,40,width-40,minf(view.y-80,440)))
-		_place(end_panel,Rect2(12,174,width-24,view.y-254))
-		_place(box,Rect2(12,view.y-56,width-24,40))
+		_place(score_label,Rect2(12,42,72,18))
+		_place(distance_caption,Rect2(94,42,view.x-106,18))
+		_place(route_bar,Rect2(12,68,view.x-24,5))
+		_place(story_caption,Rect2(12,76,view.x-24,32))
+		_place(toast,Rect2(12,190,view.x-24,50))
+		radio_box=Rect2(8,110,view.x-16,74)
+		var play_height:=maxf(220,view.y-230)
+		var zoom:=minf(play_height/360.0,(view.x-24)/224.0)
+		scale=Vector2.ONE*zoom;world_origin=Vector2(view.x/2-320*zoom,80)
+		road_touch_rect=Rect2(12,80,view.x-24,play_height)
+		joystick.fit(Rect2(10,view.y-144,124,124))
+		var bw:=minf(94,(view.x-156)/2)
+		touch_by_action["drive_fire"].fit(Rect2(view.x-2*bw-20,view.y-82,bw,60))
+		touch_by_action["drive_mine"].fit(Rect2(view.x-bw-10,view.y-82,bw,60))
+		_place(pause_panel,Rect2(20,40,view.x-40,minf(view.y-80,440)))
+		_place(end_panel,Rect2(12,174,view.x-24,view.y-254))
+		_place(box,Rect2(12,view.y-56,view.x-24,40))
 	else:
-		scale=Vector2.ONE
-		world_origin=offset
-		radio_portrait.position=face.position
-
+		scale=Vector2.ONE;world_origin=offset
 		road_touch_rect=Rect2(offset+Vector2(192,12),Vector2(256,336))
-		pause_button.text="Mola · Start" if Controls.last_device=="pad" else "Mola · Esc"
-		energy_caption.add_theme_font_size_override("font_size",9)
-		joystick.fit(Rect2(offset+Vector2(18,206),Vector2(144,144)))
-		_place(touch_hint,Rect2(offset+Vector2(8,180),Vector2(176,20)))
-		touch_hint.horizontal_alignment=HORIZONTAL_ALIGNMENT_LEFT
-		var rects := {"drive_boost":Rect2(456,252,80,44),"drive_brake":Rect2(544,252,80,44),"drive_dodge":Rect2(456,202,80,44),"drive_comfort":Rect2(544,202,80,44),"drive_fire":Rect2(456,302,80,44),"drive_mine":Rect2(544,302,80,44)}
-		for action in rects:
-			var rect: Rect2=rects[action]
-			touch_by_action[action].fit(Rect2(rect.position+offset,rect.size))
-	if touch_enabled and not portrait:
-		var right: float=view.x-146
-		var zoom:=1.15
-		scale=Vector2.ONE*zoom
-		world_origin=Vector2(view.x/2-320*zoom,view.y-360*zoom-8)
-		road_touch_rect=Rect2(world_origin+Vector2(224,60)*zoom,Vector2(192,280)*zoom)
-		_place(ui_panels[0],Rect2(8,8,138,114))
-		_place(score_label,Rect2(16,10,122,30));score_label.add_theme_font_size_override("font_size",18)
-		_place(hp_bar,Rect2(16,42,122,5))
-		_place(hud,Rect2(16,50,122,38));hud.add_theme_font_size_override("font_size",11)
-		_place(energy_caption,Rect2(16,94,122,14))
-		_place(energy_bar,Rect2(16,114,122,4))
-		_place(ui_panels[1],Rect2(right,8,138,100))
-		face.position=Vector2(right+8,14);face.scale=Vector2.ONE*0.5
-		radio_portrait.position=Vector2(right+8,14);radio_portrait.size=Vector2(24,24)
-		_place(momo_title,Rect2(right+40,14,90,22));momo_title.add_theme_font_size_override("font_size",10)
-		_place(bubble,Rect2(right+8,42,122,32));bubble.add_theme_font_size_override("font_size",11)
-		_place(radio_page_caption,Rect2(right+8,78,122,14))
-		_place(pause_button,Rect2(right,116,138,44))
-		joystick.fit(Rect2(12,view.y-140,128,128))
-		_place(touch_hint,Rect2(8,view.y-162,138,20))
-		_place(route_bar,Rect2(view.x/2-138,4,276,4))
-		_place(story_caption,Rect2(view.x/2-138,10,276,36))
-		_place(toast,Rect2(8,132,138,84));toast.add_theme_font_size_override("font_size",11)
-		var actions: Array=["drive_dodge","drive_comfort","drive_boost","drive_brake","drive_fire","drive_mine"]
-		for i in actions.size():touch_by_action[actions[i]].fit(Rect2(right+(i%2)*72,view.y-158+(i/2)*50,64,44))
+		joystick.fit(Rect2(10,view.y-138,124,124))
+		touch_by_action["drive_fire"].fit(Rect2(view.x-164,view.y-74,72,60))
+		touch_by_action["drive_mine"].fit(Rect2(view.x-84,view.y-74,72,60))
+		_place(pause_panel,Rect2(offset+Vector2(170,40),Vector2(300,280)))
+	_place(ui_panels[1],radio_box)
+	if portrait:
+		face.position=radio_box.position+Vector2(8,8);face.scale=Vector2.ONE*.65
+		_place(radio_portrait,Rect2(radio_box.position+Vector2(8,8),Vector2(30,30)))
+		_place(momo_title,Rect2(radio_box.position+Vector2(48,4),Vector2(radio_box.size.x-58,18)))
+		_place(bubble,Rect2(radio_box.position+Vector2(48,24),Vector2(radio_box.size.x-58,32)))
+		_place(radio_page_caption,Rect2(radio_box.position+Vector2(48,58),Vector2(radio_box.size.x-58,12)))
+	else:
+		face.position=radio_box.position+Vector2(8,6);face.scale=Vector2.ONE*.7
+		_place(radio_portrait,Rect2(radio_box.position+Vector2(8,6),Vector2(32,32)))
+		_place(momo_title,Rect2(radio_box.position+Vector2(46,6),Vector2(120,30)))
+		_place(bubble,Rect2(radio_box.position+Vector2(8,42),Vector2(160,44)))
+		_place(radio_page_caption,Rect2(radio_box.position+Vector2(8,92),Vector2(160,12)))
+	_place(hint,Rect2(12,86,172,76));hint.visible=not touch_enabled and not portrait
+	_place(touch_hint,Rect2(10,view.y-167,128,20));touch_hint.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
+	var column:=pause_panel.get_child(0)
+	for child in column.get_children():
+		if child is BaseButton:child.custom_minimum_size.y=44 if portrait else 36
 	position=world_origin
 	if not result_buttons.is_empty():
-		for i in result_buttons.size():
-			_place(result_buttons[i],Rect2(Vector2(12+i*(view.x/2),view.y-64),Vector2(view.x/2-24,48)) if portrait else Rect2(offset+Vector2(166+i*160,300),Vector2(148,44)))
+		for i in result_buttons.size():_place(result_buttons[i],Rect2(Vector2(12+i*(view.x/2),view.y-64),Vector2(view.x/2-24,48)) if portrait else Rect2(offset+Vector2(166+i*160,300),Vector2(148,44)))
 	_place(journal_panel,Rect2(Vector2(12,24),view-Vector2(24,48)) if portrait else Rect2(offset+Vector2(80,24),Vector2(480,312)))
-	_sync_touch()
-	_update_hud()
-	if not radio_text.is_empty(): _reflow_radio()
+	_sync_touch();_update_hud()
+	if not radio_text.is_empty():_reflow_radio()
 
 func _radio_snapshot() -> Dictionary:
 	var labels: Array=[bubble,radio_page_caption,status_label,hint,story_caption,toast,mission,momo_title,hud,score_label,energy_caption,distance_caption,brand_label]

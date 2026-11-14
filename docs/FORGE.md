@@ -184,3 +184,15 @@ Unslop güncel beceri, UI/behavior/game/sprite ekleri ve canlı AIONIA v1.7 yeni
 Kullanıcı şikâyetleri: büyük kutu ailesi mevcut sayfalama/fitting regresyonuna bağlandı; kısa aksiyon yazısında gerçek font yüksekliği kullanılır, normal replik kutuları daraltılır,44px eylemler korunur. Aktör kayması eski sabit temas testleriyle ve yeni93kontrollü cliff_rescue takımıyla denetlenir. Ham sprite kutusu temasının görsel temas olmadığı iki gerçek alfa kaynağında yakalandı; tampon hizası aynı sahne uzayında düzeltildi. Son native27takım/1699kontrol PASS. Gerçek tarayıcı akışları ve CI/yayın durumu QA/PR/yayın makbuzundadır.
 
 Görsel yükleme connector çağrısı tamamlanmadan kesildi; aktarım başarılı sayılmadı. Yetkili public checkout için mevcut GitHub CLI kimliğiyle standart Git gönderimi kullanılabilir; özel eski repo/tam geçmiş kopyalanmaz. Sonraki içerik3.etaptır; kullanıcı istemeden hazır olmayan11etap veya ayrı son üretilmez. Fiziksel cihaz/insan denge/yardımcı teknoloji açık test alanlarıdır.
+
+## 0.13.0 · Sade sürüş, sabit dünya
+
+Yetkili kaynak /workspace/drive-by-wire-public, kaansavukduran/drive-by-wire; başlangıç main6adc0b2/0.12.0, dal codex/clean-road-hud. Kullanıcının son kararı: etap başına tek biyom, kamera arkasından gelen araçlar, gerçek Fragaria çileği, yalnız ateş/mayın, ince can barı, kutusuz geçici yazılar, üç sohbet yanıtı ve aynı lineer hikâye. Yeni kontrol onayı istenmez; açık karar mevcut.
+
+Fragaria Unslop, proje profili ve ilgili UI/game/behavior/sprite kuralları uygulandı. Güncel AIONIA v1.7 revizyonu değişmemiş. Kaynak incelemesi180m otomatik biyom değişimini ve arka araçların H+50 sabitinden oluşturulduğunu doğruladı; dikey kameranın gerçek altı360’tan çok daha geridedir. Yeni araç gerçek görünür altın150 dünya birimi gerisinden başlar; retention sınırı da spawn kökünü korur. Mevcut araç layout değişiminde taşınmaz.
+
+Ortak HUD sağlık/enerji/görev kutuları yerine10px can barı, çıplak metrik ve yazı verir; karakter repliğinin portre/paneli korunur. Turbo/fren/sıyrılma/darbe eylemleri ve yeni teklifleri kaldırılır; eski kayıtlar silinmez. Hazırlık üç ayrı yanıt ve devam düğmesiyle açılır; tüm yanıtlar aynı fizik/hikâye sırasına bağlanır. İki savaş/iki ara sahne ve Devam edecek sınırı aynıdır.
+
+Logo kaynakta ignore edildiği için eski public pakette yoktu. Mevcut kullanıcı-sahipli çilek dosyası yeni açık taleple değiştirilmeden assets/brand/fragaria-strawberry.jpg içine dahil edildi; kaynak hash ve ölçü provenance içinde. Web build asset eksikse sessizce markasız geçmez. Yeni görsel/kanon/logo tasarımı veya tüm özel geçmişin aktarımı yapılmaz.
+
+Dokunmatik ilk gerçek koşuda boss uyarısının ikinci satırı kırpıldı; yazı kısaltıldı, alan32px oldu, üç boss konumu/beş viewport gerçek fitting regresyonu eklendi. Mobil puan/metre satırı boss barından ayrıldı. İlk FAIL kanıtı korunur. Native28takım/1848kontrol ve son yerleşim152kontrol PASS; son tarayıcı/CI/canlı sonuçlar QA ve bu sürümün PR/yayın makbuzundadır. Fiziksel cihaz ve insan oynanış testi ayrıca açık kalır.

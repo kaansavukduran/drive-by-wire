@@ -38,7 +38,9 @@ func run() -> void:
  title=current_scene
  await tap(JOY_BUTTON_A)
  await frames()
- h.check("story briefing offers one linear departure",current_scene.get("choices")!=null and current_scene.choices.size()==1)
+ h.check("story briefing offers three dialogue replies",current_scene.get("radio_answers")!=null and current_scene.radio_answers.size()==3)
+ await tap(JOY_BUTTON_A)
+ await frames()
  await tap(JOY_BUTTON_A)
  await frames()
  var game := current_scene
@@ -67,7 +69,7 @@ func run() -> void:
  await tap(JOY_BUTTON_X)
  h.eq("X drops mine",game.mine_drops,1)
  await tap(JOY_BUTTON_Y)
- h.check("Y offers MOMO support",game.comfort_cooldown>0)
+ h.eq("retired Y has no support action",game.comfort_cooldown,0.0)
  h.eq("hints switch to controller",Controls.last_device,"pad")
  await tap(JOY_BUTTON_START)
  h.check("Start pauses",game.paused and game.pause_panel.visible)

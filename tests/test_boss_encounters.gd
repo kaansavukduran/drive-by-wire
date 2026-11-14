@@ -28,8 +28,8 @@ func run() -> void:
   h.check("all robots cast several attacks",b.casts>=3)
   h.check("killing the boss yields victory exactly once",b.hit(10000) and not b.hit(10000) and b.defeated and not b.active)
   h.check("defeated robot cannot keep firing",b.step(5,Vector2.ZERO).is_empty())
-  h.eq("first biome before threshold",Biomes.index(stage,179),stage*2)
-  h.eq("next biome at threshold",Biomes.index(stage,180),stage*2+1)
+  h.eq("stage biome before old threshold",Biomes.index(stage,179),[2,3,4][stage])
+  h.eq("stage biome never changes at old threshold",Biomes.index(stage,180),Biomes.index(stage,0))
  root.size=Vector2i(640,360);root.content_scale_size=Vector2i(640,360);await process_frame;await process_frame
  Session.story_mode=true;Session.campaign_state=Book.choose(Book.defaults(),"depart")
  var game=load("res://scenes/main.tscn").instantiate();root.add_child(game);await process_frame
@@ -52,7 +52,7 @@ func run() -> void:
  h.check("rear mine arms in flight and hits robot even at rear movement bound",game.boss.hp<hp_before and game.mines.is_empty())
  game.boss.position=Vector2(game.car_x,game.car_y+56);hp_before=game.boss.hp
  game._direct_action("drive_comfort")
- h.check("nearby support pulse damages robot without moving it",game.boss.hp<hp_before and game.boss.position==Vector2(game.car_x,game.car_y+56))
+ h.check("retired support leaves robot hp and position unchanged",game.boss.hp==hp_before and game.boss.position==Vector2(game.car_x,game.car_y+56))
  var clock: float=game.boss.clock;game._set_paused(true);game._simulate(1)
  h.eq("pause freezes boss windup and movement",game.boss.clock,clock)
  game._set_paused(false);game._hurt_boss(10000)

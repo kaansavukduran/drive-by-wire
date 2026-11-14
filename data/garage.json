@@ -17,13 +17,13 @@
             "mood": "excited",
             "next_run": [
               {
-                "path": "run.player.max_speed",
+                "path": "run.player.max_hp",
                 "op": "add",
-                "value": 20
+                "value": 5
               }
             ]
           },
-          "reply": "Teşekkür ederim. Turbo için biraz daha payımız olacak."
+          "reply": "Teşekkür ederim. Yedek hücreyi acil onarıma ayıracağım."
         },
         {
           "id": "feed_parts",
@@ -464,7 +464,8 @@
             "value": 0.7
           }
         ]
-      ]
+      ],
+      "retired": true
     },
     {
       "id": "calm_core",
@@ -550,7 +551,8 @@
             "value": 30
           }
         ]
-      ]
+      ],
+      "retired": true
     }
   ]
 }
