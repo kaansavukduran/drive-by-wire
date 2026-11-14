@@ -1,3 +1,7 @@
+# 0.13.1 · Yerine bağlı kapılar
+
+Kamyon kapıları artık çatıdan açılmaz: sabit arka menteşelerden açılır, nesne aynı arka ağızdan bırakılır ve kapılar kapanır. Gövde görseli, hareket kökü, kontroller ve kayıtlar korunur. Gerçek test/paket/yayın durumu QA ve PR makbuzundadır.
+
 # 0.13.0 · Sade sürüş
 
 Etap başına tek biyom; kamera dışından gelen arka trafik; mevcut Fragaria çileği yükleyiciye dahil. Ateş ve Mayın dışında sürüş eylemleri kaldırıldı. Can kutusu yerine ince çıplak bar; bildirimler kutusuz metin, karakter replikleri panelde. Hazırlık üç gerçek sohbet yanıtıyla açılır, yanıtlar aynı lineer hikâyeye bağlanır. İki etap/iki ara sahne ve Devam edecek sınırı korunur. Gerçek test/yayın durumu QA ve PR makbuzundadır.
