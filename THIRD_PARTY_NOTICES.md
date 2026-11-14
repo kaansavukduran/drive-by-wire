@@ -27,3 +27,5 @@ Artwork provenance is registered in `assets/PROVENANCE.json`. Procedural art use
 `assets/fonts/ControlSymbols.ttf` is a renamed subset of DejaVu Sans containing U+2190–U+2193. It supplies missing arrow glyphs behind Lexend. Generated with fontTools; the Bitstream/DejaVu license and copyright are preserved in `assets/fonts/DEJAVU-LICENSE.txt`. Main character art is unchanged. Sound effects in `scripts/game/sounds.gd` are original procedural sine-wave cues, with no external samples.
 
 0.12.0 adds owner-requested AI-assisted original pixel-art cliff, Kurt acting poses and rescue/wreck vehicles. Methods, registration and SHA-256 are in assets/PROVENANCE.json and data/visual_art.json. Private original modelling sheets are not redistributed; generated game adaptations are not final canon approval.
+
+0.13.0 includes the owner-supplied Fragaria pixel strawberry as assets/brand/fragaria-strawberry.jpg, copied without edits at the owner’s explicit request for the public loading screen. Its SHA-256 and dimensions are recorded in assets/PROVENANCE.json. No newly designed final logo is claimed.

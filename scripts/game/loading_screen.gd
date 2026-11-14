@@ -1,7 +1,7 @@
 extends Control
 ## Native Godot loader uses measured ResourceLoader progress, without a timer.
 var brand_art: Texture2D
-const BRAND_PATH := "res://assets/brand/fragaria-reference.jpg"
+const BRAND_PATH := "res://assets/brand/fragaria-strawberry.jpg"
 const BRAND_FONT := preload("res://assets/fonts/VT323.ttf")
 var progress: Array=[]
 var amount := -1.0

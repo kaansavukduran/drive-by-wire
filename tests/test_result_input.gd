@@ -51,11 +51,11 @@ func run() -> void:
  game.dodge_cooldown=0;game.comfort_cooldown=0
  game.enemy_bullets=[{"pos":Vector2(game.car_x+20,game.car_y),"vel":Vector2.ZERO,"dmg":8},{"pos":Vector2(game.car_x+150,game.car_y),"vel":Vector2.ZERO,"dmg":8}]
  key(KEY_SHIFT,true);key(KEY_SHIFT,false)
- h.check("Shift activates actual area pulse",game.comfort_count==1 and game.comfort_cooldown>0)
- h.eq("Shift clears only nearby hostile projectiles",game.enemy_bullets.size(),1)
+ h.check("retired Shift produces no pulse",game.comfort_count==0 and game.comfort_cooldown==0)
+ h.eq("retired Shift leaves projectiles unchanged",game.enemy_bullets.size(),2)
  h.eq("Shift no longer triggers dodge",game.dodge_cooldown,0.0)
  key(KEY_R,true);key(KEY_R,false)
- h.check("R retains direct dodge",game.dodge_cooldown>0)
+ h.eq("retired R produces no dodge",game.dodge_cooldown,0.0)
  mouse(origin,MOUSE_BUTTON_LEFT,true);mouse(origin,MOUSE_BUTTON_RIGHT,true)
  game._set_paused(true)
  h.check("pause clears both mouse holds",not game.mouse_fire and not game.mouse_mine)

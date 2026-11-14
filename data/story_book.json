@@ -14,8 +14,8 @@
           "name": "Geçidi aç",
           "effect": "400 m · Bölüm sonunda ara sahne",
           "opening": "Omega-3: Emre’ye yetişeceğiz. Önümüzdeki geçidi birlikte açalım.",
-          "objective": "Omega-3’e bir kez destek ver",
-          "goal": "steady",
+          "objective": "Yolu aç ve robotu durdur",
+          "goal": "survive",
           "max_hp": 15,
           "mines": 0,
           "spawn_scale": 0.9,
@@ -51,24 +51,32 @@
       "responses": [
         {
           "id": "listen",
-          "text": "“Bitirmene izin vereceğim. Dinliyorum.”",
-          "ally": "kuzu",
-          "reply": "emre: Seni duyuyorum. Yola birlikte devam edeceğiz.",
+          "text": "Seni duyuyorum. Orada bekle, geliyorum.",
+          "ally": "emre",
+          "reply": "Emre: Duydum. Bu kez o son vuruşu beklemeyeceğim; seni bekleyeceğim.",
           "perk": "memory"
         },
         {
           "id": "together",
-          "text": "“Kararı tek başına taşımayacaksın.”",
+          "text": "Yolu birlikte açacağız. Telsizi açık tut.",
           "ally": "emre",
-          "reply": "Kurt: Yalnız değilsin. Bu konuşmayı unutmayacağım.",
+          "reply": "Emre: Buradan gördüğümü anlatırım. Yolu tek başına taşımayacaksın.",
+          "perk": "memory"
+        },
+        {
+          "id": "curious",
+          "text": "Köprüde ne gördün? Kısaca anlat.",
+          "ally": "emre",
+          "reply": "Emre: Bariyerler açık ama yol boş. Güvenli olduğuna güvenip hızlanma.",
           "perk": "memory"
         }
       ],
       "beats": [
         "kurt: İlk devriye geride kaldı. Şimdi düz yola bak; Mühür-01 senin geçiş kartını çoktan kara listeye aldı.",
-        "kuzu: Fırtına hattında direkler devrilmiş. Beni duyuyorsan cevap vermen gerekmiyor; iki elini de direksiyonda tut.",
+        "kuzu: Ormandaki yol daralıyor. Beni duyuyorsan cevap vermen gerekmiyor; iki elini de direksiyonda tut.",
         "omega: Mühür beni teslim etmeni isteyecek. Kararını ben veremem. Ama hangi kapıları kapattığımı senden daha fazla saklamayacağım."
-      ]
+      ],
+      "response_prompt": "Emre: Köprünün öbür yanındayım. Beni duyduğunu söyle; sonra yola çık."
     },
     "chapter_02": {
       "title": "2. etap · Kırık hat",
@@ -79,8 +87,8 @@
           "name": "Kuzey hattına ilerle",
           "effect": "400 m · Bölüm sonunda ara sahne",
           "opening": "Kurt: Servis yolundayım. Harita susarsa beni dinle.",
-          "objective": "Omega-3’e bir kez destek ver",
-          "goal": "steady",
+          "objective": "Yolu aç ve robotu durdur",
+          "goal": "survive",
           "max_hp": 15,
           "mines": 0,
           "spawn_scale": 1.0,
@@ -104,16 +112,23 @@
       "responses": [
         {
           "id": "listen",
-          "text": "“Bitirmene izin vereceğim. Dinliyorum.”",
-          "ally": "omega",
-          "reply": "kuzu: Seni duyuyorum. Yola birlikte devam edeceğiz.",
+          "text": "Dinlen. İkinci bardağı dönüşte doldururuz.",
+          "ally": "emre",
+          "reply": "Emre: İki bardak da hazır olacak. Acele etmeden, sağlam dön.",
           "perk": "memory"
         },
         {
           "id": "together",
-          "text": "“Kararı tek başına taşımayacaksın.”",
-          "ally": "kurt",
-          "reply": "Kurt: Yalnız değilsin. Bu konuşmayı unutmayacağım.",
+          "text": "Kurt’la aynı hattayız. Yalnız gitmiyorum.",
+          "ally": "emre",
+          "reply": "Emre: Güzel. İkinizin de sesini duymak iyi geliyor.",
+          "perk": "memory"
+        },
+        {
+          "id": "curious",
+          "text": "Sinyal hakkında hatırladığın bir şey var mı?",
+          "ally": "emre",
+          "reply": "Emre: Patlamadan önce aynı üç kısa sesi duydum. Eren kaydı sakladı.",
           "perk": "memory"
         }
       ],
@@ -121,7 +136,8 @@
         "kurt: Servis yolundaki izler taze. Biri bariyerleri içeriden açmış.",
         "omega: Harita ile yol örtüşmüyor. Köprü kaydının tarihi değiştirilmiş.",
         "kurt: Kuzey bağlantısına gelme. Aion, beni duyuyor musun?"
-      ]
+      ],
+      "response_prompt": "Emre: Eren yanımda. Senin sesini duymadan telsizi kapatmayacağım."
     }
   },
   "speakers": {

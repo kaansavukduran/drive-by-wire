@@ -137,3 +137,12 @@ Toplam55 kaynak hücresi vardır; iki kullanılmayan garaj blink alternatifi dah
 cliff1672×941 tek overhead zemin; mantıksal640×360, gerçek kopmuş yol kenarı y108. cliff_cars1254×1254, 2×2: mor Kurt aracı ve üç oyuncu seçimine uygun boş kokpitli hasarlı gövde. Bu dört kare çarpışma animasyonu sayılmaz; çarpışma aynı sahne uzayında iki araç kökünün zamana bağlı hareketidir. Kurt aracı kuzey kaynağından90derece çevrilip sağa ilerler. Yaklaşım Aion318/250→318/168; Kurt76/180→273/168. Darbe ve fren sırasında iki kök birlikte sağa gider; Aion400/198’de durur. Görünen alfa gövdelerinin teması üç gerçek seçili kaynakla ayrıca denetlenir; yalnız ham bölge kutusu ölçülmez. Aion ön tamponu y108’i geçmez.
 
 Sahne dönüşümü viewporta göre hesaplanır; araç, karakter, efekt ve zemin aynı projeksiyondadır. Metin değişimi kaynak köklerini kaydırmaz. Dikey dönüş güvenli mola verir. Dört çizilmiş Kurt pozu dışında yeni yürüme seti iddiası yoktur. Aion mevcut onaylı ayakta gövdesini kullanır. Kaynak hakları/üretim/hash assets/PROVENANCE.json; hücre/temaslar data/visual_art.json.
+
+
+## 0.13.0 · Görünürlük ve marka
+
+Her çatışma etabı tek atlas bölgesi kullanır: Cam Ormanı2, Buzlu Arşiv3. Ara sahnedeki dostça yarış2 olarak sabittir. Mesafe180 görsel değiştirmez. HUD canı sade10px bar, metrik ve geçici geri bildirimler kutusuz/kontrastlı metin; karakter repliği panelde tutulur. İki eylem düğmesi aynı60px ailede, joystick ayrı sabit yerde.
+
+Arka trafik kaynağı kamera tabanının150 dünya birimi gerisi; ön kamyon kamera tepesinin150 birim ilerisi. Kaynak sprite yarı yüksekliği54 ve kamera ölçeğiyle tamamının görünmez başladığı test edilir. Başlangıç Y’si saklanır; temizlik alt sınırı yeni uzak araçları doğdukları karede yok etmez. Yerleşim değişimi mevcut dünya konumunu değiştirmez.
+
+Fragaria çilek dosyası kaynakla bit düzeyinde aynı:1058×1487 JPEG, SHA256 e72d624a012cb86e5b21011452fd1a8fb1954b2f19c68b51d8910bebef093828.0.13.0 açık isteğiyle bu sembol public yükleyici assetine dahil edilir; yeni çizim veya final logo varyantı üretilmedi. Paketleme dosya eksikse durur; sessizce wordmark’a düşmez. Web/native gerçek ilerleme, hata ve yeniden dene akışları korunur.

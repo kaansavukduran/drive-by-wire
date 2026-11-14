@@ -1,4 +1,4 @@
-# Drive-By Wire · 0.12.0
+# Drive-By Wire · 0.13.0
 
 **Fragaria Interactive · AIONIA**
 
@@ -10,10 +10,10 @@ Omega-3 ile yolu aç, arkadaşlarının sesini dinle. Oyun artık lineer: **1. e
 
 ## Oyna
 
-[Güncel web oyunu](https://drive-by-wire.vercel.app/). Ana menü → Hikâyeye başla → Etap → Geçidi aç. Kazanınca Ara sahneye geç düğmesini kullan. Replikleri kendi hızında ilerlet. Ana menüde Bölümler, hazır içerikle gelecek etapları açıkça ayırır.
+[Güncel web oyunu](https://drive-by-wire.vercel.app/). Ana menü → Hikâyeye başla → üç sohbet yanıtından birini seç → yanıtı oku → Yola devam et. Kazanınca Ara sahneye geç düğmesini kullan. Replikleri kendi hızında ilerlet. Ana menüde Bölümler, hazır içerikle gelecek etapları açıkça ayırır.
 
-- PC: oklar/WASD dört yönlü sürüş; fare sol/Space öne ateş; fare sağ/X sınırsız arka mayın; E turbo, Q fren, Shift alan darbesi, R sıyrılma, Esc mola.
-- Gamepad: sol çubuk/D-pad; RT/A ateş, X mayın, RB turbo, LT fren, Y destek, B/LB sıyrılma; menü/seçimlerde yönler ve A, geri B.
+- PC: oklar/WASD dört yönlü sürüş; fare sol/Space öne ateş; fare sağ/X sınırsız arka mayın; Esc/P mola.
+- Gamepad: sol çubuk/D-pad; RT/A ateş, X mayın; menü/seçimlerde yönler ve A, geri B.
 - Telefon/tablet: onaylı sabit joystick + bağımsız eylem düğmeleri. Dikey/yatay oynanış ve yön değişiminde güvenli mola.
 
 Her çatışma 400m; robot durdurulmadan etap bitmez. İlkinde Mühür-01, ikincisinde Yankı-02 vardır. Ölüm aynı etap başına döndürür; önceki ara sahne ve kayıtlar korunur. Ara sahneler replik/animasyon adımını kaydeder; yarım kısa hareket yeniden o adımdan oynar. İkinci ara sahne bittikten sonra yeniden açılış da Devam edecek ekranında kalır. Baştan oynamak açık bir düğmedir.
@@ -42,3 +42,5 @@ Web’i http://localhost:8765 adresinden aç. HTML’ye çift tıklamak yeterli 
 Kaynaklar: data/story_book.json ve scripts/core/story_book.gd lineer ilerleme; road_story.json ilk ara sahne; cliff_story.json ikinci ara sahne. visual_art.json yeni resimlerin kaynak bölgeleri/hash/ayak temasları; assets/PROVENANCE.json üretim kaydıdır. Kullanıcının talebiyle sonraki kalite/Forge işleri Unslop becerisiyle yürütülür.
 
 Canlı /version.json sürüm/build commit/giriş adresini bildirir. Build başarısı, yayın ve gerçek oynanış ayrı doğrulanır; otomatik Vercel yayını kota tarafından engellenebilir. Önizleme ile public domain aynı kaynak ağacından yayımlansa bile commit/target farkı yayın makbuzunda açıkça yazılır.
+
+0.13.0: Her etap tek biyomdur: ilk etap Cam Ormanı, ikinci etap Buzlu Arşiv.180m’deki otomatik geçiş kaldırıldı; yarış da aynı ormanda kalır. Arkadan gelen araçlar gerçek kamera sınırının150 dünya birimi gerisinden başlar; mevcut araçlar yön değişiminde taşınmaz. Sürüşte yalnız Ateş ve Mayın, çıplak can barı ve kutusuz bildirimler vardır; karakter replikleri panelde kalır. Üç sohbet yanıtı farklı cevap verir, aynı hikâye ve sürüş kurallarına bağlanır. Mevcut Fragaria çileği web/native yükleyicisinde gerçek asset olarak paketlenir.

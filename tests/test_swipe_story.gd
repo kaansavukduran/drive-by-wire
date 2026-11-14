@@ -113,11 +113,11 @@ func run() -> void:
 	key(KEY_E)
 	for i in 60: game._simulate(1.0/60.0)
 	key(KEY_E,false)
-	h.check("E accelerates with real held input",game.speed>300)
+	h.near("retired E keeps steady speed",game.speed,220,0.1)
 	key(KEY_Q)
 	for i in 120: game._simulate(1.0/60.0)
 	key(KEY_Q,false)
-	h.near("Q brakes",game.speed,140,0.1)
+	h.near("retired Q keeps steady road speed",game.speed,220,0.1)
 	game.fire_cooldown=0
 	mouse(origin,MOUSE_BUTTON_LEFT)
 	h.check("mouse left fires in road",game.mouse_fire and game.bullets.size()>0)

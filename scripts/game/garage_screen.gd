@@ -105,7 +105,7 @@ func _ready() -> void:
 
 	var brief := _label(ui, Vector2(16, 290), Vector2(410, 40), 11)
 	brief_label=brief
-	brief.text = "← → Sür · ↑ Turbo · ↓ Fren · Space Ateş\nÜç etabı aş. Omega-3 ile geleceğini seç."
+	brief.text = "Oklar / WASD Sür · Fare sol Ateş · sağ Mayın\nİki etap ve iki ara sahne."
 	var quick := Button.new()
 	quick_button = quick
 	quick.theme = theme

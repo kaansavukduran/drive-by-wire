@@ -16,6 +16,7 @@ func run() -> void:
  h.eq("one linear departure action",current_scene.choices.size(),1)
  for stage in 2:
   h.eq("chapter index follows fixed order",current_scene.campaign["stage"],stage)
+  if current_scene.radio_answers[0].visible:await tap()
   await tap();var game:=current_scene
   if not h.check("A enters actual combat for both stages",game.get("boss")!=null):quit(h.finish());return
   game.set_physics_process(false);game.rng.seed=42+stage
@@ -44,6 +45,6 @@ func run() -> void:
  Session.campaign_state={};change_scene_to_file("res://scenes/title.tscn");await frames();await tap()
  h.eq("reopening completed save stays at continued",current_scene.heading.text,"DEVAM EDECEK")
  await tap();h.eq("explicit restart opens first chapter",current_scene.campaign["stage"],0)
- await tap();var game:=current_scene;game.set_physics_process(false);game._damage_player(1000);await tap()
+ await tap();await tap();var game:=current_scene;game.set_physics_process(false);game._damage_player(1000);await tap()
  h.eq("failure retries same stage",current_scene.campaign["stage"],0)
  Store.new().clear();Session.story_mode=false;Session.campaign_state={};quit(h.finish())

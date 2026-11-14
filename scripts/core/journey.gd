@@ -4,6 +4,7 @@ const DATA_PATH := "res://data/journey.json"
 var data: Dictionary
 var route := "steady"
 var next_beat := 0
+var observed_distance:=0.0
 var log_lines: Array[String] = []
 func _init(selected := "steady") -> void:
 	data = JSON.parse_string(FileAccess.get_file_as_string(DATA_PATH))
@@ -15,6 +16,7 @@ func _init(selected := "steady") -> void:
 func spec() -> Dictionary:
 	return data["routes"][route]
 func advance(distance: float) -> Array[String]:
+	observed_distance=distance
 	var fresh: Array[String] = []
 	while next_beat < data["beats"].size() and distance >= float(data["beats"][next_beat]["distance"]):
 		var line: String = data["beats"][next_beat]["line"]
@@ -23,8 +25,9 @@ func advance(distance: float) -> Array[String]:
 		next_beat += 1
 	return fresh
 func goal_met(comforts: int, collected: int) -> bool:
-	return comforts > 0 if route == "steady" else collected >= 2
+	return observed_distance>=400 if route=="survive" else (comforts>0 if route=="steady" else collected>=2)
 func goal_text(comforts: int, collected: int) -> String:
+	if route=="survive":return "Yolu aç · %d / 400 m" % mini(400,int(observed_distance))
 	return "%s · %d/%d" % [spec()["objective"],mini(comforts,1) if route=="steady" else mini(collected,2),1 if route=="steady" else 2]
 func ending(survived: bool, comforts: int, collected: int) -> String:
 	if not survived: return str(data["failure"])

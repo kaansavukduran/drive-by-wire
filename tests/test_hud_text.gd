@@ -41,7 +41,6 @@ func run() -> void:
       game._say(line,true)
       var reconstructed: String=" ".join(game.radio_pages)
       var expected: String=game.radio_text
-      if not game.momo_title.visible: expected=str(game.Cast.NAMES[game.radio_speaker])+": "+expected
       if normalized(reconstructed)!=normalized(expected): all_words=false
       for page in game.radio_pages.size():
        game.radio_page=page;game._show_radio_page()

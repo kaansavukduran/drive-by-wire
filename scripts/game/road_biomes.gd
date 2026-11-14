@@ -1,7 +1,7 @@
 extends RefCounted
 const NAMES: Array[String]=["PASLI EŞİK","FIRTINA HATTI","CAM ORMANI","BUZLU ARŞİV","KIZIL SANTRAL","SESSİZ ÇEKİRDEK"]
 const TINTS: Array[Color]=[Color.WHITE,Color("b0bfda"),Color("adcfc7"),Color("c7d8e5"),Color("d2aa9b"),Color("b7a9cd")]
-static func index(stage: int,distance: float) -> int: return clampi(stage,0,2)*2+(1 if distance>=180 else 0)
+static func index(stage: int,_distance: float) -> int: return [2,3,4,5,0,1][posmod(stage,6)]
 static func draw(canvas: CanvasItem,kind: int,travel: float,moving: bool,weather: bool) -> void:
  if weather and kind in [1,3]:
   for i in 24:

@@ -29,7 +29,10 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
    const page=await context.newPage();const errors=[];const entry={name:device.name,status:'FAIL',errors};
    page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
    try{
+    await page.route('**/*.pck',async route=>{await sleep(1200);await route.continue();});
     await page.goto(`${base}/?qa&qa_render=${device.low?'low':'normal'}`);
+    await page.waitForFunction(()=>{const logo=document.getElementById('status-brand'),status=document.getElementById('status');return logo?.complete&&logo.naturalWidth===1058&&getComputedStyle(status).visibility==='visible';},null,{timeout:20000});
+    await page.screenshot({path:`${out}/${device.name}-strawberry-loader.png`});entry.brand='PASS: real strawberry visible during measured loading';
     let q=await state(page,'title');
     assert(inside(q.play,q.view),'title play must be on screen');
     await page.screenshot({path:`${out}/${device.name}-title.png`});
@@ -69,15 +72,15 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
     }
     await tap(page,q.supplies,device.touch);
     q=await state(page,'run');
-    assert.equal(q.paused,false);assert.equal(q.route,'steady');assert.equal(q.mines,-1);
+    assert.equal(q.paused,false);assert.equal(q.route,'survive');assert.equal(q.mines,-1);
     for(const w of q.radio_ui.widgets)assert(w.fits,'visible HUD text must fit: '+w.text);
     if(q.view[1]>q.view[0]){
      const hud=q.portrait_hud;
      for(const rect of Object.values(hud))assert(inside(rect,q.view),'portrait HUD must fit');
-     assert(hud.health[1]+hud.health[3]<=hud.energy_bar[1],'health text must clear energy bar');
-     assert(hud.meters[1]>=hud.hp_bar[1]+hud.hp_bar[3],'distance must clear health bar');
-     assert(hud.meters[0]+hud.meters[2]<=hud.energy[0],'distance must clear energy caption');
-     entry.portraitHud='PASS: health, distance and energy do not overlap';
+     assert(hud.health[1]+hud.health[3]<=hud.hp_bar[1],'health text clears its bar');
+     assert(hud.hp_bar[1]+hud.hp_bar[3]<=hud.score[1],'bar clears score');
+     assert.equal(q.health_panel_visible,false);
+     entry.portraitHud='PASS: bare health bar, distance and score stay separate';
     }
     if(device.touch){
      assert(q.touch,'touch devices must work without external input');
@@ -101,30 +104,30 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
      await page.waitForFunction(p=>window.__dbwQA.player[0]<p[0]-10&&window.__dbwQA.player[1]>p[1]+10,before);
      await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
      q=await page.evaluate(()=>window.__dbwQA);
-     const turbo=await center(page,q.actions.drive_boost,0);
-     await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[turbo,fire]});
-     await wait(page,()=>window.__dbwQA.boost&&window.__dbwQA.fire&&window.__dbwQA.energy<100);
+     const mineFinger=await center(page,q.actions.drive_mine,0);
+     await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[mineFinger,fire]});
+     await wait(page,()=>window.__dbwQA.mine_held&&window.__dbwQA.fire);
      await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
-     await wait(page,()=>!window.__dbwQA.boost&&!window.__dbwQA.fire&&!window.__dbwQA.paused);
+     await wait(page,()=>!window.__dbwQA.mine_held&&!window.__dbwQA.fire&&!window.__dbwQA.paused);
      const boxes=[q.joystick,q.pause,...Object.values(q.actions)];
      for(let i=0;i<boxes.length;i++)for(let j=i+1;j<boxes.length;j++){
       const a=boxes[i],b=boxes[j];assert(!(a[0]<b[0]+b[2]&&a[0]+a[2]>b[0]&&a[1]<b[1]+b[3]&&a[1]+a[3]>b[1]),'joystick/actions/pause must not overlap');
      }
-     entry.multitouch='PASS: fixed joystick, diagonal/reverse movement, independent fire and turbo, no pause overlap';
+     entry.multitouch='PASS: fixed joystick, diagonal/reverse movement, independent fire and mine, no pause overlap';
     }else{
      await page.keyboard.down('KeyA');await wait(page,()=>window.__dbwQA.player[0]<280);await page.keyboard.up('KeyA');
      await page.keyboard.down('ArrowRight');await wait(page,()=>window.__dbwQA.player[0]>320);await page.keyboard.up('ArrowRight');
      await page.keyboard.down('KeyW');await wait(page,()=>window.__dbwQA.player[1]<240);await page.keyboard.up('KeyW');
      await page.keyboard.down('KeyS');await wait(page,()=>window.__dbwQA.player[1]>280);await page.keyboard.up('KeyS');
-     await page.keyboard.down('KeyE');await wait(page,()=>window.__dbwQA.speed>260);await page.keyboard.up('KeyE');
-     await page.keyboard.down('KeyQ');await wait(page,()=>window.__dbwQA.speed<200);await page.keyboard.up('KeyQ');
+     await page.keyboard.down('KeyE');await sleep(200);assert.equal((await page.evaluate(()=>window.__dbwQA)).speed,220);await page.keyboard.up('KeyE');
+     await page.keyboard.down('KeyQ');await sleep(200);assert.equal((await page.evaluate(()=>window.__dbwQA)).speed,220);await page.keyboard.up('KeyQ');
      q=await page.evaluate(()=>window.__dbwQA);const road=await center(page,q.road);
      await page.mouse.move(road.x,road.y);await page.mouse.down();await wait(page,()=>window.__dbwQA.fire);
      await page.mouse.move(1,1);await page.mouse.up();await wait(page,()=>!window.__dbwQA.fire);
      const mines=q.mine_drops;await page.mouse.move(road.x,road.y);await page.mouse.down({button:'right'});await page.waitForFunction(m=>window.__dbwQA.mine_drops>=m+2,mines);await page.mouse.move(1,1);await page.mouse.up({button:'right'});await wait(page,()=>!window.__dbwQA.mine_held);
-     await page.keyboard.press('Shift');await wait(page,()=>window.__dbwQA.support>0);await page.keyboard.press('KeyR');await wait(page,()=>window.__dbwQA.dodge>0);
+     await page.keyboard.press('Shift');await page.keyboard.press('KeyR');q=await page.evaluate(()=>window.__dbwQA);assert(q.support<=0&&q.dodge<=0);
      assert(await page.evaluate(()=>{const e=new MouseEvent('contextmenu',{bubbles:true,cancelable:true});document.getElementById('canvas').dispatchEvent(e);return e.defaultPrevented;}),'canvas context menu is suppressed for rear mines');
-     entry.desktopInput='PASS: continuous XY arrows/WASD, E/Q, mouse fire/right held mines, Shift pulse and R dodge';
+     entry.desktopInput='PASS: continuous XY arrows/WASD, mouse fire/right held mines; retired E/Q/Shift/R stay inactive';
     }
     await wait(page,()=>window.__dbwQA.mine_cooldown<=0);q=await page.evaluate(()=>window.__dbwQA);const mines=q.mine_drops;if(device.touch)await tap(page,q.actions.drive_mine,true);else await page.keyboard.press('KeyX');await page.waitForFunction(n=>window.__dbwQA.mine_drops===n+1,mines);q=await page.evaluate(()=>window.__dbwQA);await tap(page,q.pause,device.touch);q=await wait(page,()=>window.__dbwQA.paused);
     const distance=q.distance;await sleep(400);assert.equal((await page.evaluate(()=>window.__dbwQA)).distance,distance,'pause must stop simulation');
@@ -168,20 +171,20 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
    await tapPad(13);await tapPad(0);await state(page,'garage');
    await tapPad(13);await tapPad(0);await wait(page,()=>window.__dbwQA.stage==='upgrade');
    await tapPad(0);await wait(page,()=>window.__dbwQA.stage==='ready');
-   await tapPad(0);await state(page,'briefing');await tapPad(15);await tapPad(0);
-   let q=await state(page,'run');assert.equal(q.route,'steady');
+   await tapPad(0);await state(page,'briefing');await tapPad(15);await tapPad(0);await tapPad(0);
+   let q=await state(page,'run');assert.equal(q.route,'survive');
    await page.evaluate(()=>window.__pad.axes[0]=-0.8);await wait(page,()=>window.__dbwQA.player[0]<280);
    await page.evaluate(()=>window.__pad.axes[0]=0);await sleep(200);
    await page.evaluate(()=>window.__pad.axes[0]=0.8);await wait(page,()=>window.__dbwQA.player[0]>300);
    await page.evaluate(()=>window.__pad.axes[0]=0);
-   await press(5,true);await press(7,true);await wait(page,()=>window.__dbwQA.fire&&window.__dbwQA.boost);await press(5,false);await press(7,false);
+   await press(2,true);await press(7,true);await wait(page,()=>window.__dbwQA.fire&&window.__dbwQA.mine_held);await press(2,false);await press(7,false);
    await tapPad(9);await wait(page,()=>window.__dbwQA.paused);await tapPad(1);await wait(page,()=>!window.__dbwQA.paused);
    await page.evaluate(()=>{window.__pad.connected=false;const e=new Event('gamepaddisconnected');Object.defineProperty(e,'gamepad',{value:window.__pad});dispatchEvent(e);});
    await wait(page,()=>window.__dbwQA.paused);
    await page.evaluate(()=>{window.__pad.connected=true;const e=new Event('gamepadconnected');Object.defineProperty(e,'gamepad',{value:window.__pad});dispatchEvent(e);});
    await sleep(300);assert((await page.evaluate(()=>window.__dbwQA)).paused);
    await page.screenshot({path:`out/controller-forge.png`.replace('out/',`${out}/`)});
-   assert.deepEqual(padResult.errors,[]);padResult.status='PASS';padResult.flow='D-pad/A garage, dialogue, upgrade, route choice, analog, RB/RT, Start/B, disconnect/reconnect';
+   assert.deepEqual(padResult.errors,[]);padResult.status='PASS';padResult.flow='D-pad/A garage, dialogue, upgrade, route choice, analog, X/RT, Start/B, disconnect/reconnect';
   }catch(e){padResult.error=String(e);padResult.state=await page.evaluate(()=>window.__dbwQA).catch(()=>null);await page.screenshot({path:`${out}/controller-failure.png`}).catch(()=>{});}
   result.controller=padResult;console.log(JSON.stringify(padResult));await context.close();
   fs.writeFileSync(`${out}/forge-results.json`,JSON.stringify(result,null,2)+'\n');

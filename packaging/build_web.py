@@ -118,9 +118,8 @@ def main() -> None:
     metadata={"version":game_version(),"commit":commit,"engine":VERSION,"entry":release_path}
     html=html.replace("__DBW_VERSION__", "v"+game_version())
     html=html.replace("__DBW_RELEASE__", json.dumps(metadata))
-    brand=ROOT / "assets/brand/fragaria-reference.jpg"
-    if not brand.exists():
-        html=html.replace('<img id="status-brand" src="fragaria-reference.jpg" alt="Fragaria pixel-art çilek referansı">','')
+    brand=ROOT / "assets/brand/fragaria-strawberry.jpg"
+    if not brand.is_file():raise SystemExit("Missing Fragaria strawberry asset")
     (OUT / "index.html").write_text(html,encoding="utf-8")
     for icon in ("assets/brand/ilin-icon.png",):
         if (ROOT / icon).is_file():
@@ -129,8 +128,7 @@ def main() -> None:
     else:
         print("WARNING: no assets/brand/ilin-icon.png; page has no favicon", flush=True)
     shutil.copy2(ROOT / "assets/fonts/VT323.ttf", OUT / "brand-font.ttf")
-    if brand.exists(): shutil.copy2(brand, OUT / "fragaria-reference.jpg")
-    else: print("Brand image not included: wordmark-only preview; private asset publication approval pending.",flush=True)
+    shutil.copy2(brand, OUT / "fragaria-strawberry.jpg")
     # HTML, JS, WASM and PCK travel together under a new path for every commit.
     # Reusing /index.pck lets a previously cached shell mix different releases.
     release=OUT / release_path.lstrip("/")

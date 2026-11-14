@@ -820,6 +820,16 @@
         2
       ],
       "notes": "Cliff is one static backdrop; Kurt has four distinct walking/asking/reassuring poses; cars are one intact rescue car and three static cosmetic wrecks, not four crash animation frames."
+    },
+    "assets/brand/fragaria-strawberry.jpg": {
+      "method": "Exact unedited copy of owner-supplied Fragaria pixel strawberry reference",
+      "status": "OWNER_REQUESTED_LOADING_SYMBOL",
+      "sha256": "e72d624a012cb86e5b21011452fd1a8fb1954b2f19c68b51d8910bebef093828",
+      "source_pixels": [
+        1058,
+        1487
+      ],
+      "notes": "User explicitly requested this existing strawberry symbol in the public game loader in0.13.0. No redesign or new final logo composition claimed. Source reference bytes unchanged; used by Godot and web shell."
     }
   },
   "generator": "tools/art/build.py",

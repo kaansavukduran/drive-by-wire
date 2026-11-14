@@ -62,7 +62,7 @@ func _ready() -> void:
 	_button(ui, Rect2(180, 204, 148, 28), "Bölümler", _endings)
 	_button(ui, Rect2(24, 240, 148, 28), "Nasıl oynanır?", _show_help)
 	_button(ui, Rect2(180, 240, 148, 28), "Ayarlar", _show_settings)
-	control_hint = _label(ui, Rect2(24, 282, 308, 43), "Oklar / WASD Serbest sürüş\nE Turbo · Q Fren · Esc Mola", 11)
+	control_hint = _label(ui, Rect2(24, 282, 308, 43), "Oklar / WASD Serbest sürüş\nFare sol Ateş · sağ Mayın · Esc Mola", 11)
 	footer = _label(ui, Rect2(24, 338, 592, 14), "v%s  ·  Rekor %d  ·  Kayıt bu cihazda  ·  Çevrimdışı tek oyuncu" % [str(ProjectSettings.get_setting("application/config/version")),int(save["best_score"])], 9)
 	if store.last_error.begins_with("recovered_"):
 		footer.text = "İlerleme kurtarma kopyasından geri alındı. Kayıt bu cihazda."
@@ -152,7 +152,7 @@ func _make_help(parent: Node) -> void:
 	help_scroll.position=Vector2(18,48)
 	help_scroll.size=Vector2(492,184)
 	help_panel.add_child(help_scroll)
-	help_scroll.set_text("1. YOLU AÇ\nPC: oklar / WASD. Mobil/tablet: sabit joystick ile dört yöne sür; sağdaki eylemleri kullan.\n\n2. Omega-3’İ KORU\nSpace / F veya fare sol ile öne ateş et; Fare sağ arkaya sınırsız mayın bırakır (X alternatif). E turbo, Q fren. Shift / C alan darbesi, R sıyrılma. Artı: onarım; şimşek: enerji; kalkan: koruma. Kesik çizgiden uzaklaş; ! işaretli noktaya engel düşecek.\n\n3. EVE DÖN\nEtapları sırayla tamamla; her etaptan sonra ara sahne gelir. İlkinde Emre ve Eren, ikincisinde Kurt yanında. Bu sürüm ikinci ara sahnede Devam edecek ile biter. 13 etap planlanıyor; 3–13 henüz oynanamaz. Araba seçimi ana menüde. Başarısızlıkta önceki etaplar korunur. Mola menüsünde yol günlüğünü oku. Esc mola verir. T ile isteğe bağlı sohbet edebilirsin.")
+	help_scroll.set_text("1. YOLU AÇ\nPC: oklar / WASD. Mobil/tablet: sabit joystick ile dört yöne sür; sağdaki eylemleri kullan.\n\n2. Omega-3’İ KORU\nSpace / F veya fare sol ile öne ateş et; Fare sağ arkaya sınırsız mayın bırakır (X alternatif). Yalnız ateş ve mayın kullanılır. Artı: onarım; kalkan: koruma. Kesik çizgiden uzaklaş; ! işaretli noktaya engel düşecek.\n\n3. EVE DÖN\nEtapları sırayla tamamla; her etaptan sonra ara sahne gelir. İlkinde Emre ve Eren, ikincisinde Kurt yanında. Bu sürüm ikinci ara sahnede Devam edecek ile biter. 13 etap planlanıyor; 3–13 henüz oynanamaz. Araba seçimi ana menüde. Başarısızlıkta önceki etaplar korunur. Mola menüsünde yol günlüğünü oku. Esc mola verir. T ile isteğe bağlı sohbet edebilirsin.")
 	help_body=help_scroll.content
 	help_start = _button(help_panel, Rect2(18, 246, 236, 30), "Hazırım · Sürüşe başla", _start)
 	help_back = _button(help_panel, Rect2(266, 246, 244, 30), "Geri · Esc", _hide_help)
@@ -217,7 +217,7 @@ func _process(delta: float) -> void:
 		QA.publish("title",{"vehicles":QA.rect(menu_buttons[5]),"view":[get_viewport_rect().size.x,get_viewport_rect().size.y],"cast":cast.snapshot() if cast.visible else {},"play":QA.rect(start_button),"garage":QA.rect(menu_buttons[1]),"endings":QA.rect(menu_buttons[2]),"help":QA.rect(menu_buttons[3]),"settings":QA.rect(menu_buttons[4]),"settings_ui":QA.settings(settings),"settings_visible":settings.visible,"help_visible":help_panel.visible,"help_scroll":QA.rect(help_scroll),"help_content":QA.rect(help_body),"help_scroll_value":help_scroll.page_index,"help_reader":help_scroll.snapshot()})
 	var caption: String="Devam edecek" if campaign["phase"]=="continued" else ("Ara sahneye devam et" if campaign["phase"]=="interlude" else ("Etap %d / 13 · Devam et" % (int(campaign["stage"])+1) if campaign["stage"]>0 else "Hikâyeye başla"))
 	start_button.text = caption+(" · A" if Controls.last_device=="pad" else " · Space")
-	control_hint.text = "Sol çubuk / D-pad Serbest sürüş\nRB Turbo · LT Fren · Start Mola" if Controls.last_device=="pad" else "Oklar / WASD Serbest sürüş\nE Turbo · Q Fren · Space Ateş"
+	control_hint.text = "Sol çubuk / D-pad Serbest sürüş\nRT/A Ateş · X Mayın · Start Mola" if Controls.last_device=="pad" else "Oklar / WASD Serbest sürüş\nFare sol Ateş · sağ Mayın"
 	if DisplayServer.is_touchscreen_available():
 		start_button.text=caption
 		control_hint.text="Sabit joystick · Dört yön · Öne ateş / arkaya mayın\nİki etap, iki ara sahne. Yol birlikte sürüyor."

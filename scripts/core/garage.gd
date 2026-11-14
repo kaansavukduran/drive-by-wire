@@ -253,6 +253,7 @@ func offer_upgrades(owned: Dictionary, rng: RandomNumberGenerator = null, count:
 	for u in data.get("upgrades", []):
 		if not u is Dictionary:
 			continue
+		if u.get("retired",false):continue
 		var lvl := int(owned.get(u.get("id", ""), 0))
 		if lvl < int(u.get("max_level", 1)):
 			var copy: Dictionary = u.duplicate(true)

@@ -122,7 +122,7 @@ func _initialize() -> void:
 	var all_ids: Array = []
 	for u in g.offer_upgrades(owned, null, 99):
 		all_ids.append(u["id"])
-	h.check("maxed upgrade not offered", not all_ids.has("armor") and all_ids.has("turbo"))
+	h.check("maxed upgrade not offered", not all_ids.has("armor") and not all_ids.has("turbo") and not all_ids.has("bull_bar") and all_ids.has("quick_trigger"))
 	owned = g.apply_upgrade(owned, "quick_trigger")
 	owned = g.apply_upgrade(owned, "calm_core")
 	owned = g.apply_upgrade(owned, "extra_mine")
