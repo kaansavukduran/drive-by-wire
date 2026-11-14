@@ -1,0 +1,55 @@
+{
+  "title": "İkinci ara sahne · Uçurumun kıyısı",
+  "nodes": {
+    "approach": {
+      "speaker": "omega",
+      "text": "Aion, fren! Haritadaki köprü… burada yok!",
+      "duration": 3.0
+    },
+    "impact": {
+      "speaker": "kurt",
+      "text": "Tutun!",
+      "duration": 0.6
+    },
+    "brake": {
+      "speaker": "omega",
+      "text": "Durduk. Aion, kıpırdama. Tekerlekler hâlâ zeminde.",
+      "duration": 1.4
+    },
+    "exit": {
+      "speaker": "kurt",
+      "text": "Aion!",
+      "duration": 2.0
+    },
+    "check": {
+      "speaker": "kurt",
+      "text": "İyi misin? Bana bak. Sesimi duyuyor musun?",
+      "choices": [
+        {
+          "id": "shaken",
+          "label": "İyiyim… ellerim hâlâ titriyor."
+        },
+        {
+          "id": "joke",
+          "label": "Bir süre yarış teklif etme, olur mu?"
+        }
+      ]
+    },
+    "thanks": {
+      "speaker": "aion",
+      "text": "Teşekkür ederim, Kurt. Bir saniye daha geç kalsaydın…"
+    },
+    "wreck": {
+      "speaker": "aion",
+      "text": "Kapı açılmıyor. Aks kırılmış… Araba pert oldu."
+    },
+    "promise": {
+      "speaker": "kurt",
+      "text": "Araba burada kalsın. Sen buradasın ya. Merak etme, sana yeni bir araba getireceğim."
+    },
+    "complete": {
+      "speaker": "omega",
+      "text": "Telsizde ilk kez kimse konuşmuyor. Aion anahtarı avucuna alıyor; Kurt yanından ayrılmıyor."
+    }
+  }
+}

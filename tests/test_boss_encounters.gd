@@ -31,7 +31,7 @@ func run() -> void:
   h.eq("first biome before threshold",Biomes.index(stage,179),stage*2)
   h.eq("next biome at threshold",Biomes.index(stage,180),stage*2+1)
  root.size=Vector2i(640,360);root.content_scale_size=Vector2i(640,360);await process_frame;await process_frame
- Session.story_mode=true;Session.campaign_state=Book.choose(Book.defaults(),"signal")
+ Session.story_mode=true;Session.campaign_state=Book.choose(Book.defaults(),"depart")
  var game=load("res://scenes/main.tscn").instantiate();root.add_child(game);await process_frame
  game.set_physics_process(false);game.set_process(false);game.store=Store.new("user://boss-fixture.json")
  game.touch_enabled=true;game._layout();game._notice("ROBOT SALDIRISI\nMühür-01");game._process(.01)

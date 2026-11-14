@@ -1,5 +1,5 @@
 {
-  "version": "0.11.0",
+  "version": "0.12.0",
   "status": "GAME_ADAPTATION_DRAFT",
   "authoring": "User-requested coherent pixel-art overhaul. Built-in image generation/editing; original character references govern identity/proportions and approved scene art governs material/light. Private reference sheets are not published.",
   "sheets": {
@@ -123,6 +123,39 @@
       "rows": 2,
       "cells": 4,
       "sha256": "fd0f41cf61951a5a028067f620179d5ec142df396951b7efbc5abbc96cdccc9d"
+    },
+    "cliff": {
+      "path": "res://assets/art/cliff.png",
+      "size": [
+        1672,
+        941
+      ],
+      "columns": 1,
+      "rows": 1,
+      "cells": 1,
+      "sha256": "e21bc70060078c34d8ddcdc48fde87f672b0d500dfe05e488c9d25520e8071b3"
+    },
+    "kurt_scene": {
+      "path": "res://assets/art/kurt_scene.png",
+      "size": [
+        1261,
+        1247
+      ],
+      "columns": 2,
+      "rows": 2,
+      "cells": 4,
+      "sha256": "544310590a826c7e6b58d916b4ba05171f9cceb64d9cda6bc1223da061f87c9d"
+    },
+    "cliff_cars": {
+      "path": "res://assets/art/cliff_cars.png",
+      "size": [
+        1254,
+        1254
+      ],
+      "columns": 2,
+      "rows": 2,
+      "cells": 4,
+      "sha256": "d305098b6178c17170b29a9407d210fbf7fd9ede6cac5fcee7ffdaad77dea07d"
     }
   },
   "cast": {
@@ -218,5 +251,23 @@
     294,
     376,
     512
+  ],
+  "kurt_scene_feet": [
+    [
+      230,
+      571
+    ],
+    [
+      215,
+      575
+    ],
+    [
+      230,
+      574
+    ],
+    [
+      302,
+      578
+    ]
   ]
 }

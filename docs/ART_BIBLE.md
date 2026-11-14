@@ -128,3 +128,12 @@ Kullanıcının beğendiği0.10.1 sahne ayrıntısı; Omega-3, altı portre ve s
 - Patlama6 gerçek aşama; silah/taret/iki farklı mermi/smoke paftası;8 mayın/ikmal/engel/namlu nesnesi. İkmal şekilleri artı/şimşek/kalkanla ayrılır. İnce hız/uyarı çizgileri işlevsel piksel geri bildirimidir; dekorasyon uğruna büyütülmez.
 
 Toplam55 kaynak hücresi vardır; iki kullanılmayan garaj blink alternatifi dahil tümü55 animasyon diye sunulmaz. Sonuç yalnız atlas önizlemesiyle kabul edilmez; gerçek export, sahne akışı, sabit pikseller, telefon/yatay/tablet ve kontrol ailesiyle doğrulanır. Yeni görsel kaynaklar performansın bütün fiziksel cihazlarda ölçüldüğü anlamına gelmez.
+
+
+## 0.12.0 · Uçurum ve Kurt
+
+Üç yeni PNG, aynı mevcut pixel-art dilinde özgün oyun uyarlamasıdır; özel Kurt modelleme paftası kimlik/oran kaynağıdır, public depoya eklenmez. Kurt kısa gövdeli, iri cyan gözlü gri/lila kurt; krem göğüs/kuyruk ve mor kol izi korunur. Kıyafet/kitap eklenmez. kurt_scene1261×1247, 2×2, dört ayrı poz: sağa iki yürüyüş, endişeli soru ve sakin güvence. Farklı taban pikselleri visual_art.json içindeki ayrı kaynak ayaklarına bağlanır. Yürümede eyleme bağlı kök ilerler; konuşmada sabittir. Gövdeyi kamera titreşimiyle yürütme yoktur.
+
+cliff1672×941 tek overhead zemin; mantıksal640×360, gerçek kopmuş yol kenarı y108. cliff_cars1254×1254, 2×2: mor Kurt aracı ve üç oyuncu seçimine uygun boş kokpitli hasarlı gövde. Bu dört kare çarpışma animasyonu sayılmaz; çarpışma aynı sahne uzayında iki araç kökünün zamana bağlı hareketidir. Kurt aracı kuzey kaynağından90derece çevrilip sağa ilerler. Yaklaşım Aion318/250→318/168; Kurt76/180→273/168. Darbe ve fren sırasında iki kök birlikte sağa gider; Aion400/198’de durur. Görünen alfa gövdelerinin teması üç gerçek seçili kaynakla ayrıca denetlenir; yalnız ham bölge kutusu ölçülmez. Aion ön tamponu y108’i geçmez.
+
+Sahne dönüşümü viewporta göre hesaplanır; araç, karakter, efekt ve zemin aynı projeksiyondadır. Metin değişimi kaynak köklerini kaydırmaz. Dikey dönüş güvenli mola verir. Dört çizilmiş Kurt pozu dışında yeni yürüme seti iddiası yoktur. Aion mevcut onaylı ayakta gövdesini kullanır. Kaynak hakları/üretim/hash assets/PROVENANCE.json; hücre/temaslar data/visual_art.json.

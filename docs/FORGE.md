@@ -173,3 +173,14 @@ Yetkili kaynak:/workspace/drive-by-wire-public; kaansavukduran/drive-by-wire; ba
 Başlangıç denemelerinde temiz import sırasında Texture preload ve bir portre dosyasında tab/space parse hatası yakalandı; atlas kaynakları import sonrası yüklenir ve indent düzeltildi. Eski8 küçük yeşil araç karesini okuyan regresyon yeni4 gövdeli kaynakla uyumsuzdu: gerçek imported pivot pikseli, aynı1.1px toleransla dönüştürülmüş fizik merkezi ve gerçek ekran çerçevesinin hitbox kapsamı kontrol edilir;8 semantik durumda kök sabitliği korunur. Testteki ad çakışması ayrıca düzeltildi. Sonuçlar ilk FAIL loglarından ayrı yeni koşuda tutulur.
 
 Yeni görsel takım99 kaynak/temas/poz/durum kontrolü ekler. Masaüstü/telefon/tablet garaj pikselleri ve input regresyonu gerçek tarayıcıda doğrulanır; tam hikâye, pad/touch ve son CI/yayın durumu bu işin PR ve yayın makbuzunda güncellenir. Önceki API deployment kotası yerine varsa aynı kaynak ağacının READY Git/PR paketi mevcut public alias’ta kullanılabilir; main ile build SHA farklıysa ağaç eşitliğini ve gerçek version.json/PCK’yi ayrıca doğrula, yeni production build yapıldı diye sunma.
+
+
+## 0.12.0 · Lineer yol ve Kurt’un kurtarışı
+
+Yetkili kaynak /workspace/drive-by-wire-public, kaansavukduran/drive-by-wire, başlangıç main ed1cfb2/0.11.0; dal codex/linear-cliff-rescue. Kullanıcının son kararı13son/üçkarar modelini değiştirir:13etap planı, bu teslim ilk iki savaş ve her birinin ardından ara sahne; ikinci ara sahne sonunda Devam edecek. Diyaloglar yalnız konuşmayı değiştirir. Eski kayıtlar/earnedsonlar legacy arşivine, araç/ayar/puan korunarak uyarlanır. Kontrol şeması değişmedi.
+
+Unslop güncel beceri, UI/behavior/game/sprite ekleri ve canlı AIONIA v1.7 yeniden okundu; revizyon öncekiyle aynı. Bağlanan eski sohbet için read_thread aracı bulunmadı, içerik okunmuş sayılmadı. Orijinal Kurt paftası ve oyun çizimleri incelendi. Yeni üç PNG: uçurum zemini, dört Kurt pozu ve Kurt/üç hasarlı oyuncu gövdesi. Kaynaklar public yeni oyun adaptasyonudur; özel pafta eklenmez.
+
+Kullanıcı şikâyetleri: büyük kutu ailesi mevcut sayfalama/fitting regresyonuna bağlandı; kısa aksiyon yazısında gerçek font yüksekliği kullanılır, normal replik kutuları daraltılır,44px eylemler korunur. Aktör kayması eski sabit temas testleriyle ve yeni93kontrollü cliff_rescue takımıyla denetlenir. Ham sprite kutusu temasının görsel temas olmadığı iki gerçek alfa kaynağında yakalandı; tampon hizası aynı sahne uzayında düzeltildi. Son native27takım/1699kontrol PASS. Gerçek tarayıcı akışları ve CI/yayın durumu QA/PR/yayın makbuzundadır.
+
+Görsel yükleme connector çağrısı tamamlanmadan kesildi; aktarım başarılı sayılmadı. Yetkili public checkout için mevcut GitHub CLI kimliğiyle standart Git gönderimi kullanılabilir; özel eski repo/tam geçmiş kopyalanmaz. Sonraki içerik3.etaptır; kullanıcı istemeden hazır olmayan11etap veya ayrı son üretilmez. Fiziksel cihaz/insan denge/yardımcı teknoloji açık test alanlarıdır.

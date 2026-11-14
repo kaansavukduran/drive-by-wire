@@ -201,11 +201,6 @@ func _ready() -> void:
 		if not campaign["active"]:
 			get_tree().call_deferred("change_scene_to_file","res://scenes/journey.tscn")
 			return
-		if campaign["stage"]==1:
-			set_process(false);set_physics_process(false)
-			Session.campaign_state=campaign.duplicate(true)
-			get_tree().call_deferred("change_scene_to_file",Session.play_scene())
-			return
 		journey.configure_book(campaign)
 	Controls.install(save["settings"]["bindings"], save["settings"]["pad_bindings"], save["settings"]["deadzone"])
 	var garage := Garage.new(DataLoader.load_json(DataLoader.GARAGE_PATH), base_balance)
@@ -240,17 +235,8 @@ func _ready() -> void:
 	target_speed = speed
 	max_hp = _cfg("player.max_hp", 100)
 	max_hp += float(journey.spec()["max_hp"])
-	if Session.story_mode and campaign.get("stage")==2 and campaign.get("chapter2",{}).get("vow")=="rescue":
-		max_hp+=15
-		shield_left=7.0
 	hp = max_hp
 	mines_left = int(_cfg("mine.count", 3)) + int(journey.spec()["mines"])
-	if Session.story_mode:
-		var aid: Dictionary=Book.radio_reply(campaign)
-		if aid.get("perk")=="mine": mines_left+=1
-		elif aid.get("perk")=="shield": shield_left=7.0
-	if Session.story_mode and campaign.get("stage")==2 and campaign.get("chapter2",{}).get("vow")=="avenge":
-		shield_left=10.0
 	spawn_timer = _cfg("spawn.initial_delay", 2.0)
 	slow_scale = float(DataLoader.dig(balance, "time.command_box_time_scale", 0.1))
 	lane = lane_count / 2
@@ -300,7 +286,7 @@ func _build_ui() -> void:
 	var theme := UiSkin.theme()
 	ui_theme = theme
 	_panel(ui, Rect2(8, 8, 176, 166))
-	_panel(ui, Rect2(456, 8, 176, 166))
+	_panel(ui, Rect2(456, 8, 176, 150))
 	_panel(ui, Rect2(8, 186, 176, 110))
 	var brand := _label(ui, theme, Vector2(18, 14), Vector2(156, 16))
 	brand_label = brand
@@ -329,12 +315,12 @@ func _build_ui() -> void:
 	momo_title = _label(ui, theme, Vector2(523, 20), Vector2(98, 38))
 	momo_title.text = "Omega-3\nYol arkadaşın"
 	momo_title.add_theme_font_size_override("font_size", 10)
-	bubble = _label(ui, theme, Vector2(466, 68), Vector2(156, 52))
+	bubble = _label(ui, theme, Vector2(466, 62), Vector2(156, 40))
 	bubble.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	radio_page_caption = _label(ui, theme, Vector2(466, 122), Vector2(156, 12))
+	radio_page_caption = _label(ui, theme, Vector2(466, 104), Vector2(156, 12))
 	radio_page_caption.add_theme_font_size_override("font_size",8)
 	radio_page_caption.theme_type_variation="MutedLabel"
-	status_label = _label(ui, theme, Vector2(466, 136), Vector2(156, 36))
+	status_label = _label(ui, theme, Vector2(466, 120), Vector2(156, 36))
 	status_label.add_theme_font_size_override("font_size", 10)
 	mission = _label(ui, theme, Vector2(18, 195), Vector2(156, 96))
 	mission.add_theme_font_size_override("font_size", 11)
@@ -706,7 +692,7 @@ func _notification(what: int) -> void:
 func _restart_run() -> void:
 	Engine.time_scale = 1.0
 	Session.next_route = journey.route
-	get_tree().call_deferred("change_scene_to_file","res://scenes/ending.tscn" if Session.story_mode and campaign.get("stage",0)==3 else "res://scenes/journey.tscn")
+	get_tree().call_deferred("change_scene_to_file",Session.play_scene() if Session.story_mode and campaign.get("phase")=="interlude" else "res://scenes/journey.tscn")
 
 
 func _open_box(first: String) -> void:
@@ -984,7 +970,7 @@ func _update_hud() -> void:
 	story_caption.visible=not paused and not over
 	var chapter: int=int(campaign.get("stage",0))
 	var biome_name: String=Biomes.NAMES[Biomes.index(chapter,distance)]
-	story_caption.text=biome_name+" · "+("ETAP %d / 3" % (mini(3,chapter+1)) if Session.story_mode else "YOL")+"\n"+journey.goal_text(comfort_count,arcade.collected)
+	story_caption.text=biome_name+" · "+("ETAP %d / 13" % (chapter+1) if Session.story_mode else "YOL")+"\n"+journey.goal_text(comfort_count,arcade.collected)
 	if boss.active:
 		story_caption.text="%s · %d / %d CAN" % [Boss.NAMES[boss.stage],ceili(boss.hp),int(boss.max_hp)]+"\n"+("ARKAYA GEÇİYOR · MAYIN HAZIRLA" if boss.rear and boss.position.y<400 else ("ARKANDA · MAYIN BIRAK" if boss.position.y>car_y+30 else "ÇEKİRDEĞE ATEŞ · UYARIYA DİKKAT"))
 		route_bar.value=boss.hp/boss.max_hp*100
@@ -1465,14 +1451,14 @@ func _end_run(outcome := "destroyed") -> void:
 	var final_line: String=journey.ending(outcome=="survived",comfort_count,arcade.collected)
 	journey.log_lines.append(final_line)
 	end_panel.text = "%s\n%s\nOmega-3: %s\nPUAN %d · REKOR %d\nMesafe: %d m · %d düşman · Seri %d\n%s\nGüven: %d (%s%d)\n%s" % [
-		("ÜÇ ETAP TAMAMLANDI" if campaign.get("stage",0)==3 else "ETAP TAMAMLANDI") if outcome=="survived" and Session.story_mode else ("EVE DÖNDÜK" if outcome=="survived" else "BU AYRIMDAN YENİDEN"),str(journey.spec()["name"]),final_line,
+		"ETAP TAMAMLANDI" if outcome=="survived" and Session.story_mode else ("EVE DÖNDÜK" if outcome=="survived" else "BU AYRIMDAN YENİDEN"),str(journey.spec()["name"]),final_line,
 		arcade.score,int(save["best_score"]),int(distance),kills,arcade.best_chain,
 		"Yol hedefi tamamlandı" if journey.goal_met(comfort_count,arcade.collected) else "Yol hedefi bir sonraki sefere kaldı",
 		int(momo.trust),"+" if d>=0 else "",int(round(d)),"" if saved else "Kayıt yazılamadı."]
 	for button in touch_controls:
 		button.hide()
 	var layer := end_panel.get_parent()
-	var retry := _control_button(layer, Rect2(166, 300, 148, 44), ("Sonu oku" if campaign.get("stage",0)==3 else ("Sonraki seçim" if outcome=="survived" else "Kararı gözden geçir")) if Session.story_mode else "Yeniden sür", _restart_run)
+	var retry := _control_button(layer, Rect2(166, 300, 148, 44), ("Ara sahneye geç" if outcome=="survived" else "Yeniden dene") if Session.story_mode else "Yeniden sür", _restart_run)
 	retry.grab_focus()
 	retry.z_index=40
 	result_buttons.append(retry)

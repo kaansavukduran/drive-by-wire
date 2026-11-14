@@ -19,8 +19,7 @@ func run() -> void:
  h.eq("unknown novel choice is inert",Story.choose(Story.defaults(),"oops"),Story.defaults())
  var store=Store.new("user://novel-regression.json")
  Session.story_mode=true
- var initial=Book.complete(Book.choose(Book.defaults(),"signal"),true,100,true)
- initial=Book.choose(initial,"share")
+ var initial=Book.complete(Book.choose(Book.defaults(),"depart"),true,100,true)
  for font in ["system","lexend"]:
   UiSkin.configure("dark",font)
   for dimensions in [Vector2i(640,360),Vector2i(360,640),Vector2i(360,780),Vector2i(768,1024),Vector2i(1024,768)]:
@@ -74,7 +73,7 @@ func run() -> void:
    game.chapter=Story.defaults();game._present();Pilot.story(game,0)
    h.eq("real speech buttons play through rescue",game.chapter["step"],"complete")
    h.check("completion commits once",game._commit_completion() and not game._commit_completion())
-   h.eq("next decision is chapter three",store.load_data()["campaign"]["stage"],2)
+   h.eq("first interlude opens second combat",store.load_data()["campaign"]["stage"],1)
    h.check("revenge vow has epilogue consequence",Story.epilogue(store.load_data()["campaign"]).contains("Kurt"))
    game.queue_free();await frames()
  h.eq("Eren record survives actual scene completion and disk reload",store.load_data()["campaign"]["chapter2"]["record"],"sealed")

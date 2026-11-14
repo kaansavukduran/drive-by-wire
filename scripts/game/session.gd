@@ -13,4 +13,6 @@ static var campaign_save_failed := false
 static var view_ending := ""
 
 static func play_scene() -> String:
- return "res://scenes/road_story.tscn" if story_mode and int(campaign_state.get("stage",0))==1 else "res://scenes/main.tscn"
+ if story_mode and campaign_state.get("phase")=="continued":return "res://scenes/ending.tscn"
+ if story_mode and campaign_state.get("phase")=="interlude":return "res://scenes/road_story.tscn"
+ return "res://scenes/main.tscn"

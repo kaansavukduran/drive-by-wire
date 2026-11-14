@@ -56,10 +56,10 @@ func _ready() -> void:
 	brand.theme_type_variation="BrandLabel"
 	universe_label = _label(ui, Rect2(24, 90, 304, 20), "A I O N I A", 14)
 	universe_label.theme_type_variation="AccentLabel"
-	premise_label = _label(ui, Rect2(24, 118, 310, 38), "Omega-3 ile yolun geleceğini seç.\n2 çatışma · 1 yol hikâyesi · 13 son.", 13)
+	premise_label = _label(ui, Rect2(24, 118, 310, 38), "Omega-3 ile yola devam et.\n13 etaplık hikâye · İlk 2 etap hazır.", 13)
 	start_button = _button(ui, Rect2(24, 166, 304, 32), "Sürüşe başla · Space", _start)
 	_button(ui, Rect2(24, 204, 148, 28), "Önce garaja uğra", _garage)
-	_button(ui, Rect2(180, 204, 148, 28), "Sonlar · %d / 13" % campaign["unlocked"].size(), _endings)
+	_button(ui, Rect2(180, 204, 148, 28), "Bölümler", _endings)
 	_button(ui, Rect2(24, 240, 148, 28), "Nasıl oynanır?", _show_help)
 	_button(ui, Rect2(180, 240, 148, 28), "Ayarlar", _show_settings)
 	control_hint = _label(ui, Rect2(24, 282, 308, 43), "Oklar / WASD Serbest sürüş\nE Turbo · Q Fren · Esc Mola", 11)
@@ -152,7 +152,7 @@ func _make_help(parent: Node) -> void:
 	help_scroll.position=Vector2(18,48)
 	help_scroll.size=Vector2(492,184)
 	help_panel.add_child(help_scroll)
-	help_scroll.set_text("1. YOLU AÇ\nPC: oklar / WASD. Mobil/tablet: sabit joystick ile dört yöne sür; sağdaki eylemleri kullan.\n\n2. Omega-3’İ KORU\nSpace / F veya fare sol ile öne ateş et; Fare sağ arkaya sınırsız mayın bırakır (X alternatif). E turbo, Q fren. Shift / C alan darbesi, R sıyrılma. Artı: onarım; şimşek: enerji; kalkan: koruma. Kesik çizgiden uzaklaş; ! işaretli noktaya engel düşecek.\n\n3. EVE DÖN\nİlk ve son bölümde 400 m çatışmalı sürüş var. İkinci bölüm Emre ile dostça yarış ve seçimli sohbet: silah kullanmadan ilerle. Araba seçimi ana menüde. 13 ayrı gelecekten birine ulaş. Başarısızlıkta önceki etaplar korunur. Mola menüsünde yol günlüğünü oku. Esc mola verir. T ile isteğe bağlı sohbet edebilirsin.")
+	help_scroll.set_text("1. YOLU AÇ\nPC: oklar / WASD. Mobil/tablet: sabit joystick ile dört yöne sür; sağdaki eylemleri kullan.\n\n2. Omega-3’İ KORU\nSpace / F veya fare sol ile öne ateş et; Fare sağ arkaya sınırsız mayın bırakır (X alternatif). E turbo, Q fren. Shift / C alan darbesi, R sıyrılma. Artı: onarım; şimşek: enerji; kalkan: koruma. Kesik çizgiden uzaklaş; ! işaretli noktaya engel düşecek.\n\n3. EVE DÖN\nEtapları sırayla tamamla; her etaptan sonra ara sahne gelir. İlkinde Emre ve Eren, ikincisinde Kurt yanında. Bu sürüm ikinci ara sahnede Devam edecek ile biter. 13 etap planlanıyor; 3–13 henüz oynanamaz. Araba seçimi ana menüde. Başarısızlıkta önceki etaplar korunur. Mola menüsünde yol günlüğünü oku. Esc mola verir. T ile isteğe bağlı sohbet edebilirsin.")
 	help_body=help_scroll.content
 	help_start = _button(help_panel, Rect2(18, 246, 236, 30), "Hazırım · Sürüşe başla", _start)
 	help_back = _button(help_panel, Rect2(266, 246, 244, 30), "Geri · Esc", _hide_help)
@@ -183,7 +183,8 @@ func _start() -> void:
 	save["upgrades"] = garage.apply_upgrade({}, "armor") if save["upgrades"].is_empty() else save["upgrades"]
 	Session.story_mode=true
 	Session.view_ending=""
-	if campaign["stage"]==3: campaign=Book.defaults(campaign["unlocked"])
+	if campaign["phase"]=="continued":
+		get_tree().call_deferred("change_scene_to_file","res://scenes/ending.tscn");return
 	save["campaign"]=campaign
 	Session.campaign_state=campaign.duplicate(true)
 	Session.campaign_save_failed=not store.save_data(save)
@@ -214,12 +215,12 @@ func _input(event: InputEvent) -> void:
 func _process(delta: float) -> void:
 	if QA.active():
 		QA.publish("title",{"vehicles":QA.rect(menu_buttons[5]),"view":[get_viewport_rect().size.x,get_viewport_rect().size.y],"cast":cast.snapshot() if cast.visible else {},"play":QA.rect(start_button),"garage":QA.rect(menu_buttons[1]),"endings":QA.rect(menu_buttons[2]),"help":QA.rect(menu_buttons[3]),"settings":QA.rect(menu_buttons[4]),"settings_ui":QA.settings(settings),"settings_visible":settings.visible,"help_visible":help_panel.visible,"help_scroll":QA.rect(help_scroll),"help_content":QA.rect(help_body),"help_scroll_value":help_scroll.page_index,"help_reader":help_scroll.snapshot()})
-	var caption: String="Etap %d / 3 · Devam et" % (int(campaign["stage"])+1) if campaign["stage"]>0 and campaign["stage"]<3 else ("Yeni hikâye" if campaign["stage"]==3 else "Hikâyeye başla")
+	var caption: String="Devam edecek" if campaign["phase"]=="continued" else ("Ara sahneye devam et" if campaign["phase"]=="interlude" else ("Etap %d / 13 · Devam et" % (int(campaign["stage"])+1) if campaign["stage"]>0 else "Hikâyeye başla"))
 	start_button.text = caption+(" · A" if Controls.last_device=="pad" else " · Space")
 	control_hint.text = "Sol çubuk / D-pad Serbest sürüş\nRB Turbo · LT Fren · Start Mola" if Controls.last_device=="pad" else "Oklar / WASD Serbest sürüş\nE Turbo · Q Fren · Space Ateş"
 	if DisplayServer.is_touchscreen_available():
 		start_button.text=caption
-		control_hint.text="Sabit joystick · Dört yön · Öne ateş / arkaya mayın\nÜç etap, üç karar. Yönünü sen seç."
+		control_hint.text="Sabit joystick · Dört yön · Öne ateş / arkaya mayın\nİki etap, iki ara sahne. Yol birlikte sürüyor."
 	if motion:
 		_t += delta
 	queue_redraw()

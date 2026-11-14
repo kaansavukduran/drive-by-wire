@@ -1,77 +1,44 @@
-# Drive-By Wire · 0.11.0
+# Drive-By Wire · 0.12.0
 
-**Fragaria Interactive · Fragaria Games · AIONIA**
+**Fragaria Interactive · AIONIA**
 
-Garajda Aion ve Ömer sabit ayak hizalarında durur; konuşma/yükseltme metinleri karakter alanına taşmaz. Uzun konuşmalar İleri düğmesiyle okunur.
+Omega-3 ile yolu aç, arkadaşlarının sesini dinle. Oyun artık lineer: **1. etap → Emre/Eren ara sahnesi → 2. etap → Kurt’un kurtarışı → Devam edecek.** Sohbet yanıtları konuşmaları değiştirir; rota, combat bonusu veya farklı son açmaz.
 
-Omega-3 ile Üçüncü Nabız’ı yaşa: iki 400 metrelik çatışma etabı ve bir seçimli yol hikâyesi, üç dallanan karar ve **13 ayrı son**. Direksiyon oklar/WASD, fare, gamepad veya mobilde sabit joystick ile sende. Kararlar kaynakları, trafik baskısını ve geleceğinizi değiştirir.
+**13 etap planlanıyor. Bu sürümde yalnızca ilk iki etap ve iki ara sahne oynanabilir. 3–13 hazır değildir.** Eski 13 son galerisi kaldırıldı; eski kararlar/kazanılmış kayıtlar yerel kayıt arşivinde korunur.
 
-Sürüşte uzun telsiz konuşmaları ölçülen alana göre otomatik sayfalanır; tam metin mola günlüğünde kalır. Başlık konuşan karakteri gösterir. Konuşma, güven/kalkan durumu, kontrol ipuçları ve enerji bilgileri ayrı alanlarda görünür.
-
-0.9.0: Ana menüden **Yol Arkadaşı, Postacı veya Kuyruklu Yıldız** seç; gövde değişir, sürüş dengesi ve çarpışma alanı aynı kalır. Mobil sürüş panelleri daha az yer kaplar.
-
-0.11.0: Omega-3, altı karakterin portreleri/garaj görünümleri, üç oyuncu aracı ve Emre’nin yarış arabası, düşman araçlar/taret, üç robot boss, altı yol biyomu, garaj, mayın/ikmal/engel ve patlama görselleri ortak ayrıntılı pixel-art işçiliğine taşındı. Özgün paftaların kısa gövde/yuvarlak yüz oranları korunur. Fragaria Unslop bu projenin sonraki Forge çalışmalarında da uygulanır.
-
-0.10.1: Aion, Emre ve Eren’in özgün modelleme paftalarındaki yuvarlak yüzleri, büyük gözleri, kısa gövde/uzuv oranları ve özgün kıyafetleri geri getirildi. Ayrıntılı piksel kürk/kumaş ve sahnenin ışık kalitesi korunur. Aion’un eklenmiş koyu kıyafeti ve boyun kartı kaldırıldı; önlüğündeki özgün işaretleri ve pembe gövdesi görünür.
-
-0.10.0: Yol kenarı sahnesinde ayrıntılı kürk/kumaş, ortak gece ışığı ve sabit zemin temaslarıyla yeni Aion, Emre ve Eren paftaları kullanılır. Emre’nin altı yaralı pozu, Aion’un diz çöküp el uzatması ve Eren’in battaniyeyle yardımı vardır. **Tavşan Eren**, Emre’den ayrı bir karakterdir; saldırı kaydını mühürleme veya yalnız sinyal izini Kurt’la paylaşma seçimin epilogda hatırlanır. Yeni oyun uyarlamaları final kanon tasarımı sayılmaz.
-
-**İkinci bölüm: Yan yana.** Emre ile sohbet et, dostça yarışın temposunu seç. Kurulmuş tuzak arabasını patlatınca yol kenarında yanında kal. Verdiğin söz üçüncü bölümün desteğini, bağlarını ve epilogunu değiştirir. Bu bölümde ateş/mayın veya çatışma yoktur. Diyalog kendi hızında, 1/2, Enter/A veya dokunmatik düğmelerle ilerler; aradaki kısa yarış ve patlama animasyonları mola verilebilir. Her replikte kayıt noktası vardır.
-
-İlk ve son etapta **Mühür-01 ve Tasnif-13** yolu keser. Uyarıları izle; robot öndeyken ateş, arkadayken mayın kullan. Yarı canda ikinci faz başlar. Robot durdurulmadan çatışma etabı bitmez. Orta yol Emre’nin dostça yarışı için Cam Ormanı’ndadır.
-
-Son metinleri, sonlar galerisi, oyun yardımı, mola günlüğü ve ayarlar sabit sayfalardadır; tekerlek gerekmez. Metinlerde Önceki/Sonraki veya ←/→; menüde yönler ve A/Enter kullanılabilir. Galeri13 kaydı dört sayfada gösterir. Ayarlarda Önceki/Sonraki veya PageUp/PageDown kullanılır.
+İkinci ara sahnede yol uçurumda kesilir. Kurt soldan gelip Aion’un aracına yandan çarpar, onu kenardan uzaklaştırır. Yanına gelir, iyi olup olmadığını sorar. Aion teşekkür eder; kendi arabası pert olmuştur. Kurt yeni bir araba getireceğine söz verir. Bu sürüm burada biter.
 
 ## Oyna
 
-Ana menüde **Hikâyeye başla**. Emre, Eren, Kuzu, Kurt ve Baykuş Ömer ile telsiz konuşmalarını ilerlet; yanıtını ver, ardından rota seç. Konuşma, yanıt, rota ve günlük ayrı sabit sayfalardadır; bu ekranda kaydırma veya fare tekerleği gerekmez. Yanıtlar ilişkiyi ve etap başındaki kalkan/mayın soğutma desteğini etkiler. Tamamlanan bölüm bir sonraki kararı açar; üç karar **13 ayrı sona** ulaşır. Kaza, yeni bir son açmaz. Önceki etaplar ve kazanılan sonlar korunur.
+[Güncel web oyunu](https://drive-by-wire.vercel.app/). Ana menü → Hikâyeye başla → Etap → Geçidi aç. Kazanınca Ara sahneye geç düğmesini kullan. Replikleri kendi hızında ilerlet. Ana menüde Bölümler, hazır içerikle gelecek etapları açıkça ayırır.
 
-Telefon/tablette **sabit sol joystick** ile ileri/geri/sağa/sola serbestçe sür. Sağdaki Ateş öne, Mayın arkaya gider. Mayın sınırsızdır; basılı tutunca her 0,7 saniyede bırakılır. Eski yükseltmeler ve ikmal rotaları bu süreyi kısaltır. Mayın patlaması arka mermileri de temizler. Diğer eylemler turbo, fren, sıyrılma ve Omega-3 desteğidir. Dikey/yatay düzen, bağımsız parmaklar ve yön değişiminde güvenli mola vardır.
+- PC: oklar/WASD dört yönlü sürüş; fare sol/Space öne ateş; fare sağ/X sınırsız arka mayın; E turbo, Q fren, Shift alan darbesi, R sıyrılma, Esc mola.
+- Gamepad: sol çubuk/D-pad; RT/A ateş, X mayın, RB turbo, LT fren, Y destek, B/LB sıyrılma; menü/seçimlerde yönler ve A, geri B.
+- Telefon/tablet: onaylı sabit joystick + bağımsız eylem düğmeleri. Dikey/yatay oynanış ve yön değişiminde güvenli mola.
 
-Etap sonunda analog/D-pad ile iki eylem arasında gezip A ile onaylayabilirsin; fare gerekmez.
+Her çatışma 400m; robot durdurulmadan etap bitmez. İlkinde Mühür-01, ikincisinde Yankı-02 vardır. Ölüm aynı etap başına döndürür; önceki ara sahne ve kayıtlar korunur. Ara sahneler replik/animasyon adımını kaydeder; yarım kısa hareket yeniden o adımdan oynar. İkinci ara sahne bittikten sonra yeniden açılış da Devam edecek ekranında kalır. Baştan oynamak açık bir düğmedir.
 
-PC: **oklar/WASD** sürekli dört yönlü hareket, **Space/F/fare sol** öne ateş, **fare sağ/X** arka mayın, **E** turbo, **Q** fren, **Shift/C** alan darbesi, **R** sıyrılma, **Esc/P** mola. Gamepad: sol çubuk/D-pad hareket, A/RT ateş, X mayın, RB turbo, LT fren, B/LB sıyrılma, Y destek, Start mola. Yeniden atama ve ölü bölgesi ayarı korunur. Sürüş için yazı yazılmaz; T sohbeti isteğe bağlıdır.
+Kısa aksiyon yazıları gerçek metin yüksekliğine sığar. Normal konuşma kutuları daha dar ve kısa; uzun replikler bilgi kaybetmeden sayfalanır. Dokunmatik eylemler en az 44px kalır. Karakterler sabit kaynak ayak temasları ve ortak sahne koordinatları kullanır.
 
-Karakter/araç, hitbox, ateş ve mayın aynı fizik konumuna bağlıdır. Aion sürücülü araç atlası sabit gövde pivotu kullanır; Aion ve direksiyon aracın önüne bakar. NPC portreleri kare oranını korur. Saldırı uyarıları, patlama paftaları, ön namlu parlaması ve Omega-3 elektrik darbesi vardır. Destek yakındaki düşman mermilerini temizler. Ses, titreşim, kamera sarsıntısı ve azaltılmış hareket tercihleri korunur.
+Godot 4.6.3 altyapısı, yüksek ayrıntılı pixel-art kaynaklar, seçilen araç, ses/hareket/font/tema ayarları ve klavye atamaları korunur. Kayıtlar bu cihazdadır; hesap/reklam/telemetri yoktur. Varsayılan koyu tema; Ayarlar’da açık/sistem, font, ses ve azaltılmış hareket seçenekleri vardır. Fiziksel cihaz ve insan oyun dengesi testi yapılmış sayılmaz.
 
-Koyu varsayılan tema; açık/sistem ve font tercihi, otomatik ateş, düşük güç, bağımsız ses/hareket seçenekleri Ayarlar'dadır. Kayıtlar yereldir. Özel hesap, reklam, analiz veya LLM bağlantısı yoktur. Godot Web Canvas gerçek sistem fontuna erişemediğinden gömülü yedek kullanır. Fiziksel cihaz/gamepad ve insan eğlence testi yapılmış sayılmaz.
+## Geliştirme
 
-## Çalıştır
-
-Godot **4.6.3 standard** ile `project.godot` dosyasını aç ve F5:
+Godot 4.6.3 standard ile project.godot dosyasını açıp F5 kullan veya:
 
 ```sh
 godot --headless --editor --import --quit
-godot --path .
-bash tests/run_all.sh
-python3 packaging/build_web.py
+GODOT=godot bash tests/run_all.sh
+GODOT_BIN=godot python3 packaging/build_web.py
 python3 -m http.server 8765 --directory build/web
 ```
 
-Web çıktısını `http://localhost:8765` ile aç.
+Web’i http://localhost:8765 adresinden aç. HTML’ye çift tıklamak yeterli değildir. Normal girişte `?qa` yalnız salt okunur tarayıcı test durumunu açar; oyun durumuna yazma API’si yoktur.
 
-**Doğrulama:** Kapsam ve güncel PASS / FAIL / NOT TESTED / BLOCKED sonuçları QA raporunda. Eski sürümün yayın kanıtı yeni commitin açıldığı anlamına gelmez; canlı sürüm ayrıca kontrol edilir.
- HTML dosyasına çift tıklamak yeterli değildir. [Sürüm ve platform durumu](docs/RELEASE.md) · [Güncel AIONIA referansı](docs/AIONIA_CURRENT_REFERENCE.md) · [Kontrol kararı](docs/CONTROLS.md) · [Hikâyeli bölüm](docs/JOURNEY.md) · [Tasarım incelemesi](docs/DESIGN_BRIEF.md) · [Mahremiyet](docs/PRIVACY.md) · [Sanat kılavuzu](docs/ART_BIBLE.md) · [Test sonuçları](docs/QA.md) · [Forge kaydı](docs/FORGE.md) · [Derleme](docs/BUILD.md) · [Vercel](docs/VERCEL.md).
+`tests/browser_linear.cjs`: iki etap, iki ara sahne ve kayıtla devam için gerçek klavye/fare, Gamepad API veya dokunmatik girdileri. `DBW_INPUT=keyboard|pad|touch`, `DBW_URL` ve `DBW_EVIDENCE_DIR` ile çalışır. Eski browser_book/result_pad/touch_boss girişleri bu ortak akışa yönelir. `tests/browser_forge.cjs` altı düzen/input regresyonudur.
 
-`Releases/latest` önceki 0.1.0 paketlerini gösterebilir; bu dalın paketleriyle aynı değildir.
+[Hikâye ve kayıt](docs/JOURNEY.md) · [Tasarım](docs/GAME_DESIGN.md) · [Kontroller](docs/CONTROLS.md) · [Sanat](docs/ART_BIBLE.md) · [QA](docs/QA.md) · [Forge](docs/FORGE.md) · [Sürüm](docs/RELEASE.md) · [AIONIA kaynak](docs/AIONIA_CURRENT_REFERENCE.md) · [Mahremiyet](docs/PRIVACY.md) · [Build](docs/BUILD.md)
 
-0.7.2: sabit garaj karakterleri, ayrı sahne alanları, karakterlerle çakışmayan düğmeler ve ölçüye göre sayfalanan konuşmalar. Omega-3, serbest sürüş, sınırsız mayın ve Üçüncü Nabız korunur. Önceki kayıt kimlikleri ve 13 sonun kimlikleri korunur.
+Kaynaklar: data/story_book.json ve scripts/core/story_book.gd lineer ilerleme; road_story.json ilk ara sahne; cliff_story.json ikinci ara sahne. visual_art.json yeni resimlerin kaynak bölgeleri/hash/ayak temasları; assets/PROVENANCE.json üretim kaydıdır. Kullanıcının talebiyle sonraki kalite/Forge işleri Unslop becerisiyle yürütülür.
 
-## Kaynaklar
-
-- `data/balance.json`: sürüş, düşmanlar, turbo, kapsül, görev ve puan dengesi.
-- `scripts/core/arcade.gd`: sahneden bağımsız puan, seri, görevler.
-- `scripts/game/controls.gd`, `touch_control.gd`: klavye, analog/D-pad, yeniden atama ve çoklu dokunma.
-- `data/story_book.json`, `scripts/core/story_book.gd`: 13 sonlu seçim kitabı ve bölüm kaydı.
-- `scripts/core/`: Omega-3 ilişkisi (eski `momo` kimliğiyle uyumlu), garaj, isteğe bağlı ayrıştırıcı ve kayıt.
-- `scripts/game/main.gd`: sefer, çatışma, HUD ve mola.
-- `scripts/game/ui_skin.gd`, `appearance.gd`: tek paylaşılan tema, font ve yerel görünüm tercihi.
-- `scripts/game/companion_face.gd`: yeni Omega-3 pixel yüzü; OYUN/TASLAK.
-- `packaging/web/shell.html`, `loading_screen.gd`: gerçek ilerlemeli Fragaria yükleyiciler.
-- `scripts/game/sounds.gd`: yerel üretilen özgün kısa sesler.
-- `assets/`, `tools/art/`: mevcut piksel çizimler ve kaynak kayıtları.
-- `packaging/`, `export_presets.cfg`, `.github/`: derleme profilleri.
-
-0.6.2: [Güncel oyunu aç](https://drive-by-wire.vercel.app/play/). Kök adres bu girişe yönlenir; oyun dosyaları sürüm ve commit içeren ayrı klasörden gelir. Eski HTML ile yeni PCK karışmaz. Açık oyun sonraki sürümü haber verir; oyuncu düğmeye basana kadar etap yenilenmez. Kayıt silinmez. `main` güncellenince Vercel otomatik dağıtır; GitHub Release gerekmez. Canlı sürüm/commit/giriş adresi `/version.json` üzerinden doğrulanabilir.
-
-0.6.1: görsel ayarlar ve kamera çizim sıklığı trafik/ikmal şansını değiştirmez. Ekran dışına kaçan mermiler temizlenir; arkadaki araçlara ateş hedefe ulaşabilir.
+Canlı /version.json sürüm/build commit/giriş adresini bildirir. Build başarısı, yayın ve gerçek oynanış ayrı doğrulanır; otomatik Vercel yayını kota tarafından engellenebilir. Önizleme ile public domain aynı kaynak ağacından yayımlansa bile commit/target farkı yayın makbuzunda açıkça yazılır.
