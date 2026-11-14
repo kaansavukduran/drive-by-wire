@@ -38,7 +38,7 @@ func run() -> void:
  title=current_scene
  await tap(JOY_BUTTON_A)
  await frames()
- h.check("story briefing offers three first decisions",current_scene.get("choices")!=null and current_scene.choices.size()==3)
+ h.check("story briefing offers one linear departure",current_scene.get("choices")!=null and current_scene.choices.size()==1)
  await tap(JOY_BUTTON_A)
  await frames()
  var game := current_scene

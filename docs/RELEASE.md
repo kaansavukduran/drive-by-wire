@@ -1,3 +1,9 @@
+# 0.12.0 · Uçurumun kıyısı
+
+13 farklı son yerine 13 etaplık lineer plan; şu an ilk iki savaş ve iki ara sahne oynanabilir. İkinci ara sahnede Kurt yandan çarparak Aion’u uçurumdan kurtarır, yanına gelir, pert arabanın yerine yeni araba sözü verir. Ardından Devam edecek; hazır olmayan 3–13 açılmaz. Sohbet yanıtları sürüş bonusu/rota/son değiştirmez. Eski kayıtlar arşivlenerek uyarlanır; araç/ayar/puan korunur.
+
+Daha kompakt, metnin gerçek yüksekliğini kullanan aksiyon kutuları; dört Kurt pozu, ayrı kurtarma arabası, seçilen üç araca uygun pert gövdeler ve uçurum zemini. Büyük resim ve gerçek görünür temas kaydı. Gerçek test/yayın durumu QA ve PR/yayın makbuzundadır.
+
 # 0.11.0 · Birlikte çizilmiş bir dünya
 
 Omega-3,6 portre/garaj aktörü, oyuncu/Emre araçları, düşmanlar/taret,3 boss,6 biyom, garaj ve çatışma nesne/efektleri yeni ortak ayrıntılı pixel-art kaynaklarını kullanır. Paftadaki oran/kimlik korunur; mevcut Godot, onaylı kontroller,13 son ve kayıt biçimi sürer. Fragaria Unslop sonraki Forge işleri için proje talimatına yazıldı.

@@ -22,7 +22,7 @@ func key(code: int,down: bool) -> void:
  var e:=InputEventKey.new();e.keycode=code;e.physical_keycode=code;e.pressed=down
  Input.parse_input_event(e);Input.flush_buffered_events()
 func fixture() -> Node:
- Session.story_mode=true;Session.campaign_state=Book.choose(Book.defaults(),"signal")
+ Session.story_mode=true;Session.campaign_state=Book.choose(Book.defaults(),"depart")
  change_scene_to_file("res://scenes/main.tscn");await frames()
  var game:=current_scene
  game.set_physics_process(false);game.set_process(false)
@@ -87,7 +87,7 @@ func run() -> void:
  h.check("A activates selected garage without mouse",current_scene.get("stage")=="dialogue" or current_scene.get("stage")=="upgrade")
  root.content_scale_size=Vector2i(640,360);root.size=Vector2i(640,360)
  game=await fixture();game._end_run("survived");await frames();await pad(JOY_BUTTON_A)
- h.check("A activates next chapter without mouse",current_scene.get("choices")!=null and current_scene.campaign["stage"]==1)
+ h.check("A activates next chapter without mouse",current_scene.get("chapter")!=null and current_scene.campaign["phase"]=="interlude")
  game=await fixture();game._end_run("destroyed");await frames();await pad(JOY_BUTTON_A)
  h.check("A activates retry without advancing chapter",current_scene.get("choices")!=null and current_scene.campaign["stage"]==0)
  Controls.install({"drive_mine":KEY_V})

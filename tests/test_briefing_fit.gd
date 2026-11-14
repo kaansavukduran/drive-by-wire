@@ -10,8 +10,9 @@ func run() -> void:
   root.content_scale_size=dimensions
   root.size=dimensions
   for key in Book.data()["nodes"]:
-   var path: Array=[] if key=="root" else Array(key.split("/"))
-   Session.campaign_state=Book.sanitize({"stage":path.size(),"choices":path})
+   var state:=Book.defaults()
+   state["stage"]=int(key.trim_prefix("chapter_"))-1
+   Session.campaign_state=state
    var screen: Node=load("res://scenes/journey.tscn").instantiate()
    root.add_child(screen)
    await process_frame

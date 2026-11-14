@@ -37,16 +37,13 @@ func configure_book(state: Dictionary) -> void:
 	route=str(selected["goal"])
 	var stage: int=state["stage"]
 	var chapter: String=Book.node(state)["title"]
-	if stage==2 and not state.get("chapter2",{}).get("vow","").is_empty():
-		selected=selected.duplicate(true)
-		selected["opening"]="Kuzu: Emre yanımda. "+("Kurt iz sürüyor; ilk 10 saniye kalkanın var." if state["chapter2"]["vow"]=="avenge" else "Önce onu kurtardın. +15 can ve ilk 7 saniye kalkan seninle.")
 	data={"chapter":chapter,"premise":Book.node(state)["text"],"routes":{route:selected},"beats":[],"failure":"Bu etap tamamlanmadı. Önceki kararların korunuyor; bu ayrımdan yeniden deneyebiliriz."}
-	var lines: Array=Book.node(state).get("beats",Book.data()["beats"][stage])
+	var lines: Array=Book.node(state)["beats"]
 	for i in 3:
 		data["beats"].append({"distance":[100,220,340][i],"line":lines[i]})
 	data["routes"][route]=selected.duplicate(true)
-	data["routes"][route]["success"]="Kararımızın yolunu açtık. Bir sonraki ayrımı birlikte seçelim."
-	data["routes"][route]["partial"]="Geçide ulaştık. Yol hedefini kaçırdık; seçimimiz ve hikâyemiz yine de ilerliyor."
+	data["routes"][route]["success"]="Yol açık. Arkadaşlarının sesini dinle; ara sahneye geçelim."
+	data["routes"][route]["partial"]="Geçide ulaştık. İkmal hedefi eksik kaldı; hikâyeye devam edebiliriz."
 	log_lines.clear()
 	next_beat=0
 	log_lines.assign([chapter,"Kararların: "+" → ".join(Book.path_labels(state)),str(data["premise"]),str(selected["name"]),str(selected["effect"])])

@@ -36,8 +36,8 @@ func _ready() -> void:
  save=store.load_data()
  Controls.install(save["settings"]["bindings"],save["settings"]["pad_bindings"],save["settings"]["deadzone"])
  campaign=Book.sanitize(Session.campaign_state if not Session.campaign_state.is_empty() else save["campaign"])
- if Session.story_mode and campaign["stage"]==3:
-  get_tree().call_deferred("change_scene_to_file","res://scenes/ending.tscn")
+ if Session.story_mode and campaign["phase"] in ["interlude","continued"]:
+  get_tree().call_deferred("change_scene_to_file",Session.play_scene())
   return
  panel=PanelContainer.new()
  panel.theme=UiSkin.theme()
@@ -54,7 +54,7 @@ func _ready() -> void:
  heading.theme_type_variation="AccentLabel"
  surface.add_child(heading)
  for i in 4:
-  var button:=_button(surface,["Konuşma","Yanıt","Rota","Günlük"][i])
+  var button:=_button(surface,["Konuşma","Yanıt","Etap","Günlük"][i])
   button.pressed.connect(_show_page.bind(i,true))
   tabs.append(button)
  content=Control.new()
@@ -64,9 +64,9 @@ func _ready() -> void:
   content.add_child(page)
   pages.append(page)
  _build_radio()
- reply_text=_label(pages[1],"Yanıtın bu etapta destek sağlar. Rota seçerek yola çıkabilirsin.")
+ reply_text=_label(pages[1],"Yanıtlar sohbeti değiştirir. Bölümler aynı sırayla ilerler.")
  for reply in Book.node(campaign).get("responses",[]) if Session.story_mode else []:
-  var perk: String="Yanıtın hatırlanır" if Session.story_mode and campaign["stage"]==1 else ("Daha hızlı mayın" if reply["perk"]=="mine" else "7 sn kalkan")
+  var perk: String="Sohbet yanıtı · Sürüşü değiştirmez"
   var button:=_button(pages[1],str(reply["text"])+"\n"+perk)
   button.pressed.connect(_answer.bind(str(reply["id"])))
   button.disabled=campaign.get("radio",{}).has(Book.node_key(campaign))
@@ -74,12 +74,12 @@ func _ready() -> void:
  var options: Array=Book.node(campaign)["choices"] if Session.story_mode else Journey.new().data["routes"].values()
  for i in options.size():
   var spec: Dictionary=options[i]
-  var effect: String="Emre ile seçimli yol hikâyesi · Çatışma yok" if Session.story_mode and campaign["stage"]==1 else str(spec["effect"])
+  var effect: String=str(spec["effect"])
   var button:=_button(pages[2],str(spec["name"])+"\n"+effect)
   button.pressed.connect(_choose.bind(str(spec["id"]) if Session.story_mode else ["steady","supplies"][i]))
   choices.append(button)
  var synopsis: String=Book.node(campaign)["text"] if Session.story_mode else Journey.new().data["premise"]
- journal_parts=_paginate(synopsis+"\n\nİlk ve son etap 400 m. İkinci bölüm silahsız dostça yarış ve seçimli sohbet. Kaza yaparsan bu karardan yeniden denersin.\nOklar/WASD veya sabit joystick: dört yön. Ateş öne, sınırsız mayın arkaya. E turbo, Q fren.",190)
+ journal_parts=_paginate(synopsis+"\n\nHer etap 400 m. Sonrasında ara sahne gelir. Bu sürüm iki etap ve iki ara sahnenin ardından Devam edecek ile biter. Kaza yaparsan aynı etaptan yeniden denersin.\nOklar/WASD veya sabit joystick: dört yön. Ateş öne, sınırsız mayın arkaya. E turbo, Q fren.",190)
  journal_text=_label(pages[3],journal_parts[0])
  journal_next=_button(pages[3],"")
  journal_next.pressed.connect(func(): journal_index=(journal_index+1)%journal_parts.size();_show_journal())
@@ -144,7 +144,7 @@ func _show_page(index: int,focus: bool=false) -> void:
  page_index=index
  for i in pages.size():
   pages[i].visible=i==index
-  tabs[i].text=(["Konuşma","Yanıt","Rota","Günlük"][i])+ (" •" if i==index else "")
+  tabs[i].text=(["Konuşma","Yanıt","Etap","Günlük"][i])+ (" •" if i==index else "")
  if focus:
   if index==0: radio_next.grab_focus()
   elif index==1 and not radio_answers.is_empty() and not radio_answers[0].disabled: radio_answers[0].grab_focus()
@@ -178,8 +178,9 @@ func _fit(control: Control,rect: Rect2) -> void:
 func _layout() -> void:
  if not is_instance_valid(back): return
  var view: Vector2=get_viewport().get_visible_rect().size
- panel.position=Vector2(8,8)
- panel.size=view-Vector2(16,16)
+ var extent_panel:=Vector2(minf(560,view.x-16),minf(340,view.y-16))
+ panel.position=(view-extent_panel)/2
+ panel.size=extent_panel
  var width:=panel.size.x-32
  heading.position=Vector2(16,8)
  heading.size=Vector2(width,28)
@@ -194,7 +195,7 @@ func _layout() -> void:
  _fit(radio_next,Rect2(0,extent.y-44,extent.x,44))
  _fit(reply_text,Rect2(0,0,extent.x,extent.y-100))
  for i in radio_answers.size(): _fit(radio_answers[i],Rect2(0,extent.y-96+i*50,extent.x,46))
- var row_h: float=(extent.y-6*(choices.size()-1))/choices.size()
+ var row_h: float=minf(56,(extent.y-6*(choices.size()-1))/choices.size())
  for i in choices.size(): _fit(choices[i],Rect2(0,i*(row_h+6),extent.x,row_h))
  _fit(journal_text,Rect2(0,0,extent.x,extent.y-52))
  _fit(journal_next,Rect2(0,extent.y-44,extent.x,44))
@@ -212,13 +213,13 @@ func _process(_delta: float) -> void:
   var visible_controls: Array=[]
   for child in pages[page_index].get_children():
    if child is Control: visible_controls.append(QA.rect(child))
-  QA.publish("briefing",{"view":[view.x,view.y],"panel":QA.rect(panel),"reading":QA.rect(content),"tabs":tabs.map(func(b): return QA.rect(b)),"page":page_index,"visible_controls":visible_controls,"scrollbars":panel.find_children("*","ScrollContainer",true,false).size(),"steady":QA.rect(choices[0]),"supplies":QA.rect(choices[1]),"choices":choices.map(func(b): return QA.rect(b)),"radio_next":QA.rect(radio_next),"radio_answers":radio_answers.map(func(b): return QA.rect(b)),"radio_selected":campaign.get("radio",{}).get(Book.node_key(campaign),""),"speaker":radio_portrait.speaker,"line_index":line_index,"line_count":conversation.size(),"stage":campaign["stage"],"back":QA.rect(back)})
+  QA.publish("briefing",{"view":[view.x,view.y],"panel":QA.rect(panel),"reading":QA.rect(content),"tabs":tabs.map(func(b): return QA.rect(b)),"page":page_index,"visible_controls":visible_controls,"scrollbars":panel.find_children("*","ScrollContainer",true,false).size(),"steady":QA.rect(choices[0]),"supplies":QA.rect(choices[-1]),"choices":choices.map(func(b): return QA.rect(b)),"radio_next":QA.rect(radio_next),"radio_answers":radio_answers.map(func(b): return QA.rect(b)),"radio_selected":campaign.get("radio",{}).get(Book.node_key(campaign),""),"speaker":radio_portrait.speaker,"line_index":line_index,"line_count":conversation.size(),"stage":campaign["stage"],"back":QA.rect(back)})
 func _answer(id: String) -> void:
  campaign=Book.answer(campaign,id)
  save["campaign"]=campaign
  save_error=not store.save_data(save)
  Session.campaign_state=campaign.duplicate(true)
- reply_text.text=str(Book.radio_reply(campaign).get("reply",""))+ ("\nKayıt yazılamadı; oturum içinde korunuyor." if save_error else "\nYanıt kaydedildi. Rota sekmesinden yola çık.")
+ reply_text.text=str(Book.radio_reply(campaign).get("reply",""))+ ("\nKayıt yazılamadı; oturum içinde korunuyor." if save_error else "\nYanıt kaydedildi. Etap sekmesinden yola çık.")
  for b in radio_answers: b.disabled=true
  tabs[2].grab_focus()
  _focus_paths()

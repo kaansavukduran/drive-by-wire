@@ -69,7 +69,7 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
     }
     await tap(page,q.supplies,device.touch);
     q=await state(page,'run');
-    assert.equal(q.paused,false);assert.equal(q.route,'supplies');assert.equal(q.mines,-1);
+    assert.equal(q.paused,false);assert.equal(q.route,'steady');assert.equal(q.mines,-1);
     for(const w of q.radio_ui.widgets)assert(w.fits,'visible HUD text must fit: '+w.text);
     if(q.view[1]>q.view[0]){
      const hud=q.portrait_hud;
@@ -169,7 +169,7 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
    await tapPad(13);await tapPad(0);await wait(page,()=>window.__dbwQA.stage==='upgrade');
    await tapPad(0);await wait(page,()=>window.__dbwQA.stage==='ready');
    await tapPad(0);await state(page,'briefing');await tapPad(15);await tapPad(0);
-   let q=await state(page,'run');assert.equal(q.route,'supplies');
+   let q=await state(page,'run');assert.equal(q.route,'steady');
    await page.evaluate(()=>window.__pad.axes[0]=-0.8);await wait(page,()=>window.__dbwQA.player[0]<280);
    await page.evaluate(()=>window.__pad.axes[0]=0);await sleep(200);
    await page.evaluate(()=>window.__pad.axes[0]=0.8);await wait(page,()=>window.__dbwQA.player[0]>300);

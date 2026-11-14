@@ -264,7 +264,8 @@ func _pick_upgrade(id: String) -> void:
 
 func _start_run() -> void:
 	var campaign: Dictionary=Book.sanitize(Session.campaign_state if not Session.campaign_state.is_empty() else save["campaign"])
-	if campaign["stage"]==3: campaign=Book.defaults(campaign["unlocked"])
+	if campaign["phase"]=="continued":
+		get_tree().call_deferred("change_scene_to_file","res://scenes/ending.tscn");return
 	save["campaign"]=campaign
 	Session.campaign_state=campaign.duplicate(true)
 	Session.campaign_save_failed=not store.save_data(save)
@@ -404,7 +405,7 @@ func _layout() -> void:
 	brief_label.visible=not touch_landscape
 	brief_label.position=Vector2(16,view.y-190) if portrait else offset+Vector2(16,308)
 	brief_label.size=Vector2(view.x-32,28) if portrait else Vector2(380,20)
-	brief_label.text="Bu etap için bir yükseltme seç." if stage=="upgrade" else "3 etap · 13 son. Sabit joystick / oklar ile sür."
+	brief_label.text="Bu etap için bir yükseltme seç." if stage=="upgrade" else "13 etaplık hikâye · İlk 2 etap hazır."
 	info.position=Vector2(16,view.y-80) if portrait else offset+Vector2(16,336)
 	info.size=Vector2(view.x-32,40) if portrait else Vector2(608,18)
 	info.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART

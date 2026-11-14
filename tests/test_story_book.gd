@@ -1,107 +1,44 @@
 extends SceneTree
-const Pilot := preload("res://tests/autopilot.gd")
-const H := preload("res://tests/harness.gd")
-const Book := preload("res://scripts/core/story_book.gd")
-const Store := preload("res://scripts/core/save_store.gd")
-const Session := preload("res://scripts/game/session.gd")
+const H=preload("res://tests/harness.gd")
+const Book=preload("res://scripts/core/story_book.gd")
+const Cliff=preload("res://scripts/core/cliff_story.gd")
+const Store=preload("res://scripts/core/save_store.gd")
 var h:=H.new("story_book")
-var results: Array=[]
-func _initialize() -> void: call_deferred("run")
+func _initialize() -> void:call_deferred("run")
 func run() -> void:
- h.eq("exactly thirteen distinct ending records",Book.data()["endings"].size(),13)
- var ids: Array=[]
- var paths: Array=[]
- var texts: Array=[]
- var state:=Book.defaults()
- for item in Book.data()["endings"]:
-  ids.append(item["id"]); paths.append("/".join(item["path"])); texts.append(item["text"])
-  state=Book.defaults()
-  for id in item["path"]:
-   state=Book.choose(state,id)
-   h.check("%s choice %s belongs to the current node" % [item["id"],id],state["active"] and not Book.current(state).is_empty())
-   state=Book.complete(state,true,100,true)
-   h.eq("completion cannot be applied twice",Book.complete(state,true,100,true),state)
-  h.eq("choice path reaches its actual ending",Book.ending(state)["id"],item["id"])
-  h.eq("ending unlock is stored once",state["unlocked"],[item["id"]])
-  h.check("epilogue has substantive unique prose",str(item["text"]).length()>350 and texts.count(item["text"])==1)
- h.eq("unique ids",_unique(ids),13)
- h.eq("unique paths",_unique(paths),13)
- h.eq("unknown choice cannot activate a leg",Book.choose(Book.defaults(),"invented"),Book.defaults())
- state=Book.choose(Book.defaults(),"archive")
- state=Book.complete(state,true,120,true)
- state=Book.choose(state,"seal")
- var failed:=Book.complete(state,false,999,true)
- h.eq("failure retains completed choices",failed["choices"],["archive"])
- h.eq("failure does not advance or unlock an ending",[failed["stage"],failed["unlocked"],failed["failures"]],[1,[],1])
- var store:=Store.new("user://book-test.json")
- var save: Dictionary=store.defaults()
- save["campaign"]=state
- h.check("active checkpoint can be saved",store.save_data(save))
- h.eq("checkpoint survives disk reload",store.load_data()["campaign"],state)
- h.eq("malformed state cannot unlock arbitrary endings",Book.sanitize({"stage":3,"choices":["nonsense"],"active":true,"unlocked":["fake"],"goals_completed":99})["unlocked"],[])
- store.clear()
- # Run 26 combat legs and 13 chapter-2 story scenes: the user explicitly
- # replaced chapter 2 with a non-combat visual novel, not another robot fight.
- # Combat retains unmodified HP, real spawning/collisions, weapons,
- # pickup steering and support. No teleport, time skips or invulnerability.
- Session.story_mode=true
- var unlocked: Array=[]
- for item in Book.data()["endings"]:
-  state=Book.defaults(unlocked)
-  var path_results: Array=[]
-  for stage in 3:
-   state=Book.choose(state,str(item["path"][stage]))
-   Session.campaign_state=state.duplicate(true)
-   var game=load(Session.play_scene()).instantiate()
-   root.add_child(game)
-   await process_frame
-   game.set_physics_process(false)
-   game.store=store
-   if stage==1:
-    Pilot.story(game,results.size()%2)
-    h.eq("chapter two reaches actual aftermath and handoff",game.chapter["step"],"complete")
-    h.check("novel has no combat scene",game.get("boss")==null and not game.snapshot()["combat"])
-    h.check("real novel completion commits once",game._commit_completion())
-    h.check("duplicate completion is inert",not game._commit_completion())
-    state=Session.campaign_state.duplicate(true)
-    h.eq("novel checkpoint persists actual story choices",store.load_data()["campaign"],state)
-    path_results.append({"stage":2,"mode":"visual_novel","pace":game.chapter["pace"],"vow":game.chapter["vow"]})
-    game.queue_free();await process_frame
-    continue
-   game.rng.seed=42+stage
-   game._direct_action("drive_comfort")
-   for tick in 60*70:
-    if game.over: break
-    Pilot.drive(game)
-    if tick%600==0: game._direct_action("drive_comfort")
-    game._simulate(1.0/60.0)
-   h.check("%s leg %d survives real arcade" % [item["id"],stage+1],game.over and game.end_result.get("outcome")=="survived","hp %.0f, distance %.0f" % [game.hp,game.distance])
-   h.check("%s leg %d defeats its story robot" % [item["id"],stage+1],game.boss.defeated)
-   h.check("%s leg %d encounters actual traffic and supplies" % [item["id"],stage+1],game.kills>0 and game.arcade.collected>0)
-   state=Session.campaign_state.duplicate(true)
-   h.eq("actual completion persists checkpoint",store.load_data()["campaign"],state)
-   path_results.append({"stage":stage+1,"seconds":game.game_time,"hp":game.hp,"distance":game.distance,"kills":game.kills,"pickups":game.arcade.collected})
-   game.queue_free()
-   await process_frame
-  var actual: Dictionary=Book.ending(state)
-  h.eq("%s reachable after three played legs" % item["id"],actual.get("id"),item["id"])
-  unlocked=state["unlocked"].duplicate()
-  results.append({"ending":item["id"],"path":item["path"],"legs":path_results})
- h.eq("all thirteen unlocked by combat and novel paths",unlocked.size(),13)
- var evidence:=FileAccess.open("user://story-runs.json",FileAccess.WRITE)
- evidence.store_string(JSON.stringify(results,"  "))
- evidence.close()
- var evidence_path: String=OS.get_environment("DBW_STORY_EVIDENCE")
- if not evidence_path.is_empty():
-  var copy:=FileAccess.open(evidence_path,FileAccess.WRITE)
-  copy.store_string(JSON.stringify(results,"  "))
-  copy.close()
- print("STORY_RUNS "+JSON.stringify(results))
- store.clear()
- Session.story_mode=false
- Session.campaign_state={}
+ h.eq("13 stages planned, only two available",[int(Book.data()["planned_stages"]),int(Book.data()["available_stages"])],[13,2])
+ h.eq("no branching ending claim",Book.data()["endings"],[])
+ for first in ["listen","together"]:
+  for second in ["listen","together"]:
+   var s:=Book.defaults()
+   for i in 2:
+    h.eq("linear node independent from replies",Book.node_key(s),"chapter_%02d" % (i+1))
+    s=Book.answer(s,first if i==0 else second)
+    var a:=Book.choose(s,"depart")
+    h.eq("one route has same stats after either response",Book.current(a),Book.node(s)["choices"][0])
+    h.eq("repeated answer is inert",Book.answer(s,"listen"),s)
+    var failed:=Book.complete(a,false,900,true)
+    h.eq("failure stays at the same stage",[failed["stage"],failed["phase"],failed["score"]],[i,"briefing",s["score"]])
+    s=Book.complete(a,true,100,true)
+    h.eq("success enters interlude before next combat",[s["stage"],s["phase"]],[i,"interlude"])
+    h.eq("combat completion cannot apply twice",Book.complete(s,true,100,true),s)
+    s=Book.finish_interlude(s)
+    h.eq("interlude completion cannot apply twice",Book.finish_interlude(s),s)
+   h.eq("same continued state for every response pair",[s["stage"],s["phase"],s["score"],s["unlocked"]],[2,"continued",200,[]])
+   h.eq("no third playable stage",Book.choose(s,"depart"),s)
+ var old={"stage":3,"choices":["archive","seal","identity"],"unlocked":["e04"],"score":850,"bonds":{"emre":2}}
+ var migrated:=Book.sanitize(old)
+ h.eq("legacy completed book resumes at new second combat",[migrated["stage"],migrated["phase"]],[1,"briefing"])
+ h.eq("legacy path retained in archive",migrated["legacy"]["choices"],old["choices"])
+ h.eq("legacy score and earned record retained",[migrated["score"],migrated["unlocked"]],[850,["e04"]])
+ h.eq("migration idempotent",Book.sanitize(migrated),migrated)
+ var store:=Store.new("user://linear-test.json");var saved:=store.defaults();saved["campaign"]=migrated;saved["vehicle"]="comet";saved["settings"]["volume"]=.35
+ h.check("migration saves",store.save_data(saved));h.eq("archive survives reopen",store.load_data()["campaign"],migrated);h.eq("vehicle/settings unchanged",[store.load_data()["vehicle"],store.load_data()["settings"]["volume"]],["comet",.35]);store.clear()
+ for bad in [null,[],5,{"stage":INF,"phase":"invented"}]:h.eq("malformed input cannot open unbuilt stages",Book.sanitize(bad)["stage"],0)
+ for reply in ["shaken","joke"]:
+  var s:=Cliff.defaults()
+  for step in ["approach","impact","brake","exit"]:s=Cliff.advance(s)
+  s=Cliff.choose(s,reply);h.eq("both cliff replies rejoin at thanks",s["step"],"thanks")
+  for i in 4:s=Cliff.advance(s)
+  h.eq("both cliff replies reach same end",s["step"],"complete")
  quit(h.finish())
-func _unique(items: Array) -> int:
- var set: Dictionary={}
- for item in items: set[item]=true
- return set.size()

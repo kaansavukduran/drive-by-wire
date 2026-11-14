@@ -61,17 +61,17 @@
     },
     "promise": {
       "speaker": "aion",
-      "text": "Söz verdim. Ama Emre, sen bir hesabın bedeli değilsin. Kuzu gelene kadar buradayım. Sonra Kurt’la o sinyalin peşine düşeceğim. Kurt son yol için on saniyelik kalkan hazırlıyor.",
+      "text": "Söz verdim. Ama Emre, sen bir hesabın bedeli değilsin. Kuzu gelene kadar buradayım. Sonra Kurt’la o sinyalin peşine düşeceğim.",
       "next": "witness"
     },
     "rescue": {
       "speaker": "aion",
-      "text": "Elimi bırakma. İntikam bekleyebilir. Kuzu’nun ışıklarını görene kadar yanındayım. Bundan sonra kimseyi geride bırakmadan gideceğiz. Kuzu son yol için on beş can ve yedi saniyelik kalkan hazırlıyor.",
+      "text": "Elimi bırakma. İntikam bekleyebilir. Kuzu’nun ışıklarını görene kadar yanındayım. Bundan sonra kimseyi geride bırakmadan gideceğiz.",
       "next": "witness"
     },
     "handoff": {
       "speaker": "kuzu",
-      "text": "Geldim. Eren, battaniyeyi tut; Emre’yi birlikte alalım. Aion, radyoyu kapatma. Üçüncü kapıda neye karar verirsen ver, sesimizi yanında taşı.",
+      "text": "Geldim. Eren, battaniyeyi tut; Emre’yi birlikte alalım. Aion, radyoyu kapatma. Kurt kuzeydeki servis yolundan sana yetişecek.",
       "next": "complete"
     },
     "complete": {

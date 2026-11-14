@@ -1,6 +1,12 @@
 extends Node2D
-## Chapter 2: authored road scene + player-paced conversations. No combat spawner.
+## Two authored interludes; shared compact dialogue, pause and checkpoint UI.
 const Story=preload("res://scripts/core/road_story.gd")
+const CliffStory=preload("res://scripts/core/cliff_story.gd")
+var story_model: Script=Story
+var cliff_scene:=false
+var cliff_cast: Node2D
+var cliff_kurt: Sprite2D
+var cliff_aion: Sprite2D
 const Book=preload("res://scripts/core/story_book.gd")
 const Store=preload("res://scripts/core/save_store.gd")
 const Session=preload("res://scripts/game/session.gd")
@@ -60,13 +66,16 @@ func _ready() -> void:
  Engine.time_scale=1
  save=store.load_data();car_texture=Vehicles.texture_for(save.get("vehicle"))
  campaign=Book.sanitize(Session.campaign_state if not Session.campaign_state.is_empty() else save["campaign"])
- if int(campaign["stage"])!=1 or not campaign["active"]:
+ if campaign["phase"]!="interlude":
   get_tree().call_deferred("change_scene_to_file","res://scenes/journey.tscn");return
- chapter=Story.sanitize(campaign["chapter2"])
+ cliff_scene=int(campaign["stage"])==1
+ story_model=CliffStory if cliff_scene else Story
+ chapter=story_model.sanitize(campaign["cliff" if cliff_scene else "chapter2"])
  motion=save["settings"]["motion"];effects=save["settings"]["effects"]
  Controls.install(save["settings"]["bindings"],save["settings"]["pad_bindings"],save["settings"]["deadzone"])
  sounds=Sounds.new();sounds.enabled=save["settings"]["sound"];sounds.volume=save["settings"]["volume"];add_child(sounds)
  _build_cast()
+ _build_cliff_cast()
  panel=Panel.new();panel.theme=UiSkin.theme();panel.add_theme_stylebox_override("panel",UiSkin.panel());add_child(panel)
  heading=_label(self,"Yan yana · İkinci bölüm",13)
  speaker=_label(panel,"",12);speaker.theme_type_variation="AccentLabel"
@@ -89,10 +98,10 @@ func _label(parent: Node,text: String,font_size: int) -> Label:
  var l:=Label.new();l.theme=UiSkin.theme();l.text=text;l.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;l.add_theme_font_size_override("font_size",font_size);parent.add_child(l);return l
 func _button(parent: Node,text: String,action: Callable) -> Button:
  var b:=Button.new();b.theme=UiSkin.theme();b.text=text;b.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;b.clip_text=true;UiSkin.style_button(b);b.pressed.connect(action);parent.add_child(b);return b
-func _cinematic() -> bool:return chapter.get("step") in ["race","trap"]
-func _ground_scene() -> bool:return chapter.get("step") in ["aftermath","eren","plea","reveal","promise","rescue","witness","handoff","complete"]
+func _cinematic() -> bool:return float(story_model.data()["nodes"][chapter["step"]].get("duration",0))>0
+func _ground_scene() -> bool:return not cliff_scene and chapter.get("step") in ["aftermath","eren","plea","reveal","promise","rescue","witness","handoff","complete"]
 func _present() -> void:
- var node: Dictionary=Story.data()["nodes"][chapter["step"]]
+ var node: Dictionary=story_model.data()["nodes"][chapter["step"]]
  var cinema:=_cinematic()
  speaker.text=str(Portrait.NAMES[node.get("speaker","omega")])
  portrait.speaker=node.get("speaker","omega")
@@ -101,16 +110,18 @@ func _present() -> void:
   choices[i].visible=not cinema and node.has("choices")
   if choices[i].visible:choices[i].text=str(node["choices"][i]["label"])
  next_button.visible=not cinema and not node.has("choices")
- next_button.text="Son yol ayrımına geç · A" if chapter["step"]=="complete" else "Devam · A / Enter"
+ next_button.text=("Devam edecek · A" if cliff_scene else "2. etaba geç · A") if chapter["step"]=="complete" else "Devam · A / Enter"
  _layout();_focus();queue_redraw()
 func _reflow() -> void:
- var node: Dictionary=Story.data()["nodes"][chapter["step"]]
- pages=TextFit.pages(str(node.get("text",node.get("caption",""))),body)
+ var node: Dictionary=story_model.data()["nodes"][chapter["step"]]
+ var prose: String=str(node.get("text",node.get("caption","")))
+ if cliff_scene and chapter["step"]=="thanks" and chapter.get("reply")=="joke":prose="Teşekkür ederim, Kurt. Şakayı sonra yaparım… Bir saniye daha geç kalsaydın…"
+ pages=TextFit.pages(prose,body)
  page=clampi(page,0,pages.size()-1)
  body.text=pages[page]
  page_caption.text=""
  page_caption.hide()
- heading.text="Kayıt yazılamadı · oturumda korunuyor" if save_failed else "Yan yana · İkinci bölüm"
+ heading.text="Kayıt yazılamadı · oturumda korunuyor" if save_failed else ("Uçurumun kıyısı · 2. ara sahne" if cliff_scene else "Yan yana · 1. ara sahne")
  var who: String=str(Portrait.NAMES[node.get("speaker","omega")])
  speaker.text=who+((" · %d / %d" % [page+1,pages.size()]) if pages.size()>1 else "")
  # Choices are actionable only after the whole speech is read.
@@ -137,35 +148,35 @@ func _next() -> void:
  if paused or _cinematic():return
  if page+1<pages.size():page+=1;_reflow();_focus();return
  if chapter["step"]=="complete":_finish();return
- if Story.data()["nodes"][chapter["step"]].has("choices"):return
- chapter=Story.advance(chapter);_enter()
+ if story_model.data()["nodes"][chapter["step"]].has("choices"):return
+ chapter=story_model.advance(chapter);_enter()
 func _choose(index: int) -> void:
  if paused or index<0 or index>=choices.size() or not choices[index].visible:return
- var options: Array=Story.data()["nodes"][chapter["step"]].get("choices",[])
+ var options: Array=story_model.data()["nodes"][chapter["step"]].get("choices",[])
  if options.size()!=2:return
- chapter=Story.choose(chapter,str(options[index]["id"]));_enter()
+ chapter=story_model.choose(chapter,str(options[index]["id"]));_enter()
 func _enter() -> void:
  elapsed=0;page=0;step_time=0
  if chapter["step"]=="aftermath":ground_time=0
  _checkpoint();_present()
  if chapter["step"]=="trap":sounds.cue("kill")
 func _checkpoint() -> bool:
- chapter=Story.sanitize(chapter)
- campaign["chapter2"]=chapter.duplicate(true)
+ chapter=story_model.sanitize(chapter)
+ campaign["cliff" if cliff_scene else "chapter2"]=chapter.duplicate(true)
  save["campaign"]=campaign
  Session.campaign_state=campaign.duplicate(true)
  save_failed=not store.save_data(save);Session.campaign_save_failed=save_failed
  return not save_failed
 func _finish() -> void:
  if not _commit_completion():return
- get_tree().call_deferred("change_scene_to_file","res://scenes/journey.tscn")
+ get_tree().call_deferred("change_scene_to_file","res://scenes/ending.tscn" if cliff_scene else "res://scenes/journey.tscn")
 func _commit_completion() -> bool:
  if completed or chapter["step"]!="complete":return false
  completed=true
- var ally: String="kurt" if chapter["vow"]=="avenge" else "emre"
- campaign["bonds"][ally]=mini(3,int(campaign["bonds"].get(ally,0))+1)
- if not chapter.get("record","").is_empty():campaign["bonds"]["eren"]=mini(3,int(campaign["bonds"].get("eren",0))+1)
- campaign=Book.complete(campaign,true,500,true)
+ if not cliff_scene:
+  if not chapter.get("record","").is_empty():campaign["bonds"]["eren"]=mini(3,int(campaign["bonds"].get("eren",0))+1)
+ campaign["cliff" if cliff_scene else "chapter2"]=chapter.duplicate(true)
+ campaign=Book.finish_interlude(campaign)
  _checkpoint()
  return true
 func _pause(value: bool) -> void:
@@ -189,8 +200,8 @@ func _process(delta: float) -> void:
   if _cinematic():
    elapsed+=delta
    if motion:road_time+=delta*(100 if chapter["step"]=="race" else 22)
-   if elapsed>=float(Story.data()["nodes"][chapter["step"]]["duration"]):chapter=Story.advance(chapter);_enter()
- _sync_cast()
+   if elapsed>=float(story_model.data()["nodes"][chapter["step"]]["duration"]):chapter=story_model.advance(chapter);_enter()
+ _sync_cast();_sync_cliff_cast()
  queue_redraw()
  if QA.active():QA.publish("road_story",snapshot())
 func _layout() -> void:
@@ -198,27 +209,35 @@ func _layout() -> void:
  var v:=get_viewport_rect().size;var p:=v.y>v.x
  if layout_ready and p!=last_portrait:_pause(true)
  last_portrait=p;layout_ready=true
- var reserved_height:=232.0 if p else 154.0
- var has_choices: bool=Story.data()["nodes"][chapter["step"]].has("choices")
- var height:=104.0 if _cinematic() else ((216.0 if has_choices else 160.0) if p else 154.0)
+ var reserved_height:=188.0 if p else 132.0
+ var has_choices: bool=story_model.data()["nodes"][chapter["step"]].has("choices")
+ var panel_width:=minf(v.x-16,340 if _cinematic() else 440)
+ var cinema_body_height:=36.0
+ if _cinematic():
+  var probe:=TextFit.probe_for(body);probe.size.x=panel_width-20
+  var node: Dictionary=story_model.data()["nodes"][chapter["step"]]
+  cinema_body_height=ceilf(TextFit.height(probe,str(node.get("text",node.get("caption","")))))
+  probe.free()
+ var height:=38+cinema_body_height if _cinematic() else ((188.0 if has_choices else 140.0) if p else 132.0)
  # Same fixed layout throughout the chapter: no panel or actor jump per speech.
- panel.position=Vector2(8,v.y-height-8);panel.size=Vector2(v.x-16,height)
+ panel.size=Vector2(panel_width,height);panel.position=Vector2((v.x-panel.size.x)/2,v.y-height-8)
  heading.position=Vector2(12,8);heading.size=Vector2(v.x-112,24)
  pause_button.position=Vector2(v.x-92,4);pause_button.size=Vector2(84,44)
- portrait.position=Vector2(10,8);portrait.size=Vector2(36,36)
- speaker.position=Vector2(54,8);speaker.size=Vector2(panel.size.x-64,20)
- body.position=Vector2(12,48);body.size=Vector2(panel.size.x-24,48 if p else 46)
+ portrait.position=Vector2(8,6);portrait.size=Vector2(30,30)
+ speaker.position=Vector2(46,6);speaker.size=Vector2(panel.size.x-56,20)
+ if _cinematic():portrait.size=Vector2(24,24);speaker.position.x=40
+ body.position=Vector2(10,30 if _cinematic() else 40);body.size=Vector2(panel.size.x-20,cinema_body_height if _cinematic() else 36)
  page_caption.position=Vector2(12,114 if p else 97);page_caption.size=Vector2(panel.size.x-24,16)
- next_button.position=Vector2(12,height-56);next_button.size=Vector2(panel.size.x-24,44)
+ next_button.position=Vector2(12,height-50);next_button.size=Vector2(panel.size.x-24,44)
  for i in choices.size():
-  choices[i].position=Vector2(12+(0 if p else i*(panel.size.x-16)/2),height-108+i*52 if p else height-56)
+  choices[i].position=Vector2(12+(0 if p else i*(panel.size.x-16)/2),height-102+i*50 if p else height-50)
   choices[i].size=Vector2(panel.size.x-24 if p else (panel.size.x-32)/2,44)
  stage_rect=Rect2(0,48,v.x,v.y-reserved_height-64)
  pause_panel.size=Vector2(minf(v.x-24,420),176);pause_panel.position=(v-pause_panel.size)/2
  warning.position=Vector2(12,10);warning.size=Vector2(pause_panel.size.x-24,54)
  resume_button.position=Vector2(12,70);resume_button.size=Vector2(pause_panel.size.x-24,44)
  leave_button.position=Vector2(12,122);leave_button.size=Vector2(pause_panel.size.x-24,44)
- _reflow();_sync_cast();queue_redraw()
+ _reflow();_sync_cast();_sync_cliff_cast();queue_redraw()
 func actor_positions() -> Array[Vector2]:
  if _ground_scene():return Art.positions()
  var lead:=0.0
@@ -236,7 +255,7 @@ func _build_cast() -> void:
 func _cast_projection() -> Transform2D:
  var v:=get_viewport_rect().size
  var zoom:=minf(v.x/480.0,maxf(40,stage_rect.size.y-8)/164.0)
- var floor_y:=v.y-(232.0 if v.y>v.x else 154.0)-24.0
+ var floor_y:=v.y-(188.0 if v.y>v.x else 132.0)-24.0
  return Transform2D(0,Vector2.ONE*zoom,0,Vector2(v.x/2-320*zoom,floor_y-248*zoom))
 func _sync_cast() -> void:
  if not is_instance_valid(cast_stage) or chapter.is_empty():return
@@ -255,7 +274,9 @@ func _draw() -> void:
  if chapter.is_empty():return
  var v:=get_viewport_rect().size
  draw_rect(Rect2(Vector2.ZERO,v),UiSkin.color("background"))
- if _ground_scene():
+ if cliff_scene:
+  _draw_cliff()
+ elif _ground_scene():
   var projection:=_cast_projection()
   var floor_y:=projection*Vector2(0,248)
   # Road support is authored at source y777. The background may crop in
@@ -286,4 +307,39 @@ func draw_ellipse_shadow(at: Vector2,extent: Vector2) -> void:
  for i in 20:polygon.append(at+Vector2(cos(i*TAU/20)*extent.x,sin(i*TAU/20)*extent.y))
  draw_colored_polygon(polygon,Color(0.02,0.025,0.04,0.26))
 func snapshot() -> Dictionary:
- return {"view":[get_viewport_rect().size.x,get_viewport_rect().size.y],"chapter":chapter.duplicate(true),"elapsed":elapsed,"paused":paused,"page":page,"pages":pages.size(),"text":body.text,"speaker":speaker.text,"body":QA.rect(body),"portrait":QA.rect(portrait),"speaker_rect":QA.rect(speaker),"panel":QA.rect(panel),"next":QA.rect(next_button),"next_visible":next_button.visible,"choices":choices.filter(func(b):return b.visible).map(func(b):return QA.rect(b)),"pause":QA.rect(pause_button),"resume":QA.rect(resume_button),"leave":QA.rect(leave_button),"fits":TextFit.fits(heading) and TextFit.fits(body) and TextFit.fits(speaker) and TextFit.fits(page_caption),"cast":_cast_snapshot(),"actors":actor_positions().map(func(pos):return [pos.x,pos.y]),"frame":injury_frame(),"combat":false,"vehicle":save["vehicle"],"save_failed":save_failed}
+ return {"view":[get_viewport_rect().size.x,get_viewport_rect().size.y],"chapter":chapter.duplicate(true),"elapsed":elapsed,"paused":paused,"page":page,"pages":pages.size(),"text":body.text,"speaker":speaker.text,"body":QA.rect(body),"portrait":QA.rect(portrait),"speaker_rect":QA.rect(speaker),"panel":QA.rect(panel),"next":QA.rect(next_button),"next_visible":next_button.visible,"choices":choices.filter(func(b):return b.visible).map(func(b):return QA.rect(b)),"pause":QA.rect(pause_button),"resume":QA.rect(resume_button),"leave":QA.rect(leave_button),"fits":TextFit.fits(heading) and TextFit.fits(body) and TextFit.fits(speaker) and TextFit.fits(page_caption),"cast":_cast_snapshot(),"actors":actor_positions().map(func(pos):return [pos.x,pos.y]),"frame":injury_frame(),"interlude":2 if cliff_scene else 1,"cliff":_cliff_snapshot() if cliff_scene else {},"combat":false,"vehicle":save["vehicle"],"save_failed":save_failed}
+
+func _cliff_projection() -> Transform2D:
+ var zoom:=minf(stage_rect.size.x/(360.0 if last_portrait else 640.0),stage_rect.size.y/164.0)
+ return Transform2D(0,Vector2.ONE*zoom,0,stage_rect.get_center()-Vector2(320,170)*zoom)
+func _build_cliff_cast() -> void:
+ cliff_cast=Node2D.new();cliff_cast.name="CliffCast";add_child(cliff_cast)
+ cliff_aion=Sprite2D.new();VisualArt.standing(cliff_aion,"aion");cliff_cast.add_child(cliff_aion)
+ cliff_kurt=Sprite2D.new();cliff_kurt.material=VisualArt.material();cliff_kurt.texture_filter=CanvasItem.TEXTURE_FILTER_NEAREST;cliff_cast.add_child(cliff_kurt)
+func _sync_cliff_cast() -> void:
+ if not is_instance_valid(cliff_cast) or chapter.is_empty():return
+ cliff_cast.visible=cliff_scene and CliffStory.poses(chapter["step"],elapsed,not motion)["actors"]
+ if not cliff_cast.visible:return
+ var pose:=CliffStory.poses(chapter["step"],elapsed,not motion)
+ cliff_cast.transform=_cliff_projection()
+ cliff_aion.position=pose["aion_foot"]
+ cliff_kurt.position=pose["kurt_foot"]
+ var rect:=VisualArt.region("kurt_scene",pose["frame"])
+ var contact: Array=VisualArt.data()["kurt_scene_feet"][pose["frame"]]
+ cliff_kurt.texture=VisualArt.texture("kurt_scene");cliff_kurt.region_enabled=true;cliff_kurt.region_filter_clip_enabled=true
+ cliff_kurt.region_rect=rect;cliff_kurt.centered=false;cliff_kurt.offset=-Vector2(contact[0],contact[1]);cliff_kurt.scale=Vector2.ONE*(60.0/rect.size.y)
+func _draw_cliff() -> void:
+ var pose:=CliffStory.poses(chapter["step"],elapsed,not motion)
+ draw_set_transform_matrix(_cliff_projection())
+ draw_texture_rect(VisualArt.texture("cliff"),Rect2(0,0,640,360),false)
+ if pose["wrecked"]:VisualArt.at(self,"cliff_cars",Vehicles.index(save.get("vehicle"))+1,pose["aion_car"],Vector2(48,74))
+ else:VisualArt.vehicle_at(self,Vehicles.index(save.get("vehicle")),pose["aion_car"])
+ draw_set_transform_matrix(_cliff_projection()*Transform2D(PI/2,pose["kurt_car"]))
+ VisualArt.at(self,"cliff_cars",0,Vector2.ZERO,Vector2(48,74))
+ draw_set_transform_matrix(_cliff_projection())
+ if chapter["step"]=="impact" and effects and motion:VisualArt.at(self,"gadgets",7,pose["aion_car"]+Vector2(-22,0),Vector2(32,32),Color(1,1,1,clampf(1-elapsed/.6,0,1)))
+ if pose["wrecked"] and effects:VisualArt.at(self,"weapons",3,pose["aion_car"]+Vector2(0,-22),Vector2(24,30),Color(1,1,1,.6))
+ draw_set_transform(Vector2.ZERO)
+func _cliff_snapshot() -> Dictionary:
+ var pose:=CliffStory.poses(chapter["step"],elapsed,not motion)
+ return {"aion_car":[pose["aion_car"].x,pose["aion_car"].y],"kurt_car":[pose["kurt_car"].x,pose["kurt_car"].y],"edge_y":pose["edge_y"],"wrecked":pose["wrecked"],"actors":pose["actors"],"frame":pose["frame"],"aion_foot":[pose["aion_foot"].x,pose["aion_foot"].y],"kurt_foot":[pose["kurt_foot"].x,pose["kurt_foot"].y]}
