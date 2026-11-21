@@ -1,0 +1,65 @@
+name: Publish GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7.0.1
+
+      - name: Read Pages settings
+        id: pages
+        uses: actions/configure-pages@v6.0.0
+
+      - name: Build the game
+        run: python3 packaging/build_web.py
+
+      - name: Adapt addresses for GitHub Pages
+        env:
+          PAGES_BASE_PATH: ${{ steps.pages.outputs.base_path }}
+        run: |
+          python3 - <<'PY'
+          import os, re
+          from pathlib import Path
+
+          base = os.environ["PAGES_BASE_PATH"].rstrip("/")
+          escaped = re.escape(base).replace("/", r"\/")
+          root = Path("build/web")
+          files = list(root.rglob("*.html")) + list(root.rglob("version.json"))
+
+          for file in files:
+              text = file.read_text(encoding="utf-8")
+              for path in ("/play/", "/version.json", "/favicon.png"):
+                  text = text.replace(path, base + path)
+              text = text.replace(r"^\/play\/", "^" + escaped + r"\/play\/")
+              file.write_text(text, encoding="utf-8")
+          PY
+
+      - name: Upload the game
+        uses: actions/upload-pages-artifact@v5.0.0
+        with:
+          path: build/web
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-24.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publish the game
+        id: deployment
+        uses: actions/deploy-pages@v5.0.1
