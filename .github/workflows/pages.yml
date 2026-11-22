@@ -14,25 +14,74 @@ concurrency:
   group: github-pages
   cancel-in-progress: false
 
+env:
+  GODOT_VERSION: 4.6.3
+
 jobs:
-  build:
+  verify_native:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v7.0.1
+      - uses: actions/checkout@v4
+      - uses: actions/cache@v4
+        with:
+          path: .ci-godot
+          key: godot-${{ runner.os }}-${{ env.GODOT_VERSION }}
+      - name: Set up Godot (official build, SHA-512 verified)
+        run: |
+          python3 packaging/setup_godot.py
+          echo "$GITHUB_WORKSPACE/.ci-godot/bin" >> "$GITHUB_PATH"
+      - name: Import project
+        run: |
+          mkdir -p build && touch build/.gdignore
+          timeout 600 godot --headless --editor --import --quit
+      - name: Native Godot test suites
+        run: GODOT=godot bash tests/run_all.sh
 
+  build:
+    needs: verify_native
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/cache@v4
+        with:
+          path: .ci-godot
+          key: godot-${{ runner.os }}-${{ env.GODOT_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Set up Godot (official build, SHA-512 verified)
+        run: |
+          python3 packaging/setup_godot.py
+          echo "$GITHUB_WORKSPACE/.ci-godot/bin" >> "$GITHUB_PATH"
       - name: Read Pages settings
         id: pages
         uses: actions/configure-pages@v6.0.0
-
-      - name: Build the game
+      - name: Build the web game
+        env:
+          GODOT_BIN: godot
         run: python3 packaging/build_web.py
-
+      - name: Verify exported web build in Chromium
+        run: |
+          npm install --prefix /tmp/dbw-pw playwright --no-audit --no-fund
+          /tmp/dbw-pw/node_modules/.bin/playwright install chromium
+          python3 -m http.server 8765 --directory build/web >/tmp/dbw-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID 2>/dev/null || true' EXIT
+          for i in $(seq 1 30); do
+            curl -sf http://127.0.0.1:8765/version.json >/dev/null && break
+            sleep 0.5
+          done
+          export NODE_PATH=/tmp/dbw-pw/node_modules
+          export DBW_URL=http://127.0.0.1:8765
+          DBW_EVIDENCE_DIR=work/ci-loading node tests/browser_loading.cjs
+          DBW_EVIDENCE_DIR=work/ci-warnings node tests/browser_warnings.cjs
+          DBW_INPUT=keyboard DBW_EVIDENCE_DIR=work/ci-linear-kb node tests/browser_linear.cjs
       - name: Adapt addresses for GitHub Pages
         env:
           PAGES_BASE_PATH: ${{ steps.pages.outputs.base_path }}
         run: |
           python3 - <<'PY'
-          import os, re
+          import json, os, re
           from pathlib import Path
 
           base = os.environ["PAGES_BASE_PATH"].rstrip("/")
@@ -46,9 +95,12 @@ jobs:
                   text = text.replace(path, base + path)
               text = text.replace(r"^\/play\/", "^" + escaped + r"\/play\/")
               file.write_text(text, encoding="utf-8")
-          PY
 
-      - name: Upload the game
+          meta = json.loads((root / "version.json").read_text(encoding="utf-8"))
+          if base and not meta["entry"].startswith(base + "/play/"):
+              raise SystemExit(f"Unexpected adapted entry path: {meta['entry']}")
+          PY
+      - name: Upload the verified game artifact
         uses: actions/upload-pages-artifact@v5.0.0
         with:
           path: build/web

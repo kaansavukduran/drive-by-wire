@@ -1,19 +1,21 @@
-# Drive-By Wire 0.13.3 · Emre sahne ölçeği
+# Drive-By Wire 0.14.0 · Araç hareketi, araştırma ve yayın kapısı
 
-14 Kasım 2026. Taban public main f40e3a97e66d/0.13.2. Fragaria Unslop uygulandı; güncel canlı AIONIA belgesi v1.7, aynı revizyon. Bu sürüm yalnız ilk yol kenarı ara sahnesinde yaralı Emre’nin uniform ölçeğini 0.375 → 0.28 indirir: yaklaşık %25.33 küçülme. Yeni çizim yoktur. Önceki okunurluk bulguları, ilk FAIL kanıtları ve sonuçlar [0.13.2 arşivinde](history/QA-v0132.md) korunur.
+22 Kasım 2026. Taban public main `69904f45999e/0.13.3`. `modern-web-guidance` okundu (`accessibility`, `motion`, `form-factor-adaptation`, `progress`); diğer beş haricî Codex becerisi (`planlama`, `fragaria-unslop`, `unslop`, `yazilim-denetle`, `oyun-gelistirme-amaciyla-arastirma-ve-inceleme`) bu ortamda kurulu değildir (`SKILL_NOT_LOADED`). Önceki 0.13.3 kanıtları [0.13.3 arşivinde](history/QA-v0133.md) korunur.
 
 | Kontrol | Sonuç | Kanıt / sınır |
 |---|---|---|
-| Sanatın korunması | PASS | Emre, Aion ve Eren’in PNG dosyaları tabanla bit düzeyinde aynı. Aion/Eren’in bütün sahne verileri, Emre’nin hücreleri/temasları/world/klipleri aynı. Yalnız Emre scale ve açıklaması değişti. work/v0133/art-preservation.json. |
-| Native Godot 4.6.3 | PASS | Mevcut 30 takım / 2232 kontrol / 0 hata; road_story, görsel temaslar, sabit kökler, altı yaralı kare, ekran yönleri ve önceki metin/giriş regresyonları. work/v0133/native.log. |
-| Web export | PASS | Gerçek Godot export tamamlandı, 0.13.3 immutable giriş üretildi. work/v0133/build.log. |
-| Masaüstü normal oyun | PASS | Gerçek klavye/fare girdileriyle iki 400m/boss, bütün ara sahne adımları, kayıtla devam, Devam edecek/reload. Runtime hatası 0. work/v0133/full-keyboard/linear-results.json. |
-| Küçültülmüş sahnenin görünümü | PASS | Masaüstü1280×720, telefon390×844 ve844×390 görüntüleri incelendi. Aynı resmin eşit XY ölçeği; zemin teması korunur. İlk ara sahnede dikey→yatay→dikey güvenli mola/devam, metin fittingi ve normal dokunma doğrulandı. work/v0133/full-touch/emre-landscape.png ve emre-portrait-restored.png. |
-| Tam dokunmatik akış | PASS | Sabit joystick/ateş/mayın ile iki400m/boss ve iki ara sahne, ilk ve ikinci ara sahnede yön değişimi, Devam edecek/reload. Runtime hatası0. work/v0133/full-touch/linear-results.json. |
-| CI / production | NOT TESTED | Hazırlama sırasında yayın bekleniyor. Exact head/base, CI, merge ağaç eşitliği, Vercel deployment/alias, canlı version/asset ve gerçek oynama sonucu PR/yayın makbuzunda ayrıca kaydedilir. |
-| Fiziksel cihaz / insan değerlendirmesi | NOT TESTED | Fiziksel telefon/tablet/Xbox, diğer tarayıcılar ve insan estetik/oynanış değerlendirmesi yapılmadı. Chromium dokunmatik/Gamepad API emülasyonu fiziksel test değildir. |
-| Önceki performans / OS-font sınırları | FAIL | Önceden açık FPS ve Canvas sistem-font dosyası sınırları bu ölçek değişikliğiyle kapanmış sayılmaz. Yeni performans ölçümü yoktur. |
+| Benzer oyun araştırması | PASS | `docs/RESEARCH_VEHICULAR_COMBAT.md`: Spy Hunter (1983/1987), Super Spy Hunter (1991–1992), Highway Pursuit (2003–2025), Road Fighter (1984), Death Rally (1996/2011), OutRun (1986); sürüm/platform farkları ve izlenebilir DBW uygulama tablosu. İzlenmeyen video zaman damgası veya ölçülmemiş kare sayısı yazılmadı. |
+| Native Godot 4.6.3 | PASS | 31 takım / 2287 kontrol / 0 hata (`tests/test_vehicle_motion.gd` 55 yeni kontrol dahil). Üç kozmetik araç (`roadster`, `courier`, `comet`) için sabit pivot/hitbox sözleşmesi, direksiyon açısı, ön teker dönüşü, ateş tepmesi, mayın çıkışı, hasar kademeleri, azaltılmış hareket, deterministik RNG ayrımı ve mevcut 30 regresyon takımı. |
+| Web export | PASS | `packaging/build_web.py` (`work/.gdignore` korumalı ve `--export-release` `check_output=True` ile script/parse hatasında duran kapı) 0 hata ile `0.14.0` paketini üretti. |
+| Yükleme ve hata kurtarma (`browser_loading.cjs`) | PASS | Masaüstü 1280×720, dikey telefon 390×844, yatay telefon 844×390, 30 sn duraklama bildirimi, PCK ağ hatası + tekrar deneme ve sürüm-kapsamlı `fragaria-strawberry.jpg` SHA-256 doğrulaması. `work/v0140/loading/loading-results.json`. |
+| Çatışma uyarıları ve görünüm (`browser_warnings.cjs`) | PASS | Gerçek web akışında uyarı görünürlüğü, per-vertex yumuşatılmış far konileri, çift katmanlı zemin gölgesi ve kırpılmayan isteğe bağlı T sohbet kutusu yer tutucusu (`Omega-3’e yaz · Enter / Esc`). `work/v0140/warnings-final/warnings-browser-results.json`. |
+| Tam lineer akış · Klavye (`browser_linear.cjs`) | PASS | İki 400 m etap (Cam Ormanı + Buzlu Arşiv), Mühür-01 ve Yankı-02 Faz 1–2, iki ara sahne ("Yan yana" ve Kurt kurtarma), `cliffReload: true`, Devam edecek ve yeniden açılış koruması. Hata: 0. `work/v0140/linear-kb2/linear-results.json`. |
+| Tam lineer akış · Dokunmatik (`browser_linear.cjs`) | PASS | Sabit sanal joystick + Ateş/Mayın ile iki 400 m etap, iki boss, iki ara sahne, `cliffRotation: true`, Devam edecek ve yeniden açılış koruması. Hata: 0. `work/v0140/linear-touch2/linear-results.json`. |
+| Web anlık yenileme kayıt güvenliği | PASS | Web'de IDBFS `FS.syncfs` tamamlanmadan anlık yenileme sırasında ara sahne kayıt kaybı yakalandı; `scripts/core/save_store.gd` yalnız Web `user://save.json` için eşzamanlı `localStorage` aynası (`dbw.save_v1`) eklendi ve `cliffReload: true` ile doğrulandı. |
+| GitHub Pages dağıtım kapısı | PASS | `.github/workflows/pages.yml` `verify_native` → `build` (Godot Web export + Chromium `browser_loading`, `browser_warnings`, `browser_linear`) → `deploy` sırasına bağlandı. Canlı `0.14.0` yayını itmeden hemen sonra `version.json` ve canlı Chromium ile ayrıca doğrulanır. |
+| Fiziksel cihaz / insan değerlendirmesi | NOT TESTED | Fiziksel telefon/tablet/Xbox, Safari/Firefox ve insan estetik/oynanış değerlendirmesi yapılmadı. Chromium dokunmatik emülasyonu fiziksel test değildir. |
+| Önceki performans / OS-font sınırları | FAIL | Yazılım renderer 60 FPS hedefi ve Web Canvas’ın OS sistem font dosyalarına erişememesi açık sınırdır; bu sürümde kapatılmış sayılmaz. |
 
-Tarayıcı akışları normal menü/girdi kullanır; HP/RNG/konum/kayıt setter’ı yoktur. Küçük ölçek değişikliğini aynalayan yeni test eklenmedi; mevcut anlamlı sahne ve tam oyun regresyonları çalıştırıldı. Telefonun ilk ara sahnede iki yönde kontrolü mevcut akışın ignored work/v0133/touch-review.cjs kopyasıyla yapıldı. Kaynak sanat, ayarlar, kontrol şeması ve hikâye değişmedi.
+Tarayıcı testleri yalnızca normal menü ve gerçek klavye/dokunmatik girdilerini kullanır; HP/RNG/konum/boss/kayıt setter’ı yoktur.
 
-Tekrar: GODOT=godot bash tests/run_all.sh; GODOT_BIN=godot python3 packaging/build_web.py; DBW_INPUT=keyboard|touch|pad ile tests/browser_linear.cjs. Rollback kaynak f40e3a97e66d/0.13.2.
+Tekrar: `GODOT=.ci-godot/bin/godot bash tests/run_all.sh`; `GODOT_BIN=.ci-godot/bin/godot python3 packaging/build_web.py`; `DBW_INPUT=keyboard|touch node tests/browser_linear.cjs`. Rollback tabanı `69904f45999e/0.13.3`.

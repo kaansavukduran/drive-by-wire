@@ -39,15 +39,45 @@ func exists() -> bool:
 func load_data() -> Dictionary:
 	last_error = ""
 	var result := _read(path)
+	var mirror := _read_web_mirror()
 	if not bool(result["ok"]):
 		var backup := _read(path + ".bak")
 		if bool(backup["ok"]):
 			var data := sanitize(backup["data"])
 			last_error = "recovered_" + str(result["error"])
 			return data
+		if bool(mirror["ok"]):
+			return sanitize(mirror["data"])
 		last_error = str(result["error"])
 		return defaults()
-	return sanitize(result["data"])
+	var loaded := sanitize(result["data"])
+	if bool(mirror["ok"]):
+		return sanitize(mirror["data"])
+	return loaded
+
+
+func _read_web_mirror() -> Dictionary:
+	if not OS.has_feature("web") or path != DEFAULT_PATH:
+		return {"ok": false}
+	var raw: Variant = JavaScriptBridge.eval("(function(){try{return localStorage.getItem('dbw.save_v1')||'';}catch(e){return '';}})()")
+	if not raw is String or str(raw).strip_edges().is_empty():
+		return {"ok": false}
+	var json := JSON.new()
+	if json.parse(str(raw)) != OK or not json.data is Dictionary:
+		return {"ok": false}
+	return {"ok": true, "data": json.data}
+
+
+func _write_web_mirror(text: String) -> void:
+	if not OS.has_feature("web") or path != DEFAULT_PATH:
+		return
+	JavaScriptBridge.eval("(function(v){try{localStorage.setItem('dbw.save_v1',v);}catch(e){}})(%s)" % JSON.stringify(text))
+
+
+func _clear_web_mirror() -> void:
+	if not OS.has_feature("web") or path != DEFAULT_PATH:
+		return
+	JavaScriptBridge.eval("try{localStorage.removeItem('dbw.save_v1');}catch(e){}")
 
 
 func _read(candidate: String) -> Dictionary:
@@ -156,6 +186,7 @@ func save_data(state: Dictionary) -> bool:
 	if _replace(tmp, path) != OK:
 		last_error = "cannot_rename"
 		return false
+	_write_web_mirror(text)
 	return true
 
 
@@ -170,5 +201,6 @@ func clear() -> bool:
 		if FileAccess.file_exists(path + suffix):
 			if DirAccess.remove_absolute(path + suffix) != OK:
 				ok = false
+	_clear_web_mirror()
 	last_error = "" if ok else "cannot_delete"
 	return ok

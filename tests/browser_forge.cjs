@@ -8,7 +8,7 @@ const base=process.env.DBW_URL||'http://127.0.0.1:8765';
 fs.mkdirSync(out,{recursive:true});
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 (async()=>{
- const browser=await chromium.launch({executablePath:process.env.DBW_CHROMIUM||'/usr/bin/chromium',headless:true,args:['--no-sandbox','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
+ const browser=await require('./browser_launch.cjs').launchChromium();
  const result={devices:[],controller:null};
  const devices=[
   {name:'desktop',width:1280,height:720,touch:false},

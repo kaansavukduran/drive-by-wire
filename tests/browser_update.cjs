@@ -52,7 +52,7 @@ async function savedFiles(page){
 (async()=>{
  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
  const origin=`http://127.0.0.1:${server.address().port}`;
- const browser=await chromium.launch({executablePath:'/usr/bin/chromium',headless:true,args:['--no-sandbox','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
+ const browser=await require('./browser_launch.cjs').launchChromium();
  const result={fixture:'synthetic immutable legacy HTTP cache; same origin and profile',version:manifest.version,status:'FAIL'};
  try{
   const ctx=await browser.newContext({viewport:{width:390,height:844},hasTouch:true,isMobile:true});

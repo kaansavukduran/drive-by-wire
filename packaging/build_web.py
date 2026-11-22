@@ -93,6 +93,8 @@ def godot(engine: str, env: dict, *args: str, check_output: bool = False) -> Non
 
 def main() -> None:
     env = dict(os.environ)
+    (ROOT / "work").mkdir(parents=True, exist_ok=True)
+    (ROOT / "work/.gdignore").touch()
     env.setdefault("ANDROID_USER_HOME", str(ROOT / "work/android"))
     engine = env.get("GODOT_BIN") or download_engine(env)
     shutil.rmtree(OUT, ignore_errors=True)
@@ -102,7 +104,7 @@ def main() -> None:
     # Run the real main scene briefly before exporting, so a broken game fails the deploy.
     godot(engine, env, "--quit-after", "120", check_output=True)
     godot(engine, env, "res://scenes/main.tscn", "--quit-after", "120", check_output=True)
-    godot(engine, env, "--export-release", "Web", str(OUT / "index.html"))
+    godot(engine, env, "--export-release", "Web", str(OUT / "index.html"), check_output=True)
     for name in ("index.html", "index.js", "index.wasm", "index.pck"):
         if not (OUT / name).is_file():
             raise SystemExit("Missing Web export file: " + name)

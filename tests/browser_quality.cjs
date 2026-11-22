@@ -8,7 +8,7 @@ const output=process.env.DBW_EVIDENCE_DIR||'work/evidence-v050';
 const base=process.env.DBW_URL||'http://127.0.0.1:8765';
 fs.mkdirSync(output,{recursive:true});
 (async()=>{
- const browser=await chromium.launch({executablePath:process.env.DBW_CHROMIUM||'/usr/bin/chromium',headless:true,args:['--no-sandbox','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
+ const browser=await require('./browser_launch.cjs').launchChromium();
  const results={renderer:'Chromium SwiftShader software; no physical GPU',viewport:[1280,720],modes:{},browserErrors:[]};
  try {
   for(const mode of ['normal','low']) {
@@ -34,7 +34,9 @@ fs.mkdirSync(output,{recursive:true});
    await page.evaluate(()=>{const event=new Event('gamepadconnected');Object.defineProperty(event,'gamepad',{value:window.__pad});window.dispatchEvent(event);});
    await tap(0); // Title -> story briefing.
    await page.waitForFunction(()=>window.__dbwQA?.screen==='briefing',null,{timeout:15000});
-   await tap(0); // Confirm the first route through the native Godot Button.
+   await tap(0); // Select first radio reply with A.
+   await page.waitForFunction(()=>window.__dbwQA?.reply_ready||window.__dbwQA?.screen==='run',null,{timeout:15000});
+   if(await page.evaluate(()=>window.__dbwQA?.screen==='briefing')) await tap(0); // Continue onto the road with A.
    await page.waitForFunction(()=>Number(document.documentElement.dataset.gameFps)>0,null,{timeout:15000});
    const samples=[];
    for(let i=0;i<3;i++){

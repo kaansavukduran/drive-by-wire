@@ -3,7 +3,7 @@ const {chromium}=require('playwright');
 const assert=require('node:assert/strict');const fs=require('node:fs');
 const out=process.env.DBW_EVIDENCE_DIR||'work/evidence-v061';fs.mkdirSync(out,{recursive:true});
 const base=process.env.DBW_URL||'http://127.0.0.1:8765';
-(async()=>{const browser=await chromium.launch({executablePath:'/usr/bin/chromium',headless:true,args:['--no-sandbox','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
+(async()=>{const browser=await require('./browser_launch.cjs').launchChromium();
 const result={status:'FAIL',seen:[],errors:[],pausedWindup:'NOT TESTED'};
 let page;
 try{
@@ -15,7 +15,9 @@ try{
  await page.goto(base+'/?qa&qa_render=low');await tap((await screen('title')).play);
  let captured=false;
  for(let attempt=0;attempt<3&&!captured;attempt++){
-  let s=await screen('briefing');await tap(s.choices[0]);await screen('run');await page.keyboard.press('KeyC');
+  let s=await screen('briefing');
+  if(!s.reply_ready&&s.radio_answers?.length){await tap(s.radio_answers[0]);await page.waitForFunction(()=>window.__dbwQA.reply_ready,{timeout:15000});s=await q();}
+  await tap(s.reply_continue||s.choices[0]);await screen('run');
   const start=Date.now();let supportAt=Date.now();
   while(Date.now()-start<65000){
    s=await q();assert.equal(s.screen,'run');

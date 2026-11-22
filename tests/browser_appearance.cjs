@@ -1,7 +1,7 @@
 const {chromium}=require('playwright');const assert=require('node:assert/strict');const fs=require('node:fs');
 const out=process.env.DBW_EVIDENCE_DIR||'work/evidence-v060';fs.mkdirSync(out,{recursive:true});
 const base=process.env.DBW_URL||'http://127.0.0.1:8765';
-(async()=>{const browser=await chromium.launch({executablePath:'/usr/bin/chromium',headless:true,args:['--no-sandbox','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});const result={status:'FAIL',errors:[]};try{
+(async()=>{const browser=await require('./browser_launch.cjs').launchChromium();const result={status:'FAIL',errors:[]};try{
  const context=await browser.newContext({viewport:{width:1280,height:720},colorScheme:'light'});const page=await context.newPage();
  page.on('pageerror',e=>result.errors.push(e.message));page.on('console',m=>{if(m.type()==='error')result.errors.push(m.text());});
  const q=()=>page.evaluate(()=>window.__dbwQA);const wait=fn=>page.waitForFunction(fn,null,{timeout:15000});
@@ -31,7 +31,7 @@ const base=process.env.DBW_URL||'http://127.0.0.1:8765';
  result.webFont=(await q()).settings_ui.font;
  await tap((await q()).settings_ui.back);
  await tap((await q()).garage);await wait(()=>window.__dbwQA?.screen==='garage');await page.screenshot({path:`${out}/garage-light.png`});await page.keyboard.press('Escape');await wait(()=>window.__dbwQA?.screen==='title');
- await tap((await q()).play);await wait(()=>window.__dbwQA?.screen==='briefing');await tap((await q()).choices[0]);await wait(()=>window.__dbwQA?.screen==='run');await page.keyboard.press('Escape');await wait(()=>window.__dbwQA.paused);await page.screenshot({path:`${out}/run-light-paused.png`});
+ await tap((await q()).play);await wait(()=>window.__dbwQA?.screen==='briefing');if(!(await q()).reply_ready&&(await q()).radio_answers?.length){await tap((await q()).radio_answers[0]);await wait(()=>window.__dbwQA.reply_ready);}await tap((await q()).reply_continue||(await q()).choices[0]);await wait(()=>window.__dbwQA?.screen==='run');await page.keyboard.press('Escape');await wait(()=>window.__dbwQA.paused);await page.screenshot({path:`${out}/run-light-paused.png`});
  await page.reload();await wait(()=>window.__dbwQA?.screen==='title');await tap((await q()).endings);await wait(()=>window.__dbwQA?.screen==='endings');
  await page.screenshot({path:`${out}/gallery-light-empty.png`});
  assert.deepEqual(result.errors,[]);result.status='PASS';result.persist='PASS';result.systemChanges='PASS';console.log(JSON.stringify(result));

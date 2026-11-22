@@ -84,6 +84,22 @@ jobs:
         run: |
           python3 packaging/build_web.py
           tar -czf "build/DriveByWire-${DBW_VERSION}-web-offline.tar.gz" -C build/web .
+      - name: Verify exported web build in Chromium
+        run: |
+          npm install --prefix /tmp/dbw-pw playwright --no-audit --no-fund
+          /tmp/dbw-pw/node_modules/.bin/playwright install chromium
+          python3 -m http.server 8765 --directory build/web >/tmp/dbw-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID 2>/dev/null || true' EXIT
+          for i in $(seq 1 30); do
+            curl -sf http://127.0.0.1:8765/version.json >/dev/null && break
+            sleep 0.5
+          done
+          export NODE_PATH=/tmp/dbw-pw/node_modules
+          export DBW_URL=http://127.0.0.1:8765
+          DBW_EVIDENCE_DIR=work/ci-loading node tests/browser_loading.cjs
+          DBW_EVIDENCE_DIR=work/ci-warnings node tests/browser_warnings.cjs
+          DBW_INPUT=keyboard DBW_EVIDENCE_DIR=work/ci-linear-kb node tests/browser_linear.cjs
       - uses: actions/upload-artifact@v4
         with:
           name: linux-web

@@ -3,7 +3,7 @@ const {chromium}=require('playwright'),fs=require('node:fs'),assert=require('nod
 const assertHud=require('./hud_contract.cjs');
 const base=process.env.DBW_URL||'http://127.0.0.1:8915',mode=process.env.DBW_INPUT||'keyboard',out=process.env.DBW_EVIDENCE_DIR||'work/v012/browser-'+mode;
 fs.mkdirSync(out,{recursive:true});const sleep=ms=>new Promise(r=>setTimeout(r,ms));
-(async()=>{const browser=await chromium.launch({executablePath:'/usr/bin/chromium',headless:true,args:['--no-sandbox','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});const result={status:'FAIL',input:mode,errors:[],combat:[],interludes:[],bosses:[]};let page;
+(async()=>{const browser=await require('./browser_launch.cjs').launchChromium();const result={status:'FAIL',input:mode,errors:[],combat:[],interludes:[],bosses:[]};let page;
 try{
  const context=await browser.newContext({viewport:mode==='touch'?{width:390,height:844}:{width:1280,height:720},hasTouch:mode==='touch',isMobile:mode==='touch'});page=await context.newPage();const cdp=await context.newCDPSession(page);
  page.on('pageerror',e=>result.errors.push(e.message));page.on('console',m=>{if(m.type()==='error')result.errors.push(m.text());});

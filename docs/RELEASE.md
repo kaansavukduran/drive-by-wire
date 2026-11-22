@@ -1,3 +1,7 @@
+# 0.14.0 · Canlı araç hareketi ve doğrulanmış Pages yayını
+
+Üç kozmetik araç aynı fizik ve hitbox sözleşmesini koruyarak zemin gölgesi, yumuşatılmış far konileri, direksiyon açısı, ön teker dönüşü, ateş tepmesi, arka mayın çıkışı ve hasar kademeleri kazandı; azaltılmış hareket tercihi korunur. Web'de anlık yenileme sırasında ara sahne kayıt kaybı giderildi. GitHub Pages yayını artık native test + Web export + Chromium doğrulamasından geçmeden dağıtılmaz. Kaynaklı benzer oyun araştırması `docs/RESEARCH_VEHICULAR_COMBAT.md` içine eklendi. Gerçek test ve canlı durum [QA](QA.md) içindedir.
+
 # 0.13.3 · Aynı çizim, dengeli boyut
 
 İlk ara sahnede yaralı Tavşan Emre’nin yalnız sahne ölçeği 0.375’ten 0.28’e indirildi (yaklaşık %25 daha küçük). Çizim dosyaları, oranlar, kaynak temasları, dünya kökleri ve diğer karakterlerin boyutları aynıdır. Test/yayın durumu QA ve PR makbuzunda ayrı kaydedilir.

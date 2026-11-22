@@ -1,4 +1,4 @@
-# Drive-By Wire · 0.13.3
+# Drive-By Wire · 0.14.0
 
 **Fragaria Interactive · AIONIA**
 
@@ -10,7 +10,7 @@ Omega-3 ile yolu aç, arkadaşlarının sesini dinle. Oyun artık lineer: **1. e
 
 ## Oyna
 
-[Güncel web oyunu](https://drive-by-wire.vercel.app/). Ana menü → Hikâyeye başla → üç sohbet yanıtından birini seç → yanıtı oku → Yola devam et. Kazanınca Ara sahneye geç düğmesini kullan. Replikleri kendi hızında ilerlet. Ana menüde Bölümler, hazır içerikle gelecek etapları açıkça ayırır.
+[Güncel web oyunu (GitHub Pages)](https://kaansavukduran.github.io/drive-by-wire/) (eski Vercel bağlantısı kota/ödeme nedeniyle devre dışı olabilir). Ana menü → Hikâyeye başla → üç sohbet yanıtından birini seç → yanıtı oku → Yola devam et. Kazanınca Ara sahneye geç düğmesini kullan. Replikleri kendi hızında ilerlet. Ana menüde Bölümler, hazır içerikle gelecek etapları açıkça ayırır.
 
 - PC: oklar/WASD dört yönlü sürüş; fare sol/Space öne ateş; fare sağ/X sınırsız arka mayın; Esc/P mola.
 - Gamepad: sol çubuk/D-pad; RT/A ateş, X mayın; menü/seçimlerde yönler ve A, geri B.
@@ -37,7 +37,7 @@ Web’i http://localhost:8765 adresinden aç. HTML’ye çift tıklamak yeterli 
 
 `tests/browser_linear.cjs`: iki etap, iki ara sahne ve kayıtla devam için gerçek klavye/fare, Gamepad API veya dokunmatik girdileri. `DBW_INPUT=keyboard|pad|touch`, `DBW_URL` ve `DBW_EVIDENCE_DIR` ile çalışır. Eski browser_book/result_pad/touch_boss girişleri bu ortak akışa yönelir. `tests/browser_forge.cjs` altı düzen/input regresyonudur.
 
-[Hikâye ve kayıt](docs/JOURNEY.md) · [Tasarım](docs/GAME_DESIGN.md) · [Kontroller](docs/CONTROLS.md) · [Sanat](docs/ART_BIBLE.md) · [QA](docs/QA.md) · [Forge](docs/FORGE.md) · [Sürüm](docs/RELEASE.md) · [AIONIA kaynak](docs/AIONIA_CURRENT_REFERENCE.md) · [Mahremiyet](docs/PRIVACY.md) · [Build](docs/BUILD.md)
+[Hikâye ve kayıt](docs/JOURNEY.md) · [Tasarım](docs/GAME_DESIGN.md) · [Kontroller](docs/CONTROLS.md) · [Sanat](docs/ART_BIBLE.md) · [Araştırma](docs/RESEARCH_VEHICULAR_COMBAT.md) · [QA](docs/QA.md) · [Forge](docs/FORGE.md) · [Sürüm](docs/RELEASE.md) · [AIONIA kaynak](docs/AIONIA_CURRENT_REFERENCE.md) · [Mahremiyet](docs/PRIVACY.md) · [Build](docs/BUILD.md)
 
 Kaynaklar: data/story_book.json ve scripts/core/story_book.gd lineer ilerleme; road_story.json ilk ara sahne; cliff_story.json ikinci ara sahne. visual_art.json yeni resimlerin kaynak bölgeleri/hash/ayak temasları; assets/PROVENANCE.json üretim kaydıdır. Kullanıcının talebiyle sonraki kalite/Forge işleri Unslop becerisiyle yürütülür.
 
@@ -50,3 +50,5 @@ Canlı /version.json sürüm/build commit/giriş adresini bildirir. Build başar
 0.13.2: Bildirimler ve kontrol ipuçları ayrı alanlarda; çıplak HUD yazısı iki temada okunur. Yön/font değişiminde okunan yer ve ayarlarda düzenlenen satır korunur. Gamepad ipucu gerçek özel atamayı gösterir; proje/web/Linux açıklaması gerçek lineer içerikle uyumludur.
 
 0.13.3: İlk yol kenarı ara sahnesinde yaralı Emre yaklaşık %25 küçültüldü. Orijinal çizim, en-boy oranı, sabit ayak teması ve diğer karakterler değişmedi.
+
+0.14.0: Üç oyuncu aracı için sabit pivot/hitbox üstünde gerçek hareket sözlüğü (zemin gölgesi, yanal direksiyon yatışı, ön teker açısı, far ışığı, atış tepmesi, mayın kapağı sinyali ve ilerleyici hasar dumanı); karşılaştırmalı araçlı çatışma araştırması; GitHub Pages yayınına motor ve dışa aktarılmış tarayıcı doğrulama kapısı eklendi.

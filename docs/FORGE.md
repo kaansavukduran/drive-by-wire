@@ -217,3 +217,16 @@ Gerçek font/tema testinde düzenlenen font satırının sayfa değişince kaybo
 ## 0.13.3 · Emre’nin sahnedeki boyutu
 
 Taban public main f40e3a97e66d/0.13.2; dal codex/emre-scene-scale. Fragaria Unslop uygulandı; canlı AIONIA v1.7 aynı revizyon yeniden okundu. Kullanıcı ortadaki yaralı tavşanı aynı çizimle küçültmeyi istedi. Yalnız Emre’nin uniform ölçeği 0.375 → 0.28; diğer sanat verileri ve üç PNG bit düzeyinde korunur. Kaynak temasları/dünya kökleri sabittir. Native 30 takım/2232 kontrol PASS; gerçek tarayıcı ve CI/yayın durumu QA/PR makbuzunda. Yeni motor, sanat veya kontrol değişimi yoktur.
+
+## 0.14.0 · Araç hareket dili, araştırma ve yayın kapısı
+
+Taban public main `69904f45999e/0.13.3`; hedef canlı yayın GitHub Pages (`https://kaansavukduran.github.io/drive-by-wire/`). Canlı Vercel adresi (`drive-by-wire.vercel.app`) `DEPLOYMENT_DISABLED / Payment required` döndürdüğü gözlemlendi. Kurulu `modern-web-guidance` okundu; diğer beş Codex becerisi bu VM'de bulunmadığı için `SKILL_NOT_LOADED` olarak dürüstçe kaydedildi.
+
+Kaynaklı araç çatışması araştırması (`docs/RESEARCH_VEHICULAR_COMBAT.md`) yazıldı ve doğrudan ilk görev kararlarına bağlandı:
+- **Araç hareket dili (`scripts/game/vehicle_motion.gd`, `scripts/game/vehicle_overlay.gd`):** Üç kozmetik araç için ortak fizik/pivot/hitbox sözleşmesi korunarak çift katmanlı zemin gölgesi, yumuşatılmış far konileri, yanal direksiyon yatışı (`±0.085 rad`) ve ön teker açısı, ön ateş geri tepmesi + namlu parıltısı, arka mayın kapağı/hazır halkası ve deterministik hasar kademeleri (`damaged`, `critical`, `destroyed`) eklendi. Azaltılmış hareket tercihi dekoratif dönüşleri kapatırken kritik geri bildirimleri korur.
+- **Araç seçimi ve sohbet kutusu:** `vehicle_screen.gd` zeminli önizleme pedi ve kayıtlı seçim ipuçlarıyla güçlendirildi; `main.gd` isteğe bağlı T sohbet kutusu yer tutucusu dar ekranda kırpılmayacak şekilde kısaltıldı.
+- **Web anlık yenileme kayıt güvenliği (`scripts/core/save_store.gd`):** Gerçek tarayıcı testinde Emscripten IDBFS `FS.syncfs` tamamlanmadan yenilemede ara sahne adımının kaybedilmesi yakalandı; yalnız Web varsayılan kaydı için eşzamanlı `localStorage` aynası (`dbw.save_v1`) eklendi ve `cliffReload: true` doğrulandı.
+- **Yayın kapısı ve taşınabilir tarayıcı testleri:** `packaging/build_web.py` `work/.gdignore` korumasını koşulsuz uygular ve `--export-release` çıktısındaki script/parse hatalarında derlemeyi durdurur. `.github/workflows/pages.yml` ve `build.yml` `verify_native` → Web export + Chromium doğrulaması → Pages dağıtımı zincirine bağlandı. Tüm tarayıcı testleri ortak `tests/browser_launch.cjs` başlatıcısına geçirildi.
+
+Native 31 takım / 2287 kontrol PASS; Web `browser_loading`, `browser_warnings`, `browser_linear` (klavye ve dokunmatik) 0 hata ile PASS. Fiziksel cihaz, insan estetik/oynanış onayı ve önceki yazılım FPS / Web Canvas OS-font sınırları açık kalır. Sonraki paket (`0.15.0`): silah/mayın/patlama tek-olay bütünlüğü, Mühür-01 sahne oyunculuğu ve Cam Ormanı atmosfer derinliği.
+

@@ -1,6 +1,6 @@
 const {chromium}=require('playwright');const assert=require('node:assert/strict');const fs=require('node:fs');
 const output=process.env.DBW_EVIDENCE_DIR||'work/evidence-v050';fs.mkdirSync(output,{recursive:true});
-(async()=>{const browser=await chromium.launch({executablePath:process.env.DBW_CHROMIUM||'/usr/bin/chromium',headless:true,args:['--no-sandbox','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});try{
+(async()=>{const browser=await require('./browser_launch.cjs').launchChromium();try{
  const page=await browser.newPage({viewport:{width:1280,height:720}});const errors=[];
  page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
  const q=()=>page.evaluate(()=>window.__dbwQA);

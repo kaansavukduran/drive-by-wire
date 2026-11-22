@@ -5,7 +5,7 @@ const kind=process.env.DBW_BROWSER||'chromium';
 const base=process.env.DBW_URL||'http://127.0.0.1:8877';
 const out=process.env.DBW_EVIDENCE_DIR||'work/evidence-v070';fs.mkdirSync(out,{recursive:true});
 (async()=>{
- const browser=kind==='firefox'?await firefox.launch({headless:true,firefoxUserPrefs:{'webgl.force-enabled':true,'webgl.disabled':false,'gfx.webrender.software':true}}):await chromium.launch({executablePath:'/usr/bin/chromium',headless:true,args:['--no-sandbox','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
+ const browser=kind==='firefox'?await firefox.launch({headless:true,firefoxUserPrefs:{'webgl.force-enabled':true,'webgl.disabled':false,'gfx.webrender.software':true}}):await require('./browser_launch.cjs').launchChromium();
  const result={browser:kind,version:browser.version(),platform:'Linux automated desktop',status:'FAIL',errors:[]};
  try{
   const ctx=await browser.newContext({viewport:{width:1280,height:720}});const page=await ctx.newPage();

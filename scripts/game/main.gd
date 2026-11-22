@@ -31,6 +31,8 @@ const TouchControl := preload("res://scripts/game/touch_control.gd")
 const Cast := preload("res://scripts/game/cast_portrait.gd")
 const FONT_SYMBOLS := preload("res://assets/fonts/ControlSymbols.ttf")
 const Vehicles := preload("res://scripts/core/vehicles.gd")
+const VehicleMotion := preload("res://scripts/game/vehicle_motion.gd")
+const VehicleOverlay := preload("res://scripts/game/vehicle_overlay.gd")
 const CAR_SHEET := preload("res://assets/sprites/aion_roadster.png")
 const FONT_FALLBACK := preload("res://assets/fonts/Lexend.ttf")
 const FONT_TERM := preload("res://assets/fonts/VT323.ttf")
@@ -109,6 +111,8 @@ var end_result: Dictionary = {}
 var anim := "drive"
 var anim_t := 0.0
 var car: Sprite2D
+var vehicle_motion := VehicleMotion.new()
+var car_overlay: Node2D
 var box: LineEdit
 var bubble: Label
 var hud: Label
@@ -279,6 +283,10 @@ func _build_ui() -> void:
 	Vehicles.configure(car,save.get("vehicle"))
 	car.position = Vector2(car_x, car_y)
 	add_child(car)
+	car_overlay = VehicleOverlay.new()
+	car_overlay.name = "VehicleOverlay"
+	car_overlay.z_index = 0
+	add_child(car_overlay)
 	var warning_view := WarningView.new()
 	warning_view.name="EnemyWarnings"
 	warning_view.z_index=1
@@ -369,7 +377,7 @@ func _build_ui() -> void:
 	box.position = Vector2(W / 2 - 160, H - 48)
 	box.size = Vector2(320, 24)
 	box.add_theme_font_size_override("font_size", 16)
-	box.placeholder_text = "Omega-3’e yaz · Enter gönderir · Esc vazgeçer"
+	box.placeholder_text = "Omega-3’e yaz · Enter / Esc"
 	box.visible = false
 	box.add_theme_stylebox_override("normal", UiSkin.box("assets/ui/command_box.png", 6))
 	box.add_theme_stylebox_override("focus", UiSkin.box("assets/ui/command_box.png", 6))
@@ -834,6 +842,7 @@ func _execute(command: Dictionary) -> void:
 				mine_cooldown = _mine_reload()
 				mine_drops += 1
 				sounds.cue("mine")
+				vehicle_motion.trigger_mine()
 				mines.append({"pos": Vector2(car_x, car_y + 30), "arm": _cfg("mine.arm_seconds", 0.12), "life": _cfg("mine.lifetime", 8.0)})
 
 func _mine_reload() -> float:
@@ -884,6 +893,7 @@ func _fire(target: Variant) -> void:
 		return
 	fire_cooldown = _cfg("weapon.cooldown", 0.45)
 	sounds.cue("fire")
+	vehicle_motion.trigger_fire()
 	var origin := Vector2(car_x, car_y - 30)
 	var dir := Vector2.UP
 	var want: Dictionary = (target if target is Dictionary else {}).duplicate()
@@ -910,7 +920,7 @@ func _process(delta: float) -> void:
 		qa_clock=0
 		var targets := {}
 		for action in touch_by_action: targets[action]=QA.rect(touch_by_action[action])
-		QA.publish("run",{"view":[get_viewport_rect().size.x,get_viewport_rect().size.y],"chapter":campaign.get("stage",-1),"hp":hp,"kills":kills,"collected":arcade.collected,"finish":_cfg("arcade.finish_distance",1200),"warnings":_enemy_warnings().map(func(w): return {"kind":w["kind"],"lane":w["lane"],"progress":w["progress"],"origin":[w["origin"].x,w["origin"].y],"target":[w["target"].x,w["target"].y]}),"traffic":enemies.map(func(e): return {"id":e["id"],"spawn_y":e["spawn_y"],"type":e["type"],"state":e["state"],"t":e["t"],"hatch":e.get("hatch_open",0),"x":e["pos"].x,"y":e["pos"].y,"lane":e["lane"]}),"hazards":obstacles.map(func(o): return {"x":o["pos"].x,"y":o["pos"].y,"kind":o["kind"],"source_id":o.get("source_id",-1)}),"shield":shield_left,"bonds":campaign.get("bonds",{}),"pickup_targets":pickups.map(func(p): return {"lane":_lane_of(p["pos"].x),"y":p["pos"].y}),"radio_ui":_radio_snapshot(),"result_focus":result_buttons.find(get_viewport().gui_get_focus_owner()),"support":comfort_cooldown,"pulse_count":comfort_count,"mine_held":_held("drive_mine"),"result":result_buttons.map(func(b): return QA.rect(b)),"ending_text":end_panel.text if over else "","lane":lane,"player":[car_x,car_y],"sprite":[car.position.x,car.position.y],"hitbox":[_player_rect().position.x,_player_rect().position.y,_player_rect().size.x,_player_rect().size.y],"joystick":QA.rect(joystick),"stick":[joystick.value.x,joystick.value.y],"paused":paused,"over":over,"fire":_held("drive_fire"),"boost":boosting,"distance":distance,"speed":speed,"energy":energy,"road":[road_touch_rect.position.x,road_touch_rect.position.y,road_touch_rect.size.x,road_touch_rect.size.y],"actions":targets,"pause":QA.rect(pause_button),"journal":journal_panel.visible,"touch":touch_enabled,"portrait_hud":({"health":QA.rect(hud),"meters":QA.rect(distance_caption),"hp_bar":QA.rect(hp_bar),"score":QA.rect(score_label)} if was_portrait else {}),"route":journey.route,"mines":-1,"mine_cooldown":mine_cooldown,"mine_reload":_mine_reload(),"mine_drops":mine_drops,"active_mines":mines.map(func(m): return [m["pos"].x,m["pos"].y]),"dodge":dodge_cooldown,"settings":settings_panel.visible,"settings_ui":QA.settings(settings_panel),"settings_rect":QA.rect(settings_panel),"settings_back":QA.rect(settings_panel.back),"pause_menu":pause_panel.get_child(0).get_children().filter(func(child): return child is Button).map(func(child): return QA.rect(child)),"journal_rect":QA.rect(journal_panel),"journal_reader":journal_reader.snapshot(),"biome":Biomes.NAMES[maxi(0,biome_index)],"hp_rect":QA.rect(hp_bar),"health_panel_visible":ui_panels[0].visible,"toast_box":toast.get_theme_stylebox("normal") is not StyleBoxEmpty,"camera_bottom":(get_viewport_rect().size.y-world_origin.y)/scale.y,"boss":boss.snapshot(),"journal_back":QA.rect(journal_panel.get_child(0).get_child(2))})
+		QA.publish("run",{"view":[get_viewport_rect().size.x,get_viewport_rect().size.y],"chapter":campaign.get("stage",-1),"hp":hp,"kills":kills,"collected":arcade.collected,"finish":_cfg("arcade.finish_distance",1200),"warnings":_enemy_warnings().map(func(w): return {"kind":w["kind"],"lane":w["lane"],"progress":w["progress"],"origin":[w["origin"].x,w["origin"].y],"target":[w["target"].x,w["target"].y]}),"traffic":enemies.map(func(e): return {"id":e["id"],"spawn_y":e["spawn_y"],"type":e["type"],"state":e["state"],"t":e["t"],"hatch":e.get("hatch_open",0),"x":e["pos"].x,"y":e["pos"].y,"lane":e["lane"]}),"hazards":obstacles.map(func(o): return {"x":o["pos"].x,"y":o["pos"].y,"kind":o["kind"],"source_id":o.get("source_id",-1)}),"shield":shield_left,"bonds":campaign.get("bonds",{}),"pickup_targets":pickups.map(func(p): return {"lane":_lane_of(p["pos"].x),"y":p["pos"].y}),"radio_ui":_radio_snapshot(),"result_focus":result_buttons.find(get_viewport().gui_get_focus_owner()),"support":comfort_cooldown,"pulse_count":comfort_count,"mine_held":_held("drive_mine"),"result":result_buttons.map(func(b): return QA.rect(b)),"ending_text":end_panel.text if over else "","lane":lane,"player":[car_x,car_y],"sprite":[car.position.x,car.position.y],"hitbox":[_player_rect().position.x,_player_rect().position.y,_player_rect().size.x,_player_rect().size.y],"vehicle_anim":vehicle_motion.snapshot(),"joystick":QA.rect(joystick),"stick":[joystick.value.x,joystick.value.y],"paused":paused,"over":over,"fire":_held("drive_fire"),"boost":boosting,"distance":distance,"speed":speed,"energy":energy,"road":[road_touch_rect.position.x,road_touch_rect.position.y,road_touch_rect.size.x,road_touch_rect.size.y],"actions":targets,"pause":QA.rect(pause_button),"journal":journal_panel.visible,"touch":touch_enabled,"portrait_hud":({"health":QA.rect(hud),"meters":QA.rect(distance_caption),"hp_bar":QA.rect(hp_bar),"score":QA.rect(score_label)} if was_portrait else {}),"route":journey.route,"mines":-1,"mine_cooldown":mine_cooldown,"mine_reload":_mine_reload(),"mine_drops":mine_drops,"active_mines":mines.map(func(m): return [m["pos"].x,m["pos"].y]),"dodge":dodge_cooldown,"settings":settings_panel.visible,"settings_ui":QA.settings(settings_panel),"settings_rect":QA.rect(settings_panel),"settings_back":QA.rect(settings_panel.back),"pause_menu":pause_panel.get_child(0).get_children().filter(func(child): return child is Button).map(func(child): return QA.rect(child)),"journal_rect":QA.rect(journal_panel),"journal_reader":journal_reader.snapshot(),"biome":Biomes.NAMES[maxi(0,biome_index)],"hp_rect":QA.rect(hp_bar),"health_panel_visible":ui_panels[0].visible,"toast_box":toast.get_theme_stylebox("normal") is not StyleBoxEmpty,"camera_bottom":(get_viewport_rect().size.y-world_origin.y)/scale.y,"boss":boss.snapshot(),"journal_back":QA.rect(journal_panel.get_child(0).get_child(2))})
 	metrics_clock += delta
 	if OS.has_feature("web") and metrics_clock > 5.0:
 		metrics_clock = 0.0
@@ -1377,6 +1387,7 @@ func _damage_player(amount: float, tell := true) -> void:
 	invulnerable = _cfg("player.invulnerable_after_hit", 0.6)
 	_shake(float(DataLoader.dig(run_cfg, "screen_shake.hit", 3.0)))
 	_play("hit")
+	vehicle_motion.trigger_hit()
 	face.hurt = 0.35
 	if tell:
 		_event({"type": "damage", "amount": amount})
@@ -1483,9 +1494,10 @@ func _animate(delta: float) -> void:
 			anim_t = 0.0
 			frame = 0
 			a = ANIMS["drive"]
-	Vehicles.configure(car,save.get("vehicle"))
-	car.visible = not (invulnerable > 0.0 and int(game_time * 20) % 2 == 0 and not over)
-	car.modulate = Color(0.7, 0.9, 1.0, 0.75) if dodge_left > 0.0 else Color.WHITE
+	Vehicles.configure(car, save.get("vehicle"))
+	var base_scale := car.scale
+	vehicle_motion.step(delta, drive_velocity, name, hp, max_hp, mine_cooldown, over, motion_enabled, save.get("vehicle"))
+	vehicle_motion.apply_to_sprite(car, base_scale, invulnerable, game_time, over, dodge_left, motion_enabled)
 
 
 func _scroll_scenery(delta: float) -> void:
@@ -1552,6 +1564,7 @@ func _draw() -> void:
 	Biomes.draw(self,maxi(0,biome_index),distance*9,motion_enabled,effects_enabled and motion_enabled)
 	for pickup in pickups:
 		_draw_pickup(pickup)
+	vehicle_motion.draw_underlay(self, Vector2(car_x, car_y), save.get("vehicle"), motion_enabled, over)
 	if shield_left > 0.0 and not over:
 		draw_arc(Vector2(car_x, car_y), 32, 0, TAU, 32, Color("79d4ff"), 2)
 	if boosting and not over:

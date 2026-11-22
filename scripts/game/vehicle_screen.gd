@@ -13,6 +13,7 @@ var title: Label
 var description: Label
 var status: Label
 var panel: Panel
+var preview_stage: Panel
 var preview: Sprite2D
 var selected:="roadster"
 func _ready() -> void:
@@ -20,6 +21,9 @@ func _ready() -> void:
  Controls.install(save["settings"]["bindings"],save["settings"]["pad_bindings"],save["settings"]["deadzone"])
  panel=Panel.new();panel.theme=UiSkin.theme();panel.add_theme_stylebox_override("panel",UiSkin.panel());add_child(panel)
  title=_label("Arabanı seç",20);description=_label("",13);status=_label("",11)
+ preview_stage=Panel.new();preview_stage.mouse_filter=Control.MOUSE_FILTER_IGNORE
+ var pad_style:=StyleBoxFlat.new();pad_style.bg_color=Color(0.06,0.08,0.12,0.82);pad_style.border_color=Color("3b4d63");pad_style.set_border_width_all(1);pad_style.set_corner_radius_all(4)
+ preview_stage.add_theme_stylebox_override("panel",pad_style);panel.add_child(preview_stage)
  for id in Vehicles.IDS:
   var b:=Button.new();b.text=Vehicles.ITEMS[id]["name"];UiSkin.style_button(b)
   b.pressed.connect(func():_select(id));panel.add_child(b);buttons.append(b)
@@ -36,7 +40,10 @@ func _refresh() -> void:
  for child in preview.get_children():child.free()
  Vehicles.configure(preview,selected,1.5)
  description.text=Vehicles.ITEMS[selected]["description"]+"\nSürüş ve silah dengesi tüm araçlarda aynı."
- for i in buttons.size():buttons[i].text=("✓ " if Vehicles.IDS[i]==selected else "")+Vehicles.ITEMS[Vehicles.IDS[i]]["name"]
+ for i in buttons.size():
+  var active: bool = Vehicles.IDS[i]==selected
+  buttons[i].text=("✓ " if active else "")+Vehicles.ITEMS[Vehicles.IDS[i]]["name"]
+  buttons[i].tooltip_text="Kayıtlı seçili araç" if active else "Bu aracı seç"
  status.text="Seçili: "+Vehicles.ITEMS[selected]["name"]
 func _layout() -> void:
  var v:=get_viewport_rect().size;var p:=v.y>v.x
@@ -44,6 +51,7 @@ func _layout() -> void:
  var w:=panel.size.x;var bottom:=panel.size.y
  title.position=Vector2(12,10);title.size=Vector2(w-24,30)
  preview.position=Vector2(w/2,112) if p else Vector2(140,157);Vehicles.configure(preview,selected,1.5)
+ preview_stage.position=preview.position-Vector2(56,64);preview_stage.size=Vector2(112,128)
  description.position=Vector2(12,208) if p else Vector2(268,55);description.size=Vector2(w-24,70) if p else Vector2(312,88)
  for i in buttons.size():
   buttons[i].position=Vector2(12,300+i*52) if p else Vector2(268,132+i*48);buttons[i].size=Vector2(w-24,44) if p else Vector2(312,44)
