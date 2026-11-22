@@ -230,3 +230,14 @@ Kaynaklı araç çatışması araştırması (`docs/RESEARCH_VEHICULAR_COMBAT.md
 
 Native 31 takım / 2287 kontrol PASS; Web `browser_loading`, `browser_warnings`, `browser_linear` (klavye ve dokunmatik) 0 hata ile PASS. Fiziksel cihaz, insan estetik/oynanış onayı ve önceki yazılım FPS / Web Canvas OS-font sınırları açık kalır. Sonraki paket (`0.15.0`): silah/mayın/patlama tek-olay bütünlüğü, Mühür-01 sahne oyunculuğu ve Cam Ormanı atmosfer derinliği.
 
+## 0.15.0 · Silah/mayın tek-olay bütünlüğü, Mühür-01 oyunculuğu ve Cam Ormanı
+
+Taban yerel `main` `6794241/0.14.0`. `git push origin main` HTTP 403 ile engellendiği için (repo proje kaynaklarına push yetkisiyle bağlı değil) canlı Pages hâlâ `0.13.3` sürümündedir; yerel geliştirme ve doğrulama temiz sıralı sürüm commit’leriyle sürdürüldü.
+
+- **Ön ateş, arka mayın ve patlama bütünlüğü (`scripts/game/main.gd`):** Mayınlar için `detonated` tek-olay kilidi ve patlama başına `hit_ids` koruması eklendi; uzun karelerde (`delta = 0.25s`) çift patlama/çift hasar/çift puan önlendi. `_hurt_enemy` ve `_explode` ölü hedef korumasıyla mühürlendi. Kurulma ve aktif sensör halkaları, çok aşamalı `mine_blast` (parlama → dürüst 60 px şok halkası → `fx.png` 6 kare patlama → hasarsız duman), mermi `hit_spark` kıvılcımları ve kamyon arka ağız `hatch_puff` eşzamanlaması eklendi.
+- **Mühür-01 sahne oyunculuğu (`scripts/core/boss_encounter.gd`, `scripts/game/robot_art.gd`):** Açık oyunculuk durumları (`entering`, `telegraph`, `firing`, `recover`, `phase_shift`, `defeated`), `warning_progress()`, `recover_ratio()` ve `take_cues()` eklendi; Stage 1 Mühür-01 yalnız önde kalma sözleşmesi ve Stage 2 Yankı-02 arka fazı korundu. Zemin gölgesi, çift namlu şarj parlaması, ateş geri tepmesi, toparlanma penceresi soğutma çekirdeği/buharı ve Faz 2 reaktör halkası çizildi.
+- **Cam Ormanı atmosfer derinliği (`scripts/game/road_biomes.gd`):** Yalnız orman omuzlarında (`x < 188`, `x > 452`) deterministik cam-yaprak parıltıları eklendi; savaş RNG’si tüketilmez ve hareket/efekt kapatıldığında durur.
+
+Native 32 takım / 2325 kontrol PASS (`tests/test_combat_events.gd` 38 yeni kontrol); Web export, `browser_warnings` ve `browser_linear` (klavye) 0 hata ile PASS. Görsel incelemede Faz 2 çift halka yarıçapının üst HUD’a yaklaşması not edildi; `0.16.0` içinde daraltılacak. Sonraki paket (`0.16.0`): özgün prosedürel ses/müzik dünyası, Modern Web Guidance kabuk iyileştirmesi ve tam Mission 1 performans/kabul matrisi.
+
+

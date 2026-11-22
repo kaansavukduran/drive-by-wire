@@ -1,4 +1,4 @@
-# Drive-By Wire · 0.14.0
+# Drive-By Wire · 0.15.0
 
 **Fragaria Interactive · AIONIA**
 
@@ -52,3 +52,5 @@ Canlı /version.json sürüm/build commit/giriş adresini bildirir. Build başar
 0.13.3: İlk yol kenarı ara sahnesinde yaralı Emre yaklaşık %25 küçültüldü. Orijinal çizim, en-boy oranı, sabit ayak teması ve diğer karakterler değişmedi.
 
 0.14.0: Üç oyuncu aracı için sabit pivot/hitbox üstünde gerçek hareket sözlüğü (zemin gölgesi, yanal direksiyon yatışı, ön teker açısı, far ışığı, atış tepmesi, mayın kapağı sinyali ve ilerleyici hasar dumanı); karşılaştırmalı araçlı çatışma araştırması; GitHub Pages yayınına motor ve dışa aktarılmış tarayıcı doğrulama kapısı eklendi.
+
+0.15.0: Ön ateş isabet kıvılcımları, kamyon arka ağız yük darbesi ve arka mayın tek-olay patlama bütünlüğü (kurulma/sensör halkası + dürüst 60 px şok dalgası); Mühür-01 için açık oyunculuk durumları (gölge, namlu şarjı, ateş tepmesi, toparlanma soğutma penceresi, Faz 2 reaktör halkası) ve Cam Ormanı omuz atmosfer derinliği.

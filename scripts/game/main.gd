@@ -270,6 +270,11 @@ func _on_web_help(_args: Array) -> void:
 
 
 func _exit_tree() -> void:
+	Engine.time_scale = 1.0
+	for device in Input.get_connected_joypads():
+		Input.stop_joy_vibration(device)
+	touch_held.clear()
+	pending.clear()
 	if OS.has_feature("web") and web_help_callback != null:
 		JavaScriptBridge.get_interface("window").removeEventListener("hashchange", web_help_callback)
 
@@ -843,7 +848,7 @@ func _execute(command: Dictionary) -> void:
 				mine_drops += 1
 				sounds.cue("mine")
 				vehicle_motion.trigger_mine()
-				mines.append({"pos": Vector2(car_x, car_y + 30), "arm": _cfg("mine.arm_seconds", 0.12), "life": _cfg("mine.lifetime", 8.0)})
+				mines.append({"pos": Vector2(car_x, car_y + 30), "arm": _cfg("mine.arm_seconds", 0.12), "life": _cfg("mine.lifetime", 8.0), "age": 0.0, "detonated": false})
 
 func _mine_reload() -> float:
 	# Existing saved upgrades and route support now improve reload instead of ammo.
@@ -1176,16 +1181,26 @@ func _update_bullets(delta: float) -> void:
 	for b in bullets:
 		b["pos"] = b["pos"] + b["vel"] * delta
 		if boss.active and boss.rect().has_point(b["pos"]):
+			effects.append({"pos": b["pos"], "t": 0.0, "kind": "hit_spark", "still": true})
+			sounds.cue("bullet_hit")
 			_hurt_boss(_cfg("weapon.damage",20));b["dead"]=true
 			continue
 		for e in enemies:
+			if e.has("dead"):
+				continue
 			if _rect(e["pos"], ENEMY_HALF[e["type"]]).has_point(b["pos"]):
+				effects.append({"pos": b["pos"], "t": 0.0, "kind": "hit_spark", "still": true})
+				sounds.cue("bullet_hit")
 				_hurt_enemy(e, _cfg("weapon.damage", 20))
 				b["dead"] = true
 				break
 		if not b.has("dead"):
 			for o in obstacles:
+				if o.has("dead"):
+					continue
 				if _rect(o["pos"], Vector2(8, 8)).has_point(b["pos"]):
+					effects.append({"pos": b["pos"], "t": 0.0, "kind": "hit_spark", "still": true})
+					sounds.cue("bullet_hit")
 					o["hp"] = float(o["hp"]) - _cfg("weapon.damage", 20)
 					b["dead"] = true
 					break
@@ -1203,30 +1218,52 @@ func _update_bullets(delta: float) -> void:
 
 func _update_mines(delta: float) -> void:
 	for m in mines:
+		if bool(m.get("detonated", false)):
+			continue
 		m["pos"] = m["pos"] + Vector2(0, speed * delta)
+		m["age"] = float(m.get("age", 0.0)) + delta
 		m["arm"] = float(m["arm"]) - delta
 		m["life"] = float(m["life"]) - delta
 		if float(m["arm"]) > 0.0:
 			continue
 		var detonate: bool=boss.active and boss.rect().grow(12).has_point(m["pos"])
 		for e in enemies:
+			if e.has("dead"):
+				continue
 			if _rect(e["pos"], ENEMY_HALF[e["type"]] + Vector2(10, 10)).has_point(m["pos"]):
 				detonate = true
 				break
 		# Rear fire is counterable even before its shooter reaches the mine.
-		for bullet in enemy_bullets:
-			if bullet["pos"].distance_to(m["pos"]) <= 24:
-				detonate = true
-				break
+		if not detonate:
+			for bullet in enemy_bullets:
+				if bullet["pos"].distance_to(m["pos"]) <= 24:
+					detonate = true
+					break
 		if detonate:
-			if boss.active and boss.position.distance_to(m["pos"])<=76: _hurt_boss(_cfg("mine.damage",60))
-			for e in enemies:
-				if e["pos"].distance_to(m["pos"]) <= 60:
-					_hurt_enemy(e, _cfg("mine.damage", 60))
-			enemy_bullets=enemy_bullets.filter(func(b): return b["pos"].distance_to(m["pos"])>60)
-			effects.append({"pos": m["pos"], "t": 0.0, "kind": "small"})
+			m["detonated"] = true
 			m["life"] = -1.0
-	mines = mines.filter(func(m: Dictionary) -> bool: return float(m["life"]) > 0.0 and COMBAT_BOUNDS.has_point(m["pos"]))
+			var blast_pos: Vector2 = m["pos"]
+			var hit_ids: Dictionary = {}
+			if boss.active and boss.position.distance_to(blast_pos) <= 76:
+				_hurt_boss(_cfg("mine.damage", 60))
+			for e in enemies:
+				if e.has("dead"):
+					continue
+				var eid := int(e.get("id", 0))
+				if eid > 0 and hit_ids.has(eid):
+					continue
+				if e["pos"].distance_to(blast_pos) <= 60:
+					if eid > 0:
+						hit_ids[eid] = true
+					_hurt_enemy(e, _cfg("mine.damage", 60))
+			enemy_bullets = enemy_bullets.filter(func(b): return b["pos"].distance_to(blast_pos) > 60)
+			effects.append({"pos": blast_pos, "t": 0.0, "kind": "mine_blast"})
+			_shake(float(DataLoader.dig(run_cfg, "screen_shake.kill", 2.0)) * 0.75)
+			if sounds.streams.has("mine_boom"):
+				sounds.cue("mine_boom")
+			elif hit_ids.is_empty():
+				sounds.cue("hit")
+	mines = mines.filter(func(m: Dictionary) -> bool: return not bool(m.get("detonated", false)) and float(m["life"]) > 0.0 and COMBAT_BOUNDS.has_point(m["pos"]))
 
 
 func _update_obstacles(delta: float) -> void:
@@ -1292,7 +1329,10 @@ func _update_enemies(delta: float) -> void:
 						# A passed truck cannot drop an untelegraphed obstacle onto the car.
 						e["state"] = "drive"
 					elif float(e["t"]) >= _warning_seconds(kind):
-						obstacles.append({"pos":e["pos"]+TruckHatch.RELEASE,"source_id":e["id"],"kind":e["drop_kind"],"hp":20.0,"dmg":float(cfg.get("obstacle_damage",20)),"near":false,"passed":false})
+						var release_pos: Vector2 = e["pos"] + TruckHatch.RELEASE
+						obstacles.append({"pos":release_pos,"source_id":e["id"],"kind":e["drop_kind"],"hp":20.0,"dmg":float(cfg.get("obstacle_damage",20)),"near":false,"passed":false})
+						effects.append({"pos": release_pos, "t": 0.0, "kind": "hatch_puff"})
+						sounds.cue("truck_hatch")
 						e["state"] = "attack"
 						e["t"] = 0.0
 				elif float(e["cd"]) <= 0.0 and e["pos"].y > 0.0 and e["pos"].y < car_y - 80:
@@ -1352,13 +1392,17 @@ func _check_near(thing: Dictionary, r: Rect2, thing_lane: int) -> void:
 
 
 func _hurt_enemy(e: Dictionary, amount: float) -> void:
+	if e.has("dead"):
+		return
 	e["hp"] = float(e["hp"]) - amount
 	e["flash"] = 0.12
-	if float(e["hp"]) <= 0.0 and not e.has("dead"):
+	if float(e["hp"]) <= 0.0:
 		_explode(e, true)
 
 
 func _explode(e: Dictionary, by_player: bool) -> void:
+	if e.has("dead"):
+		return
 	e["dead"] = true
 	effects.append({"pos": e["pos"], "t": 0.0, "kind": "wreck_" + str(e["type"])})
 	_shake(float(DataLoader.dig(run_cfg, "screen_shake.kill", 2.0)))
@@ -1375,6 +1419,7 @@ func _damage_player(amount: float, tell := true) -> void:
 	if shield_left > 0.0:
 		shield_left = 0.0
 		invulnerable = _cfg("player.invulnerable_after_hit", 0.6)
+		sounds.cue("shield_block")
 		_notice("Kalkan darbeyi emdi!")
 		return
 	arcade.break_chain()
@@ -1572,12 +1617,22 @@ func _draw() -> void:
 			draw_line(Vector2(car_x + side * 7, car_y + 28), Vector2(car_x + side * 7, car_y + 38 + sin(game_time * 40) * 5), Color("79d4ff"), 3)
 	for m in mines:
 		var armed := float(m["arm"]) <= 0.0
-		Art.at(self,"gadgets",0,m["pos"],Vector2(24,24),Color.WHITE if armed else Color(.8,.8,.8))
+		var mp: Vector2 = m["pos"]
+		if not armed:
+			var arm_ratio := clampf(float(m["arm"]) / maxf(0.01, _cfg("mine.arm_seconds", 0.12)), 0.0, 1.0)
+			var deploy_r := 11.0 + arm_ratio * 9.0 if motion_enabled else 14.0
+			draw_arc(mp, deploy_r, 0.0, TAU, 18, Color(1.0, 0.78, 0.42, 0.42), 1.4)
+		else:
+			var pulse := 0.5 + 0.5 * sin(float(m.get("age", game_time)) * 10.0) if motion_enabled else 0.65
+			var ring_r := 11.5 + pulse * 3.5
+			draw_arc(mp, ring_r, 0.0, TAU, 20, Color(0.95, 0.36, 0.42, 0.32 + pulse * 0.36), 1.4)
+		Art.at(self,"gadgets",0,mp,Vector2(24,24),Color.WHITE if armed else Color(.8,.8,.8))
 	for o in obstacles:
 		Art.at(self,"gadgets",{"crate":4,"barrel":5,"spikes":6}.get(str(o["kind"]),4),o["pos"],Vector2(32,32))
 	for e in enemies:
 		_draw_enemy_sprite(e)
-	if boss.active and Rect2(192,0,256,H).encloses(boss.rect()): BossArt.draw(self,boss.position,boss.stage,game_time,boss.flash>0,1,boss.warning_left>0)
+	if boss.active and Rect2(192,0,256,H).encloses(boss.rect()):
+		BossArt.draw(self,boss.position,boss.stage,game_time,boss.flash>0,1,boss.warning_left>0,boss.act_state,boss.warning_progress(),boss.fire_recoil,boss.phase,boss.phase_burst,motion_enabled)
 	for b in bullets:
 		Art.at(self,"weapons",1,b["pos"],Vector2(12,22))
 	for b in enemy_bullets:
@@ -1633,6 +1688,49 @@ func _draw_effect_sprite(fx: Dictionary) -> void:
 	elif kind=="muzzle":
 		if t>0.1:return
 		Art.at(self,"gadgets",7,p,Vector2(24,24))
+	elif kind=="hit_spark":
+		if t>0.18: return
+		var ratio := clampf(t / 0.18, 0.0, 1.0)
+		var alpha := 1.0 - ratio
+		draw_circle(p, 3.0 * (1.0 - ratio * 0.5), Color(1.0, 0.96, 0.78, alpha * 0.9))
+		var reach := 4.0 + (ratio * 8.0 if motion_enabled else 4.0)
+		for i in 4:
+			var a := i * PI * 0.5 + 0.35
+			var dir := Vector2(cos(a), sin(a))
+			draw_line(p + dir * 2.0, p + dir * reach, Color(1.0, 0.84, 0.44, alpha), 1.4)
+	elif kind=="hatch_puff":
+		if t>0.28: return
+		var ratio := clampf(t / 0.28, 0.0, 1.0)
+		var r := 6.0 + (ratio * 12.0 if motion_enabled else 6.0)
+		draw_arc(p, r, 0.0, TAU, 16, Color(0.95, 0.86, 0.64, (1.0 - ratio) * 0.55), 1.6)
+	elif kind=="boss_phase_ring":
+		if t>0.60: return
+		var ratio := clampf(t / 0.60, 0.0, 1.0)
+		var r := 24.0 + (ratio * 66.0 if motion_enabled else 48.0)
+		draw_arc(p, r, 0.0, TAU, 32, Color(1.0, 0.82, 0.44, (1.0 - ratio) * 0.75), 2.5)
+	elif kind=="mine_blast":
+		if t>0.78: return
+		# Stage 1: brief hot flash core.
+		if t < 0.10:
+			var flash_a := 1.0 - t / 0.10
+			draw_circle(p, 18.0 + t * 80.0, Color(1.0, 0.96, 0.82, flash_a * 0.65))
+		# Stage 2: honest-radius 60 px shockwave ring.
+		if t < 0.30:
+			var wave_ratio := clampf(t / 0.30, 0.0, 1.0)
+			var wave_r := 14.0 + wave_ratio * 46.0 if motion_enabled else 44.0
+			draw_arc(p, wave_r, 0.0, TAU, 28, Color(1.0, 0.72, 0.36, (1.0 - wave_ratio) * 0.82), 2.2)
+		# Stage 3: 6-frame pixel-art blast cloud from assets/art/fx.png.
+		if t >= 0.03 and t < 0.63:
+			Art.explosion(self, p, t - 0.03, 68)
+		# Stage 4: cosmetic lingering smoke puffs (zero damage).
+		if t >= 0.28:
+			var smoke_ratio := clampf((t - 0.28) / 0.50, 0.0, 1.0)
+			var smoke_a := (1.0 - smoke_ratio) * 0.30
+			for i in 3:
+				var angle := float(i) * TAU / 3.0 + 0.5
+				var drift := (8.0 + smoke_ratio * 14.0) if motion_enabled else 10.0
+				var sp := p + Vector2(cos(angle), sin(angle)) * drift
+				draw_circle(sp, 6.0 + smoke_ratio * 4.0, Color(0.58, 0.62, 0.68, smoke_a))
 	elif kind.begins_with("wreck_"):
 		if t<0.35:
 			var index: int={"rammer":0,"pickup":1,"truck":2}.get(kind.substr(6),0)
@@ -1926,6 +2024,12 @@ func _update_encounter(delta: float) -> void:
 		enemy_bullets.append_array(boss.step(delta,Vector2(car_x,car_y)))
 		if boss.rect().intersects(_player_rect()): _damage_player(8,false)
 	for message in boss.take_messages(): _say(message,true)
+	for cue in boss.take_cues():
+		if cue == "boss_phase":
+			effects.append({"pos": boss.position, "t": 0.0, "kind": "boss_phase_ring", "still": true})
+			_shake(2.5)
+		if sounds.streams.has(cue):
+			sounds.cue(cue)
 
 func _hurt_boss(amount: float) -> void:
 	if not boss.active: return
@@ -1934,6 +2038,8 @@ func _hurt_boss(amount: float) -> void:
 		enemy_bullets.clear()
 		hp=minf(max_hp,hp+15)
 		arcade.award(400);kills+=1
-		for x in [-24,0,24]: effects.append({"pos":center+Vector2(x,0),"t":0.0,"kind":"small"})
-		_shake(3);sounds.cue("kill")
+		effects.append({"pos": center, "t": 0.0, "kind": "mine_blast", "still": true})
+		for x in [-28,28]: effects.append({"pos":center+Vector2(x,0),"t":0.0,"kind":"small","still":true})
+		_shake(3.5)
+		sounds.cue("boss_defeat" if sounds.streams.has("boss_defeat") else "kill")
 		_notice("%s DURDURULDU\n+400 puan · +15 onarım" % Boss.NAMES[boss.stage])

@@ -1,3 +1,7 @@
+# 0.15.0 · Silah/mayın bütünlüğü, Mühür-01 oyunculuğu ve Cam Ormanı
+
+Arka mayınlar uzun karede bile tek kez kurulup tek kez patlar; kurulma ve aktif sensör halkası ile 60 px gerçek etki alanını gösteren çok aşamalı patlama efekti eklendi. Ön mermi isabetleri ve kamyon arka kapağından bırakılan yükler kıvılcım/toz darbesiyle eşzamanlandı. Mühür-01 artık zemin gölgesi, namlu şarjı, ateş geri tepmesi, açık toparlanma soğutma penceresi ve Faz 2 reaktör halkasıyla okunur; Cam Ormanı omuzlarına deterministik parıltı derinliği eklendi. Gerçek test ve yayın durumu [QA](QA.md) içindedir.
+
 # 0.14.0 · Canlı araç hareketi ve doğrulanmış Pages yayını
 
 Üç kozmetik araç aynı fizik ve hitbox sözleşmesini koruyarak zemin gölgesi, yumuşatılmış far konileri, direksiyon açısı, ön teker dönüşü, ateş tepmesi, arka mayın çıkışı ve hasar kademeleri kazandı; azaltılmış hareket tercihi korunur. Web'de anlık yenileme sırasında ara sahne kayıt kaybı giderildi. GitHub Pages yayını artık native test + Web export + Chromium doğrulamasından geçmeden dağıtılmaz. Kaynaklı benzer oyun araştırması `docs/RESEARCH_VEHICULAR_COMBAT.md` içine eklendi. Gerçek test ve canlı durum [QA](QA.md) içindedir.
