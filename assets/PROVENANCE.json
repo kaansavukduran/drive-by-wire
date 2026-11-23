@@ -830,6 +830,12 @@
         1487
       ],
       "notes": "User explicitly requested this existing strawberry symbol in the public game loader in0.13.0. No redesign or new final logo composition claimed. Source reference bytes unchanged; used by Godot and web shell."
+    },
+    "scripts/game/sounds.gd": {
+      "method": "Original local 16-bit PCM procedural audio synthesis (22050 Hz, deterministic hash noise, zero external samples or network services)",
+      "status": "ORIGINAL_PROCEDURAL_AUDIO",
+      "generated_by": "Runtime AudioStreamWAV synthesis in scripts/game/sounds.gd; 0.16.0",
+      "notes": "15 layered SFX cues (fire, bullet_hit, mine, mine_boom, hit, shield_block, kill, pickup, truck_hatch, boss_warn, boss_fire, boss_phase, boss_defeat, finish, pulse) and 3 click-free seamless looping audio beds (road, boss, aftermath)."
     }
   },
   "generator": "tools/art/build.py",

@@ -240,4 +240,17 @@ Taban yerel `main` `6794241/0.14.0`. `git push origin main` HTTP 403 ile engelle
 
 Native 32 takım / 2325 kontrol PASS (`tests/test_combat_events.gd` 38 yeni kontrol); Web export, `browser_warnings` ve `browser_linear` (klavye) 0 hata ile PASS. Görsel incelemede Faz 2 çift halka yarıçapının üst HUD’a yaklaşması not edildi; `0.16.0` içinde daraltılacak. Sonraki paket (`0.16.0`): özgün prosedürel ses/müzik dünyası, Modern Web Guidance kabuk iyileştirmesi ve tam Mission 1 performans/kabul matrisi.
 
+## 0.16.0 · Ses dünyası, Modern Web Guidance kabuğu ve Mission 1 Teknik Kabul Adayı
+
+Taban yerel `main` `20bb505/0.15.0`. Mission 1 teknik kabul adayı olarak üç ana iş tamamlandı:
+
+- **Özgün prosedürel ses ve dinamik müzik dünyası (`scripts/game/sounds.gd`, `main.gd`, `road_story_screen.gd`, `assets/PROVENANCE.json`):** 15 katmanlı özgün 16-bit PCM SFX (`fire`, `bullet_hit`, `mine`, `mine_boom`, `hit`, `shield_block`, `kill`, `pickup`, `truck_hatch`, `boss_warn`, `boss_fire`, `boss_phase`, `boss_defeat`, `finish`, `pulse`), 8 sesli anti-clipping havuzu ve 3 kesintisiz döngülü müzik katmanı (`road`, `boss`, `aftermath`) eklendi. İlk dokunmatik Web testinde sahne girişindeki 264.600 örneklik senkron üretimin arka trafik giriş gecikmesine yol açtığı yakalandı; statik önbellekleme (`_cached_streams`/`_cached_beds`) ve tembel 11.025 Hz 2 saniyelik katman üretimiyle düzeltildi ve 5 ardışık tekrar dahil doğrulandı.
+- **Mühür-01 Faz 2 halka düzeltmesi (`robot_art.gd`, `main.gd`):** `0.15.0` ekran görüntüsünde üst HUD başlığına yaklaşan Faz 2 reaktör dalgası yarıçapı daraltıldı (`<= 50 px`) ve `work/v0160/linear-kb/stage1-boss2.png` üzerinde temiz olduğu doğrulandı.
+- **Modern Web Guidance web kabuğu (`packaging/web/shell.html`, `packaging/web/entry.html`):** `viewport-fit=cover`, safe-area inset boşlukları, `@media (pointer: coarse)` 44 px hedef boyutları, `@media (prefers-reduced-motion: no-preference)` kontrollü belirsiz ilerleme nabzı, dengeli başlık/metin kırılımı ve kabuk düğmelerinden odağı çalmayan temiz DOM→canvas odak devri uygulandı. Tek iş parçacıklı export, sıfır service worker ve sıfır telemetri korundu.
+
+Doğrulama: Native **33 takım / 2384 kontrol PASS** (`tests/test_audio_world.gd` 59 yeni kontrol); Web export 0 hata; `browser_loading`, `browser_warnings`, `browser_appearance`, `browser_quality`, `browser_perf` (5 ardışık tekrar), `browser_forge` (6 cihaz + gamepad) ve `browser_linear` (`keyboard`, `touch`, `pad` — üç girdi ailesinde tam 2 etap + 2 ara sahne + `cliffReload`/`cliffRotation` + Devam edecek) tamamı 0 hata ile PASS.
+
+Yayın sınırı: `git push origin main` HTTP 403 ile engellendiği için canlı GitHub Pages hâlâ `0.13.3` sürümündedir; yerel `main` (`0.14.0 → 0.15.0 → 0.16.0`) itilmeye hazırdır. Fiziksel cihaz testi, gerçek hoparlör dinlemesi, yazılım renderer 60 FPS / Web Canvas OS-font sınırı ve kullanıcının gerçek estetik/oynanış kabulü açık kalır. Kullanıcının geri bildirimi olmadan yeni 2. etap içeriğine veya 3–13 etaplarına geçilmez.
+
+
 

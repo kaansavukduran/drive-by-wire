@@ -229,6 +229,7 @@ func _ready() -> void:
 	sounds.volume = float(save["settings"]["volume"])
 	motion_enabled = bool(save["settings"]["motion"])
 	add_child(sounds)
+	sounds.set_bed("road")
 	Input.joy_connection_changed.connect(func(_device: int, connected: bool):
 		if not connected:
 			Controls.last_device = "keyboard"
@@ -271,6 +272,8 @@ func _on_web_help(_args: Array) -> void:
 
 func _exit_tree() -> void:
 	Engine.time_scale = 1.0
+	if is_instance_valid(sounds):
+		sounds.stop_all()
 	for device in Input.get_connected_joypads():
 		Input.stop_joy_vibration(device)
 	touch_held.clear()
@@ -515,8 +518,7 @@ func _apply_settings(value: Dictionary) -> void:
 	save["settings"] = value.duplicate()
 	effects_enabled = bool(value["effects"])
 	motion_enabled = bool(value["motion"])
-	sounds.enabled = bool(value["sound"])
-	sounds.volume = float(value["volume"])
+	sounds.apply_settings(bool(value["sound"]), float(value["volume"]))
 	if not effects_enabled:
 		shake = 0.0
 	face.decorative_motion = motion_enabled
@@ -663,6 +665,8 @@ func _set_paused(value: bool) -> void:
 	if value and paused:
 		return
 	paused = value
+	if is_instance_valid(sounds):
+		sounds.set_paused(value)
 	pad_lane_latch = 0
 	for device in Input.get_connected_joypads():
 		Input.stop_joy_vibration(device)
@@ -1457,6 +1461,9 @@ func _end_run(outcome := "destroyed") -> void:
 	if over:
 		return
 	over = true
+	if is_instance_valid(sounds):
+		sounds.set_paused(false)
+		sounds.set_bed("")
 	sounds.cue("finish" if outcome == "survived" else "hit")
 	paused = false
 	pause_panel.hide()
@@ -1706,8 +1713,8 @@ func _draw_effect_sprite(fx: Dictionary) -> void:
 	elif kind=="boss_phase_ring":
 		if t>0.60: return
 		var ratio := clampf(t / 0.60, 0.0, 1.0)
-		var r := 24.0 + (ratio * 66.0 if motion_enabled else 48.0)
-		draw_arc(p, r, 0.0, TAU, 32, Color(1.0, 0.82, 0.44, (1.0 - ratio) * 0.75), 2.5)
+		var r := 18.0 + (ratio * 32.0 if motion_enabled else 36.0)
+		draw_arc(p, r, 0.0, TAU, 32, Color(1.0, 0.82, 0.44, (1.0 - ratio) * 0.65), 2.0)
 	elif kind=="mine_blast":
 		if t>0.78: return
 		# Stage 1: brief hot flash core.
@@ -2017,6 +2024,8 @@ func _update_encounter(delta: float) -> void:
 	if not Session.story_mode: return
 	if distance>=280 and not boss.started:
 		boss.start(stage)
+		if is_instance_valid(sounds):
+			sounds.set_bed("boss")
 		journey.log_lines.append("%s yolunu kesti. Uyarı çizgilerinden uzaklaş; öndeyken ateş, arkadayken mayın kullan." % Boss.NAMES[boss.stage])
 		_notice("ROBOT SALDIRISI\n"+Boss.NAMES[boss.stage])
 	if boss.active:
@@ -2041,5 +2050,7 @@ func _hurt_boss(amount: float) -> void:
 		effects.append({"pos": center, "t": 0.0, "kind": "mine_blast", "still": true})
 		for x in [-28,28]: effects.append({"pos":center+Vector2(x,0),"t":0.0,"kind":"small","still":true})
 		_shake(3.5)
+		if is_instance_valid(sounds):
+			sounds.set_bed("road")
 		sounds.cue("boss_defeat" if sounds.streams.has("boss_defeat") else "kill")
 		_notice("%s DURDURULDU\n+400 puan · +15 onarım" % Boss.NAMES[boss.stage])

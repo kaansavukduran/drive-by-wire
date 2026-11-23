@@ -94,7 +94,7 @@ func _ready() -> void:
  get_viewport().size_changed.connect(_layout)
  Input.joy_connection_changed.connect(func(_id: int,connected: bool):
   if not connected:_pause(true))
- _present();_layout();_focus()
+ _present();_layout();_focus();_sync_audio()
 func _label(parent: Node,text: String,font_size: int) -> Label:
  var l:=Label.new();l.theme=UiSkin.theme();l.text=text;l.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;l.add_theme_font_size_override("font_size",font_size);parent.add_child(l);return l
 func _button(parent: Node,text: String,action: Callable) -> Button:
@@ -160,8 +160,12 @@ func _choose(index: int) -> void:
 func _enter() -> void:
  elapsed=0;page=0;reading_offset=0;step_time=0
  if chapter["step"]=="aftermath":ground_time=0
- _checkpoint();_present()
- if chapter["step"]=="trap":sounds.cue("kill")
+ _checkpoint();_present();_sync_audio()
+ if chapter["step"]=="trap":sounds.cue("mine_boom" if sounds.streams.has("mine_boom") else "kill")
+func _sync_audio() -> void:
+ if not is_instance_valid(sounds):return
+ if cliff_scene:sounds.set_bed("aftermath" if chapter.get("step") in ["check","thanks","wreck","promise","complete"] else "road")
+ else:sounds.set_bed("aftermath" if _ground_scene() else "road")
 func _checkpoint() -> bool:
  chapter=story_model.sanitize(chapter)
  campaign["cliff" if cliff_scene else "chapter2"]=chapter.duplicate(true)
@@ -171,6 +175,7 @@ func _checkpoint() -> bool:
  return not save_failed
 func _finish() -> void:
  if not _commit_completion():return
+ if is_instance_valid(sounds):sounds.stop_all()
  get_tree().call_deferred("change_scene_to_file","res://scenes/ending.tscn" if cliff_scene else "res://scenes/journey.tscn")
 func _commit_completion() -> bool:
  if completed or chapter["step"]!="complete":return false
@@ -183,10 +188,14 @@ func _commit_completion() -> bool:
  return true
 func _pause(value: bool) -> void:
  paused=value;pause_panel.visible=value
+ if is_instance_valid(sounds):sounds.set_paused(value)
  warning.text="Kayıt yazılamadı. İlerleme bu oturumda." if save_failed else "Mola · Sahne durdu. Seçimlerin bu cihazda saklanır."
  panel.visible=not value;pause_button.disabled=value;_focus()
 func _leave() -> void:
+ if is_instance_valid(sounds):sounds.stop_all()
  _checkpoint();get_tree().call_deferred("change_scene_to_file","res://scenes/title.tscn")
+func _exit_tree() -> void:
+ if is_instance_valid(sounds):sounds.stop_all()
 func _notification(what: int) -> void:
  if what==NOTIFICATION_APPLICATION_FOCUS_OUT and is_instance_valid(pause_panel):_pause(true)
 func _input(event: InputEvent) -> void:Controls.observe(event)

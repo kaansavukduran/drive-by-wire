@@ -1,3 +1,7 @@
+# 0.16.0 · Özgün ses dünyası, modern web kabuğu ve Mission 1 Teknik Kabul Adayı
+
+15 katmanlı özgün prosedürel ses efekti ve 3 kesintisiz müzik katmanı (yol, Mühür-01 karşılaşması ve "Yan yana" ara sahnesi) eklendi; statik önbellekleme sayesinde tekrar denemelerde takılma veya ses birikmesi oluşmaz, mola ve susturma anında uygulanır. Web kabuğu `viewport-fit=cover`, safe-area boşlukları, dokunmatikte 44 px düğmeler, azaltılmış hareket uyumu ve temiz odak devriyle güncellendi; Mühür-01 Faz 2 reaktör halkası üst HUD’dan tamamen ayrıldı. 33 native takım (2384 kontrol) ve klavye/dokunmatik/gamepad + 6 cihaz düzeni tarayıcı doğrulaması 0 hata ile tamamlandı; tam kabul matrisi ve açık sınırlar [QA](QA.md) içindedir.
+
 # 0.15.0 · Silah/mayın bütünlüğü, Mühür-01 oyunculuğu ve Cam Ormanı
 
 Arka mayınlar uzun karede bile tek kez kurulup tek kez patlar; kurulma ve aktif sensör halkası ile 60 px gerçek etki alanını gösteren çok aşamalı patlama efekti eklendi. Ön mermi isabetleri ve kamyon arka kapağından bırakılan yükler kıvılcım/toz darbesiyle eşzamanlandı. Mühür-01 artık zemin gölgesi, namlu şarjı, ateş geri tepmesi, açık toparlanma soğutma penceresi ve Faz 2 reaktör halkasıyla okunur; Cam Ormanı omuzlarına deterministik parıltı derinliği eklendi. Gerçek test ve yayın durumu [QA](QA.md) içindedir.

@@ -24,8 +24,8 @@ static func draw(canvas: CanvasItem, pivot: Vector2, kind: int, time: float = 0.
 		canvas.draw_arc(visual_pivot, 44.0 * scale_factor, 0.0, TAU, 28, Color(accent.r, accent.g, accent.b, heat_alpha), 1.8)
 	if phase_burst > 0.0:
 		var burst_ratio := 1.0 - clampf(phase_burst / 0.75, 0.0, 1.0)
-		var ring_r := (26.0 + burst_ratio * 58.0) * scale_factor if motion_enabled else 48.0 * scale_factor
-		canvas.draw_arc(pivot, ring_r, 0.0, TAU, 32, Color(accent.r, accent.g, accent.b, clampf(phase_burst / 0.75, 0.0, 0.85)), 2.8)
+		var ring_r := (22.0 + burst_ratio * 26.0) * scale_factor if motion_enabled else 42.0 * scale_factor
+		canvas.draw_arc(pivot, ring_r, 0.0, TAU, 32, Color(accent.r, accent.g, accent.b, clampf(phase_burst / 0.75, 0.0, 0.85)), 2.4)
 	var frame := kind + (3 if charging else 0)
 	var tint := Color(1.32, 1.32, 1.32) if flash else Color.WHITE
 	Art.at(canvas, "robots", frame, visual_pivot, Vector2(100, 76) * scale_factor, tint)

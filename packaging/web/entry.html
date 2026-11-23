@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html lang="tr">
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0b1016">
 <meta name="robots" content="noindex">
 <title>Drive-By Wire · Oyunu aç</title>
 <link rel="icon" href="/favicon.png">
 <style>
 html { color-scheme:dark; background:#0b1016; color:#f5f1e8; font-family:system-ui,sans-serif; }
-body { min-height:90vh; margin:0; display:grid; place-content:center; padding:1.5rem; text-align:center; }
-a { display:inline-block; padding:1rem; color:#0b1016; background:#9de1c3; border:2px solid #f5f1e8; }
+body { min-height:90dvh; margin:0; display:grid; place-content:center; padding:max(1.5rem,env(safe-area-inset-top,0px)) max(1.5rem,env(safe-area-inset-right,0px)) max(1.5rem,env(safe-area-inset-bottom,0px)) max(1.5rem,env(safe-area-inset-left,0px)); text-align:center; overflow-wrap:break-word; }
+h1 { text-wrap:balance; }
+p { text-wrap:pretty; }
+a { display:inline-flex; align-items:center; justify-content:center; min-block-size:44px; min-inline-size:44px; padding:.75rem 1.25rem; color:#0b1016; background:#9de1c3; border:2px solid #f5f1e8; text-decoration:none; font-weight:600; }
 a:focus-visible { outline:3px solid #f4a8c5; outline-offset:4px; }
 </style>
 <main>

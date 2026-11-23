@@ -2,7 +2,7 @@
 <html lang="tr">
 	<head>
 		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 		<meta name="description" content="Fragaria Interactive · AIONIA. Arabanı seç; iki çatışma etabı ve iki ara sahneden oluşan lineer hikâyede Omega-3 ile yolu aç.">
 		<meta name="theme-color" content="#0b0d12">
 		<title>Drive-By Wire</title>
@@ -10,38 +10,45 @@
 		<link rel="apple-touch-icon" href="favicon.png">
 		<style>
 @font-face { font-family: BrandPixel; src: url('brand-font.ttf') format('truetype'); font-display: swap; }
-:root { color-scheme: dark; --bg:#0b1016; --text:#f5f1e8; --accent:#9de1c3; }
+:root { color-scheme: dark; --bg:#0b1016; --text:#f5f1e8; --accent:#9de1c3; --target-size:24px; }
 :root[data-theme="light"] { color-scheme:light; --bg:#edece5; --text:#152633; --accent:#12664e; }
+@media (pointer: coarse) { :root { --target-size:44px; } }
 html,body,#canvas { margin:0; padding:0; border:0; }
 html,body { width:100%; height:100%; }
-body { color:var(--text); background:var(--bg); overflow:hidden; font-family:system-ui,sans-serif; }
+body { color:var(--text); background:var(--bg); overflow:hidden; font-family:system-ui,sans-serif; overflow-wrap:break-word; }
 #canvas { touch-action:none; display:block; background:var(--bg); }
 #canvas.low-power { image-rendering:pixelated; }
 #canvas:focus { outline:none; }
-#help-link { position:absolute; top:-100px; left:1rem; z-index:30; padding:.75rem; color:var(--bg); background:var(--text); }
-#help-link:focus { top:1rem; }
+:where(#status-retry, #release-open, #help-link, #accessible-help a) { min-block-size:var(--target-size); min-inline-size:var(--target-size); }
+#help-link { position:absolute; top:-120px; left:max(1rem,env(safe-area-inset-left,0px)); z-index:30; padding:.75rem; color:var(--bg); background:var(--text); display:inline-flex; align-items:center; }
+#help-link:focus { top:max(1rem,env(safe-area-inset-top,0px)); }
 #accessible-help { display:none; }
-#accessible-help:target { display:block; position:absolute; z-index:40; inset:0; overflow-y:auto; padding:clamp(1rem,5vw,3rem); background:var(--bg); color:var(--text); line-height:1.65; }
-#accessible-help a { color:var(--accent); }
-#status { position:absolute; inset:0; background:#000; color:#f5f1e8; display:flex; flex-direction:column; justify-content:center; align-items:center; visibility:hidden; gap:.25rem; padding:1rem 1rem 9rem; box-sizing:border-box; }
+#accessible-help:target { display:block; position:absolute; z-index:40; inset:0; overflow-y:auto; padding:max(clamp(1rem,5vw,3rem),env(safe-area-inset-top,0px)) max(clamp(1rem,5vw,3rem),env(safe-area-inset-right,0px)) max(clamp(1rem,5vw,3rem),env(safe-area-inset-bottom,0px)) max(clamp(1rem,5vw,3rem),env(safe-area-inset-left,0px)); background:var(--bg); color:var(--text); line-height:1.65; scroll-padding-bottom:calc(3rem + env(safe-area-inset-bottom,0px)); }
+#accessible-help h1 { text-wrap:balance; }
+#accessible-help p { text-wrap:pretty; max-width:68ch; }
+#accessible-help a { color:var(--accent); display:inline-flex; align-items:center; padding:.25rem 0; }
+#accessible-help a:focus-visible { outline:3px solid #f4a8c5; outline-offset:3px; }
+#status { position:absolute; inset:0; background:#000; color:#f5f1e8; display:flex; flex-direction:column; justify-content:center; align-items:center; visibility:hidden; gap:.25rem; padding:max(1rem,env(safe-area-inset-top,0px)) max(1rem,env(safe-area-inset-right,0px)) calc(9rem + env(safe-area-inset-bottom,0px)) max(1rem,env(safe-area-inset-left,0px)); box-sizing:border-box; }
 #status-brand { width:min(23vh,160px); max-height:31vh; object-fit:contain; image-rendering:pixelated; }
-#status-title { margin:0; font:clamp(1.7rem,5vw,2.5rem)/1 BrandPixel,monospace; text-align:center; letter-spacing:.05em; }
+#status-title { margin:0; font:clamp(1.7rem,5vw,2.5rem)/1 BrandPixel,monospace; text-align:center; letter-spacing:.05em; text-wrap:balance; }
 .status-caption { text-align:center; font-size:.8rem; margin:.3rem 0; }
-#status-bottom { position:absolute; bottom:max(1.5rem,env(safe-area-inset-bottom)); left:1rem; right:1rem; display:flex; align-items:center; flex-direction:column; gap:.5rem; }
+#status-bottom { position:absolute; bottom:max(1.5rem,env(safe-area-inset-bottom,0px)); left:max(1rem,env(safe-area-inset-left,0px)); right:max(1rem,env(safe-area-inset-right,0px)); display:flex; align-items:center; flex-direction:column; gap:.5rem; }
 #status-progress { width:min(72vw,320px); height:18px; display:flex; gap:5px; }
 #status-progress span { flex:1; background:#333b43; border:1px solid #6b7580; }
 #status-progress span.loaded { background:#ed587f; border-color:#ffacbf; }
 #status-progress span.loaded:nth-child(n+8) { background:#80cf8a; border-color:#b8e9a2; }
 #status-progress.indeterminate span:nth-child(odd) { background:#6b7580; }
+@keyframes dbw-pulse { 0%,100% { opacity:.45; } 50% { opacity:1; } }
+@media (prefers-reduced-motion: no-preference) { #status-progress.indeterminate span:nth-child(odd) { animation:dbw-pulse 1.8s ease-in-out infinite; } }
 #status-retry { padding:.75rem 1.5rem; border:2px solid #9de1c3; background:#223746; color:#f5f1e8; font:inherit; cursor:pointer; display:none; }
 #status-retry:focus-visible { outline:3px solid #f4a8c5; outline-offset:3px; }
-#status-notice { display:none; max-width:36rem; margin:0; text-align:center; line-height:1.4; }
+#status-notice { display:none; max-width:36rem; margin:0; text-align:center; line-height:1.4; text-wrap:pretty; }
 .sr-only { position:absolute; width:1px; height:1px; clip-path:inset(50%); overflow:hidden; }
-#status-version { position:absolute; bottom:.3rem; left:.6rem; font-size:.7rem; color:#b6c5ce; }
-#release-notice:not([hidden]) { position:fixed; z-index:60; inset:auto .5rem max(.5rem,env(safe-area-inset-bottom)); padding:.75rem; background:#14202b; color:#f5f1e8; border:2px solid #9de1c3; display:flex; align-items:center; flex-wrap:wrap; gap:.5rem; font:1rem/1.4 system-ui,sans-serif; }
+#status-version { position:absolute; bottom:max(.3rem,env(safe-area-inset-bottom,0px)); left:max(.6rem,env(safe-area-inset-left,0px)); font-size:.7rem; color:#b6c5ce; }
+#release-notice:not([hidden]) { position:fixed; z-index:60; inset:auto max(.5rem,env(safe-area-inset-right,0px)) max(.5rem,env(safe-area-inset-bottom,0px)) max(.5rem,env(safe-area-inset-left,0px)); padding:.75rem; background:#14202b; color:#f5f1e8; border:2px solid #9de1c3; display:flex; align-items:center; flex-wrap:wrap; gap:.5rem; font:1rem/1.4 system-ui,sans-serif; }
 #release-open { padding:.75rem; border:2px solid #f5f1e8; background:#9de1c3; color:#0b1016; font:inherit; cursor:pointer; }
 #release-open:focus-visible { outline:3px solid #f4a8c5; outline-offset:3px; }
-@media (max-height:500px) { #status { padding-bottom:7.5rem; } #status-brand { width:65px; max-height:26vh; } #status-bottom { gap:.25rem; } #status-title { font-size:1.7rem; } .status-caption { font-size:.72rem; } }
+@media (max-height:500px) { #status { padding-bottom:calc(7.5rem + env(safe-area-inset-bottom,0px)); } #status-brand { width:65px; max-height:26vh; } #status-bottom { gap:.25rem; } #status-title { font-size:1.7rem; } .status-caption { font-size:.72rem; } }
 
 		</style>
 		$GODOT_HEAD_INCLUDE
@@ -174,14 +181,17 @@ const engine = new Engine(GODOT_CONFIG);
  const retry = document.getElementById('status-retry');
 	retry.addEventListener('click', () => window.location.reload());
 
-	// Keep direct driving focused on the canvas after entering the game.
-	function focusCanvas() {
+	// Keep direct driving focused on the canvas without stealing focus from shell controls.
+	function focusCanvas(event) {
+		if (event && event.target && event.target.closest && event.target.closest('#accessible-help, #help-link, #release-notice, #status')) {
+			return;
+		}
 		if (location.hash !== '#accessible-help' && document.documentElement.dataset.gameState === 'started' && document.activeElement !== canvas) {
 			canvas.focus({ preventScroll: true });
 		}
 	}
 	window.addEventListener('pointerdown', focusCanvas, true);
-	window.addEventListener('focus', focusCanvas);
+	window.addEventListener('focus', () => focusCanvas());
 	window.addEventListener('hashchange', () => {
         if (location.hash === '#accessible-help') document.getElementById('accessible-help').focus();
         else focusCanvas();
