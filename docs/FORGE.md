@@ -250,7 +250,9 @@ Taban yerel `main` `20bb505/0.15.0`. Mission 1 teknik kabul adayı olarak üç a
 
 Doğrulama: Native **33 takım / 2384 kontrol PASS** (`tests/test_audio_world.gd` 59 yeni kontrol); Web export 0 hata; `browser_loading`, `browser_warnings`, `browser_appearance`, `browser_quality`, `browser_perf` (5 ardışık tekrar), `browser_forge` (6 cihaz + gamepad) ve `browser_linear` (`keyboard`, `touch`, `pad` — üç girdi ailesinde tam 2 etap + 2 ara sahne + `cliffReload`/`cliffRotation` + Devam edecek) tamamı 0 hata ile PASS.
 
-Yayın sınırı: `git push origin main` HTTP 403 ile engellendiği için canlı GitHub Pages hâlâ `0.13.3` sürümündedir; yerel `main` (`0.14.0 → 0.15.0 → 0.16.0`) itilmeye hazırdır. Fiziksel cihaz testi, gerçek hoparlör dinlemesi, yazılım renderer 60 FPS / Web Canvas OS-font sınırı ve kullanıcının gerçek estetik/oynanış kabulü açık kalır. Kullanıcının geri bildirimi olmadan yeni 2. etap içeriğine veya 3–13 etaplarına geçilmez.
+23 Kasım 2026’da bundle’dan alınan üç özgün commit GitHub `main` dalına gönderildi. Godot 4.6.3 ile 33 takım ve 2.384 kontrol yeniden geçti. Publish GitHub Pages iş akışında `verify_native`, `build` ve `deploy` başarılı oldu. Canlı `version.json` yayın anındaki `main` SHA’sını (`6947a391b5c97b82b62172928296369f9042c56a`) ve `0.16.0` sürümünü döndürdü. [Yayın çalıştırması](https://github.com/kaansavukduran/drive-by-wire/actions/runs/45152049217) · [Canlı sürüm bilgisi](https://kaansavukduran.github.io/drive-by-wire/version.json)
 
+GitHub Pages canlı dağıtımı **PASS**. `index.js`, `index.wasm` ve `index.pck` HTTP 200 döndürdü. Chromium’da normal giriş, menü, sohbet yanıtı, ilk sürüş, klavye hareketi ve mola doğrulandı. Ayrıntılar [QA makbuzunda](QA.md#canlı-yayın-makbuzu).
 
+Fiziksel cihaz testi, gerçek hoparlör dinlemesi ve gerçek kullanıcının estetik/oynanış kabulü **NOT TESTED**. Yazılım renderer 60 FPS ve Web Canvas OS-font sınırları açık kalır. Kullanıcının geri bildirimi olmadan yeni 2. etap içeriğine veya 3–13 etaplarına geçilmez.
 

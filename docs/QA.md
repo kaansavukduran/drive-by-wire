@@ -17,15 +17,21 @@
 | Tam lineer akış · Dokunmatik (`browser_linear.cjs`) | PASS | Sabit joystick + Ateş/Mayın ile iki 400 m etap (1. etap 135 CAN, 2. etap 133 CAN), iki boss, iki ara sahne, `cliffRotation: true`, Devam edecek & yeniden açılış. Hata: 0. `work/v0160/linear-touch3/linear-results.json`. |
 | Tam lineer akış · Gamepad (`browser_linear.cjs`) | PASS | Yalnız emüle Gamepad API ile iki 400 m etap (135/135 CAN), iki boss, iki ara sahne, Devam edecek & yeniden açılış. Hata: 0. `work/v0160/linear-pad/linear-results.json`. |
 | Altı cihaz düzeni ve kumanda (`browser_forge.cjs`) | PASS | `desktop`, `phone-portrait`, `phone-landscape`, `tablet-portrait`, `tablet-landscape`, `phone-low-power` + tam Gamepad akışı (D-pad/A garaj, diyalog, yükseltme, rota, analog, X/RT, Start/B, kopma/bağlanma). Hata: 0. `work/v0160/forge/forge-results.json`. |
-| GitHub Pages canlı dağıtımı | BLOCKED | `git push origin main` HTTP 403 (`Permission to kaansavukduran/drive-by-wire.git denied`): repo bu oturumun proje GitHub kaynaklarına yazma yetkisiyle bağlı değildir. Yerel `main` dalı (`0.14.0 → 0.15.0 → 0.16.0`) ve doğrulanmış `build/web` hazırdır; canlı GitHub Pages hâlâ `0.13.3` (`69904f45999e`) sürümündedir. |
+| GitHub Pages canlı dağıtımı | PASS | 23 Kasım 2026. `0.16.0` yayınının SHA’sı `6947a391b5c97b82b62172928296369f9042c56a`; canlı `version.json` ve `main` eşleşti. `index.js`, `index.wasm` ve `index.pck` HTTP 200 döndürdü. [Yayın çalıştırması](https://github.com/kaansavukduran/drive-by-wire/actions/runs/45152049217) · [Canlı sürüm bilgisi](https://kaansavukduran.github.io/drive-by-wire/version.json) |
 | Fiziksel cihaz / gerçek ses dinleme / insan kabulü | NOT TESTED | Fiziksel telefon/tablet/Xbox, Safari/Firefox, hoparlörden insan ses dinlemesi ve kullanıcının estetik/oynanış kabulü yapılmadı. Chromium dokunmatik/Gamepad API emülasyonu fiziksel cihaz kanıtı değildir. |
 | Önceki yazılım FPS / Web Canvas OS-font sınırları | FAIL | Yazılım renderer normal mod 60 FPS hedefi (10–12 FPS ölçüldü) ve Web Canvas’ın OS sistem font dosyalarına erişememesi açık sınır olarak korunur. |
+
+## Canlı yayın makbuzu
+
+Bundle’daki üç özgün commit `main` dalına fast-forward ile alındı. Godot 4.6.3 ile `bash tests/run_all.sh` yeniden çalıştırıldı ve 33/33 takım ile 2.384/2.384 kontrol geçti. Publish GitHub Pages çalıştırmasında `verify_native`, `build` ve `deploy` başarılı oldu. [Yayın çalıştırması](https://github.com/kaansavukduran/drive-by-wire/actions/runs/45152049217)
+
+Chromium `156.0.8078.79` (Linux, 1280×720) ana sayfadan `/drive-by-wire/play/0.16.0-6947a391b5c9/` adresine yönlendi ve oyun açıldı. Salt okunur `?qa` gözlemiyle menüden hazırlığa geçildi, bir sohbet yanıtı seçildi, ilk sürüşe girildi, ok tuşuyla araç hareket ettirildi ve Esc ile mola açıldı. Tarayıcı hatası gözlenmedi. Fiziksel cihazlar, gerçek hoparlör dinlemesi ve gerçek kullanıcı kabulü `NOT TESTED`. [Canlı oyun](https://kaansavukduran.github.io/drive-by-wire/)
 
 ## Gerçek paydalı ilerleme tablosu
 
 | İş grubu | Gerekli kapsam | Üretildi | Oyuna bağlandı | Davranış/görsel olarak doğrulandı | Açık iş |
 | --- | --- | --- | --- | --- | --- |
-| Kaynak/karar uzlaştırma | 1 repo, canlı Pages/Vercel, son kararlar | 1/1 doğrulandı (`69904f45999e`) | N/A (envanter) | Okuma + canlı kontrol + 5 haricî beceri `SKILL_NOT_LOADED` kaydı | Repo proje push kaynağına bağlı değil (HTTP 403) |
+| Kaynak/karar uzlaştırma | 1 repo, canlı Pages/Vercel, son kararlar | Başlangıç `69904f45999e`, yayın `6947a391b5c9` | N/A (envanter) | GitHub `main` ve Pages sürüm bilgisi yayın anında eşleşti | — |
 | Referans araştırması | 3 ana + 3 tamamlayıcı oyun | 6/6 (`docs/RESEARCH_VEHICULAR_COMBAT.md`) | 6/6 somut DBW kararına bağlandı | 6/6 native + tarayıcı denemeleriyle sınandı | İzlenmeyen video/ölçülmemiş kare yok |
 | Araç animasyonu | 3 kozmetik araç × (gölge, far, yatış/teker, ateş tepmesi, mayın çıkışı, hasar kademesi, azaltılmış hareket) | 3/3 (`vehicle_motion.gd`, `vehicle_overlay.gd`) | 3/3 (`main.gd`, `vehicle_screen.gd`) | 55 native kontrol + gerçek web ekran görüntüleri | Fiziksel cihazda görsel değerlendirme |
 | Öne ateş/arka mayın | Tek-olay ateş/kıvılcım + sınırsız mayın kurulma/sensör/60 px çok aşamalı patlama | 2/2 silah akışı (`main.gd`) | 2/2 | 38 native + 11 arka savunma + uzun kare (`0.25s`) + 3 girdi ailesi web oynanışı | Fiziksel cihaz/kullanıcı hissi |
@@ -36,7 +42,7 @@
 | UI/giriş | Yükleyici, 3 yanıtlı hazırlık, HUD/metin, MWG kabuk (`viewport-fit`, safe-area, 44 px coarse, odak) | Güncellendi (`shell.html`, `entry.html`, `main.gd`, `vehicle_screen.gd`) | Tamamı | 208 + 288 + 152 native + 6 viewport `browser_forge` + `browser_loading/appearance/quality` | Web Canvas OS-font sınırı (FAIL) |
 | Ses/performans | 15 SFX + 3 kesintisiz katman + statik önbellek + 5 tekrar bellek/kare süresi | 18/18 (`sounds.gd`, `PROVENANCE.json`) | `main.gd`, `road_story_screen.gd` | 59 native + `browser_perf` (5 tekrar) + `browser_linear` | Gerçek hoparlör dinlemesi (NOT TESTED); SwiftShader 60 FPS sınırı (FAIL) |
 | İkinci etap regresyonu | Buzlu Arşiv + Yankı-02 + Kurt kurtarma + Devam edecek | Yeni içerik eklenmedi (kapsam korunur) | Korundu | 93 native + 3 girdi ailesi tam 2-etap web oynanışı + `cliffReload`/`cliffRotation` | — |
-| Main/Pages | `0.14.0 → 0.15.0 → 0.16.0`, kapılı `pages.yml` | Yerel `main` + `build/web` hazır | `pages.yml` güncellendi | Yerel doğrulama PASS; uzak push HTTP 403 `BLOCKED` | Repo proje kaynaklarına bağlanıp `git push origin main` yapılmalı |
+| Main/Pages | `0.14.0 → 0.15.0 → 0.16.0`, kapılı `pages.yml` | Üç özgün commit GitHub `main` dalında | `verify_native` → `build` → `deploy` | PASS. Canlı sürüm, üç varlık ve Chromium açılış testi doğrulandı | — |
 | Kullanıcı kabulü | Gerçek kullanıcı oynanış ve estetik onayı | N/A | N/A | Bekleniyor (`NOT TESTED`) | Kullanıcının gerçek oynanış geri bildirimi |
 
 ## Mission 1 kabul matrisi
@@ -62,7 +68,7 @@
 | Ses | PASS (teknik; insan dinleme NOT TESTED) | `test_audio_world` (59), 15 SFX + 3 katman, statik önbellek, 5 tekrar temizliği |
 | Performans | PASS (emüle; normal 60 FPS FAIL açık) | `browser_perf` (SwiftShader düşük güç p50 33.4–50.0 ms, 0 hata) |
 | Mevcut ikinci etap | PASS | `test_cliff_rescue` (93), 3 girdi ailesi tam 2-etap regresyonu |
-| CI/main/Pages | BLOCKED | Yerel `main` + `pages.yml` hazır; `git push` HTTP 403 nedeniyle canlı Pages hâlâ `0.13.3` |
+| CI/main/Pages | PASS | Üç iş başarılı. Canlı sürüm `0.16.0` ve yayın SHA’sı `6947a391b5c9`. [Yayın çalıştırması](https://github.com/kaansavukduran/drive-by-wire/actions/runs/45152049217) |
 | Gerçek kullanıcı kabulü | NOT TESTED | Kullanıcının gerçek oynanış ve estetik geri bildirimi bekleniyor |
 
 Tekrar: `GODOT=.ci-godot/bin/godot bash tests/run_all.sh`; `GODOT_BIN=.ci-godot/bin/godot python3 packaging/build_web.py`; `node tests/browser_loading.cjs`; `node tests/browser_forge.cjs`; `DBW_INPUT=keyboard|touch|pad node tests/browser_linear.cjs`; `node tests/browser_perf.cjs`. Rollback tabanı `20bb505/0.15.0` (uzak taban `69904f45999e/0.13.3`).
