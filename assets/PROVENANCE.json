@@ -836,6 +836,61 @@
       "status": "ORIGINAL_PROCEDURAL_AUDIO",
       "generated_by": "Runtime AudioStreamWAV synthesis in scripts/game/sounds.gd; 0.16.0",
       "notes": "15 layered SFX cues (fire, bullet_hit, mine, mine_boom, hit, shield_block, kill, pickup, truck_hatch, boss_warn, boss_fire, boss_phase, boss_defeat, finish, pulse) and 3 click-free seamless looping audio beds (road, boss, aftermath)."
+    },
+    "assets/music/icyadventure-loopable.ogg": {
+      "method": "Original author upload, Ogg Vorbis unchanged",
+      "status": "THIRD_PARTY_CC0",
+      "title": "Icy Adventure",
+      "author": "TheFrenchDodo",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "source": "https://opengameart.org/content/retro-tunes",
+      "file_url": "https://opengameart.org/sites/default/files/icyadventure-loopable.ogg",
+      "sha256": "115450af93786a8e8eb7553cf151b82afd62ddc9631e49dee0a13a2e98bcc32d"
+    },
+    "assets/music/retrobossfight-loopable.ogg": {
+      "method": "Original author upload, Ogg Vorbis unchanged",
+      "status": "THIRD_PARTY_CC0",
+      "title": "Retro Boss fight",
+      "author": "TheFrenchDodo",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "source": "https://opengameart.org/content/retro-tunes",
+      "file_url": "https://opengameart.org/sites/default/files/retrobossfight-loopable.ogg",
+      "sha256": "f4f2ddd48aae5c94722066efba699a717d87ad7ab54f0b8c560fe468a75a6a16"
+    },
+    "assets/music/eeriechoir.ogg": {
+      "method": "Original author upload, Ogg Vorbis unchanged",
+      "status": "THIRD_PARTY_CC0",
+      "title": "Eerie Choir",
+      "author": "TheFrenchDodo",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "source": "https://opengameart.org/content/retro-tunes",
+      "file_url": "https://opengameart.org/sites/default/files/eeriechoir.ogg",
+      "sha256": "87736dfba86879f12f6fa009978f1898ca87d9cd1684f2182c2cd3b062a64185"
+    },
+    "assets/art/boss_0170.png": {
+      "method": "Nearest-neighbor registered frames adapted from local game artwork",
+      "status": "OYUN_TASLAK",
+      "derived_from": "assets/art/robots.png",
+      "generated_by": "tools/art/author_forge_0170.py",
+      "grid": [
+        7,
+        2
+      ],
+      "sha256": "04473690080ea09bbdeab8166d3718266368004fccc2adb4fba2495e875df3df"
+    },
+    "assets/art/aion_cliff_0170.png": {
+      "method": "Nearest-neighbor registered frames adapted from local game artwork",
+      "status": "OYUN_TASLAK",
+      "derived_from": "assets/sprites/aion_story.png",
+      "generated_by": "tools/art/author_forge_0170.py",
+      "grid": [
+        3,
+        1
+      ],
+      "sha256": "b891ca74be3fe9c12ea214a92413879c52e1e9b1d3c98e253097fe11f542434b"
     }
   },
   "generator": "tools/art/build.py",

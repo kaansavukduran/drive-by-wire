@@ -156,6 +156,28 @@
       "rows": 2,
       "cells": 4,
       "sha256": "d305098b6178c17170b29a9407d210fbf7fd9ede6cac5fcee7ffdaad77dea07d"
+    },
+    "boss_frames": {
+      "path": "res://assets/art/boss_0170.png",
+      "size": [
+        1120,
+        240
+      ],
+      "columns": 7,
+      "rows": 2,
+      "cells": 14,
+      "sha256": "04473690080ea09bbdeab8166d3718266368004fccc2adb4fba2495e875df3df"
+    },
+    "aion_cliff": {
+      "path": "res://assets/art/aion_cliff_0170.png",
+      "size": [
+        288,
+        96
+      ],
+      "columns": 3,
+      "rows": 1,
+      "cells": 3,
+      "sha256": "b891ca74be3fe9c12ea214a92413879c52e1e9b1d3c98e253097fe11f542434b"
     }
   },
   "cast": {

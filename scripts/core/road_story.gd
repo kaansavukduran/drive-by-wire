@@ -1,21 +1,22 @@
 extends RefCounted
 ## A small chapter-specific state machine, not a replacement game framework.
 const PATH := "res://data/road_story.json"
-const STEPS := ["arrival","memory","invite","race","trap","aftermath","eren","plea","reveal","promise","rescue","witness","handoff","complete"]
+const STEPS := ["arrival","memory","invite","say_together","race","trap","aftermath","eren","plea","reveal","promise","rescue","witness","keep_sealed","handoff","complete"]
 static var _data: Dictionary={}
 static func data() -> Dictionary:
  if _data.is_empty():_data=JSON.parse_string(FileAccess.get_file_as_string(PATH))
  return _data
-static func defaults() -> Dictionary:return {"step":"arrival","pace":"","vow":"","record":""}
+static func defaults() -> Dictionary:return {"step":"arrival","pace":"","vow":"","record":"","skip_dialogue":false}
 static func sanitize(raw: Variant) -> Dictionary:
  var out:=defaults()
  if not raw is Dictionary:return out
+ out["skip_dialogue"]=raw.get("skip_dialogue",false)==true
  if raw.get("pace") in ["race","together"]:out["pace"]=raw["pace"]
  if raw.get("vow") in ["avenge","rescue"]:out["vow"]=raw["vow"]
  if raw.get("step") in STEPS:out["step"]=raw["step"]
  if raw.get("record") in ["sealed","shared"]:out["record"]=raw["record"]
  if not out["step"] in ["arrival","memory","invite"] and out["pace"]=="":out=defaults()
- if out["step"] in ["promise","rescue","witness","handoff","complete"] and out["vow"]=="":out["step"]="reveal"
+ if out["step"] in ["promise","rescue","witness","keep_sealed","handoff","complete"] and out["vow"]=="":out["step"]="reveal"
  if out["step"]=="promise" and out["vow"]!="avenge":out["step"]="rescue"
  if out["step"]=="rescue" and out["vow"]!="rescue":out["step"]="promise"
  return out
@@ -31,6 +32,9 @@ static func choose(raw: Dictionary,id: String) -> Dictionary:
 static func advance(raw: Dictionary) -> Dictionary:
  var out:=sanitize(raw)
  match out["step"]:
+  "invite":out["pace"]="together";out["step"]="say_together"
+  "reveal":out["vow"]="rescue";out["step"]="rescue"
+  "witness":out["record"]="sealed";out["step"]="keep_sealed"
   "race":out["step"]="trap"
   "trap":out["step"]="aftermath"
   _:
