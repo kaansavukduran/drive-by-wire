@@ -188,6 +188,7 @@ var journal_scroll: Control
 var journal_reader: Control
 var boss := Boss.new()
 var boss_fall_left := 0.0
+var rear_framing_y := 0.0
 var biome_index := -1
 var result_buttons: Array[Button] = []
 var layout_initialized := false
@@ -1037,6 +1038,8 @@ func _simulate(delta: float) -> void:
 		return
 	arcade.tick(delta)
 	boss_fall_left = maxf(0.0,boss_fall_left-delta)
+	var framing_target := -54.0 if boss.rear and (boss.active or boss_fall_left>0.0) else 0.0
+	rear_framing_y = move_toward(rear_framing_y,framing_target,72.0*delta) if motion_enabled else framing_target
 	shield_left = maxf(0.0, shield_left - delta)
 	comfort_cooldown = maxf(0.0, comfort_cooldown - delta)
 	var normal_speed := _cfg("player.base_speed", 220)
@@ -1649,8 +1652,8 @@ func _enemy_warnings() -> Array[Dictionary]:
 
 
 func _draw() -> void:
-	position = world_origin + _camera_offset()
-	Art.road(self,maxi(0,biome_index),road_scroll)
+	position = world_origin + _camera_offset() + Vector2(0,rear_framing_y*scale.y)
+	Art.road(self,maxi(0,biome_index),road_scroll,H-rear_framing_y)
 	Biomes.draw(self,maxi(0,biome_index),distance*9,motion_enabled,effects_enabled and motion_enabled)
 	for pickup in pickups:
 		_draw_pickup(pickup)
@@ -1677,12 +1680,12 @@ func _draw() -> void:
 	for e in enemies:
 		_draw_enemy_sprite(e)
 	if boss.active or boss_fall_left>0.0:
-		var visible_bottom := (get_viewport_rect().size.y-world_origin.y)/scale.y
-		var visible_top := -world_origin.y/scale.y
+		var visible_bottom := (get_viewport_rect().size.y-position.y)/scale.y
+		var visible_top := -position.y/scale.y
 		if Rect2(0,visible_top,W,visible_bottom-visible_top).intersects(boss.rect().grow(30)):
-			var clip_top := (story_caption.get_global_rect().end.y+4.0-world_origin.y)/scale.y
+			var clip_top := (story_caption.get_global_rect().end.y+4.0-position.y)/scale.y
 			if was_portrait and bubble.visible:
-				clip_top = maxf(clip_top,(ui_panels[1].get_global_rect().end.y+4.0-world_origin.y)/scale.y)
+				clip_top = maxf(clip_top,(ui_panels[1].get_global_rect().end.y+4.0-position.y)/scale.y)
 			BossArt.draw_encounter(self,boss,motion_enabled,clip_top)
 	for b in bullets:
 		Art.at(self,"weapons",1,b["pos"],Vector2(12,22))

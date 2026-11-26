@@ -860,7 +860,7 @@
       "sha256": "f4f2ddd48aae5c94722066efba699a717d87ad7ab54f0b8c560fe468a75a6a16"
     },
     "assets/music/eeriechoir.ogg": {
-      "method": "Original author upload, Ogg Vorbis unchanged",
+      "method": "12-second excerpt of original author upload (00:06–00:18), with edge fades, encoded at Vorbis quality 4",
       "status": "THIRD_PARTY_CC0",
       "title": "Eerie Choir",
       "author": "TheFrenchDodo",
@@ -868,7 +868,8 @@
       "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
       "source": "https://opengameart.org/content/retro-tunes",
       "file_url": "https://opengameart.org/sites/default/files/eeriechoir.ogg",
-      "sha256": "87736dfba86879f12f6fa009978f1898ca87d9cd1684f2182c2cd3b062a64185"
+      "sha256": "9f0c97c22f20e1118a9477686dea0ce89ee37bf7b8c9819f067c28d173704122",
+      "source_sha256": "87736dfba86879f12f6fa009978f1898ca87d9cd1684f2182c2cd3b062a64185"
     },
     "assets/art/boss_0170.png": {
       "method": "Nearest-neighbor registered frames adapted from local game artwork",

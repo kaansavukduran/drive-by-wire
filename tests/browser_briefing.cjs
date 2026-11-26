@@ -7,7 +7,17 @@ async function depart(page, tap) {
     await page.waitForFunction(() => window.__dbwQA?.page === 1);
     briefing = await current();
   }
-  await tap(briefing.depart);
+  if (briefing.depart) {
+    await tap(briefing.depart);
+  } else {
+    // Published 0.16.0 supports baseline comparisons with the same driver.
+    if (!briefing.reply_ready) {
+      await tap(briefing.radio_answers[0]);
+      await page.waitForFunction(() => window.__dbwQA?.reply_ready);
+      briefing = await current();
+    }
+    await tap(briefing.reply_continue);
+  }
   await page.waitForFunction(() => window.__dbwQA?.screen === 'run');
 }
 

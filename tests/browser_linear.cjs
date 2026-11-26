@@ -59,8 +59,8 @@ try{
    await tap([x,y+h/2,w,h/2]);
    await wait(()=>window.__dbwQA.chapter.skip_dialogue);
   }
-  while((await state()).screen==='road_story'){
-   q=await state();assert.equal(q.interlude,stage+1);assert(q.fits,'compact dialogue must retain all words in its actual bounds');assert(!q.combat);assert(Date.now()-started<150000,'interlude timeout');
+  while(true){
+   q=await state();if(q.screen!=='road_story')break;assert.equal(q.interlude,stage+1);assert(q.fits,'compact dialogue must retain all words in its actual bounds');assert(!q.combat);assert(Date.now()-started<150000,'interlude timeout');
    if(q.chapter.step==='approach')assert(q.music.track.endsWith('eeriechoir.ogg')&&q.music.playing,'packaged cliff music is playing');
    if(q.cliff?.aion_car){assert(q.cliff.aion_car[1]-37>=q.cliff.edge_y,'car never crosses visible cliff rim');if(q.cliff.actors)frames.add(q.cliff.frame);if(['check','thanks','wreck'].includes(q.chapter.step))assert(!q.cliff.aion_visible,'Aion is seated before the exit');}
    if(!steps.has(q.chapter.step)){steps.add(q.chapter.step);await page.screenshot({path:out+`/interlude${stage+1}-${q.chapter.step}.png`});}

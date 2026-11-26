@@ -19,11 +19,11 @@ Artwork provenance is registered in `assets/PROVENANCE.json`. Procedural art use
 
 ## Music
 
-TheFrenchDodo, [Retro Tunes](https://opengameart.org/content/retro-tunes), [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/). The unchanged Ogg Vorbis downloads are bundled locally.
+TheFrenchDodo, [Retro Tunes](https://opengameart.org/content/retro-tunes), [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/). The Ogg Vorbis files are bundled locally.
 
 - Icy Adventure, `assets/music/icyadventure-loopable.ogg`
 - Retro Boss fight, `assets/music/retrobossfight-loopable.ogg`
-- Eerie Choir, `assets/music/eeriechoir.ogg`
+- Eerie Choir, 12-second excerpt with fades, `assets/music/eeriechoir.ogg`
 
 Source URLs and SHA-256 checksums are in `assets/PROVENANCE.json`.
 

@@ -256,3 +256,15 @@ GitHub Pages canlı dağıtımı **PASS**. `index.js`, `index.wasm` ve `index.pc
 
 Fiziksel cihaz testi, gerçek hoparlör dinlemesi ve gerçek kullanıcının estetik/oynanış kabulü **NOT TESTED**. Yazılım renderer 60 FPS ve Web Canvas OS-font sınırları açık kalır. Kullanıcının geri bildirimi olmadan yeni 2. etap içeriğine veya 3–13 etaplarına geçilmez.
 
+
+## 0.17.0 · Lineer anlatı, kurtarış ve iki boss
+
+Başlangıç `3551b72619ee` (`0.16.0`), geliştirme dalı `codex/forge-0170`. Canlı klavye tabanında Mühür-01 sıfır, Yankı-02 bir saldırı çıkardı. Kurt’un sahnesinde Aion kapının açılmadığını söylemeden önce dışarıda görünüyordu.
+
+- Hazırlık ve ara sahnelerde sabit replikler, sayfalı Devam ve ortak Atla menüsü. Toplu atlamada zamanlı sahne olayları ve kayıt kontrol noktaları çalışır.
+- Kurtarış zaman çizelgesi temas, sürtünmeli yavaşlama, yolcu kapısı ve Aion’un ayak temasına ayrıldı. Yeni atlas kareleri yerel kaynak çizimlerinden üretildi.
+- İki boss’un büyütülmüş çizimi, saldırı uyarıları, açık çekirdek döngüsü, Yankı-02 için arka kompozisyon ve son yenilgi pozu. Ön ateş ve arka mayın mevcut girdi yollarıyla sınanır.
+- CC0 Vorbis müzikler oyunun paketinde. Kurtarış müziğinin 12 saniyelik kesiti yük boyutunu sınırlar. Kaynaklar ve SHA-256 kayıtları [lisans bildiriminde](../THIRD_PARTY_NOTICES.md#music).
+- Yükleyici, sahne açıldıktan sonra gelen geç ilerleme olaylarını bırakır. Duraklatılmış oyun ve değişmeyen sahne karelerinde gereksiz yeniden çizim azaltıldı.
+
+Doğrulama ve kalan gerçek cihaz/oyuncu kabulü [QA kaydında](QA.md). Yayın adayı onayından sonra Pages iş akışı ve canlı sürüm eşleşmesi doğrulanır.

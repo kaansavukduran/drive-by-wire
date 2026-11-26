@@ -57,12 +57,28 @@ async function heapBytes(cdp) {
   };
   try {
     const context = await browser.newContext({ viewport: { width: 1280, height: 720 } });
+    await context.addInitScript(() => {
+      for (const method of ['instantiate', 'instantiateStreaming']) {
+        const original = WebAssembly[method];
+        WebAssembly[method] = async function (...args) {
+          const result = await original.apply(this, args);
+          const instance = result.instance || result;
+          const memory = Object.values(instance.exports).find(value => value instanceof WebAssembly.Memory);
+          if (memory) globalThis.__dbwPerfMemory = memory;
+          return result;
+        };
+      }
+    });
     const page = await context.newPage();
     page.on('pageerror', e => report.errors.push(e.message));
     page.on('console', m => { if (m.type() === 'error') report.errors.push(m.text()); });
     const cdp = await context.newCDPSession(page);
     await cdp.send('Performance.enable');
 
+    const memoryStats = async () => ({
+      js_heap_bytes: await heapBytes(cdp),
+      wasm_bytes: await page.evaluate(() => globalThis.__dbwPerfMemory?.buffer.byteLength ?? null),
+    });
     const q = () => page.evaluate(() => window.__dbwQA);
     const waitScreen = s => page.waitForFunction(name => window.__dbwQA?.screen === name, s, { timeout: 60000 });
     const tap = async rect => {
@@ -75,7 +91,7 @@ async function heapBytes(cdp) {
     await page.goto(`${base}/?qa&qa_render=low`);
     await waitScreen('title');
     report.cold_load_ms = Date.now() - t0;
-    report.scenes.title = { frames: stats(await sampleFrames(page, 1800)), js_heap_bytes: await heapBytes(cdp) };
+    report.scenes.title = { frames: stats(await sampleFrames(page, 1800)), ...(await memoryStats()) };
 
     // Enter Stage 1 Cam Ormanı via the linear briefing
     await tap((await q()).play);
@@ -91,9 +107,9 @@ async function heapBytes(cdp) {
     const stage1Deltas = await sampleFrames(page, 2500);
     await page.keyboard.up('KeyD');
     await page.keyboard.up('Space');
-    report.scenes.cam_ormani_drive = { frames: stats(stage1Deltas), js_heap_bytes: await heapBytes(cdp) };
+    report.scenes.cam_ormani_drive = { frames: stats(stage1Deltas), ...(await memoryStats()) };
 
-    // Five consecutive pause -> abandon -> retry cycles to verify zero leak/freeze/error
+    // Keep the document and engine alive across all five confirmed retries.
     for (let i = 1; i <= 5; i++) {
       await page.keyboard.press('Escape');
       await page.waitForFunction(() => window.__dbwQA?.paused === true, null, { timeout: 10000 });
@@ -101,26 +117,21 @@ async function heapBytes(cdp) {
       await tap(st.pause_menu[2]); // Yeniden sür -> confirmation dialog
       await page.waitForTimeout(250);
       await page.keyboard.press('Tab');
-      await page.waitForTimeout(100);
-      // Confirm abandon via pause_menu -> restart or direct Escape/Garage -> Play
-      await page.keyboard.press('Escape');
-      await page.waitForTimeout(150);
-      // Resume briefly and re-enter via title to cleanly exercise full scene reload x5
-      await page.goto(`${base}/?qa&qa_render=low`);
-      await waitScreen('title');
-      await tap((await q()).play);
+      await page.keyboard.press('Enter');
       await waitScreen('briefing');
       await require('./browser_briefing.cjs').depart(page,tap);
       await waitScreen('run');
       await page.keyboard.down('Space');
       const d = await sampleFrames(page, 1000);
       await page.keyboard.up('Space');
-      report.retries.push({ attempt: i, frames: stats(d), js_heap_bytes: await heapBytes(cdp) });
+      report.retries.push({ attempt: i, frames: stats(d), ...(await memoryStats()) });
     }
 
     assert.deepEqual(report.errors, []);
     assert(report.retries.length === 5);
     assert(report.scenes.cam_ormani_drive.frames.count >= 15);
+    const budgetMs = Number(process.env.DBW_FRAME_BUDGET_MS);
+    if (budgetMs > 0) assert(report.scenes.cam_ormani_drive.frames.p95_ms <= budgetMs, 'drive p95 exceeded the frame budget');
     report.status = 'PASS';
     await context.close();
   } catch (e) {
