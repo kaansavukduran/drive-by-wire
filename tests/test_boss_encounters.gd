@@ -1,5 +1,6 @@
 extends SceneTree
 const H=preload("res://tests/harness.gd")
+const Pilot=preload("res://tests/autopilot.gd")
 const Boss=preload("res://scripts/core/boss_encounter.gd")
 const Biomes=preload("res://scripts/game/road_biomes.gd")
 const Session=preload("res://scripts/game/session.gd")
@@ -15,17 +16,22 @@ func run() -> void:
    b.step(1.0/60,Vector2(320,290))
    if b.warning_left>0:break
   h.check("each robot warns before its first shot",b.warning_left>0 and b.casts==0 and not b.targets.is_empty())
+  h.check("wind-up armor takes no damage",not b.hit(10000) and b.hp==b.max_hp)
   var locked=b.targets.duplicate();b.step(.2,Vector2(235,200))
   h.eq("warning target stays locked when player moves",b.targets,locked)
   var shots: Array=[]
   for tick in 90:shots.append_array(b.step(1.0/60,Vector2(235,200)))
   h.check("warning produces real moving damaging shots",shots.size()>0 and shots[0]["vel"].length()>0 and shots[0]["dmg"]>0)
   h.check("front robot core stays below HUD and toast areas",b.rect().position.y>=118)
-  b.hit(b.max_hp/2);b.step(.01,Vector2(320,290))
+  Pilot.open_core(b);b.hit(b.max_hp/2);b.step(.01,Vector2(320,290))
   h.eq("half health starts a second phase",b.phase,2)
   h.check("damage leaves pivot and collision aligned",b.rect().get_center()==b.position)
   for tick in 1200:b.step(1.0/60,Vector2(320,290))
   h.check("all robots cast several attacks",b.casts>=3)
+  Pilot.open_core(b)
+  h.check("an actual phase 2 cast is required before the core opens",b.phase_casts>=1 and b.casts>=2)
+  h.check("phase 2 direction is front for Mühür and rear for Yankı",b.rear==(stage>0))
+  h.check("lane salvo leaves the center line open from both muzzles",b.aim_origins[0].x<300 and b.aim_origins[1].x>340)
   h.check("killing the boss yields victory exactly once",b.hit(10000) and not b.hit(10000) and b.defeated and not b.active)
   h.check("defeated robot cannot keep firing",b.step(5,Vector2.ZERO).is_empty())
   h.eq("stage biome before old threshold",Biomes.index(stage,179),[2,3,4][stage])
@@ -42,6 +48,7 @@ func run() -> void:
  h.check("real story reaches an actual boss",game.boss.active and game.boss.started)
  game.distance=399.89;game._simulate(.02)
  h.check("driving past encounter cannot skip boss",not game.over and game.distance<400)
+ Pilot.open_core(game.boss)
  var hp_before: float=game.boss.hp
  game.bullets=[{"pos":game.boss.position+Vector2(0,2),"vel":Vector2.UP}];game._update_bullets(.01)
  h.check("front projectile collides with robot and deals configured damage",game.boss.hp<hp_before and game.bullets.is_empty())
@@ -56,7 +63,9 @@ func run() -> void:
  var clock: float=game.boss.clock;game._set_paused(true);game._simulate(1)
  h.eq("pause freezes boss windup and movement",game.boss.clock,clock)
  game._set_paused(false);game._hurt_boss(10000)
- game.distance=399.89;game._simulate(.02)
+ Pilot.open_core(game.boss);game._hurt_boss(10000)
+ game.distance=399.89
+ for tick in 43:game._simulate(1.0/60)
  h.check("only victory opens the normal chapter completion",game.boss.defeated and game.over and game.end_result["outcome"]=="survived")
  game.store.clear();game.queue_free();await process_frame
  Session.story_mode=false;Session.campaign_state={}

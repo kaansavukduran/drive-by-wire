@@ -38,9 +38,14 @@ func run() -> void:
  title=current_scene
  await tap(JOY_BUTTON_A)
  await frames()
- h.check("story briefing offers three dialogue replies",current_scene.get("radio_answers")!=null and current_scene.radio_answers.size()==3)
+ h.eq("story briefing starts with authored dialogue",current_scene.page_index,0)
+ await tap(JOY_BUTTON_DPAD_RIGHT)
+ h.eq("D-pad moves from Devam to Atla",root.gui_get_focus_owner(),current_scene.radio_skip)
  await tap(JOY_BUTTON_A)
- await frames()
+ h.check("A opens the skip menu",current_scene.radio_skip.get_popup().visible)
+ await tap(JOY_BUTTON_DPAD_DOWN)
+ await tap(JOY_BUTTON_A)
+ h.eq("skip all leads to the departure page",current_scene.page_index,1)
  await tap(JOY_BUTTON_A)
  await frames()
  var game := current_scene

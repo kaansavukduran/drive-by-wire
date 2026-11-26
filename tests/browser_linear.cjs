@@ -20,22 +20,29 @@ try{
  let touchActive=false,held='',mine=false;
  const release=async()=>{if(mode==='pad'){await button(7,false);await button(2,false);await axis(0);}else if(mode==='touch'){if(touchActive)await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});touchActive=false;}else{if(held)await page.keyboard.up(held);held='';await page.mouse.up({button:'left'});if(mine)await page.mouse.up({button:'right'});mine=false;}};
  for(let stage=0;stage<2;stage++){
-  let q=await state();assert.equal(q.stage,stage);assert.equal(q.radio_answers.length,3,'three meaningful dialogue replies');
-  const choice=mode==='touch'?2:mode==='pad'?1:0;const prompt=q.reply_text;
-  if(!q.reply_ready){if(mode==='pad')for(let i=0;i<choice;i++)await tapPad(13);await tap(q.radio_answers[choice]);await wait(()=>window.__dbwQA.reply_ready);q=await state();assert(q.radio_selected);assert.notEqual(q.reply_text,prompt);}
-  await tap(q.reply_continue);await wait(()=>window.__dbwQA?.screen==='run');
+  let q=await state();assert.equal(q.stage,stage);
+  assert.equal(q.page,0,'briefing starts on the authored dialogue');
+  if(mode==='keyboard'&&stage===1){
+   await tap(q.radio_skip);await wait(()=>window.__dbwQA.skip_menu);
+   await page.keyboard.press('Enter');await wait(()=>window.__dbwQA.line_index===1);
+  }
+  while((q=await state()).page===0){await tap(q.radio_next);await sleep(80);}
+  await tap(q.depart);await wait(()=>window.__dbwQA?.screen==='run');
   assert.equal((await state()).health_panel_visible,false);assert.deepEqual(Object.keys((await state()).actions).sort(),['drive_fire','drive_mine']);
-  const biomes=new Set(),seenTraffic=new Set();let rearSpawns=0;
+  const biomes=new Set(),seenTraffic=new Set();let rearSpawns=0, photographedRear=false;
   const start=Date.now();
   if(mode==='pad')await button(7,true);else if(mode==='keyboard'){const p=await point((await state()).road);await page.mouse.move(p.x,p.y);await page.mouse.down({button:'left'});}
   while(true){q=await state();assert.equal(q.screen,'run');assertHud(q);
    biomes.add(q.biome);assert.equal(biomes.size,1,'a stage cannot change biome mid-drive');
    for(const e of q.traffic){if(!seenTraffic.has(e.id)){seenTraffic.add(e.id);if(e.spawn_y>0){rearSpawns++;assert(e.y-54>q.camera_bottom,'new rear traffic is wholly beyond camera');}}}
-   if(q.over){await release();result.combat.push({stage:stage+1,biome:[...biomes][0],rearSpawns,hp:q.hp,distance:q.distance,boss:q.boss,ending:q.ending_text});assert(q.boss.defeated&&q.ending_text.includes('ETAP TAMAMLANDI'),'actual boss victory, not timeout/death');break;}
+   if(q.over){await release();result.combat.push({stage:stage+1,biome:[...biomes][0],rearSpawns,hp:q.hp,distance:q.distance,boss:q.boss,ending:q.ending_text});assert(q.boss.casts>=2,'at least one real attack in both phases');assert(q.boss.defeated&&q.ending_text.includes('ETAP TAMAMLANDI'),'actual boss victory, not timeout/death');break;}
    assert(Date.now()-start<140000,'combat timeout');
+   if(stage===1&&!q.boss.active&&!q.boss.defeated)assert(q.music.track.endsWith('icyadventure-loopable.ogg')&&q.music.playing,'packaged road music is playing');
+   if(q.boss.active)assert(q.music.track.endsWith('retrobossfight-loopable.ogg')&&q.music.playing,'packaged battle music is playing');
+   if(q.boss.rear&&q.boss.vulnerable&&!photographedRear){photographedRear=true;await page.screenshot({path:out+'/stage2-rear-core.png'});}
    if(q.boss.active&&!result.bosses.some(b=>b.name===q.boss.name&&b.phase===q.boss.phase)){result.bosses.push({name:q.boss.name,phase:q.boss.phase});await page.screenshot({path:out+`/stage${stage+1}-boss${q.boss.phase}.png`});}
    const [px,py]=q.player;let best=q.lane,bestCost=Infinity;
-   for(let lane=0;lane<3;lane++){const x=256+lane*64;let cost=Math.abs(x-px)*.04;for(const e of q.traffic)if(e.lane===lane&&Math.abs(e.y-py)<165)cost+=(165-Math.abs(e.y-py))*2;for(const o of q.hazards)if(Math.abs(o.x-x)<25&&Math.abs(o.y-py)<150)cost+=250;if(q.pickup_targets.some(p=>p.lane===lane&&p.y>130&&p.y<py))cost-=30;if(q.boss.active){for(const t of q.boss.targets)if(Math.abs(t[0]-x)<34)cost+=180;if(q.boss.rear)cost+=Math.abs(q.boss.position[0]-x)*.5;}if(cost<bestCost){bestCost=cost;best=lane;}}
+   for(let lane=0;lane<3;lane++){const x=256+lane*64;let cost=Math.abs(x-px)*.04;for(const e of q.traffic)if(e.lane===lane&&Math.abs(e.y-py)<165)cost+=(165-Math.abs(e.y-py))*2;for(const o of q.hazards)if(Math.abs(o.x-x)<25&&Math.abs(o.y-py)<150)cost+=250;if(q.pickup_targets.some(p=>p.lane===lane&&p.y>130&&p.y<py))cost-=30;if(q.boss.active){for(const t of q.boss.targets)if(Math.abs(t[0]-x)<34)cost+=180;if(q.boss.vulnerable)cost+=Math.abs(q.boss.position[0]-x)*1.5;}if(cost<bestCost){bestCost=cost;best=lane;}}
    const dx=256+best*64-px,v=Math.abs(dx)<8?0:Math.sign(dx)*.95,rear=q.boss.rear||q.traffic.some(e=>Math.abs(e.x-px)<26&&e.y>py+25&&e.y<py+140);
    if(mode==='pad'){await axis(v);await button(2,rear);}
    else if(mode==='touch'){
@@ -46,18 +53,27 @@ try{
   }
   q=await state();if(mode==='pad'){await axis(-.9);await wait(()=>window.__dbwQA.result_focus===0);await axis(0);}await tap(q.result[0]);await wait(()=>window.__dbwQA?.screen==='road_story');
   const steps=new Set(),frames=new Set();let rotated=false,reloaded=false;const started=Date.now();
+  if(mode==='touch'&&stage===0){
+   await tap((await state()).skip);await wait(()=>window.__dbwQA.skip_menu);
+   const [x,y,w,h]=(await state()).skip_popup;
+   await tap([x,y+h/2,w,h/2]);
+   await wait(()=>window.__dbwQA.chapter.skip_dialogue);
+  }
   while((await state()).screen==='road_story'){
    q=await state();assert.equal(q.interlude,stage+1);assert(q.fits,'compact dialogue must retain all words in its actual bounds');assert(!q.combat);assert(Date.now()-started<150000,'interlude timeout');
-   if(q.cliff?.aion_car){assert(q.cliff.aion_car[1]-37>=q.cliff.edge_y,'car never crosses visible cliff rim');if(q.cliff.actors)frames.add(q.cliff.frame);}
+   if(q.chapter.step==='approach')assert(q.music.track.endsWith('eeriechoir.ogg')&&q.music.playing,'packaged cliff music is playing');
+   if(q.cliff?.aion_car){assert(q.cliff.aion_car[1]-37>=q.cliff.edge_y,'car never crosses visible cliff rim');if(q.cliff.actors)frames.add(q.cliff.frame);if(['check','thanks','wreck'].includes(q.chapter.step))assert(!q.cliff.aion_visible,'Aion is seated before the exit');}
    if(!steps.has(q.chapter.step)){steps.add(q.chapter.step);await page.screenshot({path:out+`/interlude${stage+1}-${q.chapter.step}.png`});}
    if(q.paused){await tap(q.resume);continue;}
    if(stage===1&&q.chapter.step==='check'&&mode==='touch'&&!rotated){const pos=q.cliff.kurt_foot;await page.setViewportSize({width:844,height:390});await wait(()=>window.__dbwQA.paused);assert.deepEqual((await state()).cliff.kurt_foot,pos);await tap((await state()).resume);rotated=true;continue;}
    if(stage===1&&q.chapter.step==='thanks'&&mode==='keyboard'&&!reloaded){await page.reload();await wait(()=>window.__dbwQA?.screen==='title');await tap((await state()).play);await wait(()=>window.__dbwQA?.screen==='road_story');assert.equal((await state()).chapter.step,'thanks');reloaded=true;continue;}
-   if(['race','trap','approach','impact','brake','exit'].includes(q.chapter.step)){await sleep(75);continue;}
-   if(q.choices.length)await tap(q.choices[0]);else if(q.next_visible)await tap(q.next);await sleep(150);
+   if(['race','trap','approach','impact','brake','exit','aion_exit'].includes(q.chapter.step)){await sleep(75);continue;}
+   if(q.next_visible)await tap(q.next);await sleep(150);
   }
-  assert(steps.has(stage===0?'trap':'impact')&&steps.has(stage===0?'eren':'promise'));
-  if(stage===1){assert(frames.has(0)&&frames.has(1)&&frames.has(2)&&frames.has(3),'all four new Kurt poses actually play');result.cliffFrames=[...frames];result.cliffReload=reloaded;result.cliffRotation=rotated;}
+  assert(steps.has(stage===0?'trap':'impact'));
+  if(mode==='touch'&&stage===0)assert(steps.has('race')&&!steps.has('eren'),'skip all retains animation and passes the lines');
+  else assert(steps.has(stage===0?'eren':'promise'));
+  if(stage===1){assert(steps.has('aion_exit'),'passenger-side exit played');assert(frames.has(0)&&frames.has(1)&&frames.has(2)&&frames.has(3),'all four new Kurt poses actually play');result.cliffFrames=[...frames];result.cliffReload=reloaded;result.cliffRotation=rotated;}
   result.interludes.push({number:stage+1,steps:[...steps]});
   await wait(stage===0?()=>window.__dbwQA?.screen==='briefing':()=>window.__dbwQA?.screen==='ending');
  }

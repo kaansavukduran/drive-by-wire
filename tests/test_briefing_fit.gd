@@ -18,7 +18,7 @@ func run() -> void:
    await process_frame
    await process_frame
    screen._layout()
-   for page in 4:
+   for page in screen.tabs.size():
     screen._show_page(page,true)
     await process_frame
     var valid:=true
@@ -26,7 +26,7 @@ func run() -> void:
     controls.append_array(screen.tabs)
     controls.append_array(screen.pages[page].get_children())
     for control in controls:
-     if not control is Control: continue
+     if not control is Control or not control.is_visible_in_tree(): continue
      var rect: Rect2=control.get_global_rect()
      if not root.get_visible_rect().grow(1).encloses(rect): valid=false
      if control.get_parent()==screen.pages[page] and not screen.content.get_global_rect().grow(1).encloses(rect): valid=false

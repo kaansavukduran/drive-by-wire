@@ -23,7 +23,7 @@ const out=process.env.DBW_EVIDENCE_DIR||'work/evidence-v070';fs.mkdirSync(out,{r
    result.commit=metadata.commit;result.game_version=metadata.version;
    const tap=async field=>{const q=await page.evaluate(()=>window.__dbwQA),r=q[field],b=await page.locator('#canvas').boundingBox();await page.mouse.click(b.x+(r[0]+r[2]/2)*b.width/q.view[0],b.y+(r[1]+r[3]/2)*b.height/q.view[1]);};
    await tap('play');await page.waitForFunction(()=>window.__dbwQA.screen==='briefing');
-   await tap('steady');await page.waitForFunction(()=>window.__dbwQA.screen==='run');
+   await require('./browser_briefing.cjs').depart(page,async rect=>{const q=await page.evaluate(()=>window.__dbwQA),b=await page.locator('#canvas').boundingBox();await page.mouse.click(b.x+(rect[0]+rect[2]/2)*b.width/q.view[0],b.y+(rect[1]+rect[3]/2)*b.height/q.view[1]);});await page.waitForFunction(()=>window.__dbwQA.screen==='run');
    const x=await page.evaluate(()=>window.__dbwQA.player[0]);await page.keyboard.down('KeyD');
    await page.waitForFunction(x=>window.__dbwQA.player[0]>x+25,x);await page.keyboard.up('KeyD');
    await page.keyboard.press('Escape');await page.waitForFunction(()=>window.__dbwQA.paused);

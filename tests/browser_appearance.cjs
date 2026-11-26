@@ -31,7 +31,7 @@ const base=process.env.DBW_URL||'http://127.0.0.1:8765';
  result.webFont=(await q()).settings_ui.font;
  await tap((await q()).settings_ui.back);
  await tap((await q()).garage);await wait(()=>window.__dbwQA?.screen==='garage');await page.screenshot({path:`${out}/garage-light.png`});await page.keyboard.press('Escape');await wait(()=>window.__dbwQA?.screen==='title');
- await tap((await q()).play);await wait(()=>window.__dbwQA?.screen==='briefing');if(!(await q()).reply_ready&&(await q()).radio_answers?.length){await tap((await q()).radio_answers[0]);await wait(()=>window.__dbwQA.reply_ready);}await tap((await q()).reply_continue||(await q()).choices[0]);await wait(()=>window.__dbwQA?.screen==='run');await page.keyboard.press('Escape');await wait(()=>window.__dbwQA.paused);await page.screenshot({path:`${out}/run-light-paused.png`});
+ await tap((await q()).play);await wait(()=>window.__dbwQA?.screen==='briefing');await require('./browser_briefing.cjs').depart(page,tap);await wait(()=>window.__dbwQA?.screen==='run');await page.keyboard.press('Escape');await wait(()=>window.__dbwQA.paused);await page.screenshot({path:`${out}/run-light-paused.png`});
  await page.reload();await wait(()=>window.__dbwQA?.screen==='title');await tap((await q()).endings);await wait(()=>window.__dbwQA?.screen==='endings');
  await page.screenshot({path:`${out}/gallery-light-empty.png`});
  assert.deepEqual(result.errors,[]);result.status='PASS';result.persist='PASS';result.systemChanges='PASS';console.log(JSON.stringify(result));

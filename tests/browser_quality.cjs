@@ -34,9 +34,8 @@ fs.mkdirSync(output,{recursive:true});
    await page.evaluate(()=>{const event=new Event('gamepadconnected');Object.defineProperty(event,'gamepad',{value:window.__pad});window.dispatchEvent(event);});
    await tap(0); // Title -> story briefing.
    await page.waitForFunction(()=>window.__dbwQA?.screen==='briefing',null,{timeout:15000});
-   await tap(0); // Select first radio reply with A.
-   await page.waitForFunction(()=>window.__dbwQA?.reply_ready||window.__dbwQA?.screen==='run',null,{timeout:15000});
-   if(await page.evaluate(()=>window.__dbwQA?.screen==='briefing')) await tap(0); // Continue onto the road with A.
+   while(await page.evaluate(()=>window.__dbwQA?.page===0)) await tap(0);
+   await tap(0); // Continue onto the road with A.
    await page.waitForFunction(()=>Number(document.documentElement.dataset.gameFps)>0,null,{timeout:15000});
    const samples=[];
    for(let i=0;i<3;i++){

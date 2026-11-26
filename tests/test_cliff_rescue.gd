@@ -18,6 +18,9 @@ func run() -> void:
    var p:=Cliff.poses(step,Cliff.duration(step)*tick/100.0)
    if p["aion_car"].y-37<p["edge_y"]:safe=false
   h.check("front remains above grounded rim throughout "+step,safe)
+ h.check("Aion remains in the car during the stuck-door line",not Cliff.poses("wreck",0)["aion_visible"])
+ h.check("the exit starts with Aion seated and ends with both feet outside",not Cliff.poses("aion_exit",0)["aion_visible"] and Cliff.poses("aion_exit",2.5)["aion_visible"])
+ h.eq("first step ends on the last dialogue anchor",Cliff.poses("aion_exit",2.5)["aion_foot"],Cliff.poses("promise",0)["aion_foot"])
  var contact:=Cliff.poses("impact",0)
  h.check("Kurt contacts left side, not rear or front",contact["kurt_car"].x<contact["aion_car"].x and absf(contact["kurt_car"].y-contact["aion_car"].y)<1 and absf(contact["kurt_car"].x+33-(contact["aion_car"].x-16))<6)
  h.eq("approach/impact seam",Cliff.poses("approach",3)["aion_car"],Cliff.poses("impact",0)["aion_car"])
@@ -34,13 +37,13 @@ func run() -> void:
    var game=load("res://scenes/road_story.tscn").instantiate();root.add_child(game);await frames();game.store=store;game.set_process(false)
    var fit:=true;var clear:=true;var all_words:=true
    for key in Cliff.STEPS:
-    game.chapter={"step":key,"reply":"shaken"};game._present();await frames()
+    game.chapter={"step":key,"reply":"shaken"};game.elapsed=Cliff.duration(key);game._present();await frames()
     var recovered: Array[String]=[]
     for page in game.pages.size():
      game.page=page;game._reflow();recovered.append(game.body.text)
      if not TextFit.fits(game.body) or not TextFit.fits(game.speaker):fit=false
     if " ".join(" ".join(recovered).split(" ",false))!=" ".join(str(Cliff.data()["nodes"][key]["text"]).split(" ",false)):all_words=false
-    var actions: Array=game.choices.filter(func(b):return b.visible)
+    var actions: Array=[game.skip_button]
     if game.next_button.visible:actions.append(game.next_button)
     for b in actions:
      if b.size.y<44 or not game.panel.get_global_rect().encloses(b.get_global_rect()) or b.get_global_rect().intersects(game.body.get_global_rect()):clear=false
@@ -48,7 +51,7 @@ func run() -> void:
    h.check("all words retained %s %s"%[theme,dimensions],all_words)
    h.check("actions reach without a wheel %s %s"%[theme,dimensions],clear)
    h.check("compact normal panel",game.panel.size.y<=140 if dimensions.y>dimensions.x else game.panel.size.y<=132)
-   game.chapter={"step":"check","reply":""};game.elapsed=0;game._present();game._sync_cliff_cast()
+   game.chapter={"step":"check","reply":""};game.elapsed=0;game._present();game._sync_cliff_pose()
    var before: Vector2=game.cliff_kurt.global_position
    game._process(1);h.eq("talking actor never drifts",game.cliff_kurt.global_position,before)
    game._pause(true);var t: float=game.elapsed;game._process(2);h.eq("pause freezes timeline",game.elapsed,t);game._pause(false)
@@ -57,7 +60,18 @@ func run() -> void:
     if game.chapter["step"]=="complete":break
     if game._cinematic():game._process(1.0/60)
     elif game.next_button.visible:game.next_button.pressed.emit()
-    elif game.choices[0].visible:game.choices[0].pressed.emit()
+   if dimensions==Vector2i(640,360):
+    game.chapter={"step":"wreck","reply":""}
+    game._present()
+    game._skip_remaining()
+    h.eq("skip all reaches the authored passenger exit",game.chapter["step"],"aion_exit")
+    h.check("skipping text leaves the exit animation running",game._cinematic() and not game.panel.visible and not game.completed)
+    game._process(1.0)
+    h.check("Aion visibly leaves the car during skipped dialogue",game.cliff_pose["aion_visible"] and not game.completed)
+    h.check("skip preference and exit checkpoint persist together",store.load_data()["campaign"]["cliff"]["skip_dialogue"] and store.load_data()["campaign"]["cliff"]["step"]=="aion_exit")
+    game.chapter["skip_dialogue"]=false
+    game._process(2.0)
+    while game.chapter["step"]!="complete":game._next()
    h.eq("real scene reaches promise and continued",game.chapter["step"],"complete")
    h.check("commit exactly once",game._commit_completion() and not game._commit_completion())
    var saved: Dictionary=store.load_data()["campaign"]

@@ -77,14 +77,10 @@ async function heapBytes(cdp) {
     report.cold_load_ms = Date.now() - t0;
     report.scenes.title = { frames: stats(await sampleFrames(page, 1800)), js_heap_bytes: await heapBytes(cdp) };
 
-    // Enter Stage 1 Cam Ormanı via real 3-reply briefing
+    // Enter Stage 1 Cam Ormanı via the linear briefing
     await tap((await q()).play);
     await waitScreen('briefing');
-    if (!(await q()).reply_ready && (await q()).radio_answers?.length) {
-      await tap((await q()).radio_answers[0]);
-      await page.waitForFunction(() => window.__dbwQA?.reply_ready, null, { timeout: 10000 });
-    }
-    await tap((await q()).reply_continue || (await q()).choices[0]);
+    await require('./browser_briefing.cjs').depart(page,tap);
     await waitScreen('run');
 
     // Measure Stage 1 Cam Ormanı active driving + fire + mine
@@ -114,11 +110,7 @@ async function heapBytes(cdp) {
       await waitScreen('title');
       await tap((await q()).play);
       await waitScreen('briefing');
-      if (!(await q()).reply_ready && (await q()).radio_answers?.length) {
-        await tap((await q()).radio_answers[0]);
-        await page.waitForFunction(() => window.__dbwQA?.reply_ready, null, { timeout: 10000 });
-      }
-      await tap((await q()).reply_continue || (await q()).choices[0]);
+      await require('./browser_briefing.cjs').depart(page,tap);
       await waitScreen('run');
       await page.keyboard.down('Space');
       const d = await sampleFrames(page, 1000);
