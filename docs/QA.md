@@ -72,3 +72,15 @@ Chromium `156.0.8078.79` (Linux, 1280×720) ana sayfadan `/drive-by-wire/play/0.
 | Gerçek kullanıcı kabulü | NOT TESTED | Kullanıcının gerçek oynanış ve estetik geri bildirimi bekleniyor |
 
 Tekrar: `GODOT=.ci-godot/bin/godot bash tests/run_all.sh`; `GODOT_BIN=.ci-godot/bin/godot python3 packaging/build_web.py`; `node tests/browser_loading.cjs`; `node tests/browser_forge.cjs`; `DBW_INPUT=keyboard|touch|pad node tests/browser_linear.cjs`; `node tests/browser_perf.cjs`. Rollback tabanı `20bb505/0.15.0` (uzak taban `69904f45999e/0.13.3`).
+
+## Yazılım denetimi ve kod optimizasyonu (2026-11-26, taban `3551b72`)
+
+| Kimlik | Önem | Bulgu | Durum | Kanıt |
+| --- | --- | --- | --- | --- |
+| SD-01 | Orta | Web `localStorage` aynası yazılamazsa (kota/gizli mod) eski ayna kalıyor; `load_data` aynayı dosyaya tercih ettiği için sonraki açılış ilerlemeyi geri alabiliyordu. | Düzeltildi | `save_store.gd`: yazma hatasında ayna silinir, dosya kaydı geçerli kalır. Web tarayıcı yeniden üretimi NOT TESTED (export şablonu bu oturumda kurulmadı). |
+| SD-02 | Düşük (performans) | `_update_hud` her 0.1 sn mayın düğmesine aynı font boyutunu yeniden yazıp temayı yeniden çözüyordu (~32 µs/çağrı). | Düzeltildi | Değer değişmedikçe atlanır. Headless ölçüm 5 tekrar medyan: HUD 73.7 → 36.9 µs/çağrı. |
+| SD-03 | Düşük (performans) | `Art.region` her çizim çağrısında JSON sözlüğünden hücre dikdörtgeni hesaplıyordu. | Düzeltildi | Sayfa/indeks başına bir kez hesaplanır: 1.15 → 0.68 µs/çağrı. Çizim karesine etkisi ESTIMATED. |
+| SD-04 | Düşük (bakım) | 0.13.0'da kaldırılan dodge/hız/ram komutlarının `_execute` dalları ve `ram_left` çarpışma dalı erişilemezdi; mayın basılıyken her karede kullanılmayan `speed_step` okunuyordu. | Kaldırıldı | 33 süit aynı PASS sayılarıyla geçti; tohum 42 tam koşu önce/sonra aynı (6790 puan, 39 düşman, 109.1 s). |
+| SD-05 | Öneri | Run başına `_cfg` önbelleği denendi. | Reddedildi | Simülasyon 59.5 → 59.7 µs/kare; gürültü eşiği altında, geri alındı. |
+
+Açık sınır: SwiftShader web 60 FPS FAIL'i render/raster tarafındadır; bu turda `browser_perf` yeniden koşulmadı (NOT TESTED).

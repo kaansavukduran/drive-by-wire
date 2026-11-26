@@ -71,7 +71,9 @@ func _read_web_mirror() -> Dictionary:
 func _write_web_mirror(text: String) -> void:
 	if not OS.has_feature("web") or path != DEFAULT_PATH:
 		return
-	JavaScriptBridge.eval("(function(v){try{localStorage.setItem('dbw.save_v1',v);}catch(e){}})(%s)" % JSON.stringify(text))
+	# load_data prefers the mirror, so a failed write (quota, private mode) must not
+	# leave an older mirror that would roll back the file written just before.
+	JavaScriptBridge.eval("(function(v){try{localStorage.setItem('dbw.save_v1',v);}catch(e){try{localStorage.removeItem('dbw.save_v1');}catch(_){}}})(%s)" % JSON.stringify(text))
 
 
 func _clear_web_mirror() -> void:

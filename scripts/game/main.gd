@@ -84,7 +84,6 @@ var max_hp := 100.0
 var invulnerable := 0.0
 var dodge_left := 0.0
 var dodge_cooldown := 0.0
-var ram_left := 0.0
 var scroll := 0.0
 var distance := 0.0
 var game_time := 0.0
@@ -817,33 +816,11 @@ func _change_lane(to: int) -> void:
 
 func _execute(command: Dictionary) -> void:
 	if str(command.get("intent","")) in ["speed_up","slow_down","dodge","ram"]:return
-	var step := _cfg("player.speed_step", 40)
 	match str(command.get("intent", "")):
 		"lane_left":
 			_change_lane(lane - 1)
 		"lane_right":
 			_change_lane(lane + 1)
-		"dodge":
-			if dodge_cooldown <= 0.0:
-				var to := lane - 1 if lane > 0 else lane + 1
-				if lane > 0 and lane < lane_count - 1 and _lane_threat(lane - 1) > _lane_threat(lane + 1):
-					to = lane + 1
-				_change_lane(to)
-				dodge_left = _cfg("player.dodge_seconds", 0.45)
-				dodge_cooldown = _cfg("player.dodge_cooldown", 1.5)
-		"speed_up":
-			target_speed = minf(target_speed + step, _cfg("player.max_speed", 340))
-			_play("boost")
-		"slow_down":
-			target_speed = maxf(target_speed - step, _cfg("player.min_speed", 140))
-			_play("brake")
-		"ram":
-			var target := _find_target(command.get("target", {}))
-			if not target.is_empty():
-				_change_lane(int(target["lane"]))
-			target_speed = minf(target_speed + step, _cfg("player.max_speed", 340))
-			ram_left = 1.2
-			_play("boost")
 		"fire":
 			_fire(command.get("target", {}))
 		"drop_mine":
@@ -961,7 +938,10 @@ func _update_hud() -> void:
 	if touch_by_action.has("drive_mine"):
 		var mine_button: Button=touch_by_action["drive_mine"].visual
 		var compact: bool=touch_enabled and not was_portrait
-		mine_button.add_theme_font_size_override("font_size",11 if compact else 12)
+		var font_size: int=11 if compact else 12
+		# Overriding a theme value re-resolves the whole theme; skip it when unchanged.
+		if not mine_button.has_theme_font_size_override("font_size") or mine_button.get_theme_font_size("font_size")!=font_size:
+			mine_button.add_theme_font_size_override("font_size",font_size)
 		# Assign only the final label: an intermediate long label grows Button's
 		# minimum size immediately, and shortening it does not shrink the rect.
 		mine_button.text="MAYIN" if compact else (("MAYIN %.1f" % mine_cooldown) if mine_cooldown>0 else "MAYIN · ∞")
@@ -1041,7 +1021,6 @@ func _simulate(delta: float) -> void:
 	invulnerable -= delta
 	dodge_left -= delta
 	dodge_cooldown -= delta
-	ram_left -= delta
 	shake = maxf(0.0, shake - delta)
 	for item in pending:
 		item["t"] = float(item["t"]) - delta
@@ -1357,12 +1336,6 @@ func _update_enemies(delta: float) -> void:
 
 
 func _collide(e: Dictionary, cfg: Dictionary) -> void:
-	if ram_left > 0.0:
-		ram_left = 0.0
-		_hurt_enemy(e, _cfg("player.ram_damage", 40))
-		_damage_player(_cfg("player.ram_self_damage", 10), false)
-		e["pos"] = e["pos"] + Vector2(0, -24 if e["pos"].y < car_y else 24)
-		return
 	_damage_player(float(cfg.get("contact_damage", 15)))
 	if str(e["type"]) == "rammer":
 		e["hp"] = 0.0

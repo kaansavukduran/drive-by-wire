@@ -25,10 +25,16 @@ static var _material: ShaderMaterial
 static func data() -> Dictionary:
  if _data.is_empty():_data=JSON.parse_string(FileAccess.get_file_as_string(PATH))
  return _data
+static var _regions: Dictionary={}
+## Registered atlas cells are immutable, so each cell rect is computed once per sheet/index.
 static func region(sheet: String,index: int) -> Rect2:
+ var cells: Dictionary=_regions.get_or_add(sheet,{})
+ if cells.has(index):return cells[index]
  var s: Dictionary=data()["sheets"][sheet];var columns: int=s["columns"]
  var cell:=Vector2(float(s["size"][0])/columns,float(s["size"][1])/int(s["rows"]))
- return Rect2(Vector2(index%columns,index/columns)*cell,cell)
+ var rect:=Rect2(Vector2(index%columns,index/columns)*cell,cell)
+ cells[index]=rect
+ return rect
 static func material() -> ShaderMaterial:
  if _material==null:
   var shader:=Shader.new()
