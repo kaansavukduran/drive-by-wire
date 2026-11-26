@@ -1070,6 +1070,9 @@ func _simulate(delta: float) -> void:
 	speed = move_toward(speed, target_speed, _cfg("player.acceleration", 160) * delta)
 	scroll = fposmod(scroll + speed * delta, 48.0)
 	distance += speed * delta * float(run_cfg.get("distance_per_pixel", 0.05))
+	var finish_distance := _cfg("arcade.finish_distance", 1200)
+	if Session.story_mode:
+		distance = minf(distance,finish_distance)
 	for line in journey.advance(distance):
 		_say(line,true)
 		bubble_left=7.0
@@ -1088,7 +1091,7 @@ func _simulate(delta: float) -> void:
 		hp = minf(max_hp, hp + _cfg("arcade.contract_heal", 10))
 		mine_cooldown = 0.0
 		_notice("GÖREV TAMAM! +%d puan\n+onarım · mayın hazır" % int(_cfg("arcade.contract_reward", 200)))
-	if distance >= _cfg("arcade.finish_distance", 1200) and (not Session.story_mode or (boss.defeated and boss_fall_left<=0.0)):
+	if distance >= finish_distance and (not Session.story_mode or (boss.defeated and boss_fall_left<=0.0)):
 		_end_run("survived")
 	for fx in effects:
 		fx["t"] = float(fx["t"]) + delta

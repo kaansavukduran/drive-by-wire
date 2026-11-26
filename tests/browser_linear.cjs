@@ -35,7 +35,7 @@ try{
   while(true){q=await state();assert.equal(q.screen,'run');assertHud(q);
    biomes.add(q.biome);assert.equal(biomes.size,1,'a stage cannot change biome mid-drive');
    for(const e of q.traffic){if(!seenTraffic.has(e.id)){seenTraffic.add(e.id);if(e.spawn_y>0){rearSpawns++;assert(e.y-54>q.camera_bottom,'new rear traffic is wholly beyond camera');}}}
-   if(q.over){await release();result.combat.push({stage:stage+1,biome:[...biomes][0],rearSpawns,hp:q.hp,distance:q.distance,boss:q.boss,ending:q.ending_text});assert(q.boss.casts>=2,'at least one real attack in both phases');assert(q.boss.defeated&&q.ending_text.includes('ETAP TAMAMLANDI'),'actual boss victory, not timeout/death');break;}
+   if(q.over){await release();result.combat.push({stage:stage+1,biome:[...biomes][0],rearSpawns,hp:q.hp,distance:q.distance,boss:q.boss,ending:q.ending_text});assert.equal(q.distance,q.finish,'story odometer stops at the goal');assert(q.boss.casts>=2,'at least one real attack in both phases');assert(q.boss.defeated&&q.ending_text.includes('ETAP TAMAMLANDI'),'actual boss victory, not timeout/death');break;}
    assert(Date.now()-start<140000,'combat timeout');
    if(stage===1&&!q.boss.active&&!q.boss.defeated)assert(q.music.track.endsWith('icyadventure-loopable.ogg')&&q.music.playing,'packaged road music is playing');
    if(q.boss.active)assert(q.music.track.endsWith('retrobossfight-loopable.ogg')&&q.music.playing,'packaged battle music is playing');

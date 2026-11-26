@@ -67,6 +67,7 @@ func run() -> void:
  game.distance=399.89
  for tick in 43:game._simulate(1.0/60)
  h.check("only victory opens the normal chapter completion",game.boss.defeated and game.over and game.end_result["outcome"]=="survived")
+ h.eq("victory pose never advances the story odometer past 400m",game.distance,400.0)
  game.store.clear();game.queue_free();await process_frame
  Session.story_mode=false;Session.campaign_state={}
  quit(h.finish())
