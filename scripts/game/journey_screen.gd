@@ -228,7 +228,11 @@ func _process(_delta: float) -> void:
   var visible_controls: Array=[]
   for child in pages[page_index].get_children():
    if child is Control and child.is_visible_in_tree(): visible_controls.append(QA.rect(child))
-  QA.publish("briefing",{"view":[view.x,view.y],"panel":QA.rect(panel),"reading":QA.rect(content),"tabs":tabs.map(func(b): return QA.rect(b)),"page":page_index,"visible_controls":visible_controls,"scrollbars":panel.find_children("*","ScrollContainer",true,false).size(),"steady":QA.rect(choices[0]),"supplies":QA.rect(choices[-1]),"choices":choices.map(func(b): return QA.rect(b)),"radio_next":QA.rect(radio_next),"radio_skip":QA.rect(radio_skip),"skip_menu":radio_skip.get_popup().visible,"skip_popup":radio_skip.popup_bounds(),"depart":QA.rect(choices[0]),"speaker":radio_portrait.speaker,"line_index":line_index,"line_count":conversation.size(),"stage":campaign["stage"],"back":QA.rect(back)})
+  # PopupMenu's own scroll container belongs to its separate Window.
+  var scrollbars := panel.find_children("*","ScrollContainer",true,false).filter(
+   func(container):return container.get_window()==get_window() and container.is_visible_in_tree()
+  ).size()
+  QA.publish("briefing",{"view":[view.x,view.y],"panel":QA.rect(panel),"reading":QA.rect(content),"tabs":tabs.map(func(b): return QA.rect(b)),"page":page_index,"visible_controls":visible_controls,"scrollbars":scrollbars,"steady":QA.rect(choices[0]),"supplies":QA.rect(choices[-1]),"choices":choices.map(func(b): return QA.rect(b)),"radio_next":QA.rect(radio_next),"radio_skip":QA.rect(radio_skip),"skip_menu":radio_skip.get_popup().visible,"skip_popup":radio_skip.popup_bounds(),"depart":QA.rect(choices[0]),"speaker":radio_portrait.speaker,"line_index":line_index,"line_count":conversation.size(),"stage":campaign["stage"],"back":QA.rect(back)})
 func _choose(route: String) -> void:
  if Session.story_mode:
   campaign=Book.choose(campaign,route)
