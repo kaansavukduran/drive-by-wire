@@ -64,7 +64,7 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
     await wait(page,()=>{const q=window.__dbwQA;return q.back[1]+q.back[3]<=q.view[1];});
     q=await page.evaluate(()=>window.__dbwQA);
     for(const key of ['panel','back'])assert(inside(q[key],q.view),`briefing ${key} must stay on screen`);
-    for(const index of [0,1,3,2]){
+    for(const index of [0,2,1]){
      await tap(page,q.tabs[index],device.touch);await page.waitForFunction(i=>window.__dbwQA.page===i,index);await sleep(150);q=await page.evaluate(()=>window.__dbwQA);
      assert.equal(q.scrollbars,0);
      for(const rect of [...q.tabs,q.back,...q.visible_controls])assert(inside(rect,q.view),'every visible page control fits without scrolling');
@@ -184,7 +184,7 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
    await tapPad(13);await tapPad(0);await state(page,'garage');
    await tapPad(13);await tapPad(0);await wait(page,()=>window.__dbwQA.stage==='upgrade');
    await tapPad(0);await wait(page,()=>window.__dbwQA.stage==='ready');
-   await tapPad(0);await state(page,'briefing');await tapPad(15);await tapPad(0);await tapPad(0);
+   await tapPad(0);await state(page,'briefing');while(await page.evaluate(()=>window.__dbwQA?.page===0))await tapPad(0);await tapPad(0);
    let q=await state(page,'run');assert.equal(q.route,'survive');
    await page.evaluate(()=>window.__pad.axes[0]=-0.8);await wait(page,()=>window.__dbwQA.player[0]<280);
    await page.evaluate(()=>window.__pad.axes[0]=0);await sleep(200);

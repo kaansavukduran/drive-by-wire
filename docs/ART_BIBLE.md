@@ -157,3 +157,9 @@ Kamyon artık saldırıda atlasın yanlış orta/tavan açıklığı olan5.hücr
 ## 0.13.3 · Emre sahne ölçeği
 
 Kullanıcının yalnız küçültme talebi: story_cast_art.json içinde emre.scale 0.375 → 0.28 (74.67%). Altı mevcut kare tek, eşit XY ölçeği kullanır. PNG, kaynak ayak temasları, world[445,248], animasyon ve Aion/Eren verileri değişmez; yeni resim/yeniden çizim yoktur. Yaralı yatay gövde, aynı ayrıntıyla diğer karakterlere yakın boyutta görünür.
+
+## 0.17.0 · Boss ve uçurum atlasları
+
+Boss atlası, 160×120 hücrede (80,60) dünya pivotunu kullanır. Her robot için giriş, zırh, şarj, atış, açık çekirdek, faz ve yenilgi kayıtları vardır. Pozlar saldırı durumuyla değişir. Atış geri tepmesi 0,24 saniyedir, uyarı 1,05 saniye ve çekirdek açıklığı 1,8 saniyedir. Mühür-01 ve Yankı-02 çizimleri 1,35 ve 1,45 ölçek kullanır. Namlu ve uyarı başlangıcı, aynı dünya pivotundaki (±24,21) bağlantı noktalarına bağlıdır. Yan kanatların görünümü hasar alanının dışına taşabilir.
+
+Aion’un iniş atlası üç 96×96 hücre ve (48,82) ayak noktası kullanır. 2,5 saniyelik inişin ilk kısmı kapıya, son kısmı zemine ayrılır. Son kare ile takip eden replik aynı dünya noktasını kullanır. Kurt mevcut dört kayıtlı pozu kullanır. Atlaslar `python3 tools/art/author_forge_0170.py` komutuyla yerel çizimlerden üretilir. Kaynak, boyut ve özetler `data/visual_art.json` ve `assets/PROVENANCE.json` içinde kayıtlıdır.

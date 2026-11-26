@@ -2,6 +2,7 @@ extends RefCounted
 ## Boss visual rendering: grounded shadow, telegraph barrel charge, firing recoil,
 ## open punish-window cooling vents, and Phase 2 reactor surge.
 const Art=preload("res://scripts/game/visual_art.gd")
+const FRAMES := {"entering":0,"telegraph":2,"firing":3,"recover":4,"phase_shift":5,"defeated":6}
 const ACCENTS: Array[Color]=[Color("ffce70"),Color("79d4ff"),Color("f4a8c5")]
 
 static func _ellipse(canvas: CanvasItem, center: Vector2, radii: Vector2, color: Color) -> void:
@@ -53,3 +54,41 @@ static func draw(canvas: CanvasItem, pivot: Vector2, kind: int, time: float = 0.
 			var lift := fposmod(time * 18.0 + (0.5 if side > 0.0 else 0.0), 10.0) if motion_enabled else 4.0
 			var vent := visual_pivot + Vector2(side * 24.0, -8.0 - lift) * scale_factor
 			canvas.draw_circle(vent, 2.6 * scale_factor, Color(0.84, 0.94, 0.96, 0.28 * (1.0 - lift / 12.0)))
+
+static func draw_encounter(canvas: CanvasItem, boss: RefCounted, motion: bool, clip_top: float) -> void:
+	var scale_factor: float = boss.SCALE[boss.stage]
+	if boss.stage > 1:
+		draw(canvas, boss.position, boss.stage, boss.clock, boss.flash>0, scale_factor)
+		return
+	var position: Vector2 = boss.position
+	var offset := Vector2.ZERO
+	if motion:
+		offset.y = sin(boss.clock*4.2)*1.6 + (1.0 if boss.rear else -1.0)*boss.fire_recoil*12.0
+	var frame: int = FRAMES.get(boss.act_state,1)
+	var shadow := Color(.02,.03,.05,.44)
+	var extent := Vector2(100,76)*scale_factor
+	var shadow_origin := position+Vector2(0,24)*scale_factor
+	if shadow_origin.y-9.0*scale_factor>=clip_top:
+		_ellipse(canvas,shadow_origin,Vector2(43,9)*scale_factor,shadow)
+	var tint := Color(1.3,1.3,1.3) if boss.flash>0 else Color.WHITE
+	var box := Rect2(position+offset-extent*.5,extent)
+	if box.end.y<=clip_top:
+		return
+	var source := Art.region("boss_frames",boss.stage*7+frame)
+	if boss.rear:
+		box.size.y = -extent.y
+	elif box.position.y<clip_top:
+		var hidden := clip_top-box.position.y
+		source.position.y+=source.size.y*hidden/extent.y
+		source.size.y*=1.0-hidden/extent.y
+		box.position.y=clip_top
+		box.size.y-=hidden
+	canvas.draw_texture_rect_region(Art.texture("boss_frames"),box,source,tint)
+	if boss.vulnerable():
+		canvas.draw_arc(position,12.0*scale_factor,0,TAU,16,Color("8cf0d3"),1.5)
+	elif boss.warning_left>0:
+		for i in 2:
+			canvas.draw_circle(boss.muzzle(i),3.0+boss.warning_progress()*4.0,ACCENTS[boss.stage])
+	if boss.phase_burst>0:
+		canvas.draw_arc(position,40.0+12.0*(1.0-boss.phase_burst/.75),0,TAU,24,
+			Color(ACCENTS[boss.stage],boss.phase_burst),2)

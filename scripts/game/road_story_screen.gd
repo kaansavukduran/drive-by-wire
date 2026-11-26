@@ -14,6 +14,7 @@ const Vehicles=preload("res://scripts/core/vehicles.gd")
 const UiSkin=preload("res://scripts/game/ui_skin.gd")
 const Controls=preload("res://scripts/game/controls.gd")
 const Portrait=preload("res://scripts/game/cast_portrait.gd")
+const DialogueSkip=preload("res://scripts/game/dialogue_skip.gd")
 const TextFit=preload("res://scripts/game/text_fit.gd")
 const Sounds=preload("res://scripts/game/sounds.gd")
 const Sheets=preload("res://scripts/game/sheets.gd")
@@ -30,7 +31,6 @@ var campaign: Dictionary
 var chapter: Dictionary
 var elapsed:=0.0
 var road_time:=0.0
-var pose_time:=0.0
 var paused:=false
 var save_failed:=false
 var motion:=true
@@ -43,7 +43,12 @@ var body: Label
 var page_caption: Label
 var portrait: Control
 var next_button: Button
-var choices: Array[Button]=[]
+var skip_button: DialogueSkip
+var caption_skipped:=false
+var cliff_pose: Dictionary={}
+var cliff_frame:=-1
+var aion_exit_frame:=-1
+var cast_frames: Dictionary={}
 var pause_button: Button
 var pause_panel: Panel
 var resume_button: Button
@@ -84,57 +89,53 @@ func _ready() -> void:
  page_caption=_label(panel,"",10);page_caption.theme_type_variation="MutedLabel"
  portrait=Portrait.new();panel.add_child(portrait);portrait.custom_minimum_size=Vector2.ZERO
  next_button=_button(panel,"Devam · A / Enter",_next)
- for i in 2:choices.append(_button(panel,"",func():_choose(i)))
+ skip_button=DialogueSkip.new();skip_button.theme=UiSkin.theme();UiSkin.style_button(skip_button);panel.add_child(skip_button)
+ skip_button.skip_line.connect(_skip_line);skip_button.skip_remaining.connect(_skip_remaining)
  pause_button=_button(self,"Mola",func():_pause(true))
  pause_panel=Panel.new();pause_panel.theme=UiSkin.theme();pause_panel.add_theme_stylebox_override("panel",UiSkin.panel());pause_panel.z_index=20;add_child(pause_panel)
- warning=_label(pause_panel,"Mola · Sahne durdu. Seçimlerin bu cihazda saklanır.",13)
+ warning=_label(pause_panel,"Mola · Sahne durdu. İlerlemen bu cihazda saklanır.",13)
  resume_button=_button(pause_panel,"Devam et · A",func():_pause(false))
  leave_button=_button(pause_panel,"Ana menüye dön",_leave)
  pause_panel.hide()
  get_viewport().size_changed.connect(_layout)
  Input.joy_connection_changed.connect(func(_id: int,connected: bool):
   if not connected:_pause(true))
- _present();_layout();_focus();_sync_audio()
+ _present();_sync_audio()
+ if chapter.get("skip_dialogue",false) and not _cinematic():_fast_forward_dialogue.call_deferred()
 func _label(parent: Node,text: String,font_size: int) -> Label:
  var l:=Label.new();l.theme=UiSkin.theme();l.text=text;l.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;l.add_theme_font_size_override("font_size",font_size);parent.add_child(l);return l
 func _button(parent: Node,text: String,action: Callable) -> Button:
  var b:=Button.new();b.theme=UiSkin.theme();b.text=text;b.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;b.clip_text=true;UiSkin.style_button(b);b.pressed.connect(action);parent.add_child(b);return b
 func _cinematic() -> bool:return float(story_model.data()["nodes"][chapter["step"]].get("duration",0))>0
-func _ground_scene() -> bool:return not cliff_scene and chapter.get("step") in ["aftermath","eren","plea","reveal","promise","rescue","witness","handoff","complete"]
+func _ground_scene() -> bool:return not cliff_scene and chapter.get("step") in ["aftermath","eren","plea","reveal","promise","rescue","witness","keep_sealed","handoff","complete"]
 func _present() -> void:
  var node: Dictionary=story_model.data()["nodes"][chapter["step"]]
  var cinema:=_cinematic()
  speaker.text=str(Portrait.NAMES[node.get("speaker","omega")])
  portrait.speaker=node.get("speaker","omega")
+ panel.visible=not paused and not (cinema and (caption_skipped or chapter.get("skip_dialogue",false)))
  next_button.visible=not cinema
- for i in choices.size():
-  choices[i].visible=not cinema and node.has("choices")
-  if choices[i].visible:choices[i].text=str(node["choices"][i]["label"])
- next_button.visible=not cinema and not node.has("choices")
- next_button.text=("Devam edecek · A" if cliff_scene else "2. etaba geç · A") if chapter["step"]=="complete" else "Devam · A / Enter"
+ skip_button.visible=panel.visible
+ next_button.text=("Devam edecek" if cliff_scene else "2. etaba geç") if chapter["step"]=="complete" else "Devam"
  _layout();_focus();queue_redraw()
 func _reflow(remember: bool=true) -> void:
  if remember:reading_offset=TextFit.offset_at(pages,page)
  var node: Dictionary=story_model.data()["nodes"][chapter["step"]]
  var prose: String=str(node.get("text",node.get("caption","")))
- if cliff_scene and chapter["step"]=="thanks" and chapter.get("reply")=="joke":prose="Teşekkür ederim, Kurt. Şakayı sonra yaparım… Bir saniye daha geç kalsaydın…"
  pages=TextFit.pages(prose,body)
  page=TextFit.page_at(pages,reading_offset)
  body.text=pages[page]
+ if cliff_scene and chapter["step"]=="brake" and elapsed<1.34:body.text="Tekerlekler zeminde. Biraz daha…"
  page_caption.text=""
  page_caption.hide()
  heading.text="Kayıt yazılamadı · oturumda korunuyor" if save_failed else ("Uçurumun kıyısı · 2. ara sahne" if cliff_scene else "Yan yana · 1. ara sahne")
  var who: String=str(Portrait.NAMES[node.get("speaker","omega")])
  speaker.text=who+((" · %d / %d" % [page+1,pages.size()]) if pages.size()>1 else "")
- # Choices are actionable only after the whole speech is read.
- if not _cinematic() and node.has("choices"):
-  for b in choices:b.visible=page==pages.size()-1
-  next_button.visible=page<pages.size()-1
-  next_button.text="Repliği sürdür · A"
  _links()
 func _links() -> void:
- var actions: Array=choices.filter(func(b):return b.visible)
- if next_button.visible:actions.append(next_button)
+ var actions: Array[Button]=[]
+ if panel.visible and next_button.visible:actions.append(next_button)
+ if panel.visible and skip_button.visible:actions.append(skip_button)
  actions.append(pause_button)
  for i in actions.size():
   for direction in ["top","left"]:actions[i].set("focus_neighbor_"+direction,actions[i].get_path_to(actions[posmod(i-1,actions.size())]))
@@ -143,28 +144,47 @@ func _links() -> void:
   resume_button.set("focus_neighbor_"+direction,resume_button.get_path_to(leave_button));leave_button.set("focus_neighbor_"+direction,leave_button.get_path_to(resume_button))
 func _focus() -> void:
  if paused:resume_button.grab_focus()
- elif choices[0].visible:choices[0].grab_focus()
- elif next_button.visible:next_button.grab_focus()
+ elif panel.visible and next_button.visible:next_button.grab_focus()
+ elif panel.visible and skip_button.visible:skip_button.grab_focus()
  else:pause_button.grab_focus()
 func _next() -> void:
  if paused or _cinematic():return
  if page+1<pages.size():page+=1;_reflow();_focus();return
+ _advance_dialogue()
+func _advance_dialogue() -> void:
  if chapter["step"]=="complete":_finish();return
- if story_model.data()["nodes"][chapter["step"]].has("choices"):return
- chapter=story_model.advance(chapter);_enter()
-func _choose(index: int) -> void:
- if paused or index<0 or index>=choices.size() or not choices[index].visible:return
- var options: Array=story_model.data()["nodes"][chapter["step"]].get("choices",[])
- if options.size()!=2:return
- chapter=story_model.choose(chapter,str(options[index]["id"]));_enter()
+ chapter=story_model.advance(chapter)
+ _enter()
+func _skip_line() -> void:
+ if paused or completed:return
+ if _cinematic():
+  caption_skipped=true
+  _present()
+ else:_advance_dialogue()
+func _skip_remaining() -> void:
+ if paused or completed:return
+ chapter["skip_dialogue"]=true
+ if _cinematic():
+  _checkpoint()
+  _present()
+ else:_fast_forward_dialogue()
+func _fast_forward_dialogue() -> void:
+ while not _cinematic() and chapter["step"]!="complete":
+  chapter=story_model.advance(chapter)
+ if chapter["step"]=="complete":_finish()
+ else:_enter()
 func _enter() -> void:
- elapsed=0;page=0;reading_offset=0;step_time=0
+ elapsed=0;page=0;reading_offset=0;step_time=0;caption_skipped=false
+ if chapter.get("skip_dialogue",false) and not _cinematic():
+  _fast_forward_dialogue()
+  return
  if chapter["step"]=="aftermath":ground_time=0
  _checkpoint();_present();_sync_audio()
  if chapter["step"]=="trap":sounds.cue("mine_boom" if sounds.streams.has("mine_boom") else "kill")
+ if cliff_scene and chapter["step"]=="impact":sounds.cue("hit")
 func _sync_audio() -> void:
  if not is_instance_valid(sounds):return
- if cliff_scene:sounds.set_bed("aftermath" if chapter.get("step") in ["check","thanks","wreck","promise","complete"] else "road")
+ if cliff_scene:sounds.set_bed("cliff" if chapter.get("step") in ["approach","impact","brake","exit"] else "aftermath")
  else:sounds.set_bed("aftermath" if _ground_scene() else "road")
 func _checkpoint() -> bool:
  chapter=story_model.sanitize(chapter)
@@ -180,8 +200,6 @@ func _finish() -> void:
 func _commit_completion() -> bool:
  if completed or chapter["step"]!="complete":return false
  completed=true
- if not cliff_scene:
-  if not chapter.get("record","").is_empty():campaign["bonds"]["eren"]=mini(3,int(campaign["bonds"].get("eren",0))+1)
  campaign["cliff" if cliff_scene else "chapter2"]=chapter.duplicate(true)
  campaign=Book.finish_interlude(campaign)
  _checkpoint()
@@ -189,8 +207,9 @@ func _commit_completion() -> bool:
 func _pause(value: bool) -> void:
  paused=value;pause_panel.visible=value
  if is_instance_valid(sounds):sounds.set_paused(value)
- warning.text="Kayıt yazılamadı. İlerleme bu oturumda." if save_failed else "Mola · Sahne durdu. Seçimlerin bu cihazda saklanır."
- panel.visible=not value;pause_button.disabled=value;_focus()
+ warning.text="Kayıt yazılamadı. İlerleme bu oturumda." if save_failed else "Mola · Sahne durdu. İlerlemen bu cihazda saklanır."
+ panel.visible=not value and not (_cinematic() and (caption_skipped or chapter.get("skip_dialogue",false)))
+ pause_button.disabled=value;_links();_focus()
 func _leave() -> void:
  if is_instance_valid(sounds):sounds.stop_all()
  _checkpoint();get_tree().call_deferred("change_scene_to_file","res://scenes/title.tscn")
@@ -202,18 +221,21 @@ func _input(event: InputEvent) -> void:Controls.observe(event)
 func _unhandled_input(event: InputEvent) -> void:
  if event.is_action_pressed("drive_pause") or event.is_action_pressed("ui_cancel"):
   _pause(not paused);get_viewport().set_input_as_handled()
- elif event is InputEventKey and event.pressed and not event.echo and event.keycode in [KEY_1,KEY_2]:
-  _choose(event.keycode-KEY_1);get_viewport().set_input_as_handled()
 func _process(delta: float) -> void:
- if not paused:
-  pose_time+=delta;step_time+=delta
+ if not paused and not completed:
+  step_time+=delta
   if _ground_scene():ground_time+=delta
   if _cinematic():
    elapsed+=delta
    if motion:road_time+=delta*(100 if chapter["step"]=="race" else 22)
-   if elapsed>=float(story_model.data()["nodes"][chapter["step"]]["duration"]):chapter=story_model.advance(chapter);_enter()
- _sync_cast();_sync_cliff_cast()
- queue_redraw()
+   if elapsed>=float(story_model.data()["nodes"][chapter["step"]]["duration"]):
+    chapter=story_model.advance(chapter)
+    _enter()
+   else:
+    _sync_cliff_pose()
+    if cliff_scene and chapter["step"]=="brake" and cliff_pose["settled"] and body.text!=pages[page]:body.text=pages[page]
+    queue_redraw()
+  _sync_cast()
  if QA.active():QA.publish("road_story",snapshot())
 func _layout() -> void:
  if not is_instance_valid(panel):return
@@ -221,7 +243,6 @@ func _layout() -> void:
  if layout_ready and p!=last_portrait:_pause(true)
  last_portrait=p;layout_ready=true
  var reserved_height:=188.0 if p else 132.0
- var has_choices: bool=story_model.data()["nodes"][chapter["step"]].has("choices")
  var panel_width:=minf(v.x-16,340 if _cinematic() else 440)
  var cinema_body_height:=36.0
  if _cinematic():
@@ -229,26 +250,26 @@ func _layout() -> void:
   var node: Dictionary=story_model.data()["nodes"][chapter["step"]]
   cinema_body_height=ceilf(TextFit.height(probe,str(node.get("text",node.get("caption","")))))
   probe.free()
- var height:=38+cinema_body_height if _cinematic() else ((188.0 if has_choices else 140.0) if p else 132.0)
+ var height:=62+cinema_body_height if _cinematic() else (140.0 if p else 132.0)
  # Same fixed layout throughout the chapter: no panel or actor jump per speech.
  panel.size=Vector2(panel_width,height);panel.position=Vector2((v.x-panel.size.x)/2,v.y-height-8)
  heading.position=Vector2(12,8);heading.size=Vector2(v.x-112,24)
  pause_button.position=Vector2(v.x-92,4);pause_button.size=Vector2(84,44)
  portrait.position=Vector2(8,6);portrait.size=Vector2(30,30)
  speaker.position=Vector2(46,6);speaker.size=Vector2(panel.size.x-56,20)
- if _cinematic():portrait.size=Vector2(24,24);speaker.position.x=40
- body.position=Vector2(10,30 if _cinematic() else 40);body.size=Vector2(panel.size.x-20,cinema_body_height if _cinematic() else 36)
+ if _cinematic():
+  portrait.size=Vector2(24,24);speaker.position.x=40;speaker.size.x=panel.size.x-146
+ body.position=Vector2(10,52 if _cinematic() else 40);body.size=Vector2(panel.size.x-20,cinema_body_height if _cinematic() else 36)
  page_caption.position=Vector2(12,114 if p else 97);page_caption.size=Vector2(panel.size.x-24,16)
- next_button.position=Vector2(12,height-50);next_button.size=Vector2(panel.size.x-24,44)
- for i in choices.size():
-  choices[i].position=Vector2(12+(0 if p else i*(panel.size.x-16)/2),height-102+i*50 if p else height-50)
-  choices[i].size=Vector2(panel.size.x-24 if p else (panel.size.x-32)/2,44)
+ next_button.position=Vector2(12,height-50);next_button.size=Vector2(panel.size.x-120,44)
+ skip_button.position=Vector2(panel.size.x-100,4 if _cinematic() else height-50)
+ skip_button.size=Vector2(88,44)
  stage_rect=Rect2(0,48,v.x,v.y-reserved_height-64)
  pause_panel.size=Vector2(minf(v.x-24,420),176);pause_panel.position=(v-pause_panel.size)/2
  warning.position=Vector2(12,10);warning.size=Vector2(pause_panel.size.x-24,54)
  resume_button.position=Vector2(12,70);resume_button.size=Vector2(pause_panel.size.x-24,44)
  leave_button.position=Vector2(12,122);leave_button.size=Vector2(pause_panel.size.x-24,44)
- _reflow(false);_sync_cast();_sync_cliff_cast();queue_redraw()
+ _reflow(false);_sync_cast();_sync_cliff_pose();queue_redraw()
 func actor_positions() -> Array[Vector2]:
  if _ground_scene():return Art.positions()
  var lead:=0.0
@@ -272,7 +293,11 @@ func _sync_cast() -> void:
  if not is_instance_valid(cast_stage) or chapter.is_empty():return
  cast_stage.visible=_ground_scene()
  cast_stage.transform=_cast_projection()
- for who in Art.IDS:Art.configure(cast_sprites[who],who,Art.frame(who,ground_time,step_time,chapter["step"],motion))
+ for who in Art.IDS:
+  var frame:=Art.frame(who,ground_time,step_time,chapter["step"],motion)
+  if cast_frames.get(who,0)!=frame:
+   Art.set_frame(cast_sprites[who],who,frame)
+   cast_frames[who]=frame
 func _cast_snapshot() -> Array:
  var out: Array=[]
  if not is_instance_valid(cast_stage) or not cast_stage.visible:return out
@@ -318,29 +343,43 @@ func draw_ellipse_shadow(at: Vector2,extent: Vector2) -> void:
  for i in 20:polygon.append(at+Vector2(cos(i*TAU/20)*extent.x,sin(i*TAU/20)*extent.y))
  draw_colored_polygon(polygon,Color(0.02,0.025,0.04,0.26))
 func snapshot() -> Dictionary:
- return {"view":[get_viewport_rect().size.x,get_viewport_rect().size.y],"chapter":chapter.duplicate(true),"elapsed":elapsed,"paused":paused,"page":page,"anchor":reading_offset,"pages":pages.size(),"text":body.text,"speaker":speaker.text,"body":QA.rect(body),"portrait":QA.rect(portrait),"speaker_rect":QA.rect(speaker),"panel":QA.rect(panel),"next":QA.rect(next_button),"next_visible":next_button.visible,"choices":choices.filter(func(b):return b.visible).map(func(b):return QA.rect(b)),"pause":QA.rect(pause_button),"resume":QA.rect(resume_button),"leave":QA.rect(leave_button),"fits":TextFit.fits(heading) and TextFit.fits(body) and TextFit.fits(speaker) and TextFit.fits(page_caption),"cast":_cast_snapshot(),"actors":actor_positions().map(func(pos):return [pos.x,pos.y]),"frame":injury_frame(),"interlude":2 if cliff_scene else 1,"cliff":_cliff_snapshot() if cliff_scene else {},"combat":false,"vehicle":save["vehicle"],"save_failed":save_failed}
+ return {"view":[get_viewport_rect().size.x,get_viewport_rect().size.y],"chapter":chapter.duplicate(true),"elapsed":elapsed,"paused":paused,"page":page,"anchor":reading_offset,"pages":pages.size(),"text":body.text,"speaker":speaker.text,"body":QA.rect(body),"portrait":QA.rect(portrait),"speaker_rect":QA.rect(speaker),"panel":QA.rect(panel),"next":QA.rect(next_button),"next_visible":next_button.visible,"skip":QA.rect(skip_button),"skip_visible":skip_button.is_visible_in_tree(),"skip_menu":skip_button.get_popup().visible,"skip_popup":skip_button.popup_bounds(),"caption_visible":panel.is_visible_in_tree(),"pause":QA.rect(pause_button),"resume":QA.rect(resume_button),"leave":QA.rect(leave_button),"fits":TextFit.fits(heading) and TextFit.fits(body) and TextFit.fits(speaker) and TextFit.fits(page_caption),"cast":_cast_snapshot(),"actors":actor_positions().map(func(pos):return [pos.x,pos.y]),"frame":injury_frame(),"interlude":2 if cliff_scene else 1,"cliff":_cliff_snapshot() if cliff_scene else {},"combat":false,"music":sounds.music_snapshot(),"vehicle":save["vehicle"],"save_failed":save_failed}
 
 func _cliff_projection() -> Transform2D:
  var zoom:=minf(stage_rect.size.x/(360.0 if last_portrait else 640.0),stage_rect.size.y/164.0)
  return Transform2D(0,Vector2.ONE*zoom,0,stage_rect.get_center()-Vector2(320,170)*zoom)
 func _build_cliff_cast() -> void:
+ if not cliff_scene:return
  cliff_cast=Node2D.new();cliff_cast.name="CliffCast";add_child(cliff_cast)
- cliff_aion=Sprite2D.new();VisualArt.standing(cliff_aion,"aion");cliff_cast.add_child(cliff_aion)
+ cliff_aion=Sprite2D.new();cliff_cast.add_child(cliff_aion)
+ cliff_aion.texture=VisualArt.texture("aion_cliff")
+ cliff_aion.region_enabled=true;cliff_aion.region_filter_clip_enabled=true
+ cliff_aion.centered=false;cliff_aion.offset=Vector2(-48,-82);cliff_aion.scale=Vector2.ONE*.62
+ cliff_aion.texture_filter=CanvasItem.TEXTURE_FILTER_NEAREST
  cliff_kurt=Sprite2D.new();cliff_kurt.material=VisualArt.material();cliff_kurt.texture_filter=CanvasItem.TEXTURE_FILTER_NEAREST;cliff_cast.add_child(cliff_kurt)
-func _sync_cliff_cast() -> void:
- if not is_instance_valid(cliff_cast) or chapter.is_empty():return
- cliff_cast.visible=cliff_scene and CliffStory.poses(chapter["step"],elapsed,not motion)["actors"]
+ cliff_kurt.texture=VisualArt.texture("kurt_scene")
+ cliff_kurt.region_enabled=true;cliff_kurt.region_filter_clip_enabled=true
+ cliff_kurt.centered=false
+func _sync_cliff_pose() -> void:
+ if not cliff_scene:return
+ cliff_pose=CliffStory.poses(chapter["step"],elapsed,not motion)
+ cliff_cast.visible=cliff_pose["actors"]
  if not cliff_cast.visible:return
- var pose:=CliffStory.poses(chapter["step"],elapsed,not motion)
  cliff_cast.transform=_cliff_projection()
- cliff_aion.position=pose["aion_foot"]
- cliff_kurt.position=pose["kurt_foot"]
- var rect:=VisualArt.region("kurt_scene",pose["frame"])
- var contact: Array=VisualArt.data()["kurt_scene_feet"][pose["frame"]]
- cliff_kurt.texture=VisualArt.texture("kurt_scene");cliff_kurt.region_enabled=true;cliff_kurt.region_filter_clip_enabled=true
- cliff_kurt.region_rect=rect;cliff_kurt.centered=false;cliff_kurt.offset=-Vector2(contact[0],contact[1]);cliff_kurt.scale=Vector2.ONE*(60.0/rect.size.y)
+ cliff_aion.position=cliff_pose["aion_foot"]
+ cliff_aion.visible=cliff_pose["aion_visible"]
+ if cliff_pose["aion_frame"]!=aion_exit_frame:
+  aion_exit_frame=cliff_pose["aion_frame"]
+  cliff_aion.region_rect=VisualArt.region("aion_cliff",aion_exit_frame)
+ cliff_kurt.position=cliff_pose["kurt_foot"]
+ var frame: int=cliff_pose["frame"]
+ if cliff_frame!=frame:
+  cliff_frame=frame
+  var rect:=VisualArt.region("kurt_scene",frame)
+  var contact: Array=VisualArt.data()["kurt_scene_feet"][frame]
+  cliff_kurt.region_rect=rect;cliff_kurt.offset=-Vector2(contact[0],contact[1]);cliff_kurt.scale=Vector2.ONE*(60.0/rect.size.y)
 func _draw_cliff() -> void:
- var pose:=CliffStory.poses(chapter["step"],elapsed,not motion)
+ var pose:=cliff_pose
  draw_set_transform_matrix(_cliff_projection())
  draw_texture_rect(VisualArt.texture("cliff"),Rect2(0,0,640,360),false)
  if pose["wrecked"]:VisualArt.at(self,"cliff_cars",Vehicles.index(save.get("vehicle"))+1,pose["aion_car"],Vector2(48,74))
@@ -349,8 +388,15 @@ func _draw_cliff() -> void:
  VisualArt.at(self,"cliff_cars",0,Vector2.ZERO,Vector2(48,74))
  draw_set_transform_matrix(_cliff_projection())
  if chapter["step"]=="impact" and effects and motion:VisualArt.at(self,"gadgets",7,pose["aion_car"]+Vector2(-22,0),Vector2(32,32),Color(1,1,1,clampf(1-elapsed/.6,0,1)))
+ if pose["wrecked"] and not pose["aion_visible"]:
+  VisualArt.portrait(self,"aion",Rect2(pose["aion_car"]-Vector2(7,10),Vector2(14,14)))
+ if pose["door"]>0.0:
+  var hinge: Vector2=pose["aion_car"]+Vector2(12,-9)
+  var tip:=hinge+Vector2(2+pose["door"]*13,17-pose["door"]*6)
+  draw_line(hinge,tip,Color("150f16"),6)
+  draw_line(hinge,tip,Color("e0ab61"),3)
  if pose["wrecked"] and effects:VisualArt.at(self,"weapons",3,pose["aion_car"]+Vector2(0,-22),Vector2(24,30),Color(1,1,1,.6))
  draw_set_transform(Vector2.ZERO)
 func _cliff_snapshot() -> Dictionary:
- var pose:=CliffStory.poses(chapter["step"],elapsed,not motion)
- return {"aion_car":[pose["aion_car"].x,pose["aion_car"].y],"kurt_car":[pose["kurt_car"].x,pose["kurt_car"].y],"edge_y":pose["edge_y"],"wrecked":pose["wrecked"],"actors":pose["actors"],"frame":pose["frame"],"aion_foot":[pose["aion_foot"].x,pose["aion_foot"].y],"kurt_foot":[pose["kurt_foot"].x,pose["kurt_foot"].y]}
+ var pose:=cliff_pose
+ return {"aion_car":[pose["aion_car"].x,pose["aion_car"].y],"kurt_car":[pose["kurt_car"].x,pose["kurt_car"].y],"edge_y":pose["edge_y"],"wrecked":pose["wrecked"],"actors":pose["actors"],"frame":pose["frame"],"aion_visible":pose["aion_visible"],"aion_foot":[pose["aion_foot"].x,pose["aion_foot"].y],"kurt_foot":[pose["kurt_foot"].x,pose["kurt_foot"].y]}

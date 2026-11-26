@@ -1,6 +1,6 @@
 extends Node
 ## Original procedural synth SFX and seamless looping music beds, generated locally.
-## No external samples, no network services, and zero shared combat RNG consumption.
+## Music resources are local, and audio never consumes the combat RNG.
 
 const SAMPLE_RATE := 22050
 const BED_SAMPLE_RATE := 11025
@@ -11,9 +11,16 @@ const CUE_NAMES: Array[String] = [
 	"boss_phase", "boss_defeat", "finish", "pulse",
 ]
 const BED_NAMES: Array[String] = ["road", "boss", "aftermath"]
+const MUSIC_TRACKS := {
+ "ice":"res://assets/music/icyadventure-loopable.ogg",
+ "boss":"res://assets/music/retrobossfight-loopable.ogg",
+ "cliff":"res://assets/music/eeriechoir.ogg",
+}
+const FALLBACK_BEDS := {"ice":"road","cliff":"aftermath"}
 
 static var _cached_streams: Dictionary = {}
 static var _cached_beds: Dictionary = {}
+static var _music: Dictionary = {}
 
 var enabled := true
 var volume := 0.7
@@ -23,6 +30,9 @@ var streams: Dictionary = {}
 var bed_streams: Dictionary = {}
 var players: Array[AudioStreamPlayer] = []
 var bed_player: AudioStreamPlayer = null
+var fading_player: AudioStreamPlayer = null
+var fade: Tween
+var last_bed := ""
 var next := 0
 
 func _ready() -> void:
@@ -37,6 +47,8 @@ func _ready() -> void:
 	bed_player = AudioStreamPlayer.new()
 	bed_player.volume_db = -24.0
 	add_child(bed_player)
+	fading_player = AudioStreamPlayer.new()
+	add_child(fading_player)
 	if _cached_streams.is_empty():
 		for name in CUE_NAMES:
 			_cached_streams[name] = build_tone(name)
@@ -60,56 +72,102 @@ func set_paused(value: bool) -> void:
 	paused = value
 	if bed_player == null:
 		return
-	if paused:
-		bed_player.stream_paused = true
-	else:
-		bed_player.stream_paused = false
+	bed_player.stream_paused = paused
+	fading_player.stream_paused = paused
+	if fade and fade.is_valid():
+		if paused: fade.pause()
+		else: fade.play()
+	if not paused:
 		_sync_bed()
 
-func set_bed(name: String) -> void:
-	if not name.is_empty() and not (name in BED_NAMES):
+func prepare_track(name: String) -> void:
+	if not MUSIC_TRACKS.has(name) or _music.has(name) or DisplayServer.get_name()=="headless":
 		return
-	if active_bed == name:
-		_sync_bed()
+	var stream := load(MUSIC_TRACKS[name]) as AudioStreamOggVorbis
+	if stream:
+		stream.loop = name!="cliff"
+	_music[name] = stream
+
+func set_bed(name: String) -> void:
+	if not name.is_empty() and not (name in BED_NAMES or MUSIC_TRACKS.has(name)):
 		return
 	active_bed = name
 	_sync_bed()
+
+func _stop_beds() -> void:
+	if fade and fade.is_valid(): fade.kill()
+	for player in [bed_player, fading_player]:
+		if is_instance_valid(player):
+			player.stop()
+			player.stream = null
+			player.stream_paused = false
+	last_bed = ""
 
 func stop_all() -> void:
 	for player in players:
 		if is_instance_valid(player):
 			player.stop()
-	if is_instance_valid(bed_player):
-		bed_player.stop()
-		bed_player.stream_paused = false
+	_stop_beds()
 
 func _sync_bed() -> void:
 	if not is_instance_valid(bed_player):
 		return
 	if active_bed.is_empty() or not enabled or volume <= 0.0:
-		bed_player.stop()
-		bed_player.stream_paused = false
+		_stop_beds()
 		return
-	if not _cached_beds.has(active_bed):
-		_cached_beds[active_bed] = build_bed(active_bed)
+	if paused:
+		return
+	var target: AudioStream = _music.get(active_bed)
+	var fallback: String = FALLBACK_BEDS.get(active_bed,active_bed)
+	if target == null:
+		prepare_track(active_bed)
+		target = _music.get(active_bed)
+	if target == null:
+		if not _cached_beds.has(fallback):
+			_cached_beds[fallback] = build_bed(fallback)
 		bed_streams = _cached_beds
-	var target: AudioStreamWAV = _cached_beds.get(active_bed, null)
+		target = _cached_beds[fallback]
 	if target == null:
 		return
+	if last_bed == active_bed and bed_player.stream == target:
+		if not fade or not fade.is_running(): bed_player.volume_db = _bed_db(active_bed)
+		return
+	if fade and fade.is_valid(): fade.kill()
+	fading_player.stop()
+	if bed_player.playing:
+		var outgoing := bed_player
+		bed_player = fading_player
+		fading_player = outgoing
+	else:
+		fading_player.stream = null
+	bed_player.stream = target
+	bed_player.stream_paused = false
+	bed_player.volume_db = -52.0 if fading_player.playing else _bed_db(active_bed)
+	bed_player.play()
+	last_bed = active_bed
+	if fading_player.playing:
+		fade = create_tween()
+		fade.set_parallel()
+		fade.tween_property(bed_player,"volume_db",_bed_db(active_bed),.36)
+		fade.tween_property(fading_player,"volume_db",-52.0,.36)
+		fade.chain().tween_callback(_finish_fade)
+
+func _finish_fade() -> void:
+	fading_player.stop()
+	fading_player.stream = null
 	bed_player.volume_db = _bed_db(active_bed)
-	if bed_player.stream != target:
-		bed_player.stream = target
-		bed_player.stream_paused = false
-		if not paused:
-			bed_player.play()
-	elif not paused and not bed_player.playing:
-		bed_player.stream_paused = false
-		bed_player.play()
-	bed_player.stream_paused = paused
 
 func _bed_db(name: String) -> float:
-	var base := -24.5 if name == "road" else (-23.0 if name == "boss" else -26.0)
-	return base + linear_to_db(maxf(volume, 0.001))
+	var base: float = {"road":-24.5,"ice":-24.5,"boss":-23.0,"cliff":-25.0,"aftermath":-26.0}.get(name,-26.0)
+	return base + linear_to_db(maxf(volume,0.001))
+
+func music_snapshot() -> Dictionary:
+	return {
+		"bed":active_bed,
+		"track":bed_player.stream.resource_path if bed_player and bed_player.stream else "",
+		"playing":bed_player.playing if bed_player else false,
+		"muted":not enabled or volume<=0.0,
+	}
 
 func cue(name: String) -> void:
 	if not enabled or volume <= 0.0 or not streams.has(name) or players.is_empty():

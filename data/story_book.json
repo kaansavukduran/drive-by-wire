@@ -46,6 +46,18 @@
         {
           "speaker": "eren",
           "line": "Ben Eren. Ormandaki bakım cebindeyim; virajda buluşuruz. Emre’nin koltuğunda bir bardak kalmış. Geri vermek için onu bekleyeceğim."
+        },
+        {
+          "speaker": "emre",
+          "line": "Köprünün öbür yanındayım. Beni duyduğunu söyle; sonra yola çık."
+        },
+        {
+          "speaker": "aion",
+          "line": "Seni duyuyorum. Orada bekle, geliyorum."
+        },
+        {
+          "speaker": "emre",
+          "line": "Duydum. Bu kez o son vuruşu beklemeyeceğim; seni bekleyeceğim."
         }
       ],
       "responses": [
@@ -75,8 +87,7 @@
         "kurt: İlk devriye geride kaldı. Şimdi düz yola bak; Mühür-01 senin geçiş kartını çoktan kara listeye aldı.",
         "kuzu: Ormandaki yol daralıyor. Beni duyuyorsan cevap vermen gerekmiyor; iki elini de direksiyonda tut.",
         "omega: Mühür beni teslim etmeni isteyecek. Kararını ben veremem. Ama hangi kapıları kapattığımı senden daha fazla saklamayacağım."
-      ],
-      "response_prompt": "Emre: Köprünün öbür yanındayım. Beni duyduğunu söyle; sonra yola çık."
+      ]
     },
     "chapter_02": {
       "title": "2. etap · Kırık hat",
@@ -107,6 +118,18 @@
         {
           "speaker": "omega",
           "line": "Kayıt yolu açık gösteriyor. Ama kayıt benim hafızam; yolun kendisi değil. Bu kez bunu unutmayacağım."
+        },
+        {
+          "speaker": "emre",
+          "line": "Eren yanımda. Senin sesini duymadan telsizi kapatmayacağım."
+        },
+        {
+          "speaker": "aion",
+          "line": "Dinlen. İkinci bardağı dönüşte doldururuz."
+        },
+        {
+          "speaker": "emre",
+          "line": "İki bardak da hazır olacak. Acele etmeden, sağlam dön."
         }
       ],
       "responses": [
@@ -136,8 +159,7 @@
         "kurt: Servis yolundaki izler taze. Biri bariyerleri içeriden açmış.",
         "omega: Harita ile yol örtüşmüyor. Köprü kaydının tarihi değiştirilmiş.",
         "kurt: Kuzey bağlantısına gelme. Aion, beni duyuyor musun?"
-      ],
-      "response_prompt": "Emre: Eren yanımda. Senin sesini duymadan telsizi kapatmayacağım."
+      ]
     }
   },
   "speakers": {

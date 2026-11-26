@@ -187,6 +187,8 @@ var journal_text: Label
 var journal_scroll: Control
 var journal_reader: Control
 var boss := Boss.new()
+var boss_fall_left := 0.0
+var rear_framing_y := 0.0
 var biome_index := -1
 var result_buttons: Array[Button] = []
 var layout_initialized := false
@@ -229,7 +231,8 @@ func _ready() -> void:
 	sounds.volume = float(save["settings"]["volume"])
 	motion_enabled = bool(save["settings"]["motion"])
 	add_child(sounds)
-	sounds.set_bed("road")
+	sounds.set_bed(_drive_bed())
+	if Session.story_mode: sounds.prepare_track.call_deferred("boss")
 	Input.joy_connection_changed.connect(func(_device: int, connected: bool):
 		if not connected:
 			Controls.last_device = "keyboard"
@@ -675,6 +678,7 @@ func _set_paused(value: bool) -> void:
 	face.set_process(not value)
 	face.queue_redraw()
 	_clear_pointers()
+	queue_redraw()
 	boosting = false
 	drive_velocity=Vector2.ZERO
 	pause_panel.visible = value
@@ -929,7 +933,7 @@ func _process(delta: float) -> void:
 		qa_clock=0
 		var targets := {}
 		for action in touch_by_action: targets[action]=QA.rect(touch_by_action[action])
-		QA.publish("run",{"view":[get_viewport_rect().size.x,get_viewport_rect().size.y],"chapter":campaign.get("stage",-1),"hp":hp,"kills":kills,"collected":arcade.collected,"finish":_cfg("arcade.finish_distance",1200),"warnings":_enemy_warnings().map(func(w): return {"kind":w["kind"],"lane":w["lane"],"progress":w["progress"],"origin":[w["origin"].x,w["origin"].y],"target":[w["target"].x,w["target"].y]}),"traffic":enemies.map(func(e): return {"id":e["id"],"spawn_y":e["spawn_y"],"type":e["type"],"state":e["state"],"t":e["t"],"hatch":e.get("hatch_open",0),"x":e["pos"].x,"y":e["pos"].y,"lane":e["lane"]}),"hazards":obstacles.map(func(o): return {"x":o["pos"].x,"y":o["pos"].y,"kind":o["kind"],"source_id":o.get("source_id",-1)}),"shield":shield_left,"bonds":campaign.get("bonds",{}),"pickup_targets":pickups.map(func(p): return {"lane":_lane_of(p["pos"].x),"y":p["pos"].y}),"radio_ui":_radio_snapshot(),"result_focus":result_buttons.find(get_viewport().gui_get_focus_owner()),"support":comfort_cooldown,"pulse_count":comfort_count,"mine_held":_held("drive_mine"),"result":result_buttons.map(func(b): return QA.rect(b)),"ending_text":end_panel.text if over else "","lane":lane,"player":[car_x,car_y],"sprite":[car.position.x,car.position.y],"hitbox":[_player_rect().position.x,_player_rect().position.y,_player_rect().size.x,_player_rect().size.y],"vehicle_anim":vehicle_motion.snapshot(),"joystick":QA.rect(joystick),"stick":[joystick.value.x,joystick.value.y],"paused":paused,"over":over,"fire":_held("drive_fire"),"boost":boosting,"distance":distance,"speed":speed,"energy":energy,"road":[road_touch_rect.position.x,road_touch_rect.position.y,road_touch_rect.size.x,road_touch_rect.size.y],"actions":targets,"pause":QA.rect(pause_button),"journal":journal_panel.visible,"touch":touch_enabled,"portrait_hud":({"health":QA.rect(hud),"meters":QA.rect(distance_caption),"hp_bar":QA.rect(hp_bar),"score":QA.rect(score_label)} if was_portrait else {}),"route":journey.route,"mines":-1,"mine_cooldown":mine_cooldown,"mine_reload":_mine_reload(),"mine_drops":mine_drops,"active_mines":mines.map(func(m): return [m["pos"].x,m["pos"].y]),"dodge":dodge_cooldown,"settings":settings_panel.visible,"settings_ui":QA.settings(settings_panel),"settings_rect":QA.rect(settings_panel),"settings_back":QA.rect(settings_panel.back),"pause_menu":pause_panel.get_child(0).get_children().filter(func(child): return child is Button).map(func(child): return QA.rect(child)),"journal_rect":QA.rect(journal_panel),"journal_reader":journal_reader.snapshot(),"biome":Biomes.NAMES[maxi(0,biome_index)],"hp_rect":QA.rect(hp_bar),"health_panel_visible":ui_panels[0].visible,"toast_box":toast.get_theme_stylebox("normal") is not StyleBoxEmpty,"camera_bottom":(get_viewport_rect().size.y-world_origin.y)/scale.y,"boss":boss.snapshot(),"journal_back":QA.rect(journal_panel.get_child(0).get_child(2))})
+		QA.publish("run",{"view":[get_viewport_rect().size.x,get_viewport_rect().size.y],"chapter":campaign.get("stage",-1),"hp":hp,"kills":kills,"collected":arcade.collected,"finish":_cfg("arcade.finish_distance",1200),"warnings":_enemy_warnings().map(func(w): return {"kind":w["kind"],"lane":w["lane"],"progress":w["progress"],"origin":[w["origin"].x,w["origin"].y],"target":[w["target"].x,w["target"].y]}),"traffic":enemies.map(func(e): return {"id":e["id"],"spawn_y":e["spawn_y"],"type":e["type"],"state":e["state"],"t":e["t"],"hatch":e.get("hatch_open",0),"x":e["pos"].x,"y":e["pos"].y,"lane":e["lane"]}),"hazards":obstacles.map(func(o): return {"x":o["pos"].x,"y":o["pos"].y,"kind":o["kind"],"source_id":o.get("source_id",-1)}),"shield":shield_left,"bonds":campaign.get("bonds",{}),"pickup_targets":pickups.map(func(p): return {"lane":_lane_of(p["pos"].x),"y":p["pos"].y}),"radio_ui":_radio_snapshot(),"result_focus":result_buttons.find(get_viewport().gui_get_focus_owner()),"support":comfort_cooldown,"pulse_count":comfort_count,"mine_held":_held("drive_mine"),"result":result_buttons.map(func(b): return QA.rect(b)),"ending_text":end_panel.text if over else "","lane":lane,"player":[car_x,car_y],"sprite":[car.position.x,car.position.y],"hitbox":[_player_rect().position.x,_player_rect().position.y,_player_rect().size.x,_player_rect().size.y],"vehicle_anim":vehicle_motion.snapshot(),"joystick":QA.rect(joystick),"stick":[joystick.value.x,joystick.value.y],"paused":paused,"over":over,"fire":_held("drive_fire"),"boost":boosting,"distance":distance,"speed":speed,"energy":energy,"road":[road_touch_rect.position.x,road_touch_rect.position.y,road_touch_rect.size.x,road_touch_rect.size.y],"actions":targets,"pause":QA.rect(pause_button),"journal":journal_panel.visible,"touch":touch_enabled,"portrait_hud":({"health":QA.rect(hud),"meters":QA.rect(distance_caption),"hp_bar":QA.rect(hp_bar),"score":QA.rect(score_label)} if was_portrait else {}),"route":journey.route,"mines":-1,"mine_cooldown":mine_cooldown,"mine_reload":_mine_reload(),"mine_drops":mine_drops,"active_mines":mines.map(func(m): return [m["pos"].x,m["pos"].y]),"dodge":dodge_cooldown,"settings":settings_panel.visible,"settings_ui":QA.settings(settings_panel),"settings_rect":QA.rect(settings_panel),"settings_back":QA.rect(settings_panel.back),"pause_menu":pause_panel.get_child(0).get_children().filter(func(child): return child is Button).map(func(child): return QA.rect(child)),"journal_rect":QA.rect(journal_panel),"journal_reader":journal_reader.snapshot(),"biome":Biomes.NAMES[maxi(0,biome_index)],"hp_rect":QA.rect(hp_bar),"health_panel_visible":ui_panels[0].visible,"toast_box":toast.get_theme_stylebox("normal") is not StyleBoxEmpty,"camera_bottom":(get_viewport_rect().size.y-world_origin.y)/scale.y,"boss":boss.snapshot(),"music":sounds.music_snapshot(),"journal_back":QA.rect(journal_panel.get_child(0).get_child(2))})
 	metrics_clock += delta
 	if OS.has_feature("web") and metrics_clock > 5.0:
 		metrics_clock = 0.0
@@ -946,7 +950,8 @@ func _process(delta: float) -> void:
 	if hud_clock >= 0.1:
 		hud_clock = 0.0
 		_update_hud()
-	queue_redraw()
+	if not paused:
+		queue_redraw()
 
 
 func _update_hud() -> void:
@@ -977,7 +982,11 @@ func _update_hud() -> void:
 	var biome_name: String=Biomes.NAMES[Biomes.index(chapter,distance)]
 	story_caption.text=biome_name+" · "+("ETAP %d / 13" % (chapter+1) if Session.story_mode else "YOL")
 	if boss.active:
-		story_caption.text="%s · %d / %d CAN" % [Boss.NAMES[boss.stage],ceili(boss.hp),int(boss.max_hp)]+"\n"+("ARKAYA GEÇİYOR · MAYIN" if boss.rear and boss.position.y<400 else ("ARKANDA · MAYIN BIRAK" if boss.position.y>car_y+30 else "UYARIYI İZLE · ATEŞ ET"))
+		var cue := "UYARIYI İZLE"
+		if boss.act_state=="phase_shift" and boss.rear:cue="ARKAYA GEÇİYOR"
+		elif boss.vulnerable():cue="ÇEKİRDEK AÇIK · "+("MAYIN" if boss.rear else "ATEŞ")
+		elif boss.rear:cue="ARKANDA · MAYINA HAZIRLAN"
+		story_caption.text="%s · %d / %d CAN\n%s" % [Boss.NAMES[boss.stage],ceili(boss.hp),int(boss.max_hp),cue]
 		route_bar.value=boss.hp/boss.max_hp*100
 	route_bar.visible=boss.active and not paused and not over
 
@@ -1028,6 +1037,9 @@ func _simulate(delta: float) -> void:
 	if paused or over:
 		return
 	arcade.tick(delta)
+	boss_fall_left = maxf(0.0,boss_fall_left-delta)
+	var framing_target := -54.0 if boss.rear and (boss.active or boss_fall_left>0.0) else 0.0
+	rear_framing_y = move_toward(rear_framing_y,framing_target,72.0*delta) if motion_enabled else framing_target
 	shield_left = maxf(0.0, shield_left - delta)
 	comfort_cooldown = maxf(0.0, comfort_cooldown - delta)
 	var normal_speed := _cfg("player.base_speed", 220)
@@ -1045,15 +1057,22 @@ func _simulate(delta: float) -> void:
 	shake = maxf(0.0, shake - delta)
 	for item in pending:
 		item["t"] = float(item["t"]) - delta
-	var due := pending.filter(func(i: Dictionary) -> bool: return float(i["t"]) <= 0.0)
-	pending = pending.filter(func(i: Dictionary) -> bool: return float(i["t"]) > 0.0)
-	for item in due:
-		_execute(item["command"])
+	if not pending.is_empty():
+		var due: Array = []
+		for item in pending:
+			if float(item["t"]) <= 0.0:
+				due.append(item)
+		for item in due:
+			pending.erase(item)
+			_execute(item["command"])
 
 	_move_player(delta)
 	speed = move_toward(speed, target_speed, _cfg("player.acceleration", 160) * delta)
 	scroll = fposmod(scroll + speed * delta, 48.0)
 	distance += speed * delta * float(run_cfg.get("distance_per_pixel", 0.05))
+	var finish_distance := _cfg("arcade.finish_distance", 1200)
+	if Session.story_mode:
+		distance = minf(distance,finish_distance)
 	for line in journey.advance(distance):
 		_say(line,true)
 		bubble_left=7.0
@@ -1072,7 +1091,7 @@ func _simulate(delta: float) -> void:
 		hp = minf(max_hp, hp + _cfg("arcade.contract_heal", 10))
 		mine_cooldown = 0.0
 		_notice("GÖREV TAMAM! +%d puan\n+onarım · mayın hazır" % int(_cfg("arcade.contract_reward", 200)))
-	if distance >= _cfg("arcade.finish_distance", 1200) and (not Session.story_mode or boss.defeated):
+	if distance >= finish_distance and (not Session.story_mode or (boss.defeated and boss_fall_left<=0.0)):
 		_end_run("survived")
 	for fx in effects:
 		fx["t"] = float(fx["t"]) + delta
@@ -1088,7 +1107,15 @@ func _simulate(delta: float) -> void:
 
 
 func _spawn(delta: float) -> void:
-	if boss.active: return
+	if Session.story_mode:
+		if distance >= 250.0:
+			return
+		var wave := fposmod(distance, 72.0)
+		if wave >= 54.0:
+			return
+		var cap := 1 if distance < 54.0 or wave < 19.0 else 2
+		if enemies.size() >= cap:
+			return
 	spawn_timer -= delta
 	if spawn_timer > 0.0 or enemies.size() >= int(_cfg("spawn.max_alive", 5)):
 		return
@@ -1109,8 +1136,24 @@ func _spawn(delta: float) -> void:
 		if roll <= 0.0:
 			kind = k
 			break
+	if Session.story_mode and int(campaign["stage"]) == 1 and distance < 54.0:
+		kind = "rammer"
 	var y := _traffic_spawn_y(kind)
-	_add_enemy(kind, rng.randi_range(0, lane_count - 1), y)
+	var next_lane := rng.randi_range(0, lane_count - 1)
+	if Session.story_mode:
+		# Spawn into an available lane while leaving one lane clear of new traffic or cargo.
+		var occupied: Array[int] = []
+		for enemy in enemies:
+			var lane_index: int = enemy["lane"]
+			if lane_index not in occupied: occupied.append(lane_index)
+		for obstacle in obstacles:
+			var lane_index := _lane_of(obstacle["pos"].x)
+			if lane_index not in occupied: occupied.append(lane_index)
+		if occupied.size()>=2:
+			return
+		while next_lane in occupied:
+			next_lane = (next_lane+1)%lane_count
+	_add_enemy(kind, next_lane, y)
 
 
 func _traffic_spawn_y(kind: String) -> float:
@@ -1184,7 +1227,7 @@ func _rect(pos: Vector2, half: Vector2) -> Rect2:
 func _update_bullets(delta: float) -> void:
 	for b in bullets:
 		b["pos"] = b["pos"] + b["vel"] * delta
-		if boss.active and boss.rect().has_point(b["pos"]):
+		if boss.settled() and boss.rect().has_point(b["pos"]):
 			effects.append({"pos": b["pos"], "t": 0.0, "kind": "hit_spark", "still": true})
 			sounds.cue("bullet_hit")
 			_hurt_boss(_cfg("weapon.damage",20));b["dead"]=true
@@ -1230,7 +1273,7 @@ func _update_mines(delta: float) -> void:
 		m["life"] = float(m["life"]) - delta
 		if float(m["arm"]) > 0.0:
 			continue
-		var detonate: bool=boss.active and boss.rect().grow(12).has_point(m["pos"])
+		var detonate: bool=boss.settled() and boss.rect().grow(12).has_point(m["pos"])
 		for e in enemies:
 			if e.has("dead"):
 				continue
@@ -1604,15 +1647,16 @@ func _enemy_warnings() -> Array[Dictionary]:
 		elif str(enemy["type"]) == "rammer" and absf(p.x-_lane_x(enemy_lane)) > 2:
 			warnings.append({"kind":"ram","lane":enemy_lane,"progress":clampf(1.0-absf(p.x-_lane_x(enemy_lane))/lane_width,0,1),"origin":p,"target":Vector2(_lane_x(enemy_lane),p.y)})
 	if boss.active:
-		if boss.position.y>H: warnings.append({"kind":"rear","lane":_lane_of(boss.position.x),"progress":0.0,"origin":boss.position,"target":Vector2(clampf(boss.position.x,235,405),H-13)})
-		for target in boss.targets:
-			warnings.append({"kind":"shot","lane":_lane_of(target.x),"progress":1.0-boss.warning_left/1.05,"origin":boss.position,"target":target})
+		if boss.rear and boss.position.y>H: warnings.append({"kind":"rear","lane":_lane_of(boss.position.x),"progress":0.0,"origin":boss.position,"target":Vector2(clampf(boss.position.x,235,405),H-13)})
+		for i in boss.targets.size():
+			var target: Vector2=boss.targets[i]
+			warnings.append({"kind":"shot","lane":_lane_of(target.x),"progress":boss.warning_progress(),"origin":boss.aim_origins[i],"target":target})
 	return warnings
 
 
 func _draw() -> void:
-	position = world_origin + _camera_offset()
-	Art.road(self,maxi(0,biome_index),road_scroll)
+	position = world_origin + _camera_offset() + Vector2(0,rear_framing_y*scale.y)
+	Art.road(self,maxi(0,biome_index),road_scroll,H-rear_framing_y)
 	Biomes.draw(self,maxi(0,biome_index),distance*9,motion_enabled,effects_enabled and motion_enabled)
 	for pickup in pickups:
 		_draw_pickup(pickup)
@@ -1638,8 +1682,14 @@ func _draw() -> void:
 		Art.at(self,"gadgets",{"crate":4,"barrel":5,"spikes":6}.get(str(o["kind"]),4),o["pos"],Vector2(32,32))
 	for e in enemies:
 		_draw_enemy_sprite(e)
-	if boss.active and Rect2(192,0,256,H).encloses(boss.rect()):
-		BossArt.draw(self,boss.position,boss.stage,game_time,boss.flash>0,1,boss.warning_left>0,boss.act_state,boss.warning_progress(),boss.fire_recoil,boss.phase,boss.phase_burst,motion_enabled)
+	if boss.active or boss_fall_left>0.0:
+		var visible_bottom := (get_viewport_rect().size.y-position.y)/scale.y
+		var visible_top := -position.y/scale.y
+		if Rect2(0,visible_top,W,visible_bottom-visible_top).intersects(boss.rect().grow(30)):
+			var clip_top := (story_caption.get_global_rect().end.y+4.0-position.y)/scale.y
+			if was_portrait and bubble.visible:
+				clip_top = maxf(clip_top,(ui_panels[1].get_global_rect().end.y+4.0-position.y)/scale.y)
+			BossArt.draw_encounter(self,boss,motion_enabled,clip_top)
 	for b in bullets:
 		Art.at(self,"weapons",1,b["pos"],Vector2(12,22))
 	for b in enemy_bullets:
@@ -1959,6 +2009,7 @@ func _layout() -> void:
 	for child in column.get_children():
 		if child is BaseButton:child.custom_minimum_size.y=44 if portrait else 36
 	position=world_origin
+	queue_redraw()
 	if not result_buttons.is_empty():
 		for i in result_buttons.size():_place(result_buttons[i],Rect2(Vector2(12+i*(view.x/2),view.y-64),Vector2(view.x/2-24,48)) if portrait else Rect2(offset+Vector2(166+i*160,300),Vector2(148,44)))
 	_place(journal_panel,Rect2(Vector2(12,24),view-Vector2(24,48)) if portrait else Rect2(offset+Vector2(80,24),Vector2(480,312)))
@@ -2015,6 +2066,10 @@ func _close_journal() -> void:
 	(pause_panel.get_child(0).get_child(1) as Button).grab_focus()
 
 
+func _drive_bed() -> String:
+	return "ice" if Session.story_mode and int(campaign.get("stage",0))==1 else "road"
+
+
 func _update_encounter(delta: float) -> void:
 	var stage: int=int(campaign.get("stage",0))
 	var next_biome:=Biomes.index(stage,distance)
@@ -2023,6 +2078,9 @@ func _update_encounter(delta: float) -> void:
 		if distance>1: _notice("BİYOM · "+Biomes.NAMES[biome_index])
 	if not Session.story_mode: return
 	if distance>=280 and not boss.started:
+		enemies.clear()
+		obstacles.clear()
+		enemy_bullets.clear()
 		boss.start(stage)
 		if is_instance_valid(sounds):
 			sounds.set_bed("boss")
@@ -2031,7 +2089,7 @@ func _update_encounter(delta: float) -> void:
 	if boss.active:
 		distance=minf(distance,399.9)
 		enemy_bullets.append_array(boss.step(delta,Vector2(car_x,car_y)))
-		if boss.rect().intersects(_player_rect()): _damage_player(8,false)
+		if boss.settled() and boss.rect().intersects(_player_rect()): _damage_player(8,false)
 	for message in boss.take_messages(): _say(message,true)
 	for cue in boss.take_cues():
 		if cue == "boss_phase":
@@ -2044,6 +2102,7 @@ func _hurt_boss(amount: float) -> void:
 	if not boss.active: return
 	var center: Vector2=boss.position
 	if boss.hit(amount):
+		boss_fall_left = .6
 		enemy_bullets.clear()
 		hp=minf(max_hp,hp+15)
 		arcade.award(400);kills+=1
@@ -2051,6 +2110,5 @@ func _hurt_boss(amount: float) -> void:
 		for x in [-28,28]: effects.append({"pos":center+Vector2(x,0),"t":0.0,"kind":"small","still":true})
 		_shake(3.5)
 		if is_instance_valid(sounds):
-			sounds.set_bed("road")
-		sounds.cue("boss_defeat" if sounds.streams.has("boss_defeat") else "kill")
+			sounds.set_bed(_drive_bed())
 		_notice("%s DURDURULDU\n+400 puan · +15 onarım" % Boss.NAMES[boss.stage])

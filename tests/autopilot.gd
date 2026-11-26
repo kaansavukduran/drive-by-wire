@@ -18,6 +18,7 @@ static func drive(game: Node) -> void:
 		for shot in game.enemy_bullets:
 			if absf(shot["pos"].x-game._lane_x(candidate))<30 and absf(shot["pos"].y-game.car_y)<120: cost+=120
 		if game.boss.active:
+			if game.boss.vulnerable(): cost+=absf(game.boss.position.x-game._lane_x(candidate))*1.5
 			for target in game.boss.targets:
 				if absf(target.x-game._lane_x(candidate))<34: cost+=180
 		if cost<best_cost:
@@ -32,10 +33,16 @@ static func drive(game: Node) -> void:
 	game._change_lane(best)
 
 ## Scene integration driver: speech buttons and 60Hz cinematic ticks, no state injection.
-static func story(game: Node,choice := 0) -> void:
+static func story(game: Node) -> void:
 	game.set_process(false)
 	for tick in 2000:
 		if game.chapter["step"]=="complete":return
 		if game._cinematic():game._process(1.0/60.0)
 		elif game.next_button.visible:game.next_button.pressed.emit()
-		elif game.choices[choice].visible:game.choices[choice].pressed.emit()
+
+
+static func open_core(boss: RefCounted) -> void:
+	for tick in 600:
+		if boss.vulnerable():
+			return
+		boss.step(1.0/60.0,Vector2(320,290))

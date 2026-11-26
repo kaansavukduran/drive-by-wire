@@ -1,6 +1,7 @@
 extends SceneTree
 ## Verifies single-event combat integrity (mines, bullets, kills, truck drops),
 ## Mühür-01 boss acting state transitions, pause/long-frame safety, and Cam Ormanı atmosphere.
+const Pilot := preload("res://tests/autopilot.gd")
 const H = preload("res://tests/harness.gd")
 const Boss = preload("res://scripts/core/boss_encounter.gd")
 const Biomes = preload("res://scripts/game/road_biomes.gd")
@@ -163,6 +164,7 @@ func run() -> void:
 	h.check("reduced motion render succeeds with active boss and effects", true)
 	game.motion_enabled = true
 	# Boss Phase 2 emits boss_phase_ring in scene
+	Pilot.open_core(game.boss)
 	game.boss.hit(game.boss.max_hp * 0.5)
 	game._update_encounter(0.02)
 	var phase_rings: int = game.effects.filter(func(fx): return str(fx["kind"]) == "boss_phase_ring").size()
@@ -177,6 +179,7 @@ func run() -> void:
 	game._set_paused(false)
 	# Boss defeat emits mine_blast + two flank small bursts
 	game.effects.clear()
+	Pilot.open_core(game.boss)
 	game._hurt_boss(9999.0)
 	h.check("boss defeat spawns center mine_blast and flank explosions", game.effects.filter(func(fx): return str(fx["kind"]) == "mine_blast").size() == 1 and game.effects.filter(func(fx): return str(fx["kind"]) == "small").size() == 2)
 

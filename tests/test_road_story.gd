@@ -15,7 +15,7 @@ func frames() -> void:await process_frame;await process_frame
 func run() -> void:
  h.eq("legacy save gets default car",Store.new().sanitize({})["vehicle"],"roadster")
  for bad in [null,"nonsense",[],0,{}]:h.eq("invalid vehicle rejected",Vehicles.sanitize(bad),"roadster")
- h.eq("forged final checkpoint cannot bypass two choices",Story.sanitize({"step":"complete"})["step"],"arrival")
+ h.eq("unrecognized final checkpoint resets safely",Story.sanitize({"step":"complete"})["step"],"arrival")
  h.eq("unknown novel choice is inert",Story.choose(Story.defaults(),"oops"),Story.defaults())
  var store=Store.new("user://novel-regression.json")
  Session.story_mode=true
@@ -29,7 +29,7 @@ func run() -> void:
    game.store=store;game.set_process(false)
    var all_fit:=true;var all_clear:=true;var preserved:=true
    for key in Story.STEPS:
-    game.chapter={"step":key,"pace":"race","vow":"rescue" if key=="rescue" else "avenge"}
+    game.chapter={"step":key,"pace":"race","vow":"rescue" if key=="rescue" else "avenge","record":"sealed"}
     game._present();game._layout();await frames()
     if game.portrait.get_global_rect().intersects(game.body.get_global_rect()) or game.portrait.get_global_rect().intersects(game.speaker.get_global_rect()):all_clear=false
     var recovered: Array[String]=[]
@@ -39,7 +39,7 @@ func run() -> void:
      if not TextFit.fits(game.body) or not TextFit.fits(game.speaker) or not TextFit.fits(game.page_caption):all_fit=false
     var text: String=Story.data()["nodes"][key].get("text",Story.data()["nodes"][key].get("caption",""))
     if " ".join(" ".join(recovered).split(" ",false))!=" ".join(text.split(" ",false)):preserved=false
-    var controls: Array=game.choices.filter(func(b):return b.visible)
+    var controls: Array=[game.skip_button]
     if game.next_button.visible:controls.append(game.next_button)
     for b in controls:
      if b.size.y<44 or not game.panel.get_global_rect().encloses(b.get_global_rect()):all_clear=false
@@ -69,15 +69,15 @@ func run() -> void:
    h.eq("pause freezes race",game.elapsed,2.0)
    game._pause(false);game._process(.1)
    h.check("resume advances actual race",game.elapsed>2)
-   game._checkpoint();h.eq("race checkpoint reload keeps chosen pace",store.load_data()["campaign"]["chapter2"],game.chapter)
-   game.chapter=Story.defaults();game._present();Pilot.story(game,0)
+   game._checkpoint();h.eq("race checkpoint reload keeps the scene pace",store.load_data()["campaign"]["chapter2"],game.chapter)
+   game.chapter=Story.defaults();game._present();Pilot.story(game)
    h.eq("real speech buttons play through rescue",game.chapter["step"],"complete")
    h.check("completion commits once",game._commit_completion() and not game._commit_completion())
    h.eq("first interlude opens second combat",store.load_data()["campaign"]["stage"],1)
-   h.check("revenge vow has epilogue consequence",Story.epilogue(store.load_data()["campaign"]).contains("Kurt"))
+   h.check("canonical response is reflected in the epilogue",Story.epilogue(store.load_data()["campaign"]).contains("hayatta tuttun"))
    game.queue_free();await frames()
  h.eq("Eren record survives actual scene completion and disk reload",store.load_data()["campaign"]["chapter2"]["record"],"sealed")
- h.eq("Eren bond is awarded exactly once by the actual scene",store.load_data()["campaign"]["bonds"]["eren"],1)
+ h.eq("fixed dialogue awards no Eren bond",store.load_data()["campaign"]["bonds"].get("eren",0),0)
  # Vehicles persist and retain exactly the established physics and driver pivot.
  Session.story_mode=false;Session.campaign_state={}
  for id in Vehicles.IDS:
@@ -114,6 +114,6 @@ func run() -> void:
  h.eq("old 0.9 checkpoint is not forced to invent Eren record choice",Story.sanitize(checkpoint)["record"],"")
  var witness: Dictionary={"step":"witness","pace":"race","vow":"rescue"}
  h.eq("unknown Eren record is rejected",Story.sanitize({"record":"forged"})["record"],"")
- h.eq("Eren record choice saves actual branch",Story.choose(witness,"shared")["record"],"shared")
+ h.eq("linearly authored response preserves Eren’s sealed recording",Story.advance(witness)["record"],"sealed")
  h.check("Eren record choice changes the epilogue",Story.epilogue({"chapter2":Story.choose(witness,"sealed")})!=Story.epilogue({"chapter2":Story.choose(witness,"shared")}))
  store.clear();UiSkin.configure("dark","system");quit(h.finish())

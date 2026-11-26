@@ -14,16 +14,7 @@
     "invite": {
       "speaker": "emre",
       "text": "Onu atamadım. Belki bir gün dönersin diye. Şimdi buradayız. Son viraja kadar yarışalım mı? Bu kez kaybeden bekleyecek.",
-      "choices": [
-        {
-          "id": "race",
-          "label": "Yarışalım. Virajda seni beklerim."
-        },
-        {
-          "id": "together",
-          "label": "Yan yana. Bu kez kimse geride kalmasın."
-        }
-      ]
+      "next": "say_together"
     },
     "race": {
       "duration": 8.0,
@@ -48,16 +39,7 @@
     "reveal": {
       "speaker": "omega",
       "text": "Tetiği ateşleyen imza benim eski kurtarma protokolüm. Ben basmadım. Ama bunu kanıtlamak için hafızamı açarsak saldırgan bizi yeniden bulabilir. Aion, önce Emre’ye cevap ver.",
-      "choices": [
-        {
-          "id": "avenge",
-          "label": "Söz. Bunu yapanı bulacağım."
-        },
-        {
-          "id": "rescue",
-          "label": "Önce seni buradan çıkaracağım."
-        }
-      ]
+      "next": "rescue"
     },
     "promise": {
       "speaker": "aion",
@@ -85,17 +67,18 @@
     },
     "witness": {
       "speaker": "eren",
-      "text": "Patlamadan önceki sinyal kaydı bende. Silmedim, kimseye de göndermedim. Bunu yapanı bulmak istiyorum; ama Emre’nin özel konuşması bir başkasının malı olsun istemiyorum. Kaydı nasıl koruyalım?",
-      "choices": [
-        {
-          "id": "sealed",
-          "label": "Kaydı sende, mühürlü tut."
-        },
-        {
-          "id": "shared",
-          "label": "Kurt’la yalnız sinyal izini paylaş."
-        }
-      ]
+      "text": "Patlamadan önceki sinyal kaydı bende. Silmedim, kimseye de göndermedim. Bunu yapanı bulacağız. Emre’nin özel konuşması onunla kalacak.",
+      "next": "keep_sealed"
+    },
+    "say_together": {
+      "speaker": "aion",
+      "text": "Yan yana. Bu kez kimse geride kalmasın.",
+      "next": "race"
+    },
+    "keep_sealed": {
+      "speaker": "aion",
+      "text": "Kayıt sende, mühürlü kalsın. Emre hazır olduğunda birlikte dinleriz.",
+      "next": "handoff"
     }
   }
 }

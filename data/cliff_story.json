@@ -13,7 +13,7 @@
     },
     "brake": {
       "speaker": "omega",
-      "text": "Durduk. Aion, kıpırdama. Tekerlekler hâlâ zeminde.",
+      "text": "Tekerlekler zeminde. Biraz daha… Şimdi durduk.",
       "duration": 1.4
     },
     "exit": {
@@ -23,25 +23,15 @@
     },
     "check": {
       "speaker": "kurt",
-      "text": "İyi misin? Bana bak. Sesimi duyuyor musun?",
-      "choices": [
-        {
-          "id": "shaken",
-          "label": "İyiyim… ellerim hâlâ titriyor."
-        },
-        {
-          "id": "joke",
-          "label": "Bir süre yarış teklif etme, olur mu?"
-        }
-      ]
+      "text": "Aion, sesimi duyuyor musun? İçeride misin?"
     },
     "thanks": {
       "speaker": "aion",
-      "text": "Teşekkür ederim, Kurt. Bir saniye daha geç kalsaydın…"
+      "text": "Duyuyorum. Teşekkür ederim, Kurt. Ellerim hâlâ titriyor."
     },
     "wreck": {
       "speaker": "aion",
-      "text": "Kapı açılmıyor. Aks kırılmış… Araba pert oldu."
+      "text": "Kapım sıkıştı. Ön aks kırılmış… Araba pert oldu."
     },
     "promise": {
       "speaker": "kurt",
@@ -50,6 +40,11 @@
     "complete": {
       "speaker": "omega",
       "text": "Telsizde ilk kez kimse konuşmuyor. Aion anahtarı avucuna alıyor; Kurt yanından ayrılmıyor."
+    },
+    "aion_exit": {
+      "speaker": "kurt",
+      "text": "Yolcu tarafını açtım. Elimi tut, yavaşça in.",
+      "duration": 2.5
     }
   }
 }

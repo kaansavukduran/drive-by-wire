@@ -1,4 +1,4 @@
-# Kontroller · 0.13.0
+# Kontroller · 0.17.0
 
 Son açık kullanıcı kararı: sürüşte yalnız Ateş ve Mayın eylemleri. Serbest dört yön hareket ve sabit joystick korunur. Turbo, fren, sıyrılma ve ayrı alan darbesi girişleri kaldırıldı; eski atamalar kayıtta korunur fakat etkin değildir. Kullanıcı seçimini açıkça verdiği için yeniden şema onayı istenmez.
 
@@ -10,7 +10,7 @@ Son açık kullanıcı kararı: sürüşte yalnız Ateş ve Mayın eylemleri. Se
 | Mola | Esc/P | Start | Mola |
 | Menü / sohbet | Yönler, Enter, Esc | Analog/D-pad, A/B | Görünür düğmeler |
 
-Sohbet hazırlığında üç yanıt vardır;1/2/3 ile de seçilebilir. Yanıtı okuduktan sonra Yola devam et ile aynı sabit etaba girilir. Ara sahnelerde görünen seçenekler ve Devam düğmesi kullanılır; hikâye sırası değişmez. T, Omega-3’e isteğe bağlı yazı kutusunu açar; eski hız/sıyrılma komutları sürüş yeteneğini geri açmaz.
+Hazırlık ve ara sahneler yazılmış replikleri sırayla gösterir. Devam sonraki sayfaya veya repliğe geçer. Atla menüsünde Bu repliği atla ve Tüm replikleri atla seçenekleri vardır. Toplu atlama yarış, çarpışma ve iniş animasyonlarını oynatır. Hazırlık bittiğinde Yola çık sürüşü başlatır. T, Omega-3’e isteğe bağlı yazı kutusunu açar; eski hız/sıyrılma komutları sürüş yeteneğini geri açmaz.
 
 Ateş ve mayın aynı anda kullanılabilir; parmak sahipliği, bırakma/iptal, odak kaybı ve ekran dönüşü basılı girdileri temizler. Mayın sınırsız ve beklemelidir. Atamalar/deadzone mevcut Ayarlar içindedir; yalnız etkin hareket ve iki eylem listelenir. Emekli turbo/tampon yükseltmeleri yeni teklifler arasında görünmez; kayıtları silinmez.
 

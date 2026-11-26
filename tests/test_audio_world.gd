@@ -1,6 +1,7 @@
 extends SceneTree
 ## Verifies original procedural SFX & looping audio bed synthesis, anti-clipping bounds,
 ## click-free loop boundaries, pause/mute/settings lifecycle, and clean multi-retry teardown.
+const Pilot := preload("res://tests/autopilot.gd")
 const H = preload("res://tests/harness.gd")
 const Sounds = preload("res://scripts/game/sounds.gd")
 const Session = preload("res://scripts/game/session.gd")
@@ -31,6 +32,9 @@ func run() -> void:
 		h.check("cue %s builds non-empty unclipped 16-bit WAV" % cue_name, wav.format == AudioStreamWAV.FORMAT_16_BITS and wav.mix_rate == Sounds.SAMPLE_RATE and wav.data.size() > 400 and peak > 100 and peak <= 28000)
 
 	# 2. All 3 seamless looping beds synthesize click-free boundary fades and LOOP_FORWARD.
+	for name in Sounds.MUSIC_TRACKS:
+		var music := load(Sounds.MUSIC_TRACKS[name]) as AudioStreamOggVorbis
+		h.check("packaged CC0 Vorbis track is playable: "+name,music!=null and music.get_length()>5)
 	h.eq("sounds defines all 3 expected music beds", Sounds.BED_NAMES.size(), 3)
 	for bed_name in Sounds.BED_NAMES:
 		var bed := Sounds.build_bed(bed_name)
@@ -83,6 +87,9 @@ func run() -> void:
 		game._set_paused(true)
 		h.eq("retry %d pauses audio controller" % retry_i, game.sounds.paused, true)
 		game._set_paused(false)
+		Pilot.open_core(game.boss)
+		game._hurt_boss(9999.0)
+		Pilot.open_core(game.boss)
 		game._hurt_boss(9999.0)
 		h.eq("retry %d returns to road bed after boss defeat" % retry_i, game.sounds.active_bed, "road")
 		game._end_run("destroyed")

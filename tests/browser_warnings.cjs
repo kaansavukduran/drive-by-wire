@@ -16,8 +16,7 @@ try{
  let captured=false;
  for(let attempt=0;attempt<3&&!captured;attempt++){
   let s=await screen('briefing');
-  if(!s.reply_ready&&s.radio_answers?.length){await tap(s.radio_answers[0]);await page.waitForFunction(()=>window.__dbwQA.reply_ready,{timeout:15000});s=await q();}
-  await tap(s.reply_continue||s.choices[0]);await screen('run');
+  await require('./browser_briefing.cjs').depart(page,tap);
   const start=Date.now();let supportAt=Date.now();
   while(Date.now()-start<65000){
    s=await q();assert.equal(s.screen,'run');

@@ -1,16 +1,16 @@
-# Drive-By Wire · 0.16.0
+# Drive-By Wire · 0.17.0
 
 **Fragaria Interactive · AIONIA**
 
-Omega-3 ile yolu aç, arkadaşlarının sesini dinle. Oyun artık lineer: **1. etap → Emre/Eren ara sahnesi → 2. etap → Kurt’un kurtarışı → Devam edecek.** Sohbet yanıtları konuşmaları değiştirir; rota, combat bonusu veya farklı son açmaz.
+Omega-3 ile yolu aç, arkadaşlarının sesini dinle. Oyun artık lineer: **1. etap → Emre/Eren ara sahnesi → 2. etap → Kurt’un kurtarışı → Devam edecek.** Karakterler yazılmış sırayla konuşur. Replikleri tek tek ilerletebilir veya atlayabilirsin.
 
 **13 etap planlanıyor. Bu sürümde yalnızca ilk iki etap ve iki ara sahne oynanabilir. 3–13 hazır değildir.** Eski 13 son galerisi kaldırıldı; eski kararlar/kazanılmış kayıtlar yerel kayıt arşivinde korunur.
 
-İkinci ara sahnede yol uçurumda kesilir. Kurt soldan gelip Aion’un aracına yandan çarpar, onu kenardan uzaklaştırır. Yanına gelir, iyi olup olmadığını sorar. Aion teşekkür eder; kendi arabası pert olmuştur. Kurt yeni bir araba getireceğine söz verir. Bu sürüm burada biter.
+İkinci ara sahnede yol uçurumda kesilir. Kurt soldan gelip Aion’un aracına yandan çarpar, onu kenardan uzaklaştırır. Kurt iner ve Aion’la araç içindeyken konuşur. Sıkışan kapı yüzünden Aion yolcu tarafından yardım alarak çıkar. Kurt yeni bir araba getireceğine söz verir. Bu sürüm burada biter.
 
 ## Oyna
 
-[Güncel web oyunu (GitHub Pages)](https://kaansavukduran.github.io/drive-by-wire/) (eski Vercel bağlantısı kota/ödeme nedeniyle devre dışı olabilir). Ana menü → Hikâyeye başla → üç sohbet yanıtından birini seç → yanıtı oku → Yola devam et. Kazanınca Ara sahneye geç düğmesini kullan. Replikleri kendi hızında ilerlet. Ana menüde Bölümler, hazır içerikle gelecek etapları açıkça ayırır.
+[Yayımdaki web oyunu (GitHub Pages)](https://kaansavukduran.github.io/drive-by-wire/) kendi sürümünü ana ekranda gösterir. 0.17.0 akışı, ana menüden Hikâyeye başla ile açılır. Replikleri Devam ile oku veya Atla menüsünü kullan. Etap ekranında Yola çık ile sürüş başlar. Kazanınca Ara sahneye geç düğmesini kullan. Tüm replikleri atlama sırasında yarış, çarpışma ve kurtarış animasyonları oynar.
 
 - PC: oklar/WASD dört yönlü sürüş; fare sol/Space öne ateş; fare sağ/X sınırsız arka mayın; Esc/P mola.
 - Gamepad: sol çubuk/D-pad; RT/A ateş, X mayın; menü/seçimlerde yönler ve A, geri B.
@@ -56,3 +56,5 @@ Canlı /version.json sürüm/build commit/giriş adresini bildirir. Build başar
 0.15.0: Ön ateş isabet kıvılcımları, kamyon arka ağız yük darbesi ve arka mayın tek-olay patlama bütünlüğü (kurulma/sensör halkası + dürüst 60 px şok dalgası); Mühür-01 için açık oyunculuk durumları (gölge, namlu şarjı, ateş tepmesi, toparlanma soğutma penceresi, Faz 2 reaktör halkası) ve Cam Ormanı omuz atmosfer derinliği.
 
 0.16.0: 15 katmanlı özgün prosedürel SFX ve 3 kesintisiz müzik katmanı (yol, boss, "Yan yana" sonrası) ile statik ses önbelleği; Modern Web Guidance kabuk iyileştirmeleri (`viewport-fit=cover`, safe-area, 44 px dokunmatik hedef, azaltılmış hareket ve temiz odak devri); 5 ardışık tekrar performans ölçümü (`browser_perf.cjs`) ve tam Mission 1 teknik kabul doğrulaması.
+
+0.17.0: Hazırlık ve iki ara sahne sabit replik sırasına alındı. Kurt’un kurtarışında fren, yolcu kapısı ve iniş ayrı oynar. İki boss büyüdü ve her fazda uyarı, saldırı ve açık çekirdek döngüsü kullanır. Müzikler oyun paketinden çalınır. [Müzik kaynakları](THIRD_PARTY_NOTICES.md#music).

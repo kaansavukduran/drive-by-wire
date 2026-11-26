@@ -29,8 +29,10 @@ static func material() -> ShaderMaterial:
 static func configure(sprite: Sprite2D,who: String,index: int) -> void:
  sprite.texture=TEXTURES[who];sprite.region_enabled=true;sprite.region_filter_clip_enabled=true
  sprite.centered=false;sprite.texture_filter=CanvasItem.TEXTURE_FILTER_NEAREST;sprite.material=material()
- sprite.region_rect=region(who,index);sprite.offset=-anchor(who,index)
  sprite.scale=Vector2.ONE*float(spec(who)["scale"])
+ set_frame(sprite,who,index)
+static func set_frame(sprite: Sprite2D,who: String,index: int) -> void:
+ sprite.region_rect=region(who,index);sprite.offset=-anchor(who,index)
 static func clip_frame(who: String,clip: String,time: float) -> int:
  var c: Dictionary=spec(who)["clips"][clip];var duration:=0.0
  for value in c["seconds"]:duration+=float(value)

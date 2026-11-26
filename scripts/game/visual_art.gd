@@ -2,6 +2,8 @@ extends RefCounted
 ## Authored visual registrations. These never supply gameplay coordinates or RNG.
 const PATH := "res://data/visual_art.json"
 const PATHS := {
+ "boss_frames":"res://assets/art/boss_0170.png",
+ "aion_cliff":"res://assets/art/aion_cliff_0170.png",
  "cliff":"res://assets/art/cliff.png",
  "kurt_scene":"res://assets/art/kurt_scene.png",
  "cliff_cars":"res://assets/art/cliff_cars.png",
